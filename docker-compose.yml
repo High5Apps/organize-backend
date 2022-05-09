@@ -1,0 +1,8 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+    command: rails server --binding=0.0.0.0
