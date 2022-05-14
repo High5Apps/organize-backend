@@ -1,6 +1,7 @@
 services:
   web:
     build: .
+    entrypoint: /usr/src/app/docker-entrypoint.sh
     ports:
       - "3000:3000"
     volumes:
