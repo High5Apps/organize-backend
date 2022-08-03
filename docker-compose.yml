@@ -1,9 +1,23 @@
 services:
+  db:
+    environment:
+      POSTGRES_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
   web:
     build: .
+    command: rails server --binding=0.0.0.0
+    depends_on:
+      - db
     entrypoint: /usr/src/app/docker-entrypoint.sh
+    environment:
+      ORGANIZE_DATABASE_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
+      ORGANIZE_DATABASE_USER: postgres
+      ORGANIZE_DATABASE_HOST: db
     ports:
       - "3000:3000"
     volumes:
       - .:/usr/src/app
-    command: rails server --binding=0.0.0.0
