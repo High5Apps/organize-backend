@@ -4,6 +4,8 @@ class Org < ApplicationRecord
   MIN_POTENTIAL_MEMBER_ESTIMATE = 2
   MAX_POTENTIAL_MEMBER_ESTIMATE = 99999
 
+  has_many :users
+
   validates :name,
     presence: true,
     length: { maximum: MAX_NAME_LENGTH }
