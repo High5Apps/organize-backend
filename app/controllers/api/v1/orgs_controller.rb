@@ -8,7 +8,7 @@ class Api::V1::OrgsController < ApplicationController
   def create
     new_org = Org.new(create_params)
     if new_org.save
-      render json: new_org, status: :created
+      render json: { id: new_org.id }, status: :created
     else
       render json: {
         error_messages: new_org.errors.full_messages
