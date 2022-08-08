@@ -5,8 +5,7 @@ class Api::V1::UsersController < ApplicationController
   ]
 
   def create
-    binary = OpenSSL::PKey::RSA.new(create_params[:public_key]).to_der
-    new_user = User.new(create_params.merge public_key: binary)
+    new_user = User.new(create_params)
     if new_user.save
       render json: { id: new_user.id }, status: :created
     else
