@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   PUBLIC_KEY_LENGTH = 294
 
+  attr_writer :private_key
+
   belongs_to :org
 
   validates :public_key_bytes,
@@ -9,11 +11,18 @@ class User < ApplicationRecord
 
   before_validation :convert_public_key_to_binary, on: :create
 
+  def create_auth_token(expiration)
+    payload = { sub: id }
+    JsonWebToken.encode(expiration, payload, private_key)
+  end
+
   def public_key
     OpenSSL::PKey::RSA.new(public_key_bytes)
   end
 
   private
+
+    attr_reader :private_key
 
     def convert_public_key_to_binary
       begin
