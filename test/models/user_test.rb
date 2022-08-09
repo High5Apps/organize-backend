@@ -14,13 +14,13 @@ class UserTest < ActiveSupport::TestCase
     assert_not @user.valid?
   end
 
-  test 'public_key should be present' do
-    @user.public_key = nil
+  test 'public_key_bytes should be present' do
+    @user.public_key_bytes = nil
     assert_not @user.valid?
   end
 
-  test 'public_key should have the correct length' do
-    @user.public_key = Base64.decode64('deadbeef')
+  test 'public_key_bytes should have the correct length' do
+    @user.public_key_bytes = Base64.decode64('deadbeef')
     assert_not @user.valid?
   end
 end
