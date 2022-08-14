@@ -1,6 +1,5 @@
 class Api::V1::UsersController < ApplicationController
   PERMITTED_PARAMS = [
-    :org_id,
     :public_key_bytes,
   ]
 

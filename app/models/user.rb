@@ -3,7 +3,7 @@ class User < ApplicationRecord
 
   attr_writer :private_key
 
-  belongs_to :org
+  belongs_to :org, optional: true
 
   validates :public_key_bytes,
     presence: true,

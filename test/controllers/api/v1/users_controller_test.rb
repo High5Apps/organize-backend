@@ -23,7 +23,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   test 'should not create with invalid params' do
     assert_no_difference 'User.count' do
       post api_v1_users_url, params: {
-        user: @params[:user].except(:org_id)
+        user: @params[:user].except(:public_key_bytes)
       }
       assert_response :unprocessable_entity
     end
