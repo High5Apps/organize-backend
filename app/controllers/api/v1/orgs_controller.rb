@@ -5,14 +5,14 @@ class Api::V1::OrgsController < ApplicationController
     :potential_member_estimate,
   ]
 
+  before_action :authenticate_user, only: [:create]
+
   def create
-    new_org = Org.new(create_params)
+    new_org = authenticated_user.build_org(create_params)
     if new_org.save
       render json: { id: new_org.id }, status: :created
     else
-      render json: {
-        error_messages: new_org.errors.full_messages
-      }, status: :unprocessable_entity
+      render_error :unprocessable_entity, new_org.errors.full_messages
     end
   end
 

@@ -8,9 +8,7 @@ class Api::V1::UsersController < ApplicationController
     if new_user.save
       render json: { id: new_user.id }, status: :created
     else
-      render json: {
-        error_messages: new_user.errors.full_messages
-      }, status: :unprocessable_entity
+      render_error :unprocessable_entity, new_user.errors.full_messages
     end
   end
 

@@ -1,3 +1,5 @@
+require "test_helper"
+
 class MockController
   include Authenticatable
 
@@ -14,9 +16,8 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
 
   setup do
     @user = users(:one)
-    private_key = OpenSSL::PKey::RSA.generate 2048
-    @user.private_key = private_key
-    @user.update(public_key_bytes: private_key.public_key.to_der)
+    setup_test_key(@user)
+
     @authentication = MockController.new
   end
 
