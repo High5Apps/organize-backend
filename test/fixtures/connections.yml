@@ -1,0 +1,6 @@
+one:
+  sharer: one
+  scanner: three
+two:
+  sharer: four
+  scanner: one

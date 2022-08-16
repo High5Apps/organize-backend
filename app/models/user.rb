@@ -5,6 +5,18 @@ class User < ApplicationRecord
 
   belongs_to :org, optional: true
 
+  has_many :shared_connections,
+    foreign_key: 'sharer_id', 
+    class_name: 'Connection'
+  has_many :scanners, through: :shared_connections
+
+  has_many :scanned_connections,
+    foreign_key: 'scanner_id',
+    class_name: 'Connection'
+  has_many :sharers, 
+    through: :scanned_connections, 
+    class_name: 'User'
+
   validates :public_key_bytes,
     presence: true,
     length: { is: PUBLIC_KEY_LENGTH }

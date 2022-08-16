@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_14_083959) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_15_061359) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "sharer_id"
+    t.uuid "scanner_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["scanner_id"], name: "index_connections_on_scanner_id"
+    t.index ["sharer_id"], name: "index_connections_on_sharer_id"
+  end
 
   create_table "orgs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
@@ -31,4 +40,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_14_083959) do
     t.index ["org_id"], name: "index_users_on_org_id"
   end
 
+  add_foreign_key "connections", "users", column: "scanner_id"
+  add_foreign_key "connections", "users", column: "sharer_id"
 end
