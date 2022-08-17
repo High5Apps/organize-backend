@@ -32,6 +32,10 @@ class User < ApplicationRecord
     OpenSSL::PKey::RSA.new(public_key_bytes)
   end
 
+  def directly_connected_to?(user_id)
+    Connection.directly_connected?(id, user_id)
+  end
+
   private
 
     attr_reader :private_key
