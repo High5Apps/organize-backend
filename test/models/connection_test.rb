@@ -5,6 +5,17 @@ class ConnectionTest < ActiveSupport::TestCase
     @connection = connections(:one)
     @sharer = @connection.sharer
     @scanner = @connection.scanner
+
+    @user_without_org = users(:two)
+    assert_nil @user_without_org.org
+
+    @user_with_org = users(:one)
+    assert_not_nil @user_with_org.org
+
+    @user_with_other_org = users(:five)
+    assert_not_nil @user_with_org.org
+
+    assert_not_equal @user_with_org.org, @user_with_other_org.org
   end
 
   test 'should be valid' do
@@ -58,5 +69,16 @@ class ConnectionTest < ActiveSupport::TestCase
     assert_not Connection.directly_connected?(u1, u1)
     assert_not Connection.directly_connected?(u1, u2)
     assert_not Connection.directly_connected?(u3, u4)
+  end
+
+  test 'scanner org is set from sharer org when nil' do
+    @user_without_org.scanned_connections.create!(sharer: @user_with_org)
+    assert_equal @user_with_org.org, @user_without_org.reload.org
+  end
+
+  test 'cannot create connection to another org' do
+    assert_no_difference 'Connection.count' do
+      @user_with_org.scanned_connections.create(sharer: @user_with_other_org)
+    end
   end
 end
