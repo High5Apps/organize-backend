@@ -2,8 +2,7 @@ module Authenticatable
   def authenticated_user
     return @authenticated_user if @authenticated_user
 
-    auth_header = request.headers['Authorization']
-    @authenticated_user = authenticate(auth_header)
+    @authenticated_user = authenticate(auth_token)
   end
 
   def authenticate(jwt)
@@ -21,6 +20,11 @@ module Authenticatable
   end
 
   private
+
+  def auth_token
+    auth_header = request.headers['Authorization']
+    auth_header&.delete_prefix! 'Bearer '
+  end
 
   def unauthenticated_user_id(jwt)
     begin

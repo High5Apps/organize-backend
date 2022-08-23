@@ -13,7 +13,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     }
 
     @authorized_headers = {
-      Authorization: scanner.create_auth_token(1.minute.from_now),
+      Authorization: bearer(scanner.create_auth_token(1.minute.from_now)),
     }
   end
 

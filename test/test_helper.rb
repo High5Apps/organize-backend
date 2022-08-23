@@ -16,4 +16,8 @@ class ActiveSupport::TestCase
     user.private_key = private_key
     user.update(public_key_bytes: private_key.public_key.to_der)
   end
+
+  def bearer(token)
+    "Bearer #{token}"
+  end
 end

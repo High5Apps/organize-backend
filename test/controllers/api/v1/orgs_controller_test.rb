@@ -12,7 +12,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     user = users(:one)
     setup_test_key(user)
     @authorized_headers = {
-      Authorization: user.create_auth_token(1.minute.from_now)
+      Authorization: bearer(user.create_auth_token(1.minute.from_now))
     }
   end
 
