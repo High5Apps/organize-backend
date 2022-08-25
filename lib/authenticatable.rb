@@ -12,7 +12,8 @@ module Authenticatable
 
     begin
       JsonWebToken.decode(jwt, user.public_key)
-    rescue JWT::DecodeError
+    rescue JWT::DecodeError => error
+      logger.error error
       nil
     else
       user
@@ -29,7 +30,8 @@ module Authenticatable
   def unauthenticated_user_id(jwt)
     begin
       JsonWebToken.unauthenticated_decode(jwt)[:sub]
-    rescue JWT::DecodeError
+    rescue JWT::DecodeError => error
+      logger.error error
       nil
     end
   end

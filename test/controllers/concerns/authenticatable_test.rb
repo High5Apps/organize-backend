@@ -4,10 +4,12 @@ class MockController
   include Authenticatable
 
   attr_accessor :request
+  attr_accessor :logger
 
   def initialize
     mock_request = Struct.new(:headers)
     self.request = mock_request.new({})
+    self.logger = Rails.logger
   end
 end
 
