@@ -22,6 +22,9 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       post api_v1_connections_url, headers: @authorized_headers, params: @params
       assert_response :created
     end
+
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    assert_not_nil json_response.dig(:id)
   end
 
   test 'should not create with invalid authorization' do

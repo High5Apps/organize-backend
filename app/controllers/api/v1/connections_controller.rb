@@ -6,7 +6,7 @@ class Api::V1::ConnectionsController < ApplicationController
     new_connection = authenticated_user.scanned_connections.build(
       sharer: @authenticated_sharer)
     if new_connection.save
-      head :created
+      render json: { id: new_connection.id }, status: :created
     else
       render json: {
         error_messages: new_connection.errors.full_messages
