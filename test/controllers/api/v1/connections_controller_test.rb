@@ -44,4 +44,31 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       assert_response :unauthorized
     end
   end
+
+  test 'should not create duplicate connections' do
+    assert_difference 'Connection.count', 1 do
+      post api_v1_connections_url, headers: @authorized_headers, params: @params
+    end
+
+    assert_no_difference 'Connection.count' do
+      post api_v1_connections_url, headers: @authorized_headers, params: @params
+    end
+  end
+
+  test 'should respond with ok when attempting to re-create' do
+    post api_v1_connections_url, headers: @authorized_headers, params: @params
+    post api_v1_connections_url, headers: @authorized_headers, params: @params
+    assert_response :ok
+  end
+
+  test 'should update updated_at when attempting to re-create' do
+    post api_v1_connections_url, headers: @authorized_headers, params: @params
+    id = JSON.parse(response.body, symbolize_names: true).dig(:id)
+    connection = Connection.find(id)
+    assert_equal connection.created_at, connection.updated_at
+
+    post api_v1_connections_url, headers: @authorized_headers, params: @params
+    id = JSON.parse(response.body, symbolize_names: true).dig(:id)
+    assert connection.reload.created_at < connection.updated_at
+  end
 end

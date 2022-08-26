@@ -6,12 +6,19 @@ class Api::V1::ConnectionsController < ApplicationController
     new_connection = authenticated_user.scanned_connections.build(
       sharer: @authenticated_sharer)
     if new_connection.save
-      render json: { id: new_connection.id }, status: :created
-    else
-      render json: {
-        error_messages: new_connection.errors.full_messages
-      }, status: :unprocessable_entity
+      return render json: { id: new_connection.id }, status: :created
     end
+
+    existing_connection = authenticated_user.scanned_connections.where(
+      sharer: @authenticated_sharer).first
+    if existing_connection
+      existing_connection.touch
+      return render json: { id: existing_connection.id }, status: :ok
+    end
+      
+    render json: {
+      error_messages: new_connection.errors.full_messages
+    }, status: :unprocessable_entity
   end
 
   private

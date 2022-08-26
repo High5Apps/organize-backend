@@ -24,7 +24,7 @@ module Authenticatable
 
   def auth_token
     auth_header = request.headers['Authorization']
-    auth_header&.delete_prefix! 'Bearer '
+    auth_header&.start_with?('Bearer ') ? auth_header[7..] : nil
   end
 
   def unauthenticated_user_id(jwt)
