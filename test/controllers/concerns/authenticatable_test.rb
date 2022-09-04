@@ -73,4 +73,19 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
       assert_nil @authentication.authenticated_user
     end
   end
+
+  test 'should not get user from correct token with incorrect scope' do
+    auth_token = @user.create_auth_token(
+      FAKE_AUTH_TIMEOUT.from_now,
+      'create:connections')
+    @authentication.request.headers['Authorization'] = bearer(auth_token)
+    travel (FAKE_AUTH_TIMEOUT - 1.second) do
+      assert_nil  @authentication.authenticated_user
+    end
+  end
+
+  test 'should authorize any scope with * scope' do
+    auth_token = @user.create_auth_token(FAKE_AUTH_TIMEOUT.from_now, '*')
+    assert @authentication.authenticate(auth_token, 'read:foos')
+  end
 end
