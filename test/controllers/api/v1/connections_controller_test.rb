@@ -8,12 +8,11 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     setup_test_key(scanner)
     assert_not sharer.directly_connected_to?(scanner.id)
 
-    @params = {
-      sharer_jwt: sharer.create_auth_token(1.minute.from_now),
-    }
+    sharer_jwt = sharer.create_auth_token(1.minute.from_now, 'create:connections')
+    @params = { sharer_jwt: sharer_jwt }
 
     @authorized_headers = {
-      Authorization: bearer(scanner.create_auth_token(1.minute.from_now)),
+      Authorization: bearer(scanner.create_auth_token(1.minute.from_now, '*')),
     }
   end
 
