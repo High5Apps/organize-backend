@@ -24,8 +24,8 @@ class User < ApplicationRecord
   before_validation :convert_public_key_to_binary, on: :create
 
   def create_auth_token(expiration)
-    payload = { sub: id }
-    JsonWebToken.encode(expiration, payload, private_key)
+    payload = JsonWebToken.payload(id, expiration)
+    JsonWebToken.encode(payload, private_key)
   end
 
   def public_key
