@@ -24,4 +24,10 @@ class UserTest < ActiveSupport::TestCase
     @user.public_key_bytes = Base64.decode64('deadbeef')
     assert_not @user.valid?
   end
+
+  test 'should set pseudonym when org_id is initially set' do
+    assert_nil @user_without_org.pseudonym
+    @user_without_org.update!(org: orgs(:one))
+    assert_not_nil @user_without_org.reload.pseudonym
+  end
 end

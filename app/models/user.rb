@@ -22,6 +22,8 @@ class User < ApplicationRecord
     length: { is: PUBLIC_KEY_LENGTH }
 
   before_validation :convert_public_key_to_binary, on: :create
+  before_update :set_pseudonym,
+    if: -> { will_save_change_to_org_id? from: nil }
 
   def create_auth_token(expiration, scope)
     payload = JsonWebToken.payload(id, expiration, scope)
@@ -47,5 +49,9 @@ class User < ApplicationRecord
       rescue => exception
         self.public_key_bytes = nil
       end
+    end
+
+    def set_pseudonym
+      self.pseudonym = org.next_pseudonym
     end
 end

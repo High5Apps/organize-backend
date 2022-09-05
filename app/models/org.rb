@@ -18,4 +18,10 @@ class Org < ApplicationRecord
         only_integer: true,
           in: MIN_POTENTIAL_MEMBER_ESTIMATE..MAX_POTENTIAL_MEMBER_ESTIMATE,
       }
+  
+  def next_pseudonym
+    seed = id.gsub("-", "").hex
+    user_count = users.count
+    Users::Pseudonym.new(seed).at(user_count)
+  end
 end

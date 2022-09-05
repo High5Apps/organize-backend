@@ -62,4 +62,14 @@ class OrgTest < ActiveSupport::TestCase
     @org.potential_member_estimate = Org::MAX_POTENTIAL_MEMBER_ESTIMATE + 1
     assert_not @org.valid?
   end
+
+  test 'next_pseudonym should change when user count changes' do
+    pseudonym_0 = @org.next_pseudonym
+    pseudonym_1 = @org.next_pseudonym
+    assert_equal pseudonym_0, pseudonym_1
+
+    @org.users << users(:two)
+    pseudonym_2 = @org.next_pseudonym
+    assert_not_equal pseudonym_1, pseudonym_2
+  end
 end
