@@ -9,10 +9,10 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
       )
     }
 
-    user = users(:one)
-    setup_test_key(user)
+    @user = users(:two)
+    setup_test_key(@user)
     @authorized_headers = {
-      Authorization: bearer(user.create_auth_token(1.minute.from_now, '*'))
+      Authorization: bearer(@user.create_auth_token(1.minute.from_now, '*'))
     }
   end
 
@@ -40,5 +40,12 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
       }
       assert_response :unprocessable_entity
     end
+  end
+
+  test "should set user's org_id on successful create" do
+    assert_nil @user.pseudonym
+    post api_v1_orgs_url, headers: @authorized_headers, params: @params
+    assert_response :created
+    assert_not_nil @user.reload.pseudonym
   end
 end
