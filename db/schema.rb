@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_15_061359) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_05_074054) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -37,6 +37,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_15_061359) do
     t.binary "public_key_bytes", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "pseudonym"
     t.index ["org_id"], name: "index_users_on_org_id"
   end
 
