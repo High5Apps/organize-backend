@@ -16,6 +16,6 @@ services:
       ORGANIZE_DATABASE_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
       ORGANIZE_DATABASE_USER: postgres
       ORGANIZE_DATABASE_HOST: db
-    image: organize
+    image: localhost:5001/organize
     ports:
       - "3000:3000"
