@@ -1,0 +1,31 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+  echo "Error: Must include ssh target as first arg"
+  exit 1
+fi
+
+if ! grep -q "Host $1" ~/.ssh/config; then
+    echo "Error: First argument must be an ssh target configured in ~/.ssh/config"
+    exit 1
+fi
+
+# Start a local registry
+# 5001 because 5000 is already used by MacOS/ControlCenter on Macs
+docker run --detach --name registry -p 5001:5000 registry:2
+
+# Build and push the image to the local registry
+docker compose -f compose.yaml -f compose.override.dev.yaml build
+docker compose -f compose.yaml -f compose.override.dev.yaml push
+
+# Transfer compose file into the home directory of the ssh target
+scp compose.yaml $1:
+
+# Connect ssh target to local registry and pull project
+ssh -R 5001:localhost:5001 $1 -C 'ORGANIZE_DATABASE_PASSWORD=secret docker compose pull'
+
+# Stop and remove the local registry
+docker container stop registry
+echo '- Stopped'
+docker container rm registry
+echo '- Removed'
