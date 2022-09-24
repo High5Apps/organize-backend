@@ -8,7 +8,6 @@ services:
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
   web:
-    build: .
     command: rails server --binding=0.0.0.0
     depends_on:
       - db
@@ -17,7 +16,6 @@ services:
       ORGANIZE_DATABASE_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
       ORGANIZE_DATABASE_USER: postgres
       ORGANIZE_DATABASE_HOST: db
+    image: organize
     ports:
       - "3000:3000"
-    volumes:
-      - .:/usr/src/app
