@@ -4,7 +4,7 @@ services:
       POSTGRES_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
     image: postgres:14.5
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
   web:
