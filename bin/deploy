@@ -19,10 +19,15 @@ docker compose -f compose.yaml -f compose.override.dev.yaml build
 docker compose -f compose.yaml -f compose.override.dev.yaml push
 
 # Transfer compose file into the home directory of the ssh target
+echo 'Transferring compose file'
 scp compose.yaml $1:
 
+# Transfer .env file
+echo 'Transferring .env file'
+scp .env $1:
+
 # Connect ssh target to local registry and pull project
-ssh -R 5001:localhost:5001 $1 -C 'ORGANIZE_DATABASE_PASSWORD=secret docker compose pull'
+ssh -R 5001:localhost:5001 $1 -C 'docker compose pull'
 
 # Stop and remove the local registry
 docker container stop registry
