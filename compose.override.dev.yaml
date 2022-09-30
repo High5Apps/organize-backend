@@ -1,5 +1,5 @@
 services:
-  web:
+  app:
     build: .
     volumes:
       - .:/usr/src/app
