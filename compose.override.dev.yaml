@@ -3,3 +3,7 @@ services:
     build: .
     volumes:
       - .:/usr/src/app
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web

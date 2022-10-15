@@ -11,7 +11,7 @@ services:
       ORGANIZE_DATABASE_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
       ORGANIZE_DATABASE_USER: postgres
       ORGANIZE_DATABASE_HOST: db
-    image: localhost:5001/organize
+    image: localhost:5001/organize-app
     ports:
       - "3000:3000"
   db:
@@ -23,10 +23,8 @@ services:
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile.web
     depends_on:
       - app
+    image: localhost:5001/organize-web
     ports:
       - "8080:80"
