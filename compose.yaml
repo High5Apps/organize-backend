@@ -22,3 +22,11 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    depends_on:
+      - app
+    ports:
+      - "8080:80"
