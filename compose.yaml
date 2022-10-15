@@ -13,7 +13,7 @@ services:
       ORGANIZE_DATABASE_HOST: db
     image: localhost:5001/organize-app
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
   db:
     environment:
       POSTGRES_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
