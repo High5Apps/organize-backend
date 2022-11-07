@@ -1,0 +1,102 @@
+#!/bin/bash
+
+# USAGE
+#   bootstrap new_host
+# EXAMPLES
+#   bootstrap org
+
+set -e
+
+USER=pi
+INITIAL_HOST=raspberrypi
+INITIAL_HOSTNAME=$INITIAL_HOST.local
+SSH_CONFIG_PATH=$HOME/.ssh/config
+SSH_KEY_PATH=$HOME/.ssh/organize_server
+SSH_KNOWN_HOSTS=$HOME/.ssh/known_hosts
+
+if [ "$#" -ne 1 ]; then
+  >&2 echo "Error: Must include new hostname as first arg"
+  exit 1
+fi
+
+new_host=$1
+new_hostname=$new_host.local
+
+ssh_config="Host $new_host
+    HostName $new_host.local
+    User $USER
+    IdentityFile $SSH_KEY_PATH
+"
+if grep -q "Host $new_host" $SSH_CONFIG_PATH; then
+  echo "$new_host is already present in SSH config"
+else
+  echo "Adding $new_host to SSH config..."
+  echo "$ssh_config" | sudo tee -a $SSH_CONFIG_PATH >/dev/null
+fi
+
+echo "Removing $INITIAL_HOSTNAME and $new_hostname from known hosts..."
+sudo sed -i '' "/$INITIAL_HOSTNAME/d" $SSH_KNOWN_HOSTS
+sudo sed -i '' "/$new_hostname/d" $SSH_KNOWN_HOSTS
+
+echo "Copying ssh config to $INITIAL_HOSTNAME..."
+ssh-copy-id -i $SSH_KEY_PATH $USER@$INITIAL_HOSTNAME
+
+ssh -i $SSH_KEY_PATH $USER@$INITIAL_HOSTNAME << EOF
+  set -e
+
+  echo 'Setting up passwordless SSH...'
+  sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+
+  echo 'Updating package manager...'
+  sudo apt update && sudo apt upgrade -y
+
+  # Updating the hostname should happen as close to reboot as possible because
+  # otherwise random scripts will emit the following error:
+  # "sudo: unable to resolve host raspberrypi: Name or service not known"
+  echo "Updating hostname to $new_host..."
+  sudo sed -i 's/$INITIAL_HOST/$new_host/' /etc/hostname
+  sudo sed -i 's/$INITIAL_HOST/$new_host/' /etc/hosts
+EOF
+
+echo "Rebooting..."
+set +e # This is needed because reboot over ssh has a non-zero exit code
+ssh -i $SSH_KEY_PATH $USER@$INITIAL_HOSTNAME "sudo reboot"
+set -e
+
+echo "Waiting for $new_host to reboot..."
+sleep 10 # This is needed to ensure a connection isn't attempted before reboot
+until ping -c 1 $new_hostname >/dev/null
+do
+  true
+done
+
+ssh -i $SSH_KEY_PATH $new_host << EOF
+  set -e
+
+  echo 'Setting up firewall...'
+  sudo apt install -y -q ufw
+  sudo sed -i 's/IPV6=yes/IPV6=no/' /etc/default/ufw
+  sudo ufw default deny incoming
+  sudo ufw default allow outgoing
+  sudo ufw allow ssh
+  sudo ufw allow "WWW Full"
+  sudo ufw allow Bonjour
+  sudo ufw allow ntp
+  yes | sudo ufw enable
+
+  echo 'Installing Docker...'
+  GET_DOCKER_SCRIPT=get-docker.sh
+  curl -fsSL https://get.docker.com -o \$GET_DOCKER_SCRIPT
+  sh \$GET_DOCKER_SCRIPT
+  rm -f \$GET_DOCKER_SCRIPT
+
+  echo 'Allowing Docker to be run without sudo...'
+  sudo usermod --append --groups docker \$USER
+  newgrp docker
+EOF
+
+echo 'Deploying images...'
+parent_dir_path=$(dirname "$0")
+$parent_dir_path/deploy $new_host
+
+echo "Successfully bootstrapped $new_host"
