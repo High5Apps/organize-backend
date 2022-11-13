@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# USAGE
+#   [Environment Variables] flash image_file
+# ENVIRONMENT VARIABLES
+#   INSECURE: Use true for easily typeable but insecure credentials pi:organize
+#   PSK: The WiFi password to use. Must be used alongside SSID
+#   SSID: The WiFi network name to connect to. Must be used alongside PSK
+# EXAMPLES
+#   flash ~/Downloads/2022-09-06-raspios-bullseye-arm64-lite.img
+#   INSECURE=true SSID=mynet PSK=pass flash ~/Downloads/2022-09-06-raspios-bullseye-arm64-lite.img
+
+set -e
+
+if [ "$#" -ne 1 ]; then
+  >&2 echo "Error: Must include path to image as first arg"
+  exit 1
+fi
+
+image_path=$1
+
+diskutil list
+read -p 'Which disk number should be used? ' disk_number
+disk=/dev/disk$disk_number
+rdisk=/dev/rdisk$disk_number
+
+diskutil unmountDisk $disk
+image_size_mib=`du -m $image_path | cut -f1`
+echo "Transferring $image_size_mib MiB..."
+sudo dd bs=1m if=$image_path of=$rdisk status=progress
+
+echo 'Waiting 1 second for disk to mount...'
+sleep 1
+
+echo 'Enabling SSH...'
+touch /Volumes/boot/ssh
+
+echo 'Updating password...'
+if [ -z "$INSECURE" ]; then
+  # For info on how to create the encoded password, see
+  # https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/
+  echo 'pi:$6$V6vV23CeH3UXH6Hl$6yOGvttZwfUGtBZRiUIkYaNIRyLjLx9t2ZTfw3L.7ImcM0hVIuzhwNQLZSm8xKR3p7glZwvg1LKcPkk8uMbIN1' >/Volumes/boot/userconf
+else
+  echo 'Using easily typeable but insecure credentials (pi:organize)'
+  echo 'pi:$6$m0CnLxo5SxLdD55o$dfMMJCufolEURA8xqvQB8wsNwpxlD0PIA6G4YH9RhF4Y9QlemnuC2aUx8J9pEHbXwOs6e9nb4VGwPuf3NqcMu1' >/Volumes/boot/userconf
+fi
+
+if ! [ -z "$SSID" ] && ! [ -z "$PSK" ]; then
+  # https://desertbot.io/blog/headless-raspberry-pi-4-ssh-wifi-setup-64-bit-mac-windows
+
+  echo 'Configuring WiFi...'
+  wpa_supplicant="
+    country=US
+    ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+    update_config=1
+
+    network={
+        ssid=\"$SSID\"
+        psk=\"$PSK\"
+        key_mgmt=WPA-PSK
+    }
+  "
+  echo "$wpa_supplicant" >/Volumes/boot/wpa_supplicant.conf
+
+  echo 'Enabling WiFi...'
+  sed -i -e 's/$/ systemd.restore_state=0 rfkill.default_state=1/' /Volumes/boot/cmdline.txt
+fi
+
+echo 'Ejecting...'
+diskutil eject $disk
