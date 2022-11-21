@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ "$#" -ne 1 ]; then
   echo "Error: Must include ssh target as first arg"
   exit 1
@@ -27,7 +29,27 @@ echo 'Transferring .env file'
 scp .env $1:
 
 # Connect ssh target to local registry and pull project
-ssh -R 5001:localhost:5001 $1 -C 'docker compose pull'
+ssh -R 5001:localhost:5001 $1  << EOF
+  set -e
+
+  echo 'Stopping existing containers (if needed)...'
+  docker compose down
+
+  echo 'Pulling latest images...'
+  docker compose pull
+
+  echo 'Starting containers...'
+  docker compose up --detach
+
+  echo 'Setting up database...'
+
+  # For some reason, if these aren't &&-chained together, execution stops after
+  # rake db:create despite having an exit code of 0
+  docker compose exec app rake db:create \
+   && docker compose exec app rake db:migrate \
+   && echo 'Testing Rails app...' \
+   && docker compose exec app rails test
+EOF
 
 # Stop and remove the local registry
 docker container stop registry
