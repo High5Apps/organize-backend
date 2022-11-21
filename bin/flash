@@ -36,13 +36,15 @@ echo 'Enabling SSH...'
 touch /Volumes/boot/ssh
 
 echo 'Updating password...'
-if [ -z "$INSECURE" ]; then
+if [ "$INSECURE" = "true" ]; then
+  echo 'insecure'
+  echo 'Using easily typeable but insecure credentials (pi:organize)'
+  echo 'pi:$6$m0CnLxo5SxLdD55o$dfMMJCufolEURA8xqvQB8wsNwpxlD0PIA6G4YH9RhF4Y9QlemnuC2aUx8J9pEHbXwOs6e9nb4VGwPuf3NqcMu1' >/Volumes/boot/userconf
+else
+  echo 'secure'
   # For info on how to create the encoded password, see
   # https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/
   echo 'pi:$6$V6vV23CeH3UXH6Hl$6yOGvttZwfUGtBZRiUIkYaNIRyLjLx9t2ZTfw3L.7ImcM0hVIuzhwNQLZSm8xKR3p7glZwvg1LKcPkk8uMbIN1' >/Volumes/boot/userconf
-else
-  echo 'Using easily typeable but insecure credentials (pi:organize)'
-  echo 'pi:$6$m0CnLxo5SxLdD55o$dfMMJCufolEURA8xqvQB8wsNwpxlD0PIA6G4YH9RhF4Y9QlemnuC2aUx8J9pEHbXwOs6e9nb4VGwPuf3NqcMu1' >/Volumes/boot/userconf
 fi
 
 if ! [ -z "$SSID" ] && ! [ -z "$PSK" ]; then
