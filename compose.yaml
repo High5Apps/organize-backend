@@ -11,12 +11,14 @@ services:
     image: localhost:5001/organize-app
     ports:
       - "127.0.0.1:3000:3000"
+    restart: always
   db:
     environment:
       POSTGRES_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
     image: postgres:14.5
     ports:
       - "127.0.0.1:5432:5432"
+    restart: always
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
   web:
@@ -25,3 +27,4 @@ services:
     image: localhost:5001/organize-web
     ports:
       - "8080:80"
+    restart: always
