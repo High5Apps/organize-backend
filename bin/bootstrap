@@ -19,6 +19,12 @@ if [ "$#" -ne 1 ]; then
   exit 1
 fi
 
+echo 'Checking that Docker daemon is running...'
+if ! docker stats --no-stream >/dev/null 2>/dev/null; then
+  >&2 echo "Error: Docker daemon must be running"
+  exit 1
+fi
+
 new_host=$1
 new_hostname=$new_host.local
 
