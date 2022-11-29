@@ -10,3 +10,6 @@ COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
 COPY . .
+
+ENTRYPOINT [ "./docker-entrypoint.app.sh" ]
+CMD [ "rails server --binding=0.0.0.0" ]
