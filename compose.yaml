@@ -10,6 +10,11 @@ services:
     ports:
       - "127.0.0.1:3000:3000"
     restart: always
+  certs:
+    image: localhost:5001/organize-certs
+    volumes:
+      - ./tmp/certbot/www/:/var/www/certbot/:rw
+      - ./tmp/certbot/conf/:/etc/letsencrypt/:rw
   db:
     environment:
       POSTGRES_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
@@ -22,7 +27,12 @@ services:
   web:
     depends_on:
       - app
+      - certs
     image: localhost:5001/organize-web
     ports:
       - "80:80"
+      - "443:443"
     restart: always
+    volumes:
+      - ./tmp/certbot/www:/var/www/certbot/:ro
+      - ./tmp/certbot/conf/:/etc/nginx/ssl/:ro

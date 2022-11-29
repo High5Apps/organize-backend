@@ -1,0 +1,7 @@
+FROM certbot/certbot:arm64v8-v2.0.0
+
+WORKDIR /usr/src/app
+
+COPY docker-entrypoint.certs.sh /usr/src/app/docker-entrypoint.certs.sh
+
+ENTRYPOINT [ "./docker-entrypoint.certs.sh" ]

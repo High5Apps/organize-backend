@@ -5,6 +5,10 @@ services:
       dockerfile: Dockerfile.app
     volumes:
       - .:/usr/src/app
+  certs:
+    build:
+      context: .
+      dockerfile: Dockerfile.certs
   web:
     build:
       context: .
