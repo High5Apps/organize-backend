@@ -11,6 +11,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.certs
+    environment:
+      SELF_SIGN: true
   web:
     build:
       context: .

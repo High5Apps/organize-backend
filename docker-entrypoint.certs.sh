@@ -8,9 +8,7 @@ cert_dir="/etc/letsencrypt/live/$DOMAIN"
 cert_file="$cert_dir/fullchain.pem"
 key_file="$cert_dir/privkey.pem"
 
-if ! [[ -e $cert_file ]]; then
-  echo "Certificate file not found for domain $DOMAIN"
-
+if ! [ -e $cert_file ] || [ "$SELF_SIGN" = true ]; then
   echo "Making a temporary self-signed certificate because nginx expects a cert"
   mkdir -p $cert_dir
   openssl req \
@@ -22,6 +20,10 @@ if ! [[ -e $cert_file ]]; then
     -out $cert_file \
     -subj "/CN=$DOMAIN" \
     -days 1
+
+  if [ "$SELF_SIGN" = true ]; then
+    exit 0
+  fi
 
   echo "Waiting for web server to restart with self-signed certs..."
   sleep 10 # This seems to be enough but may need to be raised in the future
