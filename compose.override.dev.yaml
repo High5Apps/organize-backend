@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.app
+    environment:
+      RAILS_ENV: development
     volumes:
       - .:/usr/src/app
   certs:
