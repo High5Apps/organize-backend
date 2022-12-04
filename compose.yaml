@@ -15,8 +15,8 @@ services:
   certs:
     image: localhost:5001/organize-certs
     volumes:
-      - ./tmp/certbot/www/:/var/www/certbot/:rw
-      - ./tmp/certbot/conf/:/etc/letsencrypt/:rw
+      - cert-www:/var/www/certbot/:rw
+      - cert-conf:/etc/letsencrypt/:rw
   db:
     environment:
       POSTGRES_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
@@ -36,5 +36,9 @@ services:
       - "443:443"
     restart: always
     volumes:
-      - ./tmp/certbot/www:/var/www/certbot/:ro
-      - ./tmp/certbot/conf/:/etc/nginx/ssl/:ro
+      - cert-www:/var/www/certbot/:ro
+      - cert-conf:/etc/nginx/ssl/:ro
+
+volumes:
+  cert-conf:
+  cert-www:
