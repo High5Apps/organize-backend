@@ -46,9 +46,7 @@ ssh -R 5001:localhost:5001 $1  << EOF
   # For some reason, if these aren't &&-chained together, execution stops after
   # rake db:create despite having an exit code of 0
   docker compose exec app rake db:create \
-   && docker compose exec app rake db:migrate \
-   && echo 'Testing Rails app...' \
-   && docker compose exec app rails test
+   && docker compose exec app rake db:migrate
 EOF
 
 # Stop and remove the local registry
