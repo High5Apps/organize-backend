@@ -13,6 +13,7 @@ services:
       dockerfile: Dockerfile.certs
     environment:
       SELF_SIGN: true
+    restart: "no"
   web:
     build:
       context: .

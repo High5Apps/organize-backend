@@ -14,6 +14,7 @@ services:
     restart: always
   certs:
     image: localhost:5001/organize-certs
+    restart: always
     volumes:
       - cert-www:/var/www/certbot/:rw
       - cert-conf:/etc/letsencrypt/:rw
