@@ -9,7 +9,7 @@ git clone git@github.com:High5Apps/organize-api.git \
 ```
 2. (Optional) Add Shell Aliases to ~/.zshrc
 ```sh
-alias dc='docker compose -f compose.yaml -f compose.override.dev.yaml'
+alias dc='docker compose -f docker/compose.yaml -f docker/compose.override.dev.yaml'
 alias drails='dc exec app rails'
 # Don't forget to run source ~/.zshrc
 ```

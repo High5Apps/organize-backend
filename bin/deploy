@@ -12,6 +12,8 @@ if ! grep -q "Host $1" ~/.ssh/config; then
     exit 1
 fi
 
+cd docker
+
 # Start a local registry
 # 5001 because 5000 is already used by MacOS/ControlCenter on Macs
 docker run --detach --name registry -p 5001:5000 registry:2

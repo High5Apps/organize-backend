@@ -11,5 +11,5 @@ RUN bundle install
 
 COPY . .
 
-ENTRYPOINT [ "./docker-entrypoint.app.sh" ]
+ENTRYPOINT [ "docker/app/docker-entrypoint.sh" ]
 CMD [ "rails server --binding=0.0.0.0" ]

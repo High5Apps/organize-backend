@@ -32,7 +32,7 @@
 
 # Ignore Docker .env environment variable file. For more info, see
 # https://docs.docker.com/compose/environment-variables/
-/.env
+.env
 
 # Ignore docker compose files
 compose.*
