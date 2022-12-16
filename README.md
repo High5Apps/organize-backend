@@ -41,6 +41,17 @@ rm -rf tmp/db \
 && echo 'Succeeded'
 ```
 
+## Testing
+Run the rails tests with the command below. For more options, see [The Rails Test Runner](https://guides.rubyonrails.org/testing.html#the-rails-test-runner).
+```sh
+drails test
+```
+
+## Deploying
+```sh
+bin/deploy org
+```
+
 ## Physical server setup
 To run organize-api on a Raspberry Pi, perform the following steps:
 
@@ -75,14 +86,3 @@ ssh org
 docker compose logs -f
 ```
 8. Verify that the backend startup succeeded by hitting the new server with the mobile app
-
-## Testing
-Run the rails tests with the command below. For more options, see [The Rails Test Runner](https://guides.rubyonrails.org/testing.html#the-rails-test-runner).
-```sh
-drails test
-```
-
-## Deploying
-```sh
-bin/deploy org
-```
