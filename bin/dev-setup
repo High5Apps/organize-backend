@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# USAGE
+#   dev-setup
+# OPTIONS
+#   --alias-file alias_file
+#     Add convenient aliases to the file at this path
+# EXAMPLES
+#   dev-setup --alias-file ~/.zshrc
+
+set -e
+
+dc="docker compose -f docker/compose.yaml -f docker/compose.override.dev.yaml"
+drails="$dc exec app rails"
+aliases="# Added by https://github.com/High5Apps/organize-api
+alias dc='$dc'
+alias drails='dc exec app rails'
+"
+
+alias_file=$2
+added_aliases=false
+if ! [ -z "$alias_file" ]; then
+  if [ -e $alias_file ] && grep -q "dc=" $alias_file; then
+    echo "Aliases are already present in $alias_file"
+  else
+    echo "Adding the following aliases to $alias_file"
+    echo "$aliases" | tee -a $alias_file
+    added_aliases=true
+  fi
+fi
+
+updated_dot_env=false
+dot_env_example=docker/.env.example
+dot_env=docker/.env
+if [ -e $dot_env ] && ! grep -q "example-password-odp" $dot_env; then
+  echo ".env file already contains secrets"
+else
+  echo "Creating .env file with example values..."
+  cp $dot_env_example $dot_env
+
+  echo "Creating fake secrets..."
+  $dc build
+
+  # ORGANIZE_DATABASE_PASSWORD has a max length of 99 characters
+  organize_database_password=$($dc run --no-deps app rails secret | head -c 99)
+  secret_key_base=$($dc run --no-deps app rails secret)
+
+  echo "Adding fake secrets to .env..."
+  sed -i '' "s/example-password-odp/$organize_database_password/" $dot_env
+  sed -i '' "s/example-password-skb/$secret_key_base/" $dot_env
+
+  updated_dot_env=true
+fi
+
+db_dir=tmp/db
+if ! [ -e $db_dir ] || $updated_dot_env; then
+  echo 'Initializing the database...'
+  rm -rf $db_dir
+  $dc build
+  $dc up app --detach
+
+  until >/dev/null 2>/dev/null $drails db:reset
+  do
+    echo 'Waiting 5s for database to initialize...'
+    sleep 5
+  done
+
+  echo 'Database initialized'
+  $dc down
+else
+  echo 'No need to initialize the database, since .env was unchanged'
+fi
+
+echo 'Testing project...'
+$dc up --detach
+echo 'Waiting 5s for services to settle...'
+echo '(Increase this duration if the tests fail due to connection issues.)'
+sleep 5
+$drails test
+$dc down
+
+echo 'Development setup succeeded'
+
+if $added_aliases; then
+  echo "Don't forget to activate the new aliases with: source $alias_file"
+fi
