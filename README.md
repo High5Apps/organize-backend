@@ -2,43 +2,16 @@
 [organize-api](https://github.com/High5Apps/organize-api) is the backend server for the Organize app.
 
 ## Development setup
-1. Clone organize-api
+1. Clone the organize-api repo from GitHub
 ```sh
 git clone git@github.com:High5Apps/organize-api.git \
 && cd organize-api
 ```
-2. (Optional) Add Shell Aliases to ~/.zshrc
+2. Run the `dev-setup` script
 ```sh
-alias dc='docker compose -f docker/compose.yaml -f docker/compose.override.dev.yaml'
-alias drails='dc exec app rails'
-# Don't forget to run source ~/.zshrc
-```
-3. Create .env file with example values
-```sh
-cp .env.example .env
-```
-4. Create secrets
-```sh
-# ORGANIZE_DATABASE_PASSWORD has a max length of 99 characters
-dc build \
-&& dc up --detach \
-&& dc exec app rails secret | head -c 99 && echo \
-&& dc exec app rails secret \
-&& dc down
-```
-5. Add secrets to .env file
-6. Rebuild and smoke test
-```sh
-# Increase the sleep duration if db initialization takes longer than 30s
-rm -rf tmp/db \
-&& dc build \
-&& dc up --detach \
-&& echo 'Waiting 30s for db initialization...' \
-&& sleep 30 \
-&& drails db:reset \
-&& drails test \
-&& dc down \
-&& echo 'Succeeded'
+# If you don't use ZSH, use your own alias file path (e.g. ~/.bashrc)
+# If you don't want to add aliases at all, remove the --alias-file option
+bin/dev-setup --alias-file ~/.zshrc
 ```
 
 ## Testing
