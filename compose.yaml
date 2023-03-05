@@ -26,7 +26,7 @@ services:
       - "127.0.0.1:5432:5432"
     restart: always
     volumes:
-      - ./app/tmp/db:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data:rw
   web:
     depends_on:
       - app
@@ -43,3 +43,4 @@ services:
 volumes:
   cert-conf:
   cert-www:
+  db-data:
