@@ -10,7 +10,7 @@
 
 set -e
 
-dc="docker compose -f docker/compose.yaml -f docker/compose.override.dev.yaml"
+dc="docker compose -f compose.yaml -f compose.override.dev.yaml"
 drails="$dc exec app rails"
 aliases="# Added by https://github.com/High5Apps/organize-api
 alias dc='$dc'
@@ -30,8 +30,8 @@ if ! [ -z "$alias_file" ]; then
 fi
 
 updated_dot_env=false
-dot_env_example=docker/.env.example
-dot_env=docker/.env
+dot_env_example=.env.example
+dot_env=.env
 if [ -e $dot_env ] && ! grep -q "example-password-odp" $dot_env; then
   echo ".env file already contains secrets"
 else

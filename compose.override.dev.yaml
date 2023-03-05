@@ -1,0 +1,17 @@
+services:
+  app:
+    build:
+      context: app
+    environment:
+      RAILS_ENV: development
+    volumes:
+      - ./app:/usr/src/app
+  certs:
+    build:
+      context: certs
+    environment:
+      SELF_SIGN: true
+    restart: "no"
+  web:
+    build:
+      context: web

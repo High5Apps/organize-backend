@@ -5,25 +5,25 @@
 #   git config --global core.excludesfile '~/.gitignore_global'
 
 # Ignore bundler config.
-/.bundle
+/app/.bundle
 
 # Ignore the default SQLite database.
-/db/*.sqlite3
-/db/*.sqlite3-*
+/app/db/*.sqlite3
+/app/db/*.sqlite3-*
 
 # Ignore all logfiles and tempfiles.
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
+/app/log/*
+/app/tmp/*
+!/app/log/.keep
+!/app/tmp/.keep
 
 # Ignore pidfiles, but keep the directory.
-/tmp/pids/*
-!/tmp/pids/
-!/tmp/pids/.keep
+/app/tmp/pids/*
+!/app/tmp/pids/
+!/app/tmp/pids/.keep
 
 # Ignore master key for decrypting credentials and more.
-/config/master.key
+/app/config/master.key
 
 # Ignore Docker .env environment variable file. For more info, see
 # https://docs.docker.com/compose/environment-variables/

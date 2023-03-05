@@ -6,9 +6,9 @@ RUN apt update \
 
 WORKDIR /usr/src/app
 
-COPY docker/web/nginx.conf /etc/nginx/nginx.conf
-COPY docker/web/docker-entrypoint.sh /usr/src/app/docker-entrypoint.sh
-COPY docker/web/nginx-auto-reloader.sh /usr/src/app/nginx-auto-reloader.sh
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY docker-entrypoint.sh /usr/src/app/docker-entrypoint.sh
+COPY nginx-auto-reloader.sh /usr/src/app/nginx-auto-reloader.sh
 
 ENTRYPOINT [ "./docker-entrypoint.sh" ]
 CMD [ "nginx", "-g", "daemon off;" ]
