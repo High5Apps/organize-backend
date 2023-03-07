@@ -2,8 +2,11 @@
 
 # USAGE
 #   bootstrap new_host
+# ENVIRONMENT VARIABLES
+#   IP: The IP address of the Pi. Needed if local network doesn't support mDNS
 # EXAMPLES
 #   bootstrap org
+#   IP=192.168.1.100 bootstrap org
 
 set -e
 
@@ -28,8 +31,14 @@ fi
 new_host=$1
 new_hostname=$new_host.local
 
+if ! [ -z "$IP" ]; then
+  echo "Using IP address $IP instead of mDNS"
+  INITIAL_HOSTNAME=$IP
+  new_hostname=$IP
+fi
+
 ssh_config="Host $new_host
-    HostName $new_host.local
+    HostName $new_hostname
     User $USER
     IdentityFile $SSH_KEY_PATH
 "
