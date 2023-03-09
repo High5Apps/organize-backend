@@ -90,7 +90,6 @@ ssh -i $SSH_KEY_PATH $new_host << EOF
 
   echo 'Setting up firewall...'
   sudo apt install -y -q ufw
-  sudo sed -i 's/IPV6=yes/IPV6=no/' /etc/default/ufw
   sudo ufw default deny incoming
   sudo ufw default allow outgoing
   sudo ufw allow ssh
