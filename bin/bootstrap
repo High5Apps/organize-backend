@@ -44,6 +44,15 @@ ssh_config="Host $new_host
 "
 if grep -q "Host $new_host" $SSH_CONFIG_PATH; then
   echo "$new_host is already present in SSH config"
+  line_count=$(awk "/Host $new_host$/,/HostName $new_hostname$/" $SSH_CONFIG_PATH | wc -l)
+  if (( $line_count != 2 )); then
+    echo "WARNING: The HostName for $new_host appears to have changed, so your"
+    printf ' SSH config may need to be manually updated. Open\n'
+    printf " $SSH_CONFIG_PATH and then, if needed, edit it so it contains\n"
+    printf " the following config:\n\n"
+    echo "$ssh_config"
+    read -p 'Then press <enter> to continue'
+  fi
 else
   echo "Adding $new_host to SSH config..."
   echo "$ssh_config" | sudo tee -a $SSH_CONFIG_PATH >/dev/null
