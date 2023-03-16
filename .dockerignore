@@ -39,3 +39,6 @@ compose.*
 
 # Ignore README
 README.md
+
+# Ignore Mac Desktop Services Store files
+.DS_Store
