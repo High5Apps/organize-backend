@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  PUBLIC_KEY_LENGTH = 294
+  PUBLIC_KEY_LENGTH = 91
 
   attr_writer :private_key
 
@@ -31,7 +31,7 @@ class User < ApplicationRecord
   end
 
   def public_key
-    OpenSSL::PKey::RSA.new(public_key_bytes)
+    OpenSSL::PKey::EC.new(public_key_bytes)
   end
 
   def directly_connected_to?(user_id)
@@ -44,7 +44,7 @@ class User < ApplicationRecord
 
     def convert_public_key_to_binary
       begin
-        public_key_bytes = OpenSSL::PKey::RSA.new(self.public_key_bytes).to_der
+        public_key_bytes = OpenSSL::PKey::EC.new(self.public_key_bytes).to_der
         self.public_key_bytes = public_key_bytes
       rescue => exception
         self.public_key_bytes = nil

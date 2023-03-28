@@ -12,9 +12,9 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
 
   def setup_test_key(user)
-    private_key = OpenSSL::PKey::RSA.generate 2048
-    user.private_key = private_key
-    user.update(public_key_bytes: private_key.public_key.to_der)
+    key_pair = OpenSSL::PKey::EC.generate("prime256v1")
+    user.private_key = key_pair
+    user.update(public_key_bytes: key_pair.public_to_der)
   end
 
   def bearer(token)

@@ -1,10 +1,10 @@
 class JsonWebToken
   def self.encode(payload, private_key)
-    JWT.encode payload, private_key, 'RS256'
+    JWT.encode payload, private_key, 'ES256'
   end
 
   def self.decode(token, public_key)
-    options = { required_claims: ['exp', 'scp', 'sub'], algorithm: 'RS256' }
+    options = { required_claims: ['exp', 'scp', 'sub'], algorithm: 'ES256' }
     decoded = JWT.decode(token, public_key, true, options).first
     HashWithIndifferentAccess.new decoded
   end

@@ -12,7 +12,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     @params = {
       user: @user.attributes.with_indifferent_access.slice(
         *Api::V1::UsersController::PERMITTED_PARAMS,
-      ).merge(public_key_bytes: @user.public_key.to_s)
+      ).merge(public_key_bytes: @user.public_key.to_pem)
     }
   end
 
