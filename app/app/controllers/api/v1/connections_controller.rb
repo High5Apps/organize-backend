@@ -1,6 +1,6 @@
 class Api::V1::ConnectionsController < ApplicationController
-  before_action :authenticate_user, only: [:create]
-  before_action :authenticate_sharer, only: [:create]
+  before_action :authenticate_user, only: [:create, :preview]
+  before_action :authenticate_sharer, only: [:create, :preview]
 
   def create
     new_connection = authenticated_user.scanned_connections.build(
@@ -19,6 +19,24 @@ class Api::V1::ConnectionsController < ApplicationController
     render json: {
       error_messages: new_connection.errors.full_messages
     }, status: :unprocessable_entity
+  end
+
+  def preview
+    org = @authenticated_sharer.org
+    if org
+      render json: {
+        org: {
+          id: org.id,
+          name: org.name,
+          potential_member_definition: org.potential_member_definition,
+          potential_member_estimate: org.potential_member_estimate,
+        }, user: {
+          pseudonym: @authenticated_sharer.pseudonym,
+        }
+      }
+    else
+      render_error :not_found, ["No org found for user #{@authenticated_sharer.id}"]
+    end
   end
 
   private

@@ -2,17 +2,16 @@ require "test_helper"
 
 class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    sharer = users(:one)
-    setup_test_key(sharer)
-    scanner = users(:two)
-    setup_test_key(scanner)
-    assert_not sharer.directly_connected_to?(scanner.id)
+    @sharer = users(:one)
+    setup_test_key(@sharer)
+    @scanner = users(:two)
+    setup_test_key(@scanner)
+    assert_not @sharer.directly_connected_to?(@scanner.id)
 
-    sharer_jwt = sharer.create_auth_token(1.minute.from_now, 'create:connections')
-    @params = { sharer_jwt: sharer_jwt }
+    @params = sharer_params(@sharer)
 
     @authorized_headers = {
-      Authorization: bearer(scanner.create_auth_token(1.minute.from_now, '*')),
+      Authorization: bearer(@scanner.create_auth_token(1.minute.from_now, '*')),
     }
   end
 
@@ -39,7 +38,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference 'Connection.count' do
       post api_v1_connections_url,
         headers: @authorized_headers,
-        params: @params.merge(sharer_jwt: 'bad')
+        params: sharer_params(@sharer, 1.minute.ago)
       assert_response :unauthorized
     end
   end
@@ -69,5 +68,49 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     post api_v1_connections_url, headers: @authorized_headers, params: @params
     id = JSON.parse(response.body, symbolize_names: true).dig(:id)
     assert connection.reload.created_at < connection.updated_at
+  end
+
+  test "should preview" do
+    get api_v1_connection_preview_url,
+      headers: @authorized_headers,
+      params: @params
+    assert_response :ok
+
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    assert_not_nil json_response.dig(:org, :id)
+    assert_not_nil json_response.dig(:org, :name)
+    assert_not_nil json_response.dig(:org, :potential_member_definition)
+    assert_not_nil json_response.dig(:org, :potential_member_estimate)
+    assert_not_nil json_response.dig(:user, :pseudonym)
+  end
+
+  test "should not preview with invalid authorization" do
+    get api_v1_connection_preview_url,
+      headers: { Authorization: 'bad' },
+      params: @params
+    assert_response :unauthorized
+  end
+
+  test "should not preview with invalid sharer_jwt" do
+    get api_v1_connection_preview_url,
+      headers: @authorized_headers,
+      params: sharer_params(@sharer, 1.minute.ago)
+    assert_response :unauthorized
+  end
+
+  test "preview should return not_found when sharer has no org" do
+    assert_nil @scanner.org
+
+    get api_v1_connection_preview_url,
+      headers: @authorized_headers,
+      params: sharer_params(@scanner)
+    assert_response :not_found
+  end
+
+  private
+
+  def sharer_params(sharer, expiration=1.minute.from_now)
+    sharer_jwt = sharer.create_auth_token(expiration, 'create:connections')
+    { sharer_jwt: sharer_jwt }
   end
 end
