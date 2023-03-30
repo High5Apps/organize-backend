@@ -1,5 +1,5 @@
 class Api::V1::ConnectionsController < ApplicationController
-  before_action :authenticate_user, only: [:create, :preview]
+  before_action :authenticate_user, only: [:create]
   before_action :authenticate_sharer, only: [:create, :preview]
 
   def create
@@ -21,6 +21,10 @@ class Api::V1::ConnectionsController < ApplicationController
     }, status: :unprocessable_entity
   end
 
+  # Note that this endpoint is unique in that it doesn't require requester
+  # authentication, only sharer authentication. It needs to be called before new
+  # users register, so it's not possible to require requester authentication.
+  # However, it's still relatively safe, because it authenticates the sharer.
   def preview
     org = @authenticated_sharer.org
     if org

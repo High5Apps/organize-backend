@@ -71,9 +71,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should preview" do
-    get api_v1_connection_preview_url,
-      headers: @authorized_headers,
-      params: @params
+    get api_v1_connection_preview_url, params: @params
     assert_response :ok
 
     json_response = JSON.parse(response.body, symbolize_names: true)
@@ -84,16 +82,13 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil json_response.dig(:user, :pseudonym)
   end
 
-  test "should not preview with invalid authorization" do
-    get api_v1_connection_preview_url,
-      headers: { Authorization: 'bad' },
-      params: @params
+  test "should not preview without sharer_jwt" do
+    get api_v1_connection_preview_url
     assert_response :unauthorized
   end
 
   test "should not preview with invalid sharer_jwt" do
     get api_v1_connection_preview_url,
-      headers: @authorized_headers,
       params: sharer_params(@sharer, 1.minute.ago)
     assert_response :unauthorized
   end
@@ -101,9 +96,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   test "preview should return not_found when sharer has no org" do
     assert_nil @scanner.org
 
-    get api_v1_connection_preview_url,
-      headers: @authorized_headers,
-      params: sharer_params(@scanner)
+    get api_v1_connection_preview_url, params: sharer_params(@scanner)
     assert_response :not_found
   end
 
