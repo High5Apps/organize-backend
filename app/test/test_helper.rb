@@ -17,6 +17,11 @@ class ActiveSupport::TestCase
     user.update(public_key_bytes: key_pair.public_to_der)
   end
 
+  def authorized_headers(requester, scope)
+    token = requester.create_auth_token(1.minute.from_now, scope)
+    { Authorization: bearer(token) }
+  end
+
   def bearer(token)
     "Bearer #{token}"
   end

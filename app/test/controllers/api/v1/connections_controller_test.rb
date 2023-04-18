@@ -116,9 +116,4 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     sharer_jwt = sharer.create_auth_token(expiration, 'create:connections')
     { sharer_jwt: sharer_jwt }
   end
-
-  def authorized_headers(scanner, scope)
-    token = scanner.create_auth_token(1.minute.from_now, scope)
-    { Authorization: bearer(token) }
-  end
 end

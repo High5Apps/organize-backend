@@ -11,9 +11,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
 
     @user = users(:two)
     setup_test_key(@user)
-    @authorized_headers = {
-      Authorization: bearer(@user.create_auth_token(1.minute.from_now, '*'))
-    }
+    @authorized_headers = authorized_headers(@user, '*')
   end
 
   test 'should create with valid params' do
