@@ -49,6 +49,16 @@ class ConnectionTest < ActiveSupport::TestCase
       error_messages.first
   end
 
+  test 'should not be able to connect to yourself' do
+    self_connection = @user_with_org.scanned_connections.create(
+      sharer: @user_with_org)
+    assert_not self_connection.valid?
+
+    error_messages = self_connection.errors.full_messages
+    assert_equal 1, error_messages.count
+    assert_equal Connection::ERROR_MESSAGE_SELF_CONNECTION, error_messages.first
+  end
+
   test "sharer's scanners should include scanner" do
     assert_not_nil @sharer.scanners.find_by_id(@scanner.id)
     assert_nil @sharer.scanners.find_by_id(@sharer.id)
