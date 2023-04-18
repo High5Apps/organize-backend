@@ -1,5 +1,6 @@
 class Connection < ApplicationRecord
   ERROR_MESSAGE_ALREADY_CONNECTED = "You're already connected to that user";
+  ERROR_MESSAGE_DIFFERENT_ORGS = 'You must be in the same org';
 
   belongs_to :sharer, class_name: 'User'
   belongs_to :scanner, class_name: 'User'
@@ -37,7 +38,7 @@ class Connection < ApplicationRecord
 
   def scanner_and_sharer_in_same_org?
     unless scanner&.org&.id == sharer&.org&.id
-      errors.add(:base, 'You must be in the same org')
+      errors.add(:base, ERROR_MESSAGE_DIFFERENT_ORGS)
     end
   end
 end

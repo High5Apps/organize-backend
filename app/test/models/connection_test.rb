@@ -103,8 +103,10 @@ class ConnectionTest < ActiveSupport::TestCase
   end
 
   test 'cannot create connection to another org' do
-    assert_no_difference 'Connection.count' do
-      @user_with_org.scanned_connections.create(sharer: @user_with_other_org)
-    end
+    connection = @user_with_org.scanned_connections.create(
+      sharer: @user_with_other_org)
+    error_messages = connection.errors.full_messages
+    assert_equal 1, error_messages.count
+    assert_equal Connection::ERROR_MESSAGE_DIFFERENT_ORGS, error_messages.first
   end
 end
