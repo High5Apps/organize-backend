@@ -32,9 +32,21 @@ class ConnectionTest < ActiveSupport::TestCase
     assert_not @connection.valid?
   end
 
-  test 'should not be able to connect to a user more than once' do
+  test 'should not create duplicate connections' do
     duplicate_connection = @connection.dup
     assert_not duplicate_connection.valid?
+  end
+
+  test 'should not create when alreday connected in reverse' do
+    reverse_connection = @connection.sharer.scanned_connections.create(
+      sharer: @connection.scanner)
+
+    assert_not reverse_connection.valid?
+
+    error_messages = reverse_connection.errors.full_messages
+    assert_equal 1, error_messages.count
+    assert_equal Connection::ERROR_MESSAGE_ALREADY_CONNECTED,
+      error_messages.first
   end
 
   test "sharer's scanners should include scanner" do
@@ -69,6 +81,20 @@ class ConnectionTest < ActiveSupport::TestCase
     assert_not Connection.directly_connected?(u1, u1)
     assert_not Connection.directly_connected?(u1, u2)
     assert_not Connection.directly_connected?(u3, u4)
+  end
+
+  test 'between should be correct' do
+    u1 = users(:one)
+    u2 = users(:two)
+    u3 = users(:three)
+    u4 = users(:four)
+    assert_equal connections(:one), Connection.between(u1, u3)
+    assert_equal connections(:one), Connection.between(u3, u1)
+    assert_equal connections(:two), Connection.between(u1, u4)
+    assert_equal connections(:two), Connection.between(u4, u1)
+    assert_nil Connection.between(u1, u1)
+    assert_nil Connection.between(u1, u2)
+    assert_nil Connection.between(u3, u4)
   end
 
   test 'scanner org is set from sharer org when nil' do

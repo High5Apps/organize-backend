@@ -9,10 +9,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_not @sharer.directly_connected_to?(@scanner.id)
 
     @params = sharer_params(@sharer)
-
-    @authorized_headers = {
-      Authorization: bearer(@scanner.create_auth_token(1.minute.from_now, '*')),
-    }
+    @authorized_headers = authorized_headers(@scanner, '*')
   end
 
   test 'should create with valid params' do
@@ -56,6 +53,19 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   test 'should respond with ok when attempting to re-create' do
     post api_v1_connections_url, headers: @authorized_headers, params: @params
     post api_v1_connections_url, headers: @authorized_headers, params: @params
+    assert_response :ok
+  end
+
+  test 'should respond with ok when attempting to re-create in reverse' do
+    connection = connections(:one)
+    original_sharer = connection.sharer
+    setup_test_key(original_sharer)
+    original_scanner = connection.scanner
+    setup_test_key(original_scanner)
+
+    post api_v1_connections_url,
+      headers: authorized_headers(original_sharer, '*'),
+      params: sharer_params(original_scanner)
     assert_response :ok
   end
 
@@ -105,5 +115,10 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   def sharer_params(sharer, expiration=1.minute.from_now)
     sharer_jwt = sharer.create_auth_token(expiration, 'create:connections')
     { sharer_jwt: sharer_jwt }
+  end
+
+  def authorized_headers(scanner, scope)
+    token = scanner.create_auth_token(1.minute.from_now, scope)
+    { Authorization: bearer(token) }
   end
 end

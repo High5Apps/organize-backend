@@ -1,12 +1,12 @@
 class Connection < ApplicationRecord
+  ERROR_MESSAGE_ALREADY_CONNECTED = "You're already connected to that user";
+
   belongs_to :sharer, class_name: 'User'
   belongs_to :scanner, class_name: 'User'
 
   validates :sharer, presence: true
   validates :scanner, presence: true
-  validates_uniqueness_of :scanner,
-    scope: :sharer,
-    message: "is already connected to that user"
+  validate :not_already_connected, on: :create
   validate :scanner_and_sharer_in_same_org?
 
   before_validation :set_scanner_org_from_sharer_org,
@@ -14,15 +14,25 @@ class Connection < ApplicationRecord
     on: :create
 
   def self.directly_connected?(user_id, other_user_id)
+    between(user_id, other_user_id).present?
+  end
+
+  def self.between(user_id, other_user_id)
     where(sharer_id: user_id, scanner_id: other_user_id).or(
       where(scanner_id: user_id, sharer_id: other_user_id)
-    ).exists?
+    ).first
   end
 
   private
 
   def set_scanner_org_from_sharer_org
     scanner.update!(org: sharer.org);
+  end
+
+  def not_already_connected
+    if scanner&.directly_connected_to? sharer
+      errors.add(:base, ERROR_MESSAGE_ALREADY_CONNECTED)
+    end
   end
 
   def scanner_and_sharer_in_same_org?

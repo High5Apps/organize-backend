@@ -9,8 +9,8 @@ class Api::V1::ConnectionsController < ApplicationController
       return render json: { id: new_connection.id }, status: :created
     end
 
-    existing_connection = authenticated_user.scanned_connections.where(
-      sharer: @authenticated_sharer).first
+
+    existing_connection = authenticated_user.connection_to @authenticated_sharer
     if existing_connection
       existing_connection.touch
       return render json: { id: existing_connection.id }, status: :ok

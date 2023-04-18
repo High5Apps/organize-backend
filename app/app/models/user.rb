@@ -38,6 +38,10 @@ class User < ApplicationRecord
     Connection.directly_connected?(id, user_id)
   end
 
+  def connection_to(user_id)
+    Connection.between(id, user_id)
+  end
+
   private
 
     attr_reader :private_key
