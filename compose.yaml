@@ -7,8 +7,8 @@ services:
       ORGANIZE_DATABASE_USER: postgres
       ORGANIZE_DATABASE_HOST: db
       RAILS_ENV: production
-      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?err}
       RAILS_LOG_TO_STDOUT: true
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?err}
     image: localhost:5001/organize-app
     ports:
       - "127.0.0.1:3000:3000"
