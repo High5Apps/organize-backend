@@ -29,6 +29,20 @@ services:
     restart: always
     volumes:
       - db-data:/var/lib/postgresql:rw
+  db-15:
+    environment:
+      PGDATA: /var/lib/postgresql/15/data
+      POSTGRES_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
+    image: postgres:15.2
+    volumes:
+      - db-data:/var/lib/postgresql:rw
+  db-upgrade:
+    image: localhost:5001/db-upgrade
+    profiles:
+      - runManually
+    restart: never
+    volumes:
+      - db-data:/var/lib/postgresql:rw
   web:
     depends_on:
       - app
