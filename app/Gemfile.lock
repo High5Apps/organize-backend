@@ -93,6 +93,7 @@ GEM
       net-pop
       net-smtp
     marcel (1.0.2)
+    matrix (0.4.2)
     method_source (1.0.0)
     mini_mime (1.1.2)
     minitest (5.18.0)
@@ -145,6 +146,7 @@ GEM
     rake (13.0.6)
     reline (0.3.3)
       io-console (~> 0.5)
+    rubystats (0.4.0)
     thor (1.2.1)
     timeout (0.3.2)
     tzinfo (2.0.6)
@@ -161,9 +163,11 @@ DEPENDENCIES
   bootsnap
   debug
   jwt (~> 2.4)
+  matrix
   pg (~> 1.1)
   puma (~> 5.0)
   rails (~> 7.0.2, >= 7.0.2.4)
+  rubystats (~> 0.4)
   tzinfo-data
 
 RUBY VERSION
