@@ -14,13 +14,19 @@ class Simulation
 
   def run(days: 10)
     @day = 0
+    @connections = []
     @members = Set[]
     @members.add @company.most_passionate_employee
     days.times do
       run_day
       break if @members.count >= @company.size
     end
+
+    puts @connections.map { |sharer, scanner| [sharer.id, scanner.id] }.inspect
+    puts @connections.count
   end
+
+  private
 
   def run_day
     @day += 1
@@ -41,14 +47,13 @@ class Simulation
         member.asked_closely_linked_employee_set.add to_ask
         accepted = (rand < to_ask.probability_of_joining)
         result = accepted ? "Accepted" : "Rejected"
+        already_member = @members.include? to_ask
+        action = already_member ? 'connect' : 'join'
+        puts ' '*2 + "Asking Employee #{to_ask.id} to #{action}... #{result}"
 
-        if !@members.include? to_ask
-          puts ' '*2 + "Asking Employee #{to_ask.id} to join... #{result}"
-          next unless accepted
-          @members.add to_ask
-        else
-          puts ' '*2 + "Asking Employee #{to_ask.id} to connect... #{result}"
-        end
+        next unless accepted
+        @members.add to_ask
+        @connections.push [member, to_ask]
       end
     end
 
