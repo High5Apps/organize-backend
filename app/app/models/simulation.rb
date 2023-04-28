@@ -21,9 +21,14 @@ class Simulation
       run_day
       break if @members.count >= @company.size
     end
+  end
 
-    puts @connections.map { |sharer, scanner| [sharer.id, scanner.id] }.inspect
-    puts @connections.count
+  def to_seed_data
+    {
+      connections: @connections.map { |e1, e2| [e1.id, e2.id] },
+      size: @company.size,
+      user_ids: @members.map(&:id),
+    }
   end
 
   private
