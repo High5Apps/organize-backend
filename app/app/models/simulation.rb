@@ -10,6 +10,8 @@ class Simulation
   end
 
   def run
+    puts @company.most_passionate_employee
     puts @company.link_stats
+    puts @company.close_link_stats
   end
 end

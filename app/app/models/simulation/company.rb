@@ -52,20 +52,20 @@ class Simulation::Company
 
   def link_stats
     link_counts = employees.map { |e| e.linked_employee_set.count }
-    link_counts.sort!
-    sum = link_counts.sum
-    minimum, maximum = link_counts.minmax
-    average = sum.to_f / @size
-    median = link_counts[@size / 2] # Not true median- doesn't average middle two
-    %{
-Link Stats:
-  Company size: #{@size}
-  Link count: #{sum}
-  Min: #{minimum}
-  Max: #{maximum}
-  Average: #{average.round 2}
-  Median: #{median}
-    }
+    array_stats(link_counts)
+  end
+
+  def close_link_stats
+    close_link_counts = employees.map do |e|
+      e.closely_linked_employee_set.count
+    end
+    array_stats(close_link_counts)
+  end
+
+  def most_passionate_employee
+    employees.max do |e1, e2|
+      e1.probability_of_joining <=> e2.probability_of_joining
+    end
   end
 
   # https://graphonline.ru/en/create_graph_by_edge_list
@@ -110,13 +110,21 @@ Link Stats:
     create_random_links
   end
 
-  # Each employee is linked to all members of their team
+  # Each employee is linked to all members of their team. Close links are formed
+  # with a probability based on a normal distribution.
   def create_links_between_team_members_excluding_self_links
+    closeness_distribution = Rubystats::NormalDistribution.new(0.5, 0.2)
     teams.each do |team|
-      team.employees.each do |employee_i|
-        team.employees.each do |employee_j|
-          next if employee_i == employee_j
-          employee_i.linked_employee_set.add employee_j
+      closeness = closeness_distribution.rng
+      team.employees.each do |team_member_i|
+        team.employees.each do |team_member_j|
+          next if team_member_i.id == team_member_j.id
+          team_member_i.linked_employee_set.add team_member_j
+
+          next unless team_member_i.id < team_member_j.id
+          next unless closeness > rand
+          team_member_i.closely_linked_employee_set.add team_member_j
+          team_member_j.closely_linked_employee_set.add team_member_i
         end
       end
     end
@@ -124,24 +132,28 @@ Link Stats:
 
   # Each partner team pair is assigned a closeness probability. Then each
   # employee of the partner team pair is linked based on that closeness
-  # probability.
+  # probability. Then there's a 50% chance of that being a close link.
   def create_links_between_partner_teams
     even_teams.each do |even_team|
       even_team.partner_teams.each do |partner_team|
         closeness = rand 30..50
         even_team.employees.each do |even_team_member|
           partner_team.employees.each do |partner_team_member|
-            if closeness > rand(0..100)
-              even_team_member.linked_employee_set.add partner_team_member
-              partner_team_member.linked_employee_set.add even_team_member
-            end
+            next unless closeness > rand(0..100)
+            even_team_member.linked_employee_set.add partner_team_member
+            partner_team_member.linked_employee_set.add even_team_member
+
+            next unless rand < 0.5
+            even_team_member.closely_linked_employee_set.add partner_team_member
+            partner_team_member.closely_linked_employee_set.add even_team_member
           end
         end
       end
     end
   end
 
-  # Each employee is linked to up to 10 random people in the company
+  # Each employee is linked to up to 10 random people in the company.
+  # Then there's a 50% chance of those links being a close link.
   def create_random_links
     even_employees = employees.select { |e| e.id.even? }
     odd_employees = employees.select { |e| e.id.odd? }
@@ -152,7 +164,31 @@ Link Stats:
       random_odd_employees.each do |random_odd_employee|
         even_employee.linked_employee_set.add random_odd_employee
         random_odd_employee.linked_employee_set.add even_employee
+
+        next unless rand < 0.5
+        even_employee.closely_linked_employee_set.add random_odd_employee
+        random_odd_employee.closely_linked_employee_set.add even_employee
       end
     end
+  end
+
+  def array_stats(array)
+    sorted_array = array.sort
+    size = sorted_array.count
+    sum = sorted_array.sum
+    minimum, maximum = sorted_array.minmax
+    average = sum.to_f / size
+
+     # Not true median- doesn't average middle two
+    median = sorted_array[size / 2]
+    %{
+Link Stats:
+  Company size: #{@size}
+  Link count: #{sum}
+  Min: #{minimum}
+  Max: #{maximum}
+  Average: #{average.round 2}
+  Median: #{median}
+    }
   end
 end

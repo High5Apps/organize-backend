@@ -69,4 +69,11 @@ class CompanyTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'closely_linked_employee_set should be a subset of linked_employee_set' do
+    @company.employees.each do |employee|
+      assert_operator employee.closely_linked_employee_set, :subset?,
+        employee.linked_employee_set
+    end
+  end
 end
