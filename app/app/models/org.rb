@@ -18,6 +18,18 @@ class Org < ApplicationRecord
         only_integer: true,
           in: MIN_POTENTIAL_MEMBER_ESTIMATE..MAX_POTENTIAL_MEMBER_ESTIMATE,
       }
+
+  def graph
+    user_ids = users.ids
+    connections = Connection.where(scanner_id: user_ids).or(
+      Connection.where(sharer_id: user_ids)
+    ).pluck :sharer_id, :scanner_id
+
+    {
+      user_ids: user_ids,
+      connections: connections,
+    }
+  end
   
   def next_pseudonym
     seed = id.gsub("-", "").hex

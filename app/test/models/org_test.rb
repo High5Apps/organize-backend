@@ -63,6 +63,19 @@ class OrgTest < ActiveSupport::TestCase
     assert_not @org.valid?
   end
 
+  test 'graph should include user_ids' do
+    user_ids = @org.graph[:user_ids]
+    assert_equal [users(:one), users(:three), users(:four)].map(&:id), user_ids
+  end
+
+  test 'graph should include connections as [[sharer_id, scanner_id]]' do
+    connections = @org.graph[:connections]
+    c1 = connections(:one)
+    c2 = connections(:two)
+    assert_equal [[c1.sharer_id, c1.scanner_id], [c2.sharer_id, c2.scanner_id]],
+      connections
+  end
+
   test 'next_pseudonym should change when user count changes' do
     pseudonym_0 = @org.next_pseudonym
     pseudonym_1 = @org.next_pseudonym
