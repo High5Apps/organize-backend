@@ -12,6 +12,9 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:two)
     setup_test_key(@user)
     @authorized_headers = authorized_headers(@user, '*')
+
+    @user_in_org = users(:one)
+    setup_test_key(@user_in_org)
   end
 
   test 'should create with valid params' do
@@ -45,5 +48,23 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     post api_v1_orgs_url, headers: @authorized_headers, params: @params
     assert_response :created
     assert_not_nil @user.reload.pseudonym
+  end
+
+  test 'should show graph' do
+    org = @user_in_org.org
+    get graph_api_v1_org_url(org),
+      headers: authorized_headers(@user_in_org, '*')
+    assert_response :ok
+
+    body = JSON.parse(response.body, symbolize_names: true)
+    assert_not_empty body.dig(:user_ids)
+    assert_not_empty body.dig(:connections)
+  end
+
+  test 'should not show graph with invalid authorization' do
+    org = @user_in_org.org
+    get graph_api_v1_org_url(org),
+      headers: authorized_headers(@user_in_org, '*', 1.minute.ago)
+    assert_response :unauthorized
   end
 end

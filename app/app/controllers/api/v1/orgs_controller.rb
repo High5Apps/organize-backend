@@ -5,7 +5,7 @@ class Api::V1::OrgsController < ApplicationController
     :potential_member_estimate,
   ]
 
-  before_action :authenticate_user, only: [:create]
+  before_action :authenticate_user, only: [:create, :graph]
 
   def create
     new_org = authenticated_user.build_org(create_params)
@@ -14,6 +14,10 @@ class Api::V1::OrgsController < ApplicationController
     else
       render_error :unprocessable_entity, new_org.errors.full_messages
     end
+  end
+
+  def graph
+    render json: authenticated_user.org.graph
   end
 
   private
