@@ -42,11 +42,7 @@ group :development do
   # gem "spring"
 end
 
-# Used in simulation and db seeds
-gem "rubystats", "~> 0.4"
-
-# TODO: Remove once the issue is fixed
-# This should not be needed. See:
+# TODO: Use unforked rubystats once PR is merged and released
 # https://github.com/phillbaker/rubystats/pull/20#issuecomment-1525826940
-gem "matrix"
-
+# Used in simulation and db seeds
+gem "rubystats", git: "https://github.com/High5Apps/rubystats"
