@@ -63,9 +63,10 @@ class OrgTest < ActiveSupport::TestCase
     assert_not @org.valid?
   end
 
-  test 'graph should include user_ids' do
-    user_ids = @org.graph[:user_ids]
-    assert_equal [users(:one), users(:three), users(:four)].map(&:id), user_ids
+  test 'graph should include users' do
+    users = @org.graph[:users]
+    assert_equal [users(:one), users(:three), users(:four)].map(&:id),
+      users.map { |u| u[:id] }
   end
 
   test 'graph should include connections as [[sharer_id, scanner_id]]' do

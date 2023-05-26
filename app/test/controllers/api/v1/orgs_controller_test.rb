@@ -57,7 +57,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
 
     body = JSON.parse(response.body, symbolize_names: true)
-    assert_not_empty body.dig(:user_ids)
+    assert_not_empty body.dig(:users)
     assert_not_empty body.dig(:connections)
   end
 
