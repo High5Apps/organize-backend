@@ -1,0 +1,16 @@
+founder:
+  name: Founder
+president:
+  name: President
+vice_president:
+  name: Vice President
+secretary:
+  name: Secretary
+treasurer:
+  name: Treasurer
+steward:
+  name: Steward
+trustee:
+  name: Trustee
+custom_usher:
+  name: Usher
