@@ -20,9 +20,9 @@ class Org < ApplicationRecord
       }
 
   def graph
-    user_data = users.pluck :id, :pseudonym
+    user_data = users.pluck :id, :joined_at, :pseudonym
     nodes = user_data.map do |d| 
-      { id: d[0], pseudonym: d[1] }
+      { id: d[0], joined_at: d[1].to_f, pseudonym: d[2] }
     end
 
     connections = Connection.where(scanner_id: user_ids).or(

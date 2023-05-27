@@ -2,17 +2,21 @@ one:
   org: one
   pseudonym: 'Elated Wren'
   public_key_bytes: !!binary "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE73j42wzjmUHi+5EQ/nDQqsq7VCcvIAyMBIjPQ4cDIeo0w3RCrrPIE2GhV9CEJPia8uwuUu5BfkF6Xy35fE+s6Q=="
+  joined_at: <%= DateTime.new(2023, 1, 1) %>
 two:
   public_key_bytes: !!binary "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETeRdn35M5Aoy3vkcfAdteLhWTuGPUm3dCq72KXY5gAVmE8a2w2yIxZlGYb9jVmqcOtsHbC39pZuJS4+d6axHkQ=="
 three:
   org: one
   pseudonym: 'Respectable Tortoise'
   public_key_bytes: !!binary "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcGNZoqstaDMqqw8edroeofSZ5IEHd5MQt1+dmlpPdWx7R9hc4iXVbx6LVxK1sEH7P858ZTw5/eEaePQRTQ6xCg=="
+  joined_at: <%= DateTime.new(2023, 1, 2) %>
 four:
   org: one
   pseudonym: 'Loyal Stingray'
   public_key_bytes: !!binary "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE0DFy73Y8/ezBXlSZYDAIlxZXGJGY4qSejxan6CN0ULpyVTwlod/jEF0iXE3oQeF2FOv75nJFtLId8AR2rHVpWw=="
+  joined_at: <%= DateTime.new(2023, 1, 3) %>
 five:
   org: two
   pseudonym: 'Energetic Crab'
   public_key_bytes: !!binary "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEaUVg2GoPQn16lP+PrNIoCKgaiNDDc1BCIolHiOVfzCsqblazOXNDux5AjR1O0U/O27lp3CSYNy07eMekfMHHfQ=="
+  joined_at: <%= DateTime.new(2023, 1, 3) %>
