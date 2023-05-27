@@ -69,14 +69,21 @@ class OrgTest < ActiveSupport::TestCase
       users.map { |u| u[:id] }
 
     first_user = users.first
-    assert_equal 4, first_user.keys.count
+    second_user = users.second
+    third_user = users.third
+
+    assert_equal 5, first_user.keys.count
     assert_not_empty first_user[:id]
     assert_not_equal 0, first_user[:joined_at]
     assert_not_empty first_user[:pseudonym]
 
     assert_equal 2, first_user[:recruit_count]
-    assert_equal 0, users.second[:recruit_count]
-    assert_equal 0, users.third[:recruit_count]
+    assert_equal 0, second_user[:recruit_count]
+    assert_equal 0, third_user[:recruit_count]
+
+    assert_equal 2, first_user[:connection_count]
+    assert_equal 1, second_user[:connection_count]
+    assert_equal 1, third_user[:connection_count]
   end
 
   test 'graph should include connections as [[sharer_id, scanner_id]]' do

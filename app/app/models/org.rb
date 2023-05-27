@@ -21,10 +21,17 @@ class Org < ApplicationRecord
 
   def graph
     recruit_counts = users.joins(:recruits).group(:id).count
+    scanned_connection_counts =
+      users.joins(:scanned_connections).group(:id).count
+    shared_connection_counts =
+      users.joins(:shared_connections).group(:id).count
     user_data = users.pluck :id, :joined_at, :pseudonym
     nodes = user_data.map do |d|
       id = d[0];
+      connection_count = (scanned_connection_counts[id] || 0) +
+        (shared_connection_counts[id] || 0)
       {
+        connection_count: connection_count,
         id: id,
         joined_at: d[1].to_f,
         pseudonym: d[2],
