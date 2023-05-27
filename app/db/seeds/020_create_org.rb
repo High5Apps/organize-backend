@@ -1,7 +1,7 @@
 print "\tCreating Org... "
 start_time = Time.now
 
-creator = User.first
+creator = User.find($user_id_map[$simulation.founder.id])
 
 random_local_number = rand 1000..9999
 random_store_number = rand 100..999
@@ -14,10 +14,12 @@ end
 potential_member_definition =
   "An employee of #{random_company_name} at store ##{random_store_number}"
 
-org = creator.create_org! name: "Local #{random_local_number}",
-  potential_member_definition: potential_member_definition,
-  potential_member_estimate: $simulation.to_seed_data[:size]
+Timecop.freeze($simulation.started_at) do
+  creator.create_org! name: "Local #{random_local_number}",
+    potential_member_definition: potential_member_definition,
+    potential_member_estimate: $simulation.to_seed_data[:size]
 
-creator.save!
+  creator.save!
+end
 
 puts "Completed in #{(Time.now - start_time).round 3} s"

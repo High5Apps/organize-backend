@@ -46,3 +46,4 @@ end
 # https://github.com/phillbaker/rubystats/pull/20#issuecomment-1525826940
 # Used in simulation and db seeds
 gem "rubystats", git: "https://github.com/High5Apps/rubystats"
+gem 'timecop', '~> 0.9'

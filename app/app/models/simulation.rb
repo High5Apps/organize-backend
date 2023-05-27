@@ -1,4 +1,7 @@
 class Simulation
+  attr_reader :started_at
+  attr_reader :founder
+
   def initialize
     start = Time.now
 
@@ -17,15 +20,19 @@ class Simulation
     @connections = []
     @members = Set[]
     @members.add @company.most_passionate_employee
+    @founder = @company.most_passionate_employee
+    midnight = Time.now.at_midnight
     days.times do
-      run_day
+      day_start = midnight - (days - @day).days
+      @started_at ||= day_start
+      run_day day_start
       break if @members.count >= @company.size
     end
   end
 
   def to_seed_data
     {
-      connections: @connections.map { |e1, e2| [e1.id, e2.id] },
+      connections: @connections.map { |e1, e2, t| [e1.id, e2.id, t] },
       size: @company.size,
       user_ids: @members.map(&:id),
     }
@@ -33,7 +40,7 @@ class Simulation
 
   private
 
-  def run_day
+  def run_day(day_start)
     @day += 1
     puts
     puts "Day #{@day}"
@@ -58,7 +65,7 @@ class Simulation
 
         next unless accepted
         @members.add to_ask
-        @connections.push [member, to_ask]
+        @connections.push [member, to_ask, day_start]
       end
     end
 
