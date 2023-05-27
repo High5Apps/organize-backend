@@ -20,9 +20,16 @@ class Org < ApplicationRecord
       }
 
   def graph
+    recruit_counts = users.joins(:recruits).group(:id).count
     user_data = users.pluck :id, :joined_at, :pseudonym
-    nodes = user_data.map do |d| 
-      { id: d[0], joined_at: d[1].to_f, pseudonym: d[2] }
+    nodes = user_data.map do |d|
+      id = d[0];
+      {
+        id: id,
+        joined_at: d[1].to_f,
+        pseudonym: d[2],
+        recruit_count: recruit_counts[id] || 0,
+      }
     end
 
     connections = Connection.where(scanner_id: user_ids).or(

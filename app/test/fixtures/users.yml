@@ -10,11 +10,13 @@ three:
   pseudonym: 'Respectable Tortoise'
   public_key_bytes: !!binary "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEcGNZoqstaDMqqw8edroeofSZ5IEHd5MQt1+dmlpPdWx7R9hc4iXVbx6LVxK1sEH7P858ZTw5/eEaePQRTQ6xCg=="
   joined_at: <%= DateTime.new(2023, 1, 2) %>
+  recruiter: one
 four:
   org: one
   pseudonym: 'Loyal Stingray'
   public_key_bytes: !!binary "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE0DFy73Y8/ezBXlSZYDAIlxZXGJGY4qSejxan6CN0ULpyVTwlod/jEF0iXE3oQeF2FOv75nJFtLId8AR2rHVpWw=="
   joined_at: <%= DateTime.new(2023, 1, 3) %>
+  recruiter: one
 five:
   org: two
   pseudonym: 'Energetic Crab'
