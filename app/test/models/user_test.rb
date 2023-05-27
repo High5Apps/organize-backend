@@ -30,4 +30,10 @@ class UserTest < ActiveSupport::TestCase
     @user_without_org.update!(org: orgs(:one))
     assert_not_nil @user_without_org.reload.pseudonym
   end
+
+  test 'should set joined_at when org_id is initially set' do
+    assert_nil @user_without_org.joined_at
+    @user_without_org.update!(org: orgs(:one))
+    assert_not_nil @user_without_org.reload.joined_at
+  end
 end

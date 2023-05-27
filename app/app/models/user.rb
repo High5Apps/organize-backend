@@ -22,7 +22,7 @@ class User < ApplicationRecord
     length: { is: PUBLIC_KEY_LENGTH }
 
   before_validation :convert_public_key_to_binary, on: :create
-  before_update :set_pseudonym,
+  before_update :on_join_org,
     if: -> { will_save_change_to_org_id? from: nil }
 
   def create_auth_token(expiration, scope)
@@ -55,7 +55,8 @@ class User < ApplicationRecord
       end
     end
 
-    def set_pseudonym
+    def on_join_org
       self.pseudonym = org.next_pseudonym
+      self.joined_at = Time.current
     end
 end
