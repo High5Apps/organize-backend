@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_27_090458) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_27_103831) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -39,9 +39,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_27_090458) do
     t.datetime "updated_at", null: false
     t.string "pseudonym"
     t.datetime "joined_at"
+    t.uuid "recruiter_id"
     t.index ["org_id"], name: "index_users_on_org_id"
+    t.index ["recruiter_id"], name: "index_users_on_recruiter_id"
   end
 
   add_foreign_key "connections", "users", column: "scanner_id"
   add_foreign_key "connections", "users", column: "sharer_id"
+  add_foreign_key "users", "users", column: "recruiter_id"
 end

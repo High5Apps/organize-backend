@@ -12,7 +12,7 @@ class Connection < ApplicationRecord
   validate :scanner_and_sharer_in_same_org?
   validate :sharer_and_scanner_not_equal
 
-  before_validation :set_scanner_org_from_sharer_org,
+  before_validation :set_scanner_info_from_sharer_info,
     if: -> { scanner.org.nil? },
     on: :create
 
@@ -28,8 +28,8 @@ class Connection < ApplicationRecord
 
   private
 
-  def set_scanner_org_from_sharer_org
-    scanner.update!(org: sharer.org);
+  def set_scanner_info_from_sharer_info
+    scanner.update!(org: sharer.org, recruiter: sharer);
   end
 
   def not_already_connected

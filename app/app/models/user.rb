@@ -4,7 +4,12 @@ class User < ApplicationRecord
   attr_writer :private_key
 
   belongs_to :org, optional: true
+  belongs_to :recruiter,
+    class_name: 'User',
+    foreign_key: 'recruiter_id',
+    optional: true
 
+  has_many :recruits, foreign_key: 'recruiter_id', class_name: 'User'
   has_many :shared_connections,
     foreign_key: 'sharer_id', 
     class_name: 'Connection'

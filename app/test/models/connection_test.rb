@@ -108,8 +108,15 @@ class ConnectionTest < ActiveSupport::TestCase
   end
 
   test 'scanner org is set from sharer org when nil' do
+    assert_nil @user_without_org.org
     @user_without_org.scanned_connections.create!(sharer: @user_with_org)
     assert_equal @user_with_org.org, @user_without_org.reload.org
+  end
+
+  test 'scanner recruiter is set to sharer when nil' do
+    assert_nil @user_without_org.recruiter
+    @user_without_org.scanned_connections.create!(sharer: @user_with_org)
+    assert_equal @user_with_org, @user_without_org.reload.recruiter
   end
 
   test 'cannot create connection to another org' do
