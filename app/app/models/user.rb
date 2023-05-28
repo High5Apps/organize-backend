@@ -22,6 +22,9 @@ class User < ApplicationRecord
     through: :scanned_connections, 
     class_name: 'User'
 
+  has_many :terms
+  has_many :offices, through: :terms
+
   validates :public_key_bytes,
     presence: true,
     length: { is: PUBLIC_KEY_LENGTH }

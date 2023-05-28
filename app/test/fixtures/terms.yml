@@ -1,0 +1,19 @@
+one:
+  user: one
+  office: founder
+
+two:
+  user: five
+  office: founder
+
+three:
+  user: four
+  office: president
+
+four:
+  user: three
+  office: vice_president
+
+five:
+  user: one
+  office: secretary
