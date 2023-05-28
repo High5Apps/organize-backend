@@ -66,5 +66,10 @@ class User < ApplicationRecord
     def on_join_org
       self.pseudonym = org.next_pseudonym
       self.joined_at = Time.current
+
+      unless org.users.any?
+        founder = Office.find_or_create_by name: 'Founder'
+        terms.build office: founder
+      end
     end
 end

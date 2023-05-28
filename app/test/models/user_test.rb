@@ -36,4 +36,12 @@ class UserTest < ActiveSupport::TestCase
     @user_without_org.update!(org: orgs(:one))
     assert_not_nil @user_without_org.reload.joined_at
   end
+
+  test 'should create a founder term when org is created and set on creator' do
+    org = orgs :one
+    @user_without_org.create_org org.attributes.except 'id'
+    assert_difference 'Term.count', 1 do
+      @user_without_org.save
+    end
+  end
 end
