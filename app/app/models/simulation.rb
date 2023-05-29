@@ -1,5 +1,6 @@
 class Simulation
   attr_reader :started_at
+  attr_reader :ended_at
   attr_reader :founder
 
   def initialize
@@ -21,9 +22,9 @@ class Simulation
     @members = Set[]
     @members.add @company.most_passionate_employee
     @founder = @company.most_passionate_employee
-    midnight = Time.now.at_midnight
+    @ended_at = Time.now.at_midnight
     days.times do
-      day_start = midnight - (days - @day).days
+      day_start = @ended_at - (days - @day).days
       @started_at ||= day_start
       run_day day_start
       break if @members.count >= @company.size
