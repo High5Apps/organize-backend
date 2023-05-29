@@ -66,14 +66,13 @@ class OrgTest < ActiveSupport::TestCase
   test 'graph should include users' do
     users = @org.graph[:users]
     assert_equal [users(:one), users(:three), users(:four)].map(&:id),
-      users.map { |u| u[:id] }
+      users.map { |id, _| id }
 
-    first_user = users.first
-    second_user = users.second
-    third_user = users.third
+    first_user = users[users(:one).id]
+    second_user = users[users(:three).id]
+    third_user = users[users(:four).id]
 
-    assert_equal 6, first_user.keys.count
-    assert_not_empty first_user[:id]
+    assert_equal 5, first_user.keys.count
     assert_not_equal 0, first_user[:joined_at]
     assert_not_empty first_user[:pseudonym]
 
