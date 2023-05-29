@@ -25,6 +25,8 @@ class Org < ApplicationRecord
       users.joins(:scanned_connections).group(:id).count
     shared_connection_counts =
       users.joins(:shared_connections).group(:id).count
+    offices = users.joins(:offices).group('users.id')
+      .pluck('users.id', 'array_agg(offices.name)').to_h
     user_data = users.pluck :id, :joined_at, :pseudonym
     nodes = user_data.map do |d|
       id = d[0];
@@ -34,6 +36,7 @@ class Org < ApplicationRecord
         connection_count: connection_count,
         id: id,
         joined_at: d[1].to_f,
+        offices: offices[id],
         pseudonym: d[2],
         recruit_count: recruit_counts[id] || 0,
       }

@@ -72,7 +72,7 @@ class OrgTest < ActiveSupport::TestCase
     second_user = users.second
     third_user = users.third
 
-    assert_equal 5, first_user.keys.count
+    assert_equal 6, first_user.keys.count
     assert_not_empty first_user[:id]
     assert_not_equal 0, first_user[:joined_at]
     assert_not_empty first_user[:pseudonym]
@@ -84,6 +84,10 @@ class OrgTest < ActiveSupport::TestCase
     assert_equal 2, first_user[:connection_count]
     assert_equal 1, second_user[:connection_count]
     assert_equal 1, third_user[:connection_count]
+
+    assert_equal ['Founder', 'Secretary'], first_user[:offices]
+    assert_nil second_user[:offices]
+    assert_equal ['President'], third_user[:offices]
   end
 
   test 'graph should include connections as [[sharer_id, scanner_id]]' do

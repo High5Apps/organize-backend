@@ -10,10 +10,6 @@ three:
   user: four
   office: president
 
-four:
-  user: three
-  office: vice_president
-
 five:
   user: one
   office: secretary
