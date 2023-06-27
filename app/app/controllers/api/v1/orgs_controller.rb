@@ -5,7 +5,7 @@ class Api::V1::OrgsController < ApplicationController
     :potential_member_estimate,
   ]
 
-  before_action :authenticate_user, only: [:create, :graph]
+  before_action :authenticate_user, only: [:create, :graph, :show]
 
   def create
     new_org = authenticated_user.build_org(create_params)
@@ -14,6 +14,22 @@ class Api::V1::OrgsController < ApplicationController
     else
       render_error :unprocessable_entity, new_org.errors.full_messages
     end
+  end
+
+  def show
+    org = authenticated_user.org
+
+    if org&.id != params[:id]
+      return render_error :unauthorized, "You don't belong to that Org"
+    end
+
+    render json: {
+      graph: org.graph,
+      id: org.id,
+      name: org.name,
+      potential_member_definition: org.potential_member_definition,
+      potential_member_estimate: org.potential_member_estimate,
+    }
   end
 
   def graph
