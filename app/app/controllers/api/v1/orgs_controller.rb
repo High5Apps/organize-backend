@@ -5,7 +5,7 @@ class Api::V1::OrgsController < ApplicationController
     :potential_member_estimate,
   ]
 
-  before_action :authenticate_user, only: [:create, :graph, :show]
+  before_action :authenticate_user, only: [:create, :show]
 
   def create
     new_org = authenticated_user.build_org(create_params)
@@ -30,10 +30,6 @@ class Api::V1::OrgsController < ApplicationController
       potential_member_definition: org.potential_member_definition,
       potential_member_estimate: org.potential_member_estimate,
     }
-  end
-
-  def graph
-    render json: authenticated_user.org.graph
   end
 
   private

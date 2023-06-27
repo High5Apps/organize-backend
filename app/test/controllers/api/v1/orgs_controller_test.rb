@@ -84,22 +84,4 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
       headers: authorized_headers(@user_in_org, '*')
     assert_response :unauthorized
   end
-
-  test 'should show graph' do
-    org = @user_in_org.org
-    get graph_api_v1_org_url(org),
-      headers: authorized_headers(@user_in_org, '*')
-    assert_response :ok
-
-    body = JSON.parse(response.body, symbolize_names: true)
-    assert_not_empty body.dig(:users)
-    assert_not_empty body.dig(:connections)
-  end
-
-  test 'should not show graph with invalid authorization' do
-    org = @user_in_org.org
-    get graph_api_v1_org_url(org),
-      headers: authorized_headers(@user_in_org, '*', 1.minute.ago)
-    assert_response :unauthorized
-  end
 end
