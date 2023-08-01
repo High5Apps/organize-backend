@@ -50,9 +50,8 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil @user.reload.pseudonym
   end
 
-  test 'should show' do
-    org = @user_in_org.org
-    get api_v1_org_url(org), headers: authorized_headers(@user_in_org, '*')
+  test 'should show my_org' do
+    get api_v1_my_org_url, headers: authorized_headers(@user_in_org, '*')
     assert_response :ok
 
     body = JSON.parse(response.body, symbolize_names: true)
@@ -64,24 +63,22 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_operator body.dig(:potential_member_estimate), :>, 0
   end
 
-  test 'should not show without authorization' do
-    get api_v1_org_url(@user_in_org.org)
+  test 'should not show my_org without authorization' do
+    get api_v1_my_org_url
     assert_response :unauthorized
   end
 
-  test 'should not show with invalid authorization' do
-    get api_v1_org_url(@user_in_org.org),
+  test 'should not show my_org with invalid authorization' do
+    get api_v1_my_org_url,
       headers: authorized_headers(@user_in_org, '*', 1.minute.ago)
     assert_response :unauthorized
   end
 
-  test 'should not show Orgs that the user does not belong to' do
-    org = @user_in_org.org
-    other_org = orgs(:two)
-    assert_not_equal other_org.id, org.id
+  test 'my_org should return not_found when user has no org' do
+    user_without_org = users(:two)
+    assert_nil user_without_org.org
 
-    get api_v1_org_url(other_org),
-      headers: authorized_headers(@user_in_org, '*')
-    assert_response :unauthorized
+    get api_v1_my_org_url, headers: authorized_headers(user_without_org, '*')
+    assert_response :not_found
   end
 end

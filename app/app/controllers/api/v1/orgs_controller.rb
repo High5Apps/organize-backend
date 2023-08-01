@@ -5,7 +5,7 @@ class Api::V1::OrgsController < ApplicationController
     :potential_member_estimate,
   ]
 
-  before_action :authenticate_user, only: [:create, :show]
+  before_action :authenticate_user, only: [:create, :my_org]
 
   def create
     new_org = authenticated_user.build_org(create_params)
@@ -16,11 +16,11 @@ class Api::V1::OrgsController < ApplicationController
     end
   end
 
-  def show
+  def my_org
     org = authenticated_user.org
 
-    if org&.id != params[:id]
-      return render_error :unauthorized, "You don't belong to that Org"
+    unless org
+      return render_error :not_found, "You don't belong to an Org"
     end
 
     render json: {
