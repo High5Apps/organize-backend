@@ -37,32 +37,6 @@ class OrgTest < ActiveSupport::TestCase
     assert_not @org.valid?
   end
 
-  test 'potential_member_estimate should be present' do
-    @org.potential_member_estimate = nil
-    assert_not @org.valid?
-  end
-
-  test 'potential_member_estimate should be an integer' do
-    @org.potential_member_estimate = 200.5
-    assert_not @org.valid?
-  end
-
-  test 'potential_member_estimate should not be too small' do
-    @org.potential_member_estimate = Org::MIN_POTENTIAL_MEMBER_ESTIMATE
-    assert @org.valid?
-
-    @org.potential_member_estimate = Org::MIN_POTENTIAL_MEMBER_ESTIMATE - 1
-    assert_not @org.valid?
-  end
-
-  test 'potential_member_estimate should not be too large' do
-    @org.potential_member_estimate = Org::MAX_POTENTIAL_MEMBER_ESTIMATE
-    assert @org.valid?
-
-    @org.potential_member_estimate = Org::MAX_POTENTIAL_MEMBER_ESTIMATE + 1
-    assert_not @org.valid?
-  end
-
   test 'graph should include users' do
     users = @org.graph[:users]
     assert_equal [users(:one), users(:three), users(:four)].map(&:id),

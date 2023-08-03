@@ -16,8 +16,7 @@ potential_member_definition =
 
 Timecop.freeze($simulation.started_at) do
   creator.create_org! name: "Local #{random_local_number}",
-    potential_member_definition: potential_member_definition,
-    potential_member_estimate: $simulation.to_seed_data[:size]
+    potential_member_definition: potential_member_definition
 
   creator.save!
 end

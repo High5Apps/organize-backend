@@ -60,7 +60,6 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_not_empty body.dig(:id)
     assert_not_empty body.dig(:name)
     assert_not_empty body.dig(:potential_member_definition)
-    assert_operator body.dig(:potential_member_estimate), :>, 0
   end
 
   test 'should not show my_org without authorization' do

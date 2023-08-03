@@ -2,7 +2,6 @@ class Api::V1::OrgsController < ApplicationController
   PERMITTED_PARAMS = [
     :name,
     :potential_member_definition,
-    :potential_member_estimate,
   ]
 
   before_action :authenticate_user, only: [:create, :my_org]
@@ -28,7 +27,6 @@ class Api::V1::OrgsController < ApplicationController
       id: org.id,
       name: org.name,
       potential_member_definition: org.potential_member_definition,
-      potential_member_estimate: org.potential_member_estimate,
     }
   end
 

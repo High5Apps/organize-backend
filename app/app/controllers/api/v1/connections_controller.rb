@@ -33,7 +33,6 @@ class Api::V1::ConnectionsController < ApplicationController
           id: org.id,
           name: org.name,
           potential_member_definition: org.potential_member_definition,
-          potential_member_estimate: org.potential_member_estimate,
         }, user: {
           pseudonym: @authenticated_sharer.pseudonym,
         }
