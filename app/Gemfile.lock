@@ -1,10 +1,3 @@
-GIT
-  remote: https://github.com/High5Apps/rubystats
-  revision: e244b8f1eedb00982300f4a127a89d4e7f7e36fe
-  specs:
-    rubystats (0.4.0)
-      matrix
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -153,6 +146,8 @@ GEM
     rake (13.0.6)
     reline (0.3.3)
       io-console (~> 0.5)
+    rubystats (0.4.1)
+      matrix
     thor (1.2.1)
     timecop (0.9.6)
     timeout (0.3.2)
@@ -173,7 +168,7 @@ DEPENDENCIES
   pg (~> 1.1)
   puma (~> 5.0)
   rails (~> 7.0.2, >= 7.0.2.4)
-  rubystats!
+  rubystats (~> 0.4.1)
   timecop (~> 0.9)
   tzinfo-data
 

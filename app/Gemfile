@@ -42,8 +42,6 @@ group :development do
   # gem "spring"
 end
 
-# TODO: Use unforked rubystats once PR is merged and released
-# https://github.com/phillbaker/rubystats/pull/20#issuecomment-1525826940
 # Used in simulation and db seeds
-gem "rubystats", git: "https://github.com/High5Apps/rubystats"
+gem "rubystats", "~> 0.4.1"
 gem 'timecop', '~> 0.9'
