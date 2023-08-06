@@ -9,6 +9,7 @@ class User < ApplicationRecord
     foreign_key: 'recruiter_id',
     optional: true
 
+  has_many :posts
   has_many :recruits, foreign_key: 'recruiter_id', class_name: 'User'
   has_many :shared_connections,
     foreign_key: 'sharer_id', 

@@ -1,0 +1,15 @@
+one:
+  category: :grievances
+  title: 'Post with body'
+  body: 'Post body'
+  user: one
+
+two:
+  category: :general
+  title: 'Post without body'
+  user: two
+
+three:
+  category: :demands
+  title: 'Demand post'
+  user: one
