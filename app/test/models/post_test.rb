@@ -9,6 +9,11 @@ class PostTest < ActiveSupport::TestCase
     assert @post.valid?
   end
 
+  test 'org should be present' do
+    @post.org = nil
+    assert @post.invalid?
+  end
+
   test 'category should be present' do
     @post.category = nil
     assert @post.invalid?

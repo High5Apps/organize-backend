@@ -8,7 +8,13 @@ class Api::V1::PostsController < ApplicationController
   before_action :authenticate_user, only: [:create]
 
   def create
-    new_post = authenticated_user.posts.build(create_params)
+    org = authenticated_user.org
+    unless org
+      return render_error :not_found,
+        ['You must join an Org before you can create posts']
+    end
+
+    new_post = authenticated_user.posts.build(create_params.merge(org: org))
     if new_post.save
       render json: { id: new_post.id }, status: :created
     else

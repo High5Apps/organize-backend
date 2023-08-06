@@ -39,4 +39,14 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
       assert_response :unprocessable_entity
     end
   end
+
+  test 'should not create if user is not in an org' do
+    @user.update!(org: nil)
+    assert_nil @user.reload.org
+
+    assert_no_difference 'Post.count' do
+      post api_v1_posts_url, headers: @authorized_headers, params: @params
+      assert_response :not_found
+    end
+  end
 end

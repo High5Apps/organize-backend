@@ -4,8 +4,10 @@ class Post < ApplicationRecord
 
   enum category: [:general, :grievances, :demands]
 
+  belongs_to :org
   belongs_to :user
 
+  validates :org, presence: true
   validates :category,
     presence: true,
     inclusion: { in: categories }
