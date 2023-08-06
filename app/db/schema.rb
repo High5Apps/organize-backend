@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_06_142748) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_06_145832) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   create_table "connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "sharer_id"
-    t.uuid "scanner_id"
+    t.uuid "sharer_id", null: false
+    t.uuid "scanner_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["scanner_id"], name: "index_connections_on_scanner_id"
@@ -41,7 +41,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_06_142748) do
     t.integer "category", null: false
     t.string "title", null: false
     t.text "body"
-    t.uuid "user_id"
+    t.uuid "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "org_id", null: false
@@ -50,8 +50,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_06_142748) do
   end
 
   create_table "terms", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "user_id"
-    t.uuid "office_id"
+    t.uuid "user_id", null: false
+    t.uuid "office_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["office_id"], name: "index_terms_on_office_id"
