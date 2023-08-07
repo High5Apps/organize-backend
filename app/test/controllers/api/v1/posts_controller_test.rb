@@ -49,4 +49,64 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
       assert_response :not_found
     end
   end
+
+  test 'should index with valid authorization' do
+    get api_v1_posts_url, headers: @authorized_headers
+    assert_response :ok
+  end
+
+  test 'should not index with invalid authorization' do
+    get api_v1_posts_url, headers: { Authorization: 'bad'}
+    assert_response :unauthorized
+  end
+
+  test 'should not index if user is not in an Org' do
+    @user.update!(org: nil)
+    assert_nil @user.reload.org
+
+    get api_v1_posts_url, headers: @authorized_headers
+    assert_response :not_found
+  end
+
+  test 'index should include multiple posts' do
+    get api_v1_posts_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    posts = json_response.dig(:posts)
+    assert_operator posts.count, :>, 1
+  end
+
+  test 'index should only include posts from requester Org' do
+    get api_v1_posts_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    post_jsons = json_response.dig(:posts)
+    post_ids = post_jsons.map {|p| p[:id]}
+    posts = Post.find(post_ids)
+    posts.each do |post|
+      assert_equal post.org, @user.org
+    end
+  end
+  
+  test 'index should order posts with newest first' do
+    get api_v1_posts_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    post_jsons = json_response.dig(:posts)
+    post_created_ats = post_jsons.map {|p| p[:created_at]}
+
+    # Reverse is needed because sort is an ascending sort
+    assert_equal post_created_ats, post_created_ats.sort.reverse
+  end
+
+  test 'index should only include allow-listed attributes' do
+    get api_v1_posts_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    post_with_body = json_response.dig(:posts, 1)
+
+    attribute_allow_list = Api::V1::PostsController::INDEX_ATTRIBUTE_ALLOW_LIST
+
+    attribute_allow_list.each do |attribute|
+      assert_not_empty post_with_body[attribute]
+    end
+
+    assert_equal attribute_allow_list.count, post_with_body.keys.count
+  end
 end

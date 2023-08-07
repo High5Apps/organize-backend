@@ -5,16 +5,20 @@ class Api::V1::PostsController < ApplicationController
     :title,
   ]
 
-  before_action :authenticate_user, only: [:create]
+  INDEX_ATTRIBUTE_ALLOW_LIST = [
+    :id,
+    :category,
+    :title,
+    :body,
+    :user_id,
+    :created_at,
+  ]
+
+  before_action :authenticate_user, only: [:index, :create]
+  before_action :check_org_membership, only: [:index, :create]
 
   def create
-    org = authenticated_user.org
-    unless org
-      return render_error :not_found,
-        ['You must join an Org before you can create posts']
-    end
-
-    new_post = authenticated_user.posts.build(create_params.merge(org: org))
+    new_post = authenticated_user.posts.build(create_params.merge(org: @org))
     if new_post.save
       render json: { id: new_post.id }, status: :created
     else
@@ -22,9 +26,23 @@ class Api::V1::PostsController < ApplicationController
     end
   end
 
+  def index
+    posts = @org.posts.order created_at: :desc
+    render json: {
+      posts: posts.as_json(only: INDEX_ATTRIBUTE_ALLOW_LIST),
+    }
+  end
+
   private
 
   def create_params
     params.require(:post).permit(PERMITTED_PARAMS)
+  end
+
+  def check_org_membership
+    @org = authenticated_user.org
+    unless @org
+      render_error :not_found, ['You must join an Org first']
+    end
   end
 end
