@@ -12,6 +12,7 @@ class Api::V1::PostsController < ApplicationController
     :body,
     :user_id,
     :created_at,
+    :pseudonym,
   ]
 
   before_action :authenticate_user, only: [:index, :create]
@@ -27,10 +28,11 @@ class Api::V1::PostsController < ApplicationController
   end
 
   def index
-    posts = @org.posts.order created_at: :desc
-    render json: {
-      posts: posts.as_json(only: INDEX_ATTRIBUTE_ALLOW_LIST),
-    }
+    posts = @org.posts
+      .joins(:user)
+      .order(created_at: :desc)
+      .select(*INDEX_ATTRIBUTE_ALLOW_LIST)
+    render json: { posts: posts }
   end
 
   private
