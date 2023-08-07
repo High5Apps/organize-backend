@@ -104,7 +104,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     attribute_allow_list = Api::V1::PostsController::INDEX_ATTRIBUTE_ALLOW_LIST
 
     attribute_allow_list.each do |attribute|
-      assert_not_empty post_with_body[attribute]
+      assert_not_nil post_with_body[attribute]
     end
 
     assert_equal attribute_allow_list.count, post_with_body.keys.count

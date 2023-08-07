@@ -32,6 +32,7 @@ class Api::V1::PostsController < ApplicationController
       .joins(:user)
       .order(created_at: :desc)
       .select(*INDEX_ATTRIBUTE_ALLOW_LIST)
+      .map {|post| post.attributes.merge(created_at: post.created_at.to_f)}
     render json: { posts: posts }
   end
 
