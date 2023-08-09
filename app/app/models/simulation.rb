@@ -19,6 +19,7 @@ class Simulation
   def run(days: 10)
     @day = 0
     @connections = []
+    @posts = []
     @members = Set[]
     @members.add @company.most_passionate_employee
     @founder = @company.most_passionate_employee
@@ -47,6 +48,11 @@ class Simulation
     puts "Day #{@day}"
     puts "-----------------"
 
+    run_day_connections(day_start)
+    run_day_posts(day_start)  
+  end
+
+  def run_day_connections(day_start)
     @members.to_a.each do |member|
       unasked_close_links = member.unasked_closely_linked_employee_set
       next if unasked_close_links.count == 0
@@ -71,5 +77,24 @@ class Simulation
     end
 
     puts "Members: #{@members.count} of #{@company.size}"
+  end
+
+  def run_day_posts(day_start)
+    any_posts_today = false
+
+    @members.each do |member|
+      # Using probability_of_joining as a score of enthusiasm, the probability
+      # of posting grows linearly with enthusiasm from 1/20 to 1/10
+      probability_of_posting = 0.05 + (0.05 * member.probability_of_joining)
+      next unless rand < probability_of_posting
+
+      # Add up to a single line break between between the previous simulation
+      # section and this one, but only if there's at least one post today
+      puts unless any_posts_today
+      any_posts_today = true
+
+      puts "Member #{member.id} created a post"
+      @posts.push [member, day_start]
+    end
   end
 end
