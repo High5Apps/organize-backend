@@ -46,9 +46,10 @@ class OrgTest < ActiveSupport::TestCase
     second_user = users[users(:three).id]
     third_user = users[users(:four).id]
 
-    assert_equal 5, first_user.keys.count
+    assert_equal 6, first_user.keys.count
     assert_not_equal 0, first_user[:joined_at]
     assert_not_empty first_user[:pseudonym]
+    assert_not_empty first_user[:id]
 
     assert_equal 2, first_user[:recruit_count]
     assert_equal 0, second_user[:recruit_count]
