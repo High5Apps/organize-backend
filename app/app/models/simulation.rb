@@ -35,6 +35,7 @@ class Simulation
   def to_seed_data
     {
       connections: @connections.map { |e1, e2, t| [e1.id, e2.id, t] },
+      posts: @posts.map { |employee, timestamp| [employee.id, timestamp]},
       size: @company.size,
       user_ids: @members.map(&:id),
     }
