@@ -85,30 +85,6 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
       assert_equal post.org, @user.org
     end
   end
-  
-  test 'index should order posts with newest first' do
-    get api_v1_posts_url, headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    post_jsons = json_response.dig(:posts)
-    post_created_ats = post_jsons.map {|p| p[:created_at]}
-
-    # Reverse is needed because sort is an ascending sort
-    assert_equal post_created_ats, post_created_ats.sort.reverse
-  end
-
-  test 'index should only include allow-listed attributes' do
-    get api_v1_posts_url, headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    post_with_body = json_response.dig(:posts, 1)
-
-    attribute_allow_list = Api::V1::PostsController::INDEX_ATTRIBUTE_ALLOW_LIST
-
-    attribute_allow_list.each do |attribute|
-      assert_not_nil post_with_body[attribute]
-    end
-
-    assert_equal attribute_allow_list.count, post_with_body.keys.count
-  end
 
   test 'index should format created_at attributes as floats' do
     get api_v1_posts_url, headers: @authorized_headers

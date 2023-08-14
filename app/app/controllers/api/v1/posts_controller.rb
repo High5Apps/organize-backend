@@ -5,16 +5,6 @@ class Api::V1::PostsController < ApplicationController
     :title,
   ]
 
-  INDEX_ATTRIBUTE_ALLOW_LIST = [
-    :id,
-    :category,
-    :title,
-    :body,
-    :user_id,
-    :created_at,
-    :pseudonym,
-  ]
-
   before_action :authenticate_user, only: [:index, :create]
   before_action :check_org_membership, only: [:index, :create]
 
@@ -28,11 +18,7 @@ class Api::V1::PostsController < ApplicationController
   end
 
   def index
-    posts = @org.posts
-      .joins(:user)
-      .order(created_at: :desc)
-      .page(params[:page])
-      .select(*INDEX_ATTRIBUTE_ALLOW_LIST)
+    posts = Post::Query.build params, initial_posts: @org.posts
     render json: { posts: posts, meta: pagination_dict(posts) }
   end
 
