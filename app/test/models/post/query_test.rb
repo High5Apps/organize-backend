@@ -42,4 +42,11 @@ class PostQueryTest < ActiveSupport::TestCase
 
     assert_equal attribute_allow_list.count, post_json.keys.count
   end
+
+  test 'should respect created_after param' do
+    post = posts(:one)
+    posts = Post::Query.build({ created_after: post.created_at })
+    assert_not_equal Post.all, posts
+    assert_equal Post.created_after(post.created_at).sort, posts.sort
+  end
 end
