@@ -110,6 +110,13 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_equal attribute_allow_list.count, post_with_body.keys.count
   end
 
+  test 'index should format created_at attributes as floats' do
+    get api_v1_posts_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    created_at = json_response.dig(:posts, 1, :created_at)
+    assert_instance_of Float, created_at
+  end
+
   test 'index should include pagination metadata' do
     get api_v1_posts_url, headers: @authorized_headers
     json_response = JSON.parse(response.body, symbolize_names: true)

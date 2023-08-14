@@ -28,14 +28,12 @@ class Api::V1::PostsController < ApplicationController
   end
 
   def index
-    posts_relation = @org.posts
+    posts = @org.posts
       .joins(:user)
       .order(created_at: :desc)
       .page(params[:page])
       .select(*INDEX_ATTRIBUTE_ALLOW_LIST)
-    posts = posts_relation
-      .map {|post| post.attributes.merge(created_at: post.created_at.to_f)}
-    render json: { posts: posts, meta: pagination_dict(posts_relation) }
+    render json: { posts: posts, meta: pagination_dict(posts) }
   end
 
   private
