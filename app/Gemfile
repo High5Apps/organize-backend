@@ -48,3 +48,6 @@ gem 'timecop', '~> 0.9'
 
 # Used for random db seed data
 gem 'faker', '~> 3'
+
+# Used for pagination
+gem 'kaminari', '~> 1'

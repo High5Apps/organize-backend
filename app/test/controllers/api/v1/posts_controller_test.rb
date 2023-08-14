@@ -109,4 +109,20 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal attribute_allow_list.count, post_with_body.keys.count
   end
+
+  test 'index should include pagination metadata' do
+    get api_v1_posts_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    metadata = json_response[:meta]
+    assert json_response[:meta].key?(:current_page)
+    assert json_response[:meta].key?(:next_page)
+  end
+
+  test 'index should respect page param' do
+    page = 99
+    get api_v1_posts_url, headers: @authorized_headers, params: { page: page }
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    current_page = json_response.dig(:meta, :current_page)
+    assert_equal page, current_page
+  end
 end

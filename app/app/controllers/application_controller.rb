@@ -7,6 +7,13 @@ class ApplicationController < ActionController::API
     render_unauthorized unless authenticated_user
   end
 
+  def pagination_dict(collection)
+    {
+      current_page: collection.current_page,
+      next_page: collection.next_page,
+    }
+  end
+
   def render_unauthorized
     error_message = "You aren't authorized to do that."
     render_error :unauthorized, [error_message]
