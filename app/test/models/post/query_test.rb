@@ -11,11 +11,23 @@ class PostQueryTest < ActiveSupport::TestCase
     assert posts.all? { |post| post.org == org }
   end
 
-  test 'should order posts with newest first' do
+  test 'should order posts with newest first by default' do
     post_created_ats = Post::Query.build({}).pluck :created_at
 
     # Reverse is needed because sort is an ascending sort
-    assert_equal post_created_ats, post_created_ats.sort.reverse
+    assert_equal post_created_ats.sort.reverse, post_created_ats
+  end
+
+  test 'should order posts with newest first when sort param is new' do
+    post_created_ats = Post::Query.build({ sort: 'new' }).pluck :created_at
+
+    # Reverse is needed because sort is an ascending sort
+    assert_equal post_created_ats.sort.reverse, post_created_ats
+  end
+
+  test 'should order posts with oldest first when sort param is old' do
+    post_created_ats = Post::Query.build({ sort: 'old' }).pluck :created_at
+    assert_equal post_created_ats.sort, post_created_ats
   end
 
   test 'should only include allow-listed attributes' do

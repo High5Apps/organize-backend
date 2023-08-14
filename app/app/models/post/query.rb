@@ -14,9 +14,16 @@ class Post::Query
 
     posts = initial_posts
       .joins(:user)
-      .order(created_at: :desc)
       .page(params[:page])
       .select(*ATTRIBUTE_ALLOW_LIST)
+
+    # Default to sorting by new
+    sort_parameter = params[:sort] || 'new'
+    if sort_parameter == 'new'
+      posts = posts.order(created_at: :desc)
+    elsif  sort_parameter == 'old'
+      posts = posts.order(created_at: :asc)
+    end
 
     posts
   end
