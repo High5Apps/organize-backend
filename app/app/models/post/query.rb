@@ -23,6 +23,12 @@ class Post::Query
       posts = posts.created_after(created_after)
     end
 
+    created_before_param = params[:created_before]
+    if created_before_param
+      created_before = Time.at(created_before_param.to_f).utc
+      posts = posts.created_before(created_before)
+    end
+
     # Default to sorting by new
     sort_parameter = params[:sort] || 'new'
     if sort_parameter == 'new'

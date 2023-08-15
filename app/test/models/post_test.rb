@@ -57,4 +57,12 @@ class PostTest < ActiveSupport::TestCase
     assert_not_equal Post.count, posts.count
     assert posts.all? { |post| post.created_at > created_at }
   end
+
+  test 'created_before should filter by created_at' do
+    post = posts(:two)
+    created_at = post.created_at
+    posts = Post.created_before(created_at)
+    assert_not_equal Post.count, posts.count
+    assert posts.all? { |post| post.created_at < created_at }
+  end
 end

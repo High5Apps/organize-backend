@@ -44,9 +44,16 @@ class PostQueryTest < ActiveSupport::TestCase
   end
 
   test 'should respect created_after param' do
-    post = posts(:one)
+    post = posts(:two)
     posts = Post::Query.build({ created_after: post.created_at })
     assert_not_equal Post.all, posts
     assert_equal Post.created_after(post.created_at).sort, posts.sort
+  end
+
+  test 'should respect created_before param' do
+    post = posts(:two)
+    posts = Post::Query.build({ created_before: post.created_at })
+    assert_not_equal Post.all, posts
+    assert_equal Post.created_before(post.created_at).sort, posts.sort
   end
 end
