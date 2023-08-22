@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_07_065828) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_22_205703) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "body", null: false
+    t.uuid "post_id", null: false
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
+  end
 
   create_table "connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "sharer_id", null: false
@@ -70,6 +80,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_07_065828) do
     t.index ["recruiter_id"], name: "index_users_on_recruiter_id"
   end
 
+  add_foreign_key "comments", "posts"
+  add_foreign_key "comments", "users"
   add_foreign_key "connections", "users", column: "scanner_id"
   add_foreign_key "connections", "users", column: "sharer_id"
   add_foreign_key "posts", "users"

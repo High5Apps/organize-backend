@@ -1,0 +1,14 @@
+one:
+  post: one
+  user: three
+  body: 'Comment body'
+
+two:
+  post: one
+  user: one
+  body: 'Another comment'
+
+three:
+  post: two
+  user: five
+  body: 'Another comment'
