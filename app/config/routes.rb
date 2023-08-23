@@ -4,7 +4,7 @@ Rails.application.routes.draw do
       resources :connections,  only: [:create]
       resources :orgs, only: [:create]
       resources :posts, only: [:index, :create] do
-        resources :comments, only: [:create]
+        resources :comments, only: [:index, :create]
       end
       resources :users, only: [:create, :show]
 

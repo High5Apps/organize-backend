@@ -1,10 +1,18 @@
 class Api::V1::CommentsController < ApplicationController
+  INDEX_ATTRIBUTE_ALLOW_LIST = [
+    :id,
+    :body,
+    :user_id,
+    :created_at,
+    :pseudonym,
+  ]
+
   PERMITTED_PARAMS = [
     :body,
   ]
 
-  before_action :authenticate_user, only: [:create]
-  before_action :check_post_belongs_to_org, only: [:create]
+  before_action :authenticate_user, only: [:index, :create]
+  before_action :check_post_belongs_to_org, only: [:index, :create]
 
   def create
     new_comment = \
@@ -14,6 +22,14 @@ class Api::V1::CommentsController < ApplicationController
     else
       render_error :unprocessable_entity, new_comment.errors.full_messages
     end
+  end
+
+  def index
+    comments = @post.comments
+      .joins(:user)
+      .order(created_at: :desc)
+      .select(*INDEX_ATTRIBUTE_ALLOW_LIST)
+    render json: { comments: comments }
   end
 
   private
