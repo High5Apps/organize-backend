@@ -11,6 +11,7 @@ class Post < ApplicationRecord
   belongs_to :user
 
   has_many :comments
+  has_many :up_votes
 
   validates :org, presence: true
   validates :category,

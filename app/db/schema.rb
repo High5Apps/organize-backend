@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_22_205703) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_24_181933) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -68,6 +68,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_22_205703) do
     t.index ["user_id"], name: "index_terms_on_user_id"
   end
 
+  create_table "up_votes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "value", null: false
+    t.uuid "user_id", null: false
+    t.uuid "post_id"
+    t.uuid "comment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_id", "user_id"], name: "index_up_votes_on_comment_id_and_user_id", unique: true
+    t.index ["post_id", "user_id"], name: "index_up_votes_on_post_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_up_votes_on_user_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "org_id"
     t.binary "public_key_bytes", null: false
@@ -87,5 +99,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_22_205703) do
   add_foreign_key "posts", "users"
   add_foreign_key "terms", "offices"
   add_foreign_key "terms", "users"
+  add_foreign_key "up_votes", "comments"
+  add_foreign_key "up_votes", "posts"
+  add_foreign_key "up_votes", "users"
   add_foreign_key "users", "users", column: "recruiter_id"
 end

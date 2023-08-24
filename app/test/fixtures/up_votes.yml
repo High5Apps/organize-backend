@@ -1,0 +1,34 @@
+one:
+  user: one
+  post: one
+  value: 1
+
+two:
+  user: three
+  post: one
+  value: 1
+
+three:
+  user: four
+  post: one
+  value: -1
+
+four:
+  user: three
+  comment: one
+  value: 1
+
+five:
+  user: one
+  comment: one
+  value: -1
+
+six:
+  user: four
+  comment: one
+  value: 1
+
+seven:
+  user: five
+  comment: three
+  value: 1
