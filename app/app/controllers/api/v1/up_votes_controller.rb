@@ -3,8 +3,9 @@ class Api::V1::UpVotesController < ApplicationController
     :value,
   ]
 
-  before_action :authenticate_user, only: [:create]
+  before_action :authenticate_user, only: [:create, :update]
   before_action :check_commentable_belongs_to_org, only: [:create]
+  before_action :check_up_vote_belongs_to_user, only: [:update]
 
   def create
     params_with_user_id = create_params.merge user_id: authenticated_user.id
@@ -13,6 +14,14 @@ class Api::V1::UpVotesController < ApplicationController
       render json: { id: new_up_vote.id }, status: :created
     else
       render_error :unprocessable_entity, new_up_vote.errors.full_messages
+    end
+  end
+
+  def update
+    if @up_vote.update update_params
+      head :no_content
+    else
+      render_error :unprocessable_entity, @up_vote.errors.full_messages
     end
   end
 
@@ -40,6 +49,17 @@ class Api::V1::UpVotesController < ApplicationController
   end
   
   def create_params
+    params.require(:up_vote).permit(PERMITTED_PARAMS)
+  end
+
+  def check_up_vote_belongs_to_user
+    @up_vote = authenticated_user.up_votes.find_by id: params[:id]
+    unless @up_vote
+      render_error :not_found, ['Up vote not found']
+    end
+  end
+
+  def update_params
     params.require(:up_vote).permit(PERMITTED_PARAMS)
   end
 end
