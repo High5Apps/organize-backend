@@ -6,11 +6,6 @@ class Api::V1::UpVotesControllerTest < ActionDispatch::IntegrationTest
     setup_test_key(@user)
     @authorized_headers = authorized_headers(@user, '*')
 
-    @up_vote = up_votes(:one)
-    @old_value = @up_vote.value
-    @new_value = -1
-    assert_not_equal @old_value, @new_value
-
     post = posts(:three)
     comment = comments(:two)
     @commentable_urls = [
@@ -96,70 +91,5 @@ class Api::V1::UpVotesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :not_found
-  end
-
-  test 'should update with valid params' do
-    assert_changes -> { @up_vote.reload.value }, {
-      from: @old_value, to: @new_value,
-    } do
-      patch api_v1_up_vote_url(@up_vote),
-        headers: @authorized_headers,
-        params: { up_vote: @params[:up_vote].merge(value: @new_value) }
-    end
-
-    assert_response :no_content
-  end
-
-  test 'should not update with invalid authorization' do
-    assert_no_changes -> { @up_vote.reload.value } do
-      patch api_v1_up_vote_url(@up_vote),
-        headers: { Authorization: 'bad'},
-        params: { up_vote: @params[:up_vote].merge(value: @new_value) }
-    end
-
-    assert_response :unauthorized
-  end
-
-  test 'should not update with invalid params' do
-    assert_no_changes -> { @up_vote.reload.value } do
-      patch api_v1_up_vote_url(@up_vote),
-        headers: @authorized_headers,
-        params: { up_vote: @params[:up_vote].merge(value: 2) }
-    end
-
-    assert_response :unprocessable_entity
-  end
-
-  test 'should not update when up vote belongs to another user' do
-    up_vote_of_another_user = up_votes(:two)
-    assert_not_equal @user, up_vote_of_another_user.user
-    assert_not_equal up_vote_of_another_user.value, @new_value
-    assert_no_changes -> { up_vote_of_another_user.reload.value } do
-      patch api_v1_up_vote_url(up_vote_of_another_user),
-        headers: @authorized_headers,
-        params: { up_vote: @params[:up_vote].merge(value: @new_value) }
-    end
-
-    assert_response :not_found
-  end
-
-  test 'should ignore unpermitted params and only update permitted params' do
-    other_post = posts(:two)
-    assert_changes -> { @up_vote.reload.value }, {
-      from: @old_value, to: @new_value,
-    } do
-      assert_no_changes -> { @up_vote.reload.post_id } do
-        patch api_v1_up_vote_url(@up_vote),
-          headers: @authorized_headers,
-          params: {
-            up_vote: @params[:up_vote].merge(
-              post_id: other_post.id,
-              value: @new_value,
-            )
-          }
-      end
-    end
-
-    assert_response :no_content
   end
 end

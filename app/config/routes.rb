@@ -5,7 +5,6 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
-      resources :up_votes, only: [:update]
       resources :connections,  only: [:create]
       resources :orgs, only: [:create]
       resources :posts, concerns: :up_votable, only: [:index, :create] do
