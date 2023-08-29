@@ -4,11 +4,11 @@ class Api::V1::UpVotesController < ApplicationController
   ]
 
   before_action :authenticate_user, only: [:create]
-  before_action :check_commentable_belongs_to_org, only: [:create]
+  before_action :check_up_votable_belongs_to_org, only: [:create]
 
   def create
     params_with_user_id = create_params.merge user_id: authenticated_user.id
-    new_up_vote = @commentable.up_votes.build params_with_user_id
+    new_up_vote = @up_votable.up_votes.build params_with_user_id
     if new_up_vote.save
       render json: { id: new_up_vote.id }, status: :created
     else
@@ -18,7 +18,7 @@ class Api::V1::UpVotesController < ApplicationController
 
   private
 
-  def check_commentable_belongs_to_org
+  def check_up_votable_belongs_to_org
     post_id = params[:post_id]
     comment_id = params[:comment_id]
 
@@ -27,11 +27,11 @@ class Api::V1::UpVotesController < ApplicationController
     end
 
     if post_id
-      @commentable = Post.find_by id: post_id
-      post = @commentable
+      @up_votable = Post.find_by id: post_id
+      post = @up_votable
     else
-      @commentable = Comment.includes(:post).find_by id: comment_id
-      post = @commentable&.post
+      @up_votable = Comment.includes(:post).find_by id: comment_id
+      post = @up_votable&.post
     end
 
     unless post&.org == authenticated_user.org
