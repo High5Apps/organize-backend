@@ -21,12 +21,12 @@ four:
 five:
   user: one
   comment: one
-  value: -1
+  value: 1
 
 six:
   user: four
   comment: one
-  value: 1
+  value: -1
 
 seven:
   user: five

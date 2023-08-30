@@ -6,9 +6,10 @@ class UpVote < ApplicationRecord
   belongs_to :post, optional: true
   belongs_to :user
 
-  validates :comment, uniqueness: { scope: :user, allow_nil: true }
+  # It's not possible to validate post/comment uniqueness due to the manual
+  # validation performed in UpVotesController#create. However, uniqueness is
+  # ensured at the database level.
   validates :user, presence: true
-  validates :post, uniqueness: { scope: :user, allow_nil: true }
   validates :value,
     numericality: {
       greater_than_or_equal_to: -1,
