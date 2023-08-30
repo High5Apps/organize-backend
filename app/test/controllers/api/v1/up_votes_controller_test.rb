@@ -13,20 +13,6 @@ class Api::V1::UpVotesControllerTest < ActionDispatch::IntegrationTest
       api_v1_comment_up_votes_url(comment),
     ]
 
-    @nonexistent_up_votable_urls = [
-      api_v1_post_up_votes_url('non-existent-post-id'),
-      api_v1_comment_up_votes_url('non-existent-comment-id'),
-    ]
-
-    @post_in_another_org = posts(:two)
-    assert_not_equal @user.org, @post_in_another_org.org
-    @comment_in_another_org = comments(:three)
-    assert_not_equal @user.org, @comment_in_another_org.post.org
-    @up_votable_urls_in_other_orgs = [
-      api_v1_post_up_votes_url(@post_in_another_org),
-      api_v1_comment_up_votes_url(@comment_in_another_org),
-    ]
-
     @params = {
       up_vote: {
         value: 1,
@@ -70,9 +56,13 @@ class Api::V1::UpVotesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create on a nonexistent up-votable' do
-    assert_equal @up_votable_urls.count, @nonexistent_up_votable_urls.count
+    nonexistent_up_votable_urls = [
+      api_v1_post_up_votes_url('non-existent-post-id'),
+      api_v1_comment_up_votes_url('non-existent-comment-id'),
+    ]
+    assert_equal @up_votable_urls.count, nonexistent_up_votable_urls.count
 
-    @nonexistent_up_votable_urls.each do |url|
+    nonexistent_up_votable_urls.each do |url|
       assert_no_difference 'UpVote.count' do
         post url, headers: @authorized_headers, params: @params
       end
@@ -82,9 +72,17 @@ class Api::V1::UpVotesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create if up-votable belongs to another Org' do
-    assert_equal @up_votable_urls.count, @up_votable_urls_in_other_orgs.count
+    post_in_another_org = posts(:two)
+    assert_not_equal @user.org, post_in_another_org.org
+    comment_in_another_org = comments(:three)
+    assert_not_equal @user.org, comment_in_another_org.post.org
+    up_votable_urls_in_other_orgs = [
+      api_v1_post_up_votes_url(post_in_another_org),
+      api_v1_comment_up_votes_url(comment_in_another_org),
+    ]
+    assert_equal @up_votable_urls.count, up_votable_urls_in_other_orgs.count
 
-    @up_votable_urls_in_other_orgs.each do |url|
+    up_votable_urls_in_other_orgs.each do |url|
       assert_no_difference 'UpVote.count' do
         post url, headers: @authorized_headers, params: @params
       end
