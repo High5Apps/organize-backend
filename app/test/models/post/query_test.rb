@@ -56,4 +56,26 @@ class PostQueryTest < ActiveSupport::TestCase
     assert_not_equal Post.all, posts
     assert_equal Post.created_before(post.created_at).sort, posts.sort
   end
+
+  test 'should include all categories when category param is not set' do
+    posts = Post::Query.build.to_a
+    assert posts.any?(&:general?)
+    assert posts.any?(&:grievances?)
+    assert posts.any?(&:demands?)
+  end
+
+  test 'should only include general posts when category param is general' do
+    posts = Post::Query.build({ category: 'general'})
+    assert posts.to_a.all?(&:general?)
+  end
+
+  test 'should only include grievances when category param is grievances' do
+    posts = Post::Query.build({ category: 'grievances'})
+    assert posts.to_a.all?(&:grievances?)
+  end
+
+  test 'should only include demands when category param is demands' do
+    posts = Post::Query.build({ category: 'demands'})
+    assert posts.to_a.all?(&:demands?)
+  end
 end

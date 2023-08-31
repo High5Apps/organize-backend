@@ -9,13 +9,22 @@ class Post::Query
     :pseudonym,
   ]
 
-  def self.build(params, initial_posts: nil)
+  def self.build(params={}, initial_posts: nil)
     initial_posts ||= Post.all
 
     posts = initial_posts
       .joins(:user)
       .page(params[:page])
       .select(*ATTRIBUTE_ALLOW_LIST)
+
+    category_parameter = params[:category]
+    if category_parameter == 'general'
+      posts = posts.general
+    elsif category_parameter == 'grievances'
+      posts = posts.grievances
+    elsif category_parameter == 'demands'
+      posts = posts.demands
+    end
 
     created_after_param = params[:created_after]
     if created_after_param
