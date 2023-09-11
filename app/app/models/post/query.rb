@@ -1,21 +1,24 @@
 class Post::Query
-  ATTRIBUTE_ALLOW_LIST = [
-    :id,
-    :category,
-    :title,
-    :body,
-    :user_id,
-    :created_at,
-    :pseudonym,
-  ]
+  ALLOWED_ATTRIBUTES = {
+    id: '',
+    category: '',
+    title: '',
+    body: '',
+    user_id: '',
+    created_at: '',
+    pseudonym: '',
+    score: 'COALESCE(SUM(value), 0) as score',
+  }
+  SELECTIONS = ALLOWED_ATTRIBUTES.map { |k,v| (v.blank?) ? k : v }
 
   def self.build(params={}, initial_posts: nil)
     initial_posts ||= Post.all
 
     posts = initial_posts
-      .joins(:user)
+      .left_outer_joins(:user, :up_votes)
       .page(params[:page])
-      .select(*ATTRIBUTE_ALLOW_LIST)
+      .group(:id, :pseudonym)
+      .select(*SELECTIONS)
 
     category_parameter = params[:category]
     if category_parameter == 'general'

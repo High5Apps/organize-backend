@@ -1,6 +1,9 @@
 class PostQueryTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
+
+    @post_with_upvotes = posts(:one)
+    @post_without_upvotes = posts(:two)
   end
 
   test 'should respect initial_posts' do
@@ -34,7 +37,7 @@ class PostQueryTest < ActiveSupport::TestCase
     posts = Post::Query.build({}, initial_posts: @user.org.posts)
     post_json = posts.first.as_json.with_indifferent_access
   
-    attribute_allow_list = Post::Query::ATTRIBUTE_ALLOW_LIST
+    attribute_allow_list = Post::Query::ALLOWED_ATTRIBUTES.keys
 
     attribute_allow_list.each do |attribute|
       assert post_json.key?(attribute)
@@ -77,5 +80,23 @@ class PostQueryTest < ActiveSupport::TestCase
   test 'should only include demands when category param is demands' do
     posts = Post::Query.build({ category: 'demands'})
     assert posts.to_a.all?(&:demands?)
+  end
+
+  test 'should include posts without any upvotes' do
+    assert_empty @post_without_upvotes.up_votes
+    post_ids = Post::Query.build.ids
+    assert_includes post_ids, @post_without_upvotes.id
+  end
+
+  test 'posts without upvotes should have a score of 0' do
+    post = Post::Query.build.find @post_without_upvotes.id
+    assert_equal 0, post.score
+  end
+
+  test 'should include score as the sum of upvote and downvotes' do
+    assert_not_empty @post_with_upvotes.up_votes
+    expected_score = @post_with_upvotes.up_votes.sum(:value)
+    post = Post::Query.build.find @post_with_upvotes.id
+    assert_equal expected_score, post.score
   end
 end
