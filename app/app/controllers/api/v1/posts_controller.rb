@@ -18,7 +18,7 @@ class Api::V1::PostsController < ApplicationController
   end
 
   def index
-    posts = Post::Query.build params, initial_posts: @org.posts
+    posts = Post::Query.build query_params, initial_posts: @org.posts
     render json: { posts: posts, meta: pagination_dict(posts) }
   end
 
@@ -33,5 +33,9 @@ class Api::V1::PostsController < ApplicationController
     unless @org
       render_error :not_found, ['You must join an Org first']
     end
+  end
+
+  def query_params
+    params.merge requester_id: authenticated_user.id
   end
 end

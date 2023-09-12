@@ -99,4 +99,18 @@ class PostQueryTest < ActiveSupport::TestCase
     post = Post::Query.build.find @post_with_upvotes.id
     assert_equal expected_score, post.score
   end
+
+  test "should include my_vote as the requester's upvote value" do
+    expected_vote = @user.up_votes.where(post: @post_with_upvotes).first.value
+    assert_not_equal 0, expected_vote
+    vote = Post::Query.build({ requester_id: @user.id})
+      .find(@post_with_upvotes.id).my_vote
+    assert_equal expected_vote, vote
+  end
+
+  test 'should include my_vote as 0 when the user has not upvoted or downvoted' do
+    vote = Post::Query.build({ requester_id: @user.id})
+      .find(@post_without_upvotes.id).my_vote
+    assert_equal 0, vote
+  end
 end

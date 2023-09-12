@@ -7,9 +7,9 @@ class Post::Query
     user_id: '',
     created_at: '',
     pseudonym: '',
-    score: 'COALESCE(SUM(value), 0) as score',
+    score: '',
+    my_vote: '',
   }
-  SELECTIONS = ALLOWED_ATTRIBUTES.map { |k,v| (v.blank?) ? k : v }
 
   def self.build(params={}, initial_posts: nil)
     initial_posts ||= Post.all
@@ -18,7 +18,7 @@ class Post::Query
       .left_outer_joins(:user, :up_votes)
       .page(params[:page])
       .group(:id, :pseudonym)
-      .select(*SELECTIONS)
+      .select(*selections(params))
 
     category_parameter = params[:category]
     if category_parameter == 'general'
@@ -50,5 +50,20 @@ class Post::Query
     end
 
     posts
+  end
+
+  private
+
+  def self.selections(params)
+    score = 'COALESCE(SUM(value), 0) AS score'
+
+    # Even though there is at most one upvote per requester per post, SUM is
+    # used because an aggregate function is required
+    my_vote = Post.sanitize_sql_array([
+      "SUM(CASE WHEN up_votes.user_id = :requester_id THEN value ELSE 0 END) AS my_vote",
+      requester_id: params[:requester_id]])
+
+    attributes = ALLOWED_ATTRIBUTES.merge(my_vote: my_vote, score: score)
+    attributes.map { |k,v| (v.blank?) ? k : v }
   end
 end
