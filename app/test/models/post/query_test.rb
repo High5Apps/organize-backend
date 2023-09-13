@@ -34,6 +34,12 @@ class PostQueryTest < ActiveSupport::TestCase
     assert_equal post_created_ats.sort, post_created_ats
   end
 
+  test 'sorting by new should be the opposite of sorting by old' do
+    newest_posts = Post::Query.build({ sort: 'new' })
+    oldest_posts = Post::Query.build({ sort: 'old' })
+    assert_equal newest_posts, oldest_posts.reverse
+  end
+
   test 'should order posts by most upvotes when sort param is top' do
     post_scores = Post::Query.build({ sort: 'top' }).map(&:score)
 
