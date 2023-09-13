@@ -45,8 +45,10 @@ class Post::Query
     sort_parameter = params[:sort] || 'new'
     if sort_parameter == 'new'
       posts = posts.order(created_at: :desc)
-    elsif  sort_parameter == 'old'
+    elsif sort_parameter == 'old'
       posts = posts.order(created_at: :asc)
+    elsif sort_parameter == 'top'
+      posts = posts.order(score: :desc, id: :desc)
     end
 
     posts

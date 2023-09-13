@@ -4,6 +4,7 @@ class PostQueryTest < ActiveSupport::TestCase
 
     @post_with_upvotes = posts(:one)
     @post_without_upvotes = posts(:two)
+    @another_post_without_upvotes = posts(:three)
   end
 
   test 'should respect initial_posts' do
@@ -31,6 +32,29 @@ class PostQueryTest < ActiveSupport::TestCase
   test 'should order posts with oldest first when sort param is old' do
     post_created_ats = Post::Query.build({ sort: 'old' }).pluck :created_at
     assert_equal post_created_ats.sort, post_created_ats
+  end
+
+  test 'should order posts by most upvotes when sort param is top' do
+    post_scores = Post::Query.build({ sort: 'top' }).map(&:score)
+
+    # Reverse is needed because sort is an ascending sort
+    assert_equal post_scores.sort.reverse, post_scores
+  end
+
+  test 'top sort should break ties by descending post ID' do
+    assert_empty @post_without_upvotes.up_votes
+    assert_empty @another_post_without_upvotes.up_votes
+    alphabetically_sorted_post_ids = [
+      @post_without_upvotes,
+      @another_post_without_upvotes,
+    ].map { |p| p.id }.sort 
+    expected_earlier_post = alphabetically_sorted_post_ids.last
+    expected_later_post = alphabetically_sorted_post_ids.first
+
+    post_ids = Post::Query.build({ sort: 'top' }).map(&:id)
+    assert_operator post_ids.find_index(expected_earlier_post),
+      :<,
+      post_ids.find_index(expected_later_post)
   end
 
   test 'should only include allow-listed attributes' do
