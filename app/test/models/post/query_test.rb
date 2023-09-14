@@ -79,15 +79,32 @@ class PostQueryTest < ActiveSupport::TestCase
   test 'should respect created_after param' do
     post = posts(:two)
     posts = Post::Query.build({ created_after: post.created_at })
-    assert_not_equal Post.all, posts
+    assert_not_equal Post.all.to_a.count, posts.to_a.count
     assert_equal Post.created_after(post.created_at).sort, posts.sort
   end
 
   test 'should respect created_before param' do
     post = posts(:two)
     posts = Post::Query.build({ created_before: post.created_at })
-    assert_not_equal Post.all, posts
+    assert_not_equal Post.all.to_a.count, posts.to_a.count
     assert_equal Post.created_before(post.created_at).sort, posts.sort
+  end
+
+  test 'created_before should apply to up_votes' do
+    up_vote = up_votes(:three)
+    post = up_vote.post
+    created_before = up_vote.created_at
+
+    windowed_posts = Post::Query.build({ created_before: created_before })
+    windowed_score = windowed_posts.find(post.id).score
+    unwindowed_score = Post::Query.build.find(post.id).score
+    assert_not_equal unwindowed_score, windowed_score
+
+    expected_score = Post.find(post.id).up_votes
+      .filter{ |uv| uv.created_at < created_before }
+      .map(&:value)
+      .sum
+    assert_equal expected_score, windowed_score
   end
 
   test 'should include all categories when category param is not set' do

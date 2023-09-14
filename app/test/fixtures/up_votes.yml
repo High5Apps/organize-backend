@@ -2,33 +2,40 @@ one:
   user: one
   post: one
   value: 1
+  created_at: <%= 10.seconds.from_now.to_fs(:db) %>
 
 two:
   user: three
   post: one
   value: 1
+  created_at: <%= 11.seconds.from_now.to_fs(:db) %>
 
 three:
   user: four
   post: one
   value: -1
+  created_at: <%= 12.seconds.from_now.to_fs(:db) %>
 
 four:
   user: three
   comment: one
   value: 1
+  created_at: <%= 13.seconds.from_now.to_fs(:db) %>
 
 five:
   user: one
   comment: one
   value: 1
+  created_at: <%= 14.seconds.from_now.to_fs(:db) %>
 
 six:
   user: four
   comment: one
   value: -1
+  created_at: <%= 15.seconds.from_now.to_fs(:db) %>
 
 seven:
   user: five
   comment: three
   value: 1
+  created_at: <%= 16.seconds.from_now.to_fs(:db) %>

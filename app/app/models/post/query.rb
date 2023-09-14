@@ -11,11 +11,26 @@ class Post::Query
     my_vote: '',
   }
 
+  FAR_FUTURE_TIME = 1.year.from_now.freeze
+  UP_VOTE_JOIN_TEMPLATE = %(
+    LEFT OUTER JOIN up_votes
+      ON up_votes.post_id = posts.id
+        AND up_votes.created_at < :created_before
+  ).gsub(/\s+/, ' ').freeze
+  private_constant :FAR_FUTURE_TIME, :UP_VOTE_JOIN_TEMPLATE
+
   def self.build(params={}, initial_posts: nil)
     initial_posts ||= Post.all
 
+    created_before_param = params[:created_before] || FAR_FUTURE_TIME
+    created_before = Time.at(created_before_param.to_f).utc
+
     posts = initial_posts
-      .left_outer_joins(:user, :up_votes)
+      .created_before(created_before)
+      .joins(:user)
+      .joins(Post.sanitize_sql_array([
+        UP_VOTE_JOIN_TEMPLATE, created_before: created_before,
+      ]))
       .page(params[:page])
       .group(:id, :pseudonym)
       .select(*selections(params))
@@ -33,12 +48,6 @@ class Post::Query
     if created_after_param
       created_after = Time.at(created_after_param.to_f).utc
       posts = posts.created_after(created_after)
-    end
-
-    created_before_param = params[:created_before]
-    if created_before_param
-      created_before = Time.at(created_before_param.to_f).utc
-      posts = posts.created_before(created_before)
     end
 
     # Default to sorting by new
