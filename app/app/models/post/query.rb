@@ -13,9 +13,20 @@ class Post::Query
 
   FAR_FUTURE_TIME = 1.year.from_now.freeze
   UP_VOTE_JOIN_TEMPLATE = %(
-    LEFT OUTER JOIN up_votes
-      ON up_votes.post_id = posts.id
-        AND up_votes.created_at < :created_before
+    LEFT OUTER JOIN (
+      SELECT *
+      FROM (
+        SELECT *,
+          FIRST_VALUE(up_votes.id) OVER (
+            PARTITION BY up_votes.user_id, up_votes.post_id
+            ORDER BY up_votes.created_at DESC, up_votes.id DESC
+          ) AS first_id
+        FROM up_votes
+        WHERE up_votes.created_at < :created_before
+      ) AS recent_up_votes
+      WHERE recent_up_votes.id = first_id
+    ) AS most_recent_upvotes
+      ON most_recent_upvotes.post_id = posts.id
   ).gsub(/\s+/, ' ').freeze
   private_constant :FAR_FUTURE_TIME, :UP_VOTE_JOIN_TEMPLATE
 
@@ -68,10 +79,10 @@ class Post::Query
   def self.selections(params)
     score = 'COALESCE(SUM(value), 0) AS score'
 
-    # Even though there is at most one upvote per requester per post, SUM is
-    # used because an aggregate function is required
+    # Even though there is at most one most_recent_upvote per requester per
+    # post, SUM is used because an aggregate function is required
     my_vote = Post.sanitize_sql_array([
-      "SUM(CASE WHEN up_votes.user_id = :requester_id THEN value ELSE 0 END) AS my_vote",
+      "SUM(CASE WHEN most_recent_upvotes.user_id = :requester_id THEN value ELSE 0 END) AS my_vote",
       requester_id: params[:requester_id]])
 
     attributes = ALLOWED_ATTRIBUTES.merge(my_vote: my_vote, score: score)
