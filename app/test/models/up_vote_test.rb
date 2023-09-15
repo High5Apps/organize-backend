@@ -45,16 +45,16 @@ class UpVoteTest < ActiveSupport::TestCase
     assert @post_up_vote.valid?
   end
 
-  test 'should not allow users to double up vote the same post' do
+  test 'should allow a user to create multiple up votes on a single post' do
     assert_not_nil @post_up_vote.post
-    assert_raises ActiveRecord::RecordNotUnique do
+    assert_difference 'UpVote.count', 1 do
       @post_up_vote.dup.save
     end
   end
 
-  test 'should not allow users to double up vote the same comment' do
+  test 'should allow users to create multiple up votes on a single comment' do
     assert_not_nil @comment_up_vote.comment
-    assert_raises ActiveRecord::RecordNotUnique do
+    assert_difference 'UpVote.count', 1 do
       @comment_up_vote.dup.save
     end
   end

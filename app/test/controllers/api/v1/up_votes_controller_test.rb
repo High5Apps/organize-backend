@@ -18,27 +18,6 @@ class Api::V1::UpVotesControllerTest < ActionDispatch::IntegrationTest
         value: 1,
       }
     }
-
-    post_up_vote = up_votes(:one)
-    assert_not_nil post_up_vote.post
-
-    comment_up_vote = up_votes(:five)
-    assert_not_nil comment_up_vote.comment
-
-    @up_votes = [
-      post_up_vote,
-      comment_up_vote,
-    ]
-    @up_votes.each do |up_vote|
-      assert_equal @user, up_vote.user
-      assert_equal @params[:up_vote][:value], up_vote.value
-    end
-
-    @up_vote_urls = [
-      api_v1_post_up_votes_url(post_up_vote.post),
-      api_v1_comment_up_votes_url(comment_up_vote.comment),
-    ]
-    assert_equal @up_votable_urls.count, @up_vote_urls.count
   end
 
   test 'should create with valid params' do
@@ -46,7 +25,7 @@ class Api::V1::UpVotesControllerTest < ActionDispatch::IntegrationTest
       assert_difference 'UpVote.count', 1 do
         post url, headers: @authorized_headers, params: @params
       end
-  
+
       assert_response :created
     end
   end
@@ -107,31 +86,5 @@ class Api::V1::UpVotesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :not_found
-  end
-
-  test 'create should not modify a pre-existing up-vote when the value is unchanged' do
-    @up_vote_urls.each_with_index do |url, i|
-      assert_no_difference 'UpVote.count' do
-        assert_no_changes -> { @up_votes[i].reload.updated_at } do
-          post url, headers: @authorized_headers, params: @params
-        end
-      end
-  
-      assert_response :not_modified
-    end
-  end
-
-  test 'create should update a pre-existing up-vote when the value is different' do
-    @up_vote_urls.each_with_index do |url, i|
-      assert_no_difference 'UpVote.count' do
-        assert_changes -> { @up_votes[i].reload.updated_at } do
-          post url,
-            headers: @authorized_headers,
-            params: { up_vote: { value: -1 } }
-        end
-      end
-  
-      assert_response :ok
-    end
   end
 end

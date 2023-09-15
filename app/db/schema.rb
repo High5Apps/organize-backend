@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_24_181933) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_15_112919) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -75,8 +75,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_24_181933) do
     t.uuid "comment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["comment_id", "user_id"], name: "index_up_votes_on_comment_id_and_user_id", unique: true
-    t.index ["post_id", "user_id"], name: "index_up_votes_on_post_id_and_user_id", unique: true
+    t.index ["comment_id"], name: "index_up_votes_on_comment_id"
+    t.index ["post_id"], name: "index_up_votes_on_post_id"
     t.index ["user_id"], name: "index_up_votes_on_user_id"
   end
 
