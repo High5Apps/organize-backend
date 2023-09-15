@@ -69,4 +69,50 @@ class UpVoteTest < ActiveSupport::TestCase
     @post_up_vote.comment = comments(:one)
     assert @post_up_vote.invalid?
   end
+
+  test 'most_recent_created_before should not include newer post upvotes' do
+    assert_not_equal 0, @post_up_vote.value
+
+    time_now = UpVote.order(created_at: :desc).first.created_at + 1.second
+    opposite_value = -1 * @post_up_vote.value
+
+    assert_difference -> {
+      UpVote.where(post: @post_up_vote.post).sum(:value)
+    }, opposite_value do
+      assert_no_difference -> {
+        UpVote.most_recent_created_before(time_now)
+          .where(post: @post_up_vote.post)
+          .sum(:value)
+      } do
+        travel_to time_now + 1.second do
+          uv = @post_up_vote.dup
+          uv.value = -1 * @post_up_vote.value
+          uv.save!
+        end
+      end
+    end
+  end
+
+  test 'most_recent_created_before should not include newer comment upvotes' do
+    assert_not_equal 0, @comment_up_vote.value
+
+    time_now = UpVote.order(created_at: :desc).first.created_at + 1.second
+    opposite_value = -1 * @comment_up_vote.value
+
+    assert_difference -> {
+      UpVote.where(comment: @comment_up_vote.comment).sum(:value)
+    }, opposite_value do
+      assert_no_difference -> {
+        UpVote.most_recent_created_before(time_now)
+          .where(comment: @comment_up_vote.comment)
+          .sum(:value)
+      } do
+        travel_to time_now + 1.second do
+          uv = @comment_up_vote.dup
+          uv.value = -1 * @comment_up_vote.value
+          uv.save!
+        end
+      end
+    end
+  end
 end
