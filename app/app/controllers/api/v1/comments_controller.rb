@@ -33,12 +33,7 @@ class Api::V1::CommentsController < ApplicationController
     comments = @post.comments
       .created_before(created_before)
       .joins(:user)
-      .joins(%Q(
-        LEFT OUTER JOIN (
-          #{UpVote.most_recent_created_before(created_before).to_sql}
-        ) AS up_votes
-          ON up_votes.comment_id = comments.id
-      ).gsub(/\s+/, ' '))
+      .left_outer_joins_with_most_recent_up_votes_created_before(created_before)
       .order(created_at: :desc)
       .group(:id, :pseudonym)
       .select(*selections)

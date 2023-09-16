@@ -20,12 +20,7 @@ class Post::Query
     posts = initial_posts
       .created_before(created_before)
       .joins(:user)
-      .joins(%Q(
-        LEFT OUTER JOIN (
-          #{UpVote.most_recent_created_before(created_before).to_sql}
-        ) AS up_votes
-          ON up_votes.post_id = posts.id
-      ).gsub(/\s+/, ' '))
+      .left_outer_joins_with_most_recent_up_votes_created_before(created_before)
       .page(params[:page])
       .group(:id, :pseudonym)
       .select(*selections(params))
