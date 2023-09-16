@@ -6,6 +6,7 @@ class Api::V1::CommentsController < ApplicationController
     created_at: '',
     pseudonym: '',
     score: '',
+    my_vote: '',
   }
 
   PERMITTED_PARAMS = [
@@ -60,7 +61,13 @@ class Api::V1::CommentsController < ApplicationController
   def selections()
     score = 'COALESCE(SUM(value), 0) AS score'
 
-    attributes = ALLOWED_ATTRIBUTES.merge(score: score)
+    # Even though there is at most one most_recent_upvote per requester per
+    # comment, SUM is used because an aggregate function is required
+    my_vote = Comment.sanitize_sql_array([
+      "SUM(CASE WHEN up_votes.user_id = :requester_id THEN value ELSE 0 END) AS my_vote",
+      requester_id: authenticated_user.id])
+
+    attributes = ALLOWED_ATTRIBUTES.merge(score: score, my_vote: my_vote)
     attributes.map { |k,v| (v.blank?) ? k : v }
   end
 end
