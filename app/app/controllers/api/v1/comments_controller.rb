@@ -25,7 +25,11 @@ class Api::V1::CommentsController < ApplicationController
   end
 
   def index
+    created_before_param = params[:created_before] || UpVote::FAR_FUTURE_TIME
+    created_before = Time.at(created_before_param.to_f).utc
+
     comments = @post.comments
+      .created_before(created_before)
       .joins(:user)
       .order(created_at: :desc)
       .select(*INDEX_ATTRIBUTE_ALLOW_LIST)

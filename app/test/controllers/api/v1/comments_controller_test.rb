@@ -142,4 +142,22 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
       assert_equal @post, comment.post
     end
   end
+
+  test 'should respect created_before param' do
+    comment = comments(:two)
+    post = comment.post
+    created_before = comment.created_at.to_f
+
+    get api_v1_post_comments_url(post),
+      headers: @authorized_headers,
+      params: { created_before: created_before }
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    comment_jsons = json_response.dig(:comments)
+    comment_created_ats = comment_jsons.map { |comment| comment[:created_at] }
+
+    assert_not_empty comment_created_ats
+    comment_created_ats.each do |created_at|
+      assert_operator created_at, :<, created_before
+    end
+  end
 end
