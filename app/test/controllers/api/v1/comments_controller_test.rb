@@ -99,8 +99,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     json_response = JSON.parse(response.body, symbolize_names: true)
     comment = json_response.dig(:comments, 0)
 
-    attribute_allow_list = \
-      Api::V1::CommentsController::INDEX_ATTRIBUTE_ALLOW_LIST
+    attribute_allow_list = Api::V1::CommentsController::ALLOWED_ATTRIBUTES.keys
     attribute_allow_list.each do |attribute|
       assert comment.key? attribute
     end
@@ -159,5 +158,19 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     comment_created_ats.each do |created_at|
       assert_operator created_at, :<, created_before
     end
+  end
+
+  test 'should include score as the sum of upvotes and downvotes' do
+    comment_with_up_votes = comments(:one)
+    assert_not_empty comment_with_up_votes.up_votes
+
+    get api_v1_post_comments_url(comment_with_up_votes.post),
+      headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    comment_jsons = json_response.dig(:comments)
+    comment = comment_jsons.find { |c| c[:id] == comment_with_up_votes.id }
+
+    expected_score = comment_with_up_votes.up_votes.sum(:value)
+    assert_equal expected_score, comment[:score]
   end
 end

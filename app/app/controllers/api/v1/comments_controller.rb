@@ -1,11 +1,12 @@
 class Api::V1::CommentsController < ApplicationController
-  INDEX_ATTRIBUTE_ALLOW_LIST = [
-    :id,
-    :body,
-    :user_id,
-    :created_at,
-    :pseudonym,
-  ]
+  ALLOWED_ATTRIBUTES = {
+    id: '',
+    body: '',
+    user_id: '',
+    created_at: '',
+    pseudonym: '',
+    score: '',
+  }
 
   PERMITTED_PARAMS = [
     :body,
@@ -31,8 +32,15 @@ class Api::V1::CommentsController < ApplicationController
     comments = @post.comments
       .created_before(created_before)
       .joins(:user)
+      .joins(%Q(
+        LEFT OUTER JOIN (
+          #{UpVote.most_recent_created_before(created_before).to_sql}
+        ) AS up_votes
+          ON up_votes.comment_id = comments.id
+      ).gsub(/\s+/, ' '))
       .order(created_at: :desc)
-      .select(*INDEX_ATTRIBUTE_ALLOW_LIST)
+      .group(:id, :pseudonym)
+      .select(*selections)
     render json: { comments: comments }
   end
 
@@ -47,5 +55,12 @@ class Api::V1::CommentsController < ApplicationController
 
   def create_params
     params.require(:comment).permit(PERMITTED_PARAMS)
+  end
+
+  def selections()
+    score = 'COALESCE(SUM(value), 0) AS score'
+
+    attributes = ALLOWED_ATTRIBUTES.merge(score: score)
+    attributes.map { |k,v| (v.blank?) ? k : v }
   end
 end
