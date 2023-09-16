@@ -11,13 +11,10 @@ class Post::Query
     my_vote: '',
   }
 
-  FAR_FUTURE_TIME = 1.year.from_now.freeze
-  private_constant :FAR_FUTURE_TIME
-
   def self.build(params={}, initial_posts: nil)
     initial_posts ||= Post.all
 
-    created_before_param = params[:created_before] || FAR_FUTURE_TIME
+    created_before_param = params[:created_before] || UpVote::FAR_FUTURE_TIME
     created_before = Time.at(created_before_param.to_f).utc
 
     posts = initial_posts
