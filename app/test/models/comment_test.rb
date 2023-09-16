@@ -36,4 +36,13 @@ class CommentTest < ActiveSupport::TestCase
     @comment.body = 'a' * (1 + Comment::MAX_BODY_LENGTH)
     assert @comment.invalid?
   end
+
+  test 'created_before should filter by created_at' do
+    comment = comments(:two)
+    created_at = comment.created_at
+    comments = Comment.created_before(created_at)
+    assert_not_equal Comment.count, comments.count
+    assert_not_empty comments
+    assert comments.all? { |comment| comment.created_at < created_at }
+  end
 end

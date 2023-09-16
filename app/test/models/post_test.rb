@@ -55,6 +55,7 @@ class PostTest < ActiveSupport::TestCase
     created_at = post.created_at
     posts = Post.created_after(created_at)
     assert_not_equal Post.count, posts.count
+    assert_not_empty posts
     assert posts.all? { |post| post.created_at > created_at }
   end
 
@@ -63,6 +64,7 @@ class PostTest < ActiveSupport::TestCase
     created_at = post.created_at
     posts = Post.created_before(created_at)
     assert_not_equal Post.count, posts.count
+    assert_not_empty posts
     assert posts.all? { |post| post.created_at < created_at }
   end
 end

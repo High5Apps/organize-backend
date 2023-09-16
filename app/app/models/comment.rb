@@ -1,4 +1,6 @@
 class Comment < ApplicationRecord
+  scope :created_before, ->(time) { where(created_at: ...time) }
+
   MAX_BODY_LENGTH = 10000
 
   belongs_to :post
