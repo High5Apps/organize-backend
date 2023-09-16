@@ -7,7 +7,7 @@ class UpVote < ApplicationRecord
           PARTITION BY up_votes.user_id, up_votes.post_id, up_votes.comment_id
           ORDER BY up_votes.created_at DESC, up_votes.id DESC
         ) AS first_id
-      )
+      ).gsub(/\s+/, ' ')
     ).where('up_votes.created_at < ?', time)
 
     from(

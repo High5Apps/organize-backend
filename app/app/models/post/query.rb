@@ -28,7 +28,7 @@ class Post::Query
           #{UpVote.most_recent_created_before(created_before).to_sql}
         ) AS up_votes
           ON up_votes.post_id = posts.id
-      ))
+      ).gsub(/\s+/, ' '))
       .page(params[:page])
       .group(:id, :pseudonym)
       .select(*selections(params))
