@@ -4,30 +4,39 @@ UPVOTES_DISTRIBUTION = Rubystats::BetaDistribution.new(2, 19)
 # https://www.wolframalpha.com/input?i=beta+distribution+%281%2C+20%29
 DOWNVOTES_DISTRIBUTION = Rubystats::BetaDistribution.new(1, 20)
 
-user_ids = User.ids
-user_count = user_ids.count
-post_count = Post.count
-expected_upvote_count = \
-  (post_count * user_count * UPVOTES_DISTRIBUTION.mean).round
-expected_downvote_count = \
-  (post_count * user_count * DOWNVOTES_DISTRIBUTION.mean).round
+USER_IDS = User.ids
+USER_COUNT = USER_IDS.count
 
-print "\tCreating roughly #{expected_upvote_count} upvotes and #{expected_downvote_count} downvotes... "
-start_time = Time.now
+def create_upvotes(parent_model)
+  parent_model_count = parent_model.count
+  expected_upvote_count = \
+    (parent_model_count * USER_COUNT * UPVOTES_DISTRIBUTION.mean).round
+  expected_downvote_count = \
+    (parent_model_count * USER_COUNT * DOWNVOTES_DISTRIBUTION.mean).round
+  type = parent_model.to_s.downcase
 
-columns = [:value, :user_id, :post_id]
-values = []
+  print "\tCreating roughly #{expected_upvote_count} #{type} upvotes and #{expected_downvote_count} #{type} downvotes... "
+  start_time = Time.now
 
-Post.all.each do |p|
-  upvotes = (user_count * UPVOTES_DISTRIBUTION.rng).round
-  downvotes = ((user_count - upvotes) * DOWNVOTES_DISTRIBUTION.rng).round
-  shuffled_user_ids = user_ids.shuffle
-  upvoter_ids = shuffled_user_ids[0, upvotes]
-  values += upvoter_ids.map { |id| columns.zip([1, id, p.id]).to_h }
-  downvoter_ids = shuffled_user_ids[upvotes, downvotes]
-  values += downvoter_ids.map { |id| columns.zip([-1, id, p.id]).to_h }
+  columns = [
+    :value, :user_id, ActiveSupport::Inflector.foreign_key(parent_model),
+  ]
+  values = []
+
+  parent_model.all.each do |pm|
+    upvotes = (USER_COUNT * UPVOTES_DISTRIBUTION.rng).round
+    downvotes = ((USER_COUNT - upvotes) * DOWNVOTES_DISTRIBUTION.rng).round
+    shuffled_user_ids = USER_IDS.shuffle
+    upvoter_ids = shuffled_user_ids[0, upvotes]
+    values += upvoter_ids.map { |id| columns.zip([1, id, pm.id]).to_h }
+    downvoter_ids = shuffled_user_ids[upvotes, downvotes]
+    values += downvoter_ids.map { |id| columns.zip([-1, id, pm.id]).to_h }
+  end
+  
+  Upvote.insert_all values unless values.empty?
+  
+  puts "Completed in #{(Time.now - start_time).round 3} s"
 end
 
-Upvote.insert_all values unless values.empty?
-
-puts "Completed in #{(Time.now - start_time).round 3} s"
+create_upvotes Post
+create_upvotes Comment
