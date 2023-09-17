@@ -28,6 +28,6 @@ Post.all.each do |p|
   values += downvoter_ids.map { |id| columns.zip([-1, id, p.id]).to_h }
 end
 
-UpVote.insert_all values unless values.empty?
+Upvote.insert_all values unless values.empty?
 
 puts "Completed in #{(Time.now - start_time).round 3} s"

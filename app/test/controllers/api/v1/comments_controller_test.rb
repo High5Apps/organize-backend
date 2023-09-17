@@ -13,7 +13,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     setup_test_key(@user)
     @authorized_headers = authorized_headers(@user, '*')
 
-    @comment_with_up_votes = comments(:one)
+    @comment_with_upvotes = comments(:one)
   end
 
   test 'should create with valid params' do
@@ -163,35 +163,35 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index should include score as the sum of upvotes and downvotes' do
-    assert_not_empty @comment_with_up_votes.up_votes
+    assert_not_empty @comment_with_upvotes.upvotes
 
-    get api_v1_post_comments_url(@comment_with_up_votes.post),
+    get api_v1_post_comments_url(@comment_with_upvotes.post),
       headers: @authorized_headers
     json_response = JSON.parse(response.body, symbolize_names: true)
     comment_jsons = json_response.dig(:comments)
-    comment = comment_jsons.find { |c| c[:id] == @comment_with_up_votes.id }
+    comment = comment_jsons.find { |c| c[:id] == @comment_with_upvotes.id }
 
-    expected_score = @comment_with_up_votes.up_votes.sum(:value)
+    expected_score = @comment_with_upvotes.upvotes.sum(:value)
     assert_equal expected_score, comment[:score]
   end
 
   test "index should include my_vote as the requester's upvote value" do
-    expected_vote = @user.up_votes
-      .where(comment: @comment_with_up_votes).first.value
+    expected_vote = @user.upvotes
+      .where(comment: @comment_with_upvotes).first.value
     assert_not_equal 0, expected_vote
 
-    get api_v1_post_comments_url(@comment_with_up_votes.post),
+    get api_v1_post_comments_url(@comment_with_upvotes.post),
       headers: @authorized_headers
     json_response = JSON.parse(response.body, symbolize_names: true)
     comment_jsons = json_response.dig(:comments)
-    comment = comment_jsons.find { |c| c[:id] == @comment_with_up_votes.id }
+    comment = comment_jsons.find { |c| c[:id] == @comment_with_upvotes.id }
     vote = comment[:my_vote]
     assert_equal expected_vote, vote
   end
 
   test 'index should include my_vote as 0 when the user has not upvoted or downvoted' do
     comment_without_upvotes = comments(:two)
-    assert_empty comment_without_upvotes.up_votes
+    assert_empty comment_without_upvotes.upvotes
     
     get api_v1_post_comments_url(comment_without_upvotes.post),
       headers: @authorized_headers

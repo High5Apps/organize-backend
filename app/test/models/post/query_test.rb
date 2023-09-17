@@ -48,8 +48,8 @@ class PostQueryTest < ActiveSupport::TestCase
   end
 
   test 'top sort should break ties by descending post ID' do
-    assert_empty @post_without_upvotes.up_votes
-    assert_empty @another_post_without_upvotes.up_votes
+    assert_empty @post_without_upvotes.upvotes
+    assert_empty @another_post_without_upvotes.upvotes
     alphabetically_sorted_post_ids = [
       @post_without_upvotes,
       @another_post_without_upvotes,
@@ -90,17 +90,17 @@ class PostQueryTest < ActiveSupport::TestCase
     assert_equal Post.created_before(post.created_at).sort, posts.sort
   end
 
-  test 'created_before should apply to up_votes' do
-    up_vote = up_votes(:three)
-    post = up_vote.post
-    created_before = up_vote.created_at
+  test 'created_before should apply to upvotes' do
+    upvote = upvotes(:three)
+    post = upvote.post
+    created_before = upvote.created_at
 
     windowed_posts = Post::Query.build({ created_before: created_before })
     windowed_score = windowed_posts.find(post.id).score
     unwindowed_score = Post::Query.build.find(post.id).score
     assert_not_equal unwindowed_score, windowed_score
 
-    expected_score = Post.find(post.id).up_votes
+    expected_score = Post.find(post.id).upvotes
       .filter{ |uv| uv.created_at < created_before }
       .map(&:value)
       .sum
@@ -130,7 +130,7 @@ class PostQueryTest < ActiveSupport::TestCase
   end
 
   test 'should include posts without any upvotes' do
-    assert_empty @post_without_upvotes.up_votes
+    assert_empty @post_without_upvotes.upvotes
     post_ids = Post::Query.build.ids
     assert_includes post_ids, @post_without_upvotes.id
   end
@@ -141,14 +141,14 @@ class PostQueryTest < ActiveSupport::TestCase
   end
 
   test 'should include score as the sum of upvote and downvotes' do
-    assert_not_empty @post_with_upvotes.up_votes
-    expected_score = @post_with_upvotes.up_votes.sum(:value)
+    assert_not_empty @post_with_upvotes.upvotes
+    expected_score = @post_with_upvotes.upvotes.sum(:value)
     post = Post::Query.build.find @post_with_upvotes.id
     assert_equal expected_score, post.score
   end
 
   test "should include my_vote as the requester's upvote value" do
-    expected_vote = @user.up_votes.where(post: @post_with_upvotes).first.value
+    expected_vote = @user.upvotes.where(post: @post_with_upvotes).first.value
     assert_not_equal 0, expected_vote
     vote = Post::Query.build({ requester_id: @user.id})
       .find(@post_with_upvotes.id).my_vote

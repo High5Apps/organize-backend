@@ -1,23 +1,23 @@
-class Api::V1::UpVotesController < ApplicationController
+class Api::V1::UpvotesController < ApplicationController
   PERMITTED_PARAMS = [
     :value,
   ]
 
   before_action :authenticate_user, only: [:create]
-  before_action :check_up_votable_belongs_to_org, only: [:create]
+  before_action :check_upvotable_belongs_to_org, only: [:create]
 
   def create
-    new_up_vote = @up_votable.up_votes.build create_params
-    if new_up_vote.save
+    new_upvote = @upvotable.upvotes.build create_params
+    if new_upvote.save
       head :created
     else
-      render_error :unprocessable_entity, new_up_vote.errors.full_messages
+      render_error :unprocessable_entity, new_upvote.errors.full_messages
     end
   end
 
   private
 
-  def check_up_votable_belongs_to_org
+  def check_upvotable_belongs_to_org
     post_id = params[:post_id]
     comment_id = params[:comment_id]
 
@@ -26,11 +26,11 @@ class Api::V1::UpVotesController < ApplicationController
     end
 
     if post_id
-      @up_votable = Post.find_by id: post_id
-      post = @up_votable
+      @upvotable = Post.find_by id: post_id
+      post = @upvotable
     else
-      @up_votable = Comment.includes(:post).find_by id: comment_id
-      post = @up_votable&.post
+      @upvotable = Comment.includes(:post).find_by id: comment_id
+      post = @upvotable&.post
     end
 
     unless post&.org == authenticated_user.org
@@ -39,7 +39,7 @@ class Api::V1::UpVotesController < ApplicationController
   end
   
   def create_params
-    params.require(:up_vote)
+    params.require(:upvote)
       .permit(PERMITTED_PARAMS)
       .merge user_id: authenticated_user.id
   end

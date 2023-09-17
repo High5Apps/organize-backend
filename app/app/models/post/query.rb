@@ -14,13 +14,13 @@ class Post::Query
   def self.build(params={}, initial_posts: nil)
     initial_posts ||= Post.all
 
-    created_before_param = params[:created_before] || UpVote::FAR_FUTURE_TIME
+    created_before_param = params[:created_before] || Upvote::FAR_FUTURE_TIME
     created_before = Time.at(created_before_param.to_f).utc
 
     posts = initial_posts
       .created_before(created_before)
       .joins(:user)
-      .left_outer_joins_with_most_recent_up_votes_created_before(created_before)
+      .left_outer_joins_with_most_recent_upvotes_created_before(created_before)
       .page(params[:page])
       .group(:id, :pseudonym)
       .select(*selections(params))
@@ -61,7 +61,7 @@ class Post::Query
     # Even though there is at most one most_recent_upvote per requester per
     # post, SUM is used because an aggregate function is required
     my_vote = Post.sanitize_sql_array([
-      "SUM(CASE WHEN up_votes.user_id = :requester_id THEN value ELSE 0 END) AS my_vote",
+      "SUM(CASE WHEN upvotes.user_id = :requester_id THEN value ELSE 0 END) AS my_vote",
       requester_id: params[:requester_id]])
 
     attributes = ALLOWED_ATTRIBUTES.merge(my_vote: my_vote, score: score)

@@ -1,19 +1,19 @@
-class UpVote < ApplicationRecord
+class Upvote < ApplicationRecord
   scope :most_recent_created_before, ->(time) {
-    most_recent_up_vote_for_each_user_on_each_up_votable_before_time = select(
+    most_recent_upvote_for_each_user_on_each_upvotable_before_time = select(
       '*',
       %(
-        FIRST_VALUE(up_votes.id) OVER (
-          PARTITION BY up_votes.user_id, up_votes.post_id, up_votes.comment_id
-          ORDER BY up_votes.created_at DESC, up_votes.id DESC
+        FIRST_VALUE(upvotes.id) OVER (
+          PARTITION BY upvotes.user_id, upvotes.post_id, upvotes.comment_id
+          ORDER BY upvotes.created_at DESC, upvotes.id DESC
         ) AS first_id
       ).gsub(/\s+/, ' ')
-    ).where('up_votes.created_at < ?', time)
+    ).where('upvotes.created_at < ?', time)
 
     from(
-      most_recent_up_vote_for_each_user_on_each_up_votable_before_time,
-      :up_votes
-    ).where('up_votes.id = first_id')
+      most_recent_upvote_for_each_user_on_each_upvotable_before_time,
+      :upvotes
+    ).where('upvotes.id = first_id')
   }
 
   ERROR_EXACTLY_ONE_COMMENT_OR_POST = \

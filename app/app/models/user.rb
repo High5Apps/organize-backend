@@ -27,7 +27,7 @@ class User < ApplicationRecord
   has_many :terms
   has_many :offices, through: :terms
 
-  has_many :up_votes
+  has_many :upvotes
 
   validates :public_key_bytes,
     presence: true,
