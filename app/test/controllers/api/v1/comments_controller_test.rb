@@ -3,6 +3,7 @@ require "test_helper"
 class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @post = posts(:one)
+    @post_without_comments = posts(:three)
     @params = {
       comment: {
         body: 'Comment body',
@@ -109,16 +110,6 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     assert_equal attribute_allow_list.count, comment.keys.count
   end
 
-  test 'index should order with newest first' do
-    get api_v1_post_comments_url(@post), headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    comment_jsons = json_response.dig(:comments)
-    comment_created_ats = comment_jsons.map { |comment| comment[:created_at] }
-
-    # Reverse is needed because sort is an ascending sort
-    assert_equal comment_created_ats, comment_created_ats.sort.reverse
-  end
-
   test 'index should format created_at attributes as floats' do
     get api_v1_post_comments_url(@post), headers: @authorized_headers
     json_response = JSON.parse(response.body, symbolize_names: true)
@@ -200,5 +191,155 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     comment = comment_jsons.find { |c| c[:id] == comment_without_upvotes.id }
     vote = comment[:my_vote]
     assert_equal 0, vote
+  end
+
+  test 'index sort should be stable over time when no new upvotes are created' do
+    assert_not_empty @post.comments
+    assert_not_empty @post.comments.first.upvotes
+
+    get api_v1_post_comments_url(@post),
+      headers: @authorized_headers,
+      params: { created_before: Time.now.to_f }
+    first_comment_ids = JSON.parse(response.body, symbolize_names: true)
+      .dig(:comments)
+      .map {|comment| comment[:id]}
+
+    get api_v1_post_comments_url(@post),
+      headers: @authorized_headers,
+      params: { created_before: 1.year.from_now.to_f }
+    second_comment_ids = JSON.parse(response.body, symbolize_names: true)
+      .dig(:comments)
+      .map {|comment| comment[:id]}
+
+    assert_not_empty first_comment_ids
+    assert_equal first_comment_ids, second_comment_ids
+  end
+
+  test 'index sort should prefer newer comments with equal scores' do
+    assert_empty @post_without_comments.comments
+    post_creator = @post_without_comments.user
+
+    older_comment = \
+      @post_without_comments.comments.create!(body: 'body', user: post_creator)
+    older_comment.upvotes.create!(user: post_creator, value: 1)
+
+    newer_comment = older_comment.dup
+    newer_comment.save!
+    newer_comment.upvotes.create!(user: post_creator, value: 1)
+
+    get api_v1_post_comments_url(@post_without_comments),
+      headers: @authorized_headers,
+      params: { created_before: Time.now.to_f }
+    comment_ids = JSON.parse(response.body, symbolize_names: true)
+      .dig(:comments)
+      .map {|comment| comment[:id]}
+    assert_operator comment_ids.find_index(newer_comment.id),
+      :<, comment_ids.find_index(older_comment.id)
+  end
+
+  test 'index sort should prefer slightly older comments with higher scores' do
+    post_creator = @post_without_comments.user
+
+    older_comment = \
+      @post_without_comments.comments.create!(body: 'body', user: post_creator)
+    older_comment.upvotes.create!(user: post_creator, value: 1)
+
+    # If this test fails after raising the gravity parameter, you probably need
+    # to decrease this value.
+    travel 1.hour
+
+    newer_comment = older_comment.dup
+    newer_comment.save!
+
+    travel 1.second
+
+    get api_v1_post_comments_url(@post_without_comments),
+      headers: authorized_headers(@user, '*'),
+      params: { created_before: Time.now.to_f }
+    comment_ids = JSON.parse(response.body, symbolize_names: true)
+      .dig(:comments)
+      .map {|comment| comment[:id]}
+    assert_operator comment_ids.find_index(older_comment.id),
+      :<, comment_ids.find_index(newer_comment.id)
+  end
+
+  test 'index sort should prefer much newer comments with slightly lower scores' do
+    post_creator = @post_without_comments.user
+
+    older_comment = \
+      @post_without_comments.comments.create!(body: 'body', user: post_creator)
+    older_comment.upvotes.create!(user: post_creator, value: 1)
+
+    # If this test fails after lowering the gravity parameter, you probably need
+    # to increase this value.
+    travel 2.hours
+
+    newer_comment = older_comment.dup
+    newer_comment.save!
+
+    travel 1.second
+
+    get api_v1_post_comments_url(@post_without_comments),
+      headers: authorized_headers(@user, '*'),
+      params: { created_before: Time.now.to_f }
+    comment_ids = JSON.parse(response.body, symbolize_names: true)
+      .dig(:comments)
+      .map {|comment| comment[:id]}
+    assert_operator comment_ids.find_index(newer_comment.id),
+      :<, comment_ids.find_index(older_comment.id)
+  end
+
+  test 'index sort should prefer older comments with much higher scores' do
+    post_creator = @post_without_comments.user
+
+    older_comment = \
+      @post_without_comments.comments.create!(body: 'body', user: post_creator)
+    older_comment.upvotes.build(user: post_creator, value: 50)
+      .save!(validate: false)
+
+    # If this test fails after raising the gravity parameter, you probably need
+    # to decrease this value.
+    travel 1.day
+
+    newer_comment = older_comment.dup
+    newer_comment.save!
+
+    travel 1.second
+
+    get api_v1_post_comments_url(@post_without_comments),
+      headers: authorized_headers(@user, '*'),
+      params: { created_before: Time.now.to_f }
+    comment_ids = JSON.parse(response.body, symbolize_names: true)
+      .dig(:comments)
+      .map {|comment| comment[:id]}
+    assert_operator comment_ids.find_index(older_comment.id),
+      :<, comment_ids.find_index(newer_comment.id)
+  end
+
+  test 'index sort should prefer much newer comments with lower scores' do
+    post_creator = @post_without_comments.user
+
+    older_comment = \
+      @post_without_comments.comments.create!(body: 'body', user: post_creator)
+    older_comment.upvotes.build(user: post_creator, value: 50)
+      .save!(validate: false)
+
+    # If this test fails after lowering the gravity parameter, you probably need
+    # to increase this value.
+    travel 2.days
+
+    newer_comment = older_comment.dup
+    newer_comment.save!
+
+    travel 1.second
+
+    get api_v1_post_comments_url(@post_without_comments),
+      headers: authorized_headers(@user, '*'),
+      params: { created_before: Time.now.to_f }
+    comment_ids = JSON.parse(response.body, symbolize_names: true)
+      .dig(:comments)
+      .map {|comment| comment[:id]}
+    assert_operator comment_ids.find_index(newer_comment.id),
+      :<, comment_ids.find_index(older_comment.id)
   end
 end

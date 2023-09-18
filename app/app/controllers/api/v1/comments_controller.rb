@@ -34,9 +34,19 @@ class Api::V1::CommentsController < ApplicationController
       .created_before(created_before)
       .joins(:user)
       .left_outer_joins_with_most_recent_upvotes_created_before(created_before)
-      .order(created_at: :desc)
       .group(:id, :pseudonym)
       .select(*selections)
+      .order(Arel.sql(Comment.sanitize_sql_array([
+        %(
+          (1 + COALESCE(SUM(value), 0)) /
+          (2 +
+            (EXTRACT(EPOCH FROM (:cutoff_time - comments.created_at)) /
+            :time_division)
+          )^:gravity DESC, comments.id DESC
+        ).gsub(/\s+/, ' '),
+        cutoff_time: created_before,
+        gravity: 1.5,
+        time_division: 1.hour])))
     render json: { comments: comments }
   end
 
