@@ -48,6 +48,18 @@ class Post::Query
       posts = posts.order(created_at: :asc, id: :asc)
     elsif sort_parameter == 'top'
       posts = posts.order(score: :desc, id: :desc)
+    elsif sort_parameter == 'hot'
+      posts = posts.order(Arel.sql(Post.sanitize_sql_array([
+        %(
+          (1 + COALESCE(SUM(value), 0)) /
+          (2 +
+            (EXTRACT(EPOCH FROM (:cutoff_time - posts.created_at)) /
+            :time_division)
+          )^:gravity DESC, posts.id DESC
+        ).gsub(/\s+/, ' '),
+        cutoff_time: created_before,
+        gravity: 1.5,
+        time_division: 1.hour])))
     end
 
     posts

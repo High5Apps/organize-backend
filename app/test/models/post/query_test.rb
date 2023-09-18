@@ -53,7 +53,7 @@ class PostQueryTest < ActiveSupport::TestCase
     alphabetically_sorted_post_ids = [
       @post_without_upvotes,
       @another_post_without_upvotes,
-    ].map { |p| p.id }.sort 
+    ].map { |p| p.id }.sort
     expected_earlier_post = alphabetically_sorted_post_ids.last
     expected_later_post = alphabetically_sorted_post_ids.first
 
@@ -61,6 +61,117 @@ class PostQueryTest < ActiveSupport::TestCase
     assert_operator post_ids.find_index(expected_earlier_post),
       :<,
       post_ids.find_index(expected_later_post)
+  end
+
+  test 'hot order should be stable over time when no new upvotes are created' do
+    first_order = Post::Query.build({
+      created_before: 1.year.from_now, sort: 'hot' }).ids
+    second_order = Post::Query.build({
+      created_before: 2.years.from_now, sort: 'hot' }).ids
+    assert_not_empty first_order
+    assert_equal first_order, second_order
+  end
+
+  test 'hot order should prefer newer posts with equal scores' do
+    post_creator = @post_without_upvotes.user
+
+    older_post = @post_without_upvotes.dup
+    older_post.save!
+    older_post.upvotes.create!(user: post_creator, value: 1)
+
+    newer_post = @post_without_upvotes.dup
+    newer_post.save!
+    newer_post.upvotes.create!(user: post_creator, value: 1)
+
+    post_ids = Post::Query.build({ created_before: Time.now, sort: 'hot' }).ids
+    assert_operator post_ids.find_index(newer_post.id),
+      :<, post_ids.find_index(older_post.id)
+  end
+
+  test 'hot order should prefer slightly older posts with higher scores' do
+    post_creator = @post_without_upvotes.user
+
+    older_post = @post_without_upvotes.dup
+    older_post.save!
+    older_post.upvotes.create!(user: post_creator, value: 1)
+
+    # If this test fails after raising the gravity parameter, you probably need
+    # to decrease this value.
+    travel 1.hour
+
+    newer_post = @post_without_upvotes.dup
+    newer_post.save!
+
+    travel 1.second
+
+    post_ids = Post::Query.build({ created_before: Time.now, sort: 'hot' }).ids
+    assert_operator post_ids.find_index(older_post.id),
+      :<, post_ids.find_index(newer_post.id)
+  end
+
+  test 'hot order should prefer much newer posts with slightly lower scores' do
+    post_creator = @post_without_upvotes.user
+
+    older_post = @post_without_upvotes.dup
+    older_post.save!
+    older_post.upvotes.create!(user: post_creator, value: 1)
+
+    # If this test fails after lowering the gravity parameter, you probably need
+    # to increase this value.
+    travel 2.hours
+
+    newer_post = @post_without_upvotes.dup
+    newer_post.save!
+
+    travel 1.second
+
+    post_ids = Post::Query.build({ created_before: Time.now, sort: 'hot' }).ids
+    assert_operator post_ids.find_index(newer_post.id),
+      :<, post_ids.find_index(older_post.id)
+  end
+
+  test 'hot order should prefer older posts with much higher scores' do
+    post_creator = @post_without_upvotes.user
+
+    older_post = @post_without_upvotes.dup
+    older_post.save!
+    older_post.upvotes.build(user: post_creator, value: 50)
+      .save!(validate: false)
+
+    # If this test fails after raising the gravity parameter, you probably need
+    # to decrease this value.
+    travel 1.day
+
+    newer_post = @post_without_upvotes.dup
+    newer_post.save!
+
+    travel 1.second
+
+    post_ids = Post::Query.build({ created_before: Time.now, sort: 'hot' }).ids
+    assert_operator post_ids.find_index(older_post.id),
+      :<, post_ids.find_index(newer_post.id)
+  end
+
+  test 'hot order should prefer much newer posts with lower scores' do
+    post_creator = @post_without_upvotes.user
+
+    older_post = @post_without_upvotes.dup
+    older_post.save!
+    older_post.upvotes.build(user: post_creator, value: 50)
+      .save!(validate: false)
+
+    # If this test fails after lowering the gravity parameter, you probably need
+    # to increase this value.
+    travel 2.days
+
+    newer_post = @post_without_upvotes.dup
+    newer_post.save!
+
+    travel 1.second
+
+    post_ids = Post::Query.build({ created_before: Time.now, sort: 'hot' }).ids
+    assert_operator post_ids.find_index(newer_post.id),
+      :<, post_ids.find_index(older_post.id)
   end
 
   test 'should only include allow-listed attributes' do
