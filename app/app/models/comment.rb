@@ -21,4 +21,6 @@ class Comment < ApplicationRecord
   validates :body,
     presence: true,
     length: { maximum: MAX_BODY_LENGTH }
+
+  has_ancestry
 end

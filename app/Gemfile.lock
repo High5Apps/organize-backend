@@ -66,6 +66,8 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
+    ancestry (4.3.3)
+      activerecord (>= 5.2.6)
     bootsnap (1.16.0)
       msgpack (~> 1.2)
     builder (3.2.4)
@@ -176,6 +178,7 @@ PLATFORMS
   aarch64-linux
 
 DEPENDENCIES
+  ancestry (~> 4)
   bootsnap
   debug
   faker (~> 3)

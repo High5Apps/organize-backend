@@ -51,3 +51,6 @@ gem 'faker', '~> 3'
 
 # Used for pagination
 gem 'kaminari', '~> 1'
+
+# Used for comment threading
+gem 'ancestry', '~> 4'

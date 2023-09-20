@@ -3,15 +3,18 @@ one:
   user: three
   body: 'Comment body'
   created_at: <%= 10.seconds.after(Time.at 0).to_fs(:db) %>
+  ancestry: '/'
 
 two:
   post: one
   user: one
   body: 'Another comment'
   created_at: <%= 11.seconds.after(Time.at 0).to_fs(:db) %>
+  ancestry: '/'
 
 three:
   post: two
   user: five
   body: 'Another comment'
   created_at: <%= 12.seconds.after(Time.at 0).to_fs(:db) %>
+  ancestry: '/'
