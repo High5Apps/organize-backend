@@ -49,6 +49,8 @@ posts = Post.order(:created_at).each do |post|
   max_average_time_between_comments = available_timespan / comment_count
   current_time = post.created_at
 
+  potential_parent_comments = []
+
   comment_count.times do
     # Pick a random amount of time to have elappsed since the last comment
     time_delta = \
@@ -58,9 +60,13 @@ posts = Post.order(:created_at).each do |post|
     # Pick a random member who had joined by that time to be the commenter
     commenter = User.where(joined_at: ...comment_time).sample
 
+    parent = potential_parent_comments.sample if rand < 0.8
+
     Timecop.freeze comment_time do
-      post.comments.create! user: commenter,
-        body: hipster_ipsum_comment_body
+      comment = post.comments.create! user: commenter,
+        body: hipster_ipsum_comment_body,
+        parent: parent
+      potential_parent_comments.push(comment)
     end
   end
 end
