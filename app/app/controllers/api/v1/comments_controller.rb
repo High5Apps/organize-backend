@@ -32,9 +32,8 @@ class Api::V1::CommentsController < ApplicationController
 
     comments = @post.comments
       .created_before(created_before)
-      .joins(:user)
+      .includes_pseudonym
       .left_outer_joins_with_most_recent_upvotes_created_before(created_before)
-      .group(:id, :pseudonym)
       .select(*selections)
       .order(Arel.sql(Comment.sanitize_sql_array([
         %(

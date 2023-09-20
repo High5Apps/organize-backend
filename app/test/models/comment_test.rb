@@ -45,4 +45,10 @@ class CommentTest < ActiveSupport::TestCase
     assert_not_empty comments
     assert comments.all? { |comment| comment.created_at < created_at }
   end
+
+  test 'includes_pseudonym should include pseudonyms' do
+    pseudonyms = Comment.includes_pseudonym.map(&:pseudonym)
+    assert_not_empty pseudonyms
+    pseudonyms.each { |p| assert_not_empty p } 
+  end
 end
