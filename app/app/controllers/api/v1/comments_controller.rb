@@ -33,6 +33,7 @@ class Api::V1::CommentsController < ApplicationController
     comments = @post.comments
       .created_before(created_before)
       .includes_pseudonym
+      .includes_score_from_upvotes_created_before(created_before)
       .left_outer_joins_with_most_recent_upvotes_created_before(created_before)
       .select(*selections)
       .order_by_hot_created_before(created_before)
@@ -53,7 +54,7 @@ class Api::V1::CommentsController < ApplicationController
   end
 
   def selections()
-    score = 'COALESCE(SUM(value), 0) AS score'
+    already_selected_keys = [:score, :pseudonym]
 
     # Even though there is at most one most_recent_upvote per requester per
     # comment, SUM is used because an aggregate function is required
@@ -61,7 +62,8 @@ class Api::V1::CommentsController < ApplicationController
       "SUM(CASE WHEN upvotes.user_id = :requester_id THEN value ELSE 0 END) AS my_vote",
       requester_id: authenticated_user.id])
 
-    attributes = ALLOWED_ATTRIBUTES.merge(score: score, my_vote: my_vote)
-    attributes.map { |k,v| (v.blank?) ? k : v }
+    attributes = ALLOWED_ATTRIBUTES.merge(my_vote: my_vote)
+    attributes.filter { |k,v| !already_selected_keys.include? k }
+      .map { |k,v| (v.blank?) ? k : v }
   end
 end

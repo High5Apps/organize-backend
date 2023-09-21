@@ -153,19 +153,6 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'index should include score as the sum of upvotes and downvotes' do
-    assert_not_empty @comment_with_upvotes.upvotes
-
-    get api_v1_post_comments_url(@comment_with_upvotes.post),
-      headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    comment_jsons = json_response.dig(:comments)
-    comment = comment_jsons.find { |c| c[:id] == @comment_with_upvotes.id }
-
-    expected_score = @comment_with_upvotes.upvotes.sum(:value)
-    assert_equal expected_score, comment[:score]
-  end
-
   test "index should include my_vote as the requester's upvote value" do
     expected_vote = @user.upvotes
       .where(comment: @comment_with_upvotes).first.value

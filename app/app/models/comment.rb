@@ -3,6 +3,10 @@ class Comment < ApplicationRecord
   scope :includes_pseudonym, -> {
     select(:pseudonym).joins(:user).group(:id, :pseudonym)
   }
+  scope :includes_score_from_upvotes_created_before, ->(time) {
+    left_outer_joins_with_most_recent_upvotes_created_before(time)
+      .select('COALESCE(SUM(value), 0) AS score')
+  }
   scope :left_outer_joins_with_most_recent_upvotes_created_before, ->(time) {
     joins(%Q(
       LEFT OUTER JOIN (

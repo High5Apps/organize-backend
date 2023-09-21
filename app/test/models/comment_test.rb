@@ -54,6 +54,16 @@ class CommentTest < ActiveSupport::TestCase
     pseudonyms.each { |p| assert_not_empty p } 
   end
 
+  test 'includes_score_from_upvotes_created_before should include score as the sum of upvotes and downvotes' do
+    assert_not_empty @comment.upvotes
+
+    expected_score = @comment.upvotes.sum(:value)
+    comment_with_score = Comment
+      .includes_score_from_upvotes_created_before(Time.now)
+      .find(@comment.id)
+    assert_equal expected_score, comment_with_score.score
+  end
+
   test 'order_by_hot_created_before should be stable over time when no new upvotes are created' do
     assert_not_empty @post.comments
     assert_not_empty @post.comments.first.upvotes
