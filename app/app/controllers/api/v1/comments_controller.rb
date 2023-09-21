@@ -1,17 +1,23 @@
 class Api::V1::CommentsController < ApplicationController
-  ALLOWED_ATTRIBUTES = {
-    id: '',
-    body: '',
-    user_id: '',
-    created_at: '',
-    pseudonym: '',
-    score: '',
-    my_vote: '',
-  }
+  ALLOWED_ATTRIBUTES = [
+    :id,
+    :body,
+    :user_id,
+    :created_at,
+    :pseudonym,
+    :score,
+    :my_vote,
+  ].freeze
+
+  MANUAL_SELECTIONS = ALLOWED_ATTRIBUTES.filter do |k|
+    # These attributes are already included by the includes_* scopes below
+    ![:score, :pseudonym, :my_vote].include? k
+  end.freeze
+  private_constant :MANUAL_SELECTIONS
 
   PERMITTED_PARAMS = [
     :body,
-  ]
+  ].freeze
 
   before_action :authenticate_user, only: [:index, :create]
   before_action :check_post_belongs_to_org, only: [:index, :create]
@@ -30,12 +36,14 @@ class Api::V1::CommentsController < ApplicationController
     created_before_param = params[:created_before] || Upvote::FAR_FUTURE_TIME
     created_before = Time.at(created_before_param.to_f).utc
 
+    my_id = authenticated_user.id
     comments = @post.comments
       .created_before(created_before)
       .includes_pseudonym
       .includes_score_from_upvotes_created_before(created_before)
+      .includes_my_vote_from_upvotes_created_before(created_before, my_id)
       .left_outer_joins_with_most_recent_upvotes_created_before(created_before)
-      .select(*selections)
+      .select(*MANUAL_SELECTIONS)
       .order_by_hot_created_before(created_before)
     render json: { comments: comments }
   end
@@ -51,19 +59,5 @@ class Api::V1::CommentsController < ApplicationController
 
   def create_params
     params.require(:comment).permit(PERMITTED_PARAMS)
-  end
-
-  def selections()
-    already_selected_keys = [:score, :pseudonym]
-
-    # Even though there is at most one most_recent_upvote per requester per
-    # comment, SUM is used because an aggregate function is required
-    my_vote = Comment.sanitize_sql_array([
-      "SUM(CASE WHEN upvotes.user_id = :requester_id THEN value ELSE 0 END) AS my_vote",
-      requester_id: authenticated_user.id])
-
-    attributes = ALLOWED_ATTRIBUTES.merge(my_vote: my_vote)
-    attributes.filter { |k,v| !already_selected_keys.include? k }
-      .map { |k,v| (v.blank?) ? k : v }
   end
 end

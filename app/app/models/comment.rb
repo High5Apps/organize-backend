@@ -1,5 +1,13 @@
 class Comment < ApplicationRecord
   scope :created_before, ->(time) { where(created_at: ...time) }
+  scope :includes_my_vote_from_upvotes_created_before, ->(time, my_id) {
+    # Even though there is at most one most_recent_upvote per requester per
+    # comment, SUM is used because an aggregate function is required
+    left_outer_joins_with_most_recent_upvotes_created_before(time)
+      .select(Comment.sanitize_sql_array([
+        "SUM(CASE WHEN upvotes.user_id = :my_id THEN value ELSE 0 END) AS my_vote",
+        my_id: my_id]))
+  }
   scope :includes_pseudonym, -> {
     select(:pseudonym).joins(:user).group(:id, :pseudonym)
   }

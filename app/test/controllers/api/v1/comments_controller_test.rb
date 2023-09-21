@@ -102,7 +102,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     json_response = JSON.parse(response.body, symbolize_names: true)
     comment = json_response.dig(:comments, 0)
 
-    attribute_allow_list = Api::V1::CommentsController::ALLOWED_ATTRIBUTES.keys
+    attribute_allow_list = Api::V1::CommentsController::ALLOWED_ATTRIBUTES
     attribute_allow_list.each do |attribute|
       assert comment.key? attribute
     end
@@ -151,32 +151,5 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     comment_created_ats.each do |created_at|
       assert_operator created_at, :<, created_before
     end
-  end
-
-  test "index should include my_vote as the requester's upvote value" do
-    expected_vote = @user.upvotes
-      .where(comment: @comment_with_upvotes).first.value
-    assert_not_equal 0, expected_vote
-
-    get api_v1_post_comments_url(@comment_with_upvotes.post),
-      headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    comment_jsons = json_response.dig(:comments)
-    comment = comment_jsons.find { |c| c[:id] == @comment_with_upvotes.id }
-    vote = comment[:my_vote]
-    assert_equal expected_vote, vote
-  end
-
-  test 'index should include my_vote as 0 when the user has not upvoted or downvoted' do
-    comment_without_upvotes = comments(:two)
-    assert_empty comment_without_upvotes.upvotes
-    
-    get api_v1_post_comments_url(comment_without_upvotes.post),
-      headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    comment_jsons = json_response.dig(:comments)
-    comment = comment_jsons.find { |c| c[:id] == comment_without_upvotes.id }
-    vote = comment[:my_vote]
-    assert_equal 0, vote
   end
 end

@@ -64,6 +64,29 @@ class CommentTest < ActiveSupport::TestCase
     assert_equal expected_score, comment_with_score.score
   end
 
+  test "includes_my_vote_from_upvotes_created_before should include my_vote as the requester's upvote value" do
+    user = @comment.upvotes.first.user
+    expected_vote = user.upvotes
+      .where(comment: @comment).first.value
+    assert_not_equal 0, expected_vote
+
+    my_vote = Comment
+      .includes_my_vote_from_upvotes_created_before(Time.now, user.id)
+      .find(@comment.id).my_vote
+    assert_equal expected_vote, my_vote
+  end
+
+  test 'includes_my_vote_from_upvotes_created_before should include my_vote as 0 when the user has not upvoted or downvoted' do
+    comment_without_upvotes = comments(:two)
+    user = comment_without_upvotes.user
+    assert_empty comment_without_upvotes.upvotes
+
+    my_vote = Comment
+      .includes_my_vote_from_upvotes_created_before(Time.now, user.id)
+      .find(comment_without_upvotes.id).my_vote
+    assert_equal 0, my_vote
+  end
+
   test 'order_by_hot_created_before should be stable over time when no new upvotes are created' do
     assert_not_empty @post.comments
     assert_not_empty @post.comments.first.upvotes
