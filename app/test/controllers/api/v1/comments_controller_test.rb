@@ -101,13 +101,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_post_comments_url(@post), headers: @authorized_headers
     json_response = JSON.parse(response.body, symbolize_names: true)
     comment = json_response.dig(:comments, 0)
-
-    attribute_allow_list = Api::V1::CommentsController::ALLOWED_ATTRIBUTES
-    attribute_allow_list.each do |attribute|
-      assert comment.key? attribute
-    end
-
-    assert_equal attribute_allow_list.count, comment.keys.count
+    assert_only_includes_allowed_attributes comment
   end
 
   test 'index should format created_at attributes as floats' do
@@ -150,6 +144,36 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     assert_not_empty comment_created_ats
     comment_created_ats.each do |created_at|
       assert_operator created_at, :<, created_before
+    end
+  end
+
+  test 'index should include nested replies' do
+    comment_with_reply = comments(:three)
+    first_reply_id = comment_with_reply.children.first.id
+    assert_not_empty first_reply_id
+
+    post = comment_with_reply.post
+    user = post.user
+    setup_test_key(user)
+
+    get api_v1_post_comments_url(post), headers: authorized_headers(user, '*')
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    parent_comment = json_response.dig(:comments)
+      .find { |c| c[:id] == comment_with_reply.id }
+    replies = parent_comment[:replies]
+    assert_not_empty replies
+
+    reply = replies.find { |r| r[:id] == first_reply_id }
+    assert_only_includes_allowed_attributes reply
+  end
+
+  private
+
+  def assert_only_includes_allowed_attributes(comment)
+    attribute_allow_list = Api::V1::CommentsController::ALLOWED_ATTRIBUTES
+    assert_equal attribute_allow_list.count, comment.keys.count
+    attribute_allow_list.each do |attribute|
+      assert comment.key? attribute
     end
   end
 end

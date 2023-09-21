@@ -18,3 +18,10 @@ three:
   body: 'Another comment'
   created_at: <%= 12.seconds.after(Time.at 0).to_fs(:db) %>
   ancestry: '/'
+
+four:
+  post: two
+  user: five
+  body: 'A reply'
+  created_at: <%= 13.seconds.after(Time.at 0).to_fs(:db) %>
+  ancestry: <%= "/#{ActiveRecord::FixtureSet.identify(:three, :uuid)}/" %>

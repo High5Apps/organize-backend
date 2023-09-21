@@ -7,11 +7,17 @@ class Api::V1::CommentsController < ApplicationController
     :pseudonym,
     :score,
     :my_vote,
+    :replies,
   ].freeze
 
-  MANUAL_SELECTIONS = ALLOWED_ATTRIBUTES.filter do |k|
-    # These attributes are already included by the includes_* scopes below
-    ![:score, :pseudonym, :my_vote].include? k
+  INTERMEDIATE_ATTRIBUTES = [
+    :ancestry,
+  ]
+
+  MANUAL_SELECTIONS = (ALLOWED_ATTRIBUTES + INTERMEDIATE_ATTRIBUTES).filter do |k|
+    # Either these attributes are already included by the includes_* scopes,
+    # or they're not indended as selections
+    ![:score, :pseudonym, :my_vote, :replies].include? k
   end.freeze
   private_constant :MANUAL_SELECTIONS
 
@@ -44,6 +50,13 @@ class Api::V1::CommentsController < ApplicationController
       .includes_my_vote_from_upvotes_created_before(created_before, my_id)
       .select(*MANUAL_SELECTIONS)
       .order_by_hot_created_before(created_before)
+      .arrange_serializable do |parent, children|
+        {
+          **parent.attributes
+            .filter { |k| ALLOWED_ATTRIBUTES.include? k.to_sym },
+          replies: children,
+        }
+      end
     render json: { comments: comments }
   end
 
