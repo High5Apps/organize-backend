@@ -11,6 +11,21 @@ class Comment < ApplicationRecord
         ON upvotes.comment_id = comments.id
     ).gsub(/\s+/, ' '))
   }
+  scope :order_by_hot_created_before, ->(time) {
+    left_outer_joins_with_most_recent_upvotes_created_before(time)
+      .order(Arel.sql(Comment.sanitize_sql_array([
+        %(
+          (1 + COALESCE(SUM(value), 0)) /
+          (2 +
+            (EXTRACT(EPOCH FROM (:cutoff_time - comments.created_at)) /
+            :time_division)
+          )^:gravity DESC, comments.id DESC
+        ).gsub(/\s+/, ' '),
+        cutoff_time: time,
+        gravity: 0.975,
+        time_division: 1.hour])))
+      .group(:id)
+  }
 
   MAX_BODY_LENGTH = 10000
 
