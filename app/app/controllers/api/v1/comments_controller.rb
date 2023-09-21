@@ -42,7 +42,6 @@ class Api::V1::CommentsController < ApplicationController
       .includes_pseudonym
       .includes_score_from_upvotes_created_before(created_before)
       .includes_my_vote_from_upvotes_created_before(created_before, my_id)
-      .left_outer_joins_with_most_recent_upvotes_created_before(created_before)
       .select(*MANUAL_SELECTIONS)
       .order_by_hot_created_before(created_before)
     render json: { comments: comments }
