@@ -8,6 +8,7 @@ class Api::V1::CommentsController < ApplicationController
     :score,
     :my_vote,
     :replies,
+    :depth
   ].freeze
 
   INTERMEDIATE_ATTRIBUTES = [
