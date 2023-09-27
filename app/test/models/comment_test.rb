@@ -39,6 +39,26 @@ class CommentTest < ActiveSupport::TestCase
     assert @comment.invalid?
   end
 
+  test 'comments should have a maximum depth of MAX_COMMENT_DEPTH' do
+    comment = @comment.dup
+    assert comment.save!
+    assert_equal 0, comment.depth
+    
+    (1...Comment::MAX_COMMENT_DEPTH).each do
+      comment = comment.children.build(
+        body: 'body',
+        post: @comment.post,
+        user: @comment.user)
+      assert comment.save!
+    end
+
+    comment = comment.children.build(
+      body: 'body',
+      post: @comment.post,
+      user: @comment.user)
+    assert_not comment.save
+  end
+
   test 'created_before should filter by created_at' do
     comment = comments(:two)
     created_at = comment.created_at

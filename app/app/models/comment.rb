@@ -40,6 +40,7 @@ class Comment < ApplicationRecord
   }
 
   MAX_BODY_LENGTH = 10000
+  MAX_COMMENT_DEPTH = 8
 
   belongs_to :post
   belongs_to :user
@@ -51,6 +52,12 @@ class Comment < ApplicationRecord
   validates :body,
     presence: true,
     length: { maximum: MAX_BODY_LENGTH }
+  validates :depth,
+    numericality: {
+      greater_than_or_equal_to: 0,
+      less_than: MAX_COMMENT_DEPTH,
+      only_integer: true,
+    }
 
   has_ancestry cache_depth: true, depth_cache_column: :depth
 end
