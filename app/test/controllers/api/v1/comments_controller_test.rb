@@ -3,6 +3,11 @@ require "test_helper"
 class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @post = posts(:one)
+    comment = comments(:one)
+    @commentable_urls = [
+      api_v1_post_comments_url(@post),
+      api_v1_comment_comments_url(comment),
+    ]
     @post_without_comments = posts(:three)
     @params = {
       comment: {
@@ -13,64 +18,77 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:one)
     setup_test_key(@user)
     @authorized_headers = authorized_headers(@user, '*')
-
-    @comment_with_upvotes = comments(:one)
   end
 
   test 'should create with valid params' do
-    assert_difference 'Comment.count', 1 do
-      post api_v1_post_comments_url(@post),
-        headers: @authorized_headers,
-        params: @params
+    @commentable_urls.each do |url|
+      assert_difference 'Comment.count', 1 do
+        post url, headers: @authorized_headers, params: @params
+      end
+
+      assert_response :created
+
+      json_response = JSON.parse(response.body, symbolize_names: true)
+      assert_not_nil json_response.dig(:id)
     end
-
-    assert_response :created
-
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_not_nil json_response.dig(:id)
   end
 
   test 'should not create with invalid authorization' do
-    assert_no_difference 'Comment.count' do
-      post api_v1_post_comments_url(@post),
-        headers: { Authorization: 'bad'},
-        params: @params
-    end
+    @commentable_urls.each do |url|
+      assert_no_difference 'Comment.count' do
+        post url, headers: { Authorization: 'bad'}, params: @params
+      end
 
-    assert_response :unauthorized
+      assert_response :unauthorized
+    end
   end
 
   test 'should not create with invalid params' do
-    assert_no_difference 'Comment.count' do
-      post api_v1_post_comments_url(@post),
-        headers: @authorized_headers,
-        params: { comment: @params[:comment].except(:body) }
-    end
+    @commentable_urls.each do |url|
+      assert_no_difference 'Comment.count' do
+        post url,
+          headers: @authorized_headers,
+          params: { comment: @params[:comment].except(:body) }
+      end
 
-    assert_response :unprocessable_entity
+      assert_response :unprocessable_entity
+    end
   end
 
-  test 'should not create on a nonexistent post' do
-    assert_no_difference 'Comment.count' do
-      post api_v1_post_comments_url('bad-post-id'),
-        headers: @authorized_headers,
-        params: @params
-    end
+  test 'should not create on a nonexistent commentable' do
+    nonexistent_commentable_urls = [
+      api_v1_post_comments_url('bad-post-id'),
+      api_v1_comment_comments_url('bad-comment-id'),
+    ]
+    assert_equal @commentable_urls.count, nonexistent_commentable_urls.count
 
-    assert_response :not_found
+    nonexistent_commentable_urls.each do |url|
+      assert_no_difference 'Comment.count' do
+        post url, headers: @authorized_headers, params: @params
+      end
+
+      assert_response :not_found
+    end
   end
 
   test 'should not create if post belongs to another Org' do
     post_in_another_org = posts(:two)
     assert_not_equal post_in_another_org.org.id, @user.org.id
+    comment_in_another_org = comments(:three)
+    assert_not_equal comment_in_another_org.post.org.id, @user.org.id
+    commentable_urls_in_other_orgs = [
+      api_v1_post_comments_url(post_in_another_org),
+      api_v1_comment_comments_url(comment_in_another_org),
+    ]
+    assert_equal @commentable_urls.count, commentable_urls_in_other_orgs.count
 
-    assert_no_difference 'Comment.count' do
-      post api_v1_post_comments_url(post_in_another_org),
-        headers: @authorized_headers,
-        params: @params
+    commentable_urls_in_other_orgs.each do |url|
+      assert_no_difference 'Comment.count' do
+        post url, headers: @authorized_headers, params: @params
+      end
+
+      assert_response :not_found
     end
-
-    assert_response :not_found
   end
 
   test 'should index with valid authorization' do

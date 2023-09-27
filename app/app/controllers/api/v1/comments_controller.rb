@@ -26,11 +26,10 @@ class Api::V1::CommentsController < ApplicationController
   ].freeze
 
   before_action :authenticate_user, only: [:index, :create]
-  before_action :check_post_belongs_to_org, only: [:index, :create]
+  before_action :check_commentable_belongs_to_org, only: [:index, :create]
 
   def create
-    new_comment = \
-      @post.comments.build(create_params.merge(user_id: authenticated_user.id))
+    new_comment = @commentable_relation.build(create_params)
     if new_comment.save
       render json: { id: new_comment.id }, status: :created
     else
@@ -62,14 +61,35 @@ class Api::V1::CommentsController < ApplicationController
 
   private
 
-  def check_post_belongs_to_org
-    @post = Post.find_by id: params[:post_id]
+  def check_commentable_belongs_to_org
+    post_id = params[:post_id]
+    comment_id = params[:comment_id]
+
+    unless post_id || comment_id
+      return render_error :bad_request, ['Must include post_id or comment_id']
+    end
+
+    if post_id
+      @post = Post.find_by id: post_id
+      @commentable_relation = @post&.comments
+    else
+      comment = Comment.includes(:post).find_by id: comment_id
+      @post = comment&.post
+      @commentable_relation = comment&.children
+    end
+
     unless @post&.org == authenticated_user.org
-      render_error :not_found, ['Post not found']
+      render_error :not_found, ['Commentable not found']
     end
   end
 
   def create_params
-    params.require(:comment).permit(PERMITTED_PARAMS)
+    params.require(:comment)
+      .permit(PERMITTED_PARAMS)
+      .merge(
+        # post_id is needed for replies, since the shallow route doesn't include
+        # the post_id
+        post_id: @post.id,
+        user_id: authenticated_user.id)
   end
 end

@@ -11,7 +11,9 @@ Rails.application.routes.draw do
         resources :comments, 
           concerns: :upvotable,
           only: [:index, :create], 
-          shallow: true
+          shallow: true do
+            resources :comments, only: [:create]
+          end
       end
       resources :users, only: [:create, :show]
 
