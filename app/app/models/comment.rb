@@ -52,5 +52,5 @@ class Comment < ApplicationRecord
     presence: true,
     length: { maximum: MAX_BODY_LENGTH }
 
-  has_ancestry
+  has_ancestry cache_depth: true, depth_cache_column: :depth
 end
