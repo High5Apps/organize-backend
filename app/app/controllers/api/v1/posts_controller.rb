@@ -11,7 +11,8 @@ class Api::V1::PostsController < ApplicationController
   def create
     new_post = authenticated_user.posts.build(create_params.merge(org: @org))
     if new_post.save
-      render json: { id: new_post.id }, status: :created
+      render json: { id: new_post.id, created_at: new_post.created_at },
+        status: :created
     else
       render_error :unprocessable_entity, new_post.errors.full_messages
     end

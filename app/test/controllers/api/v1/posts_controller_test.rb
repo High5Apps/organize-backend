@@ -22,6 +22,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
     json_response = JSON.parse(response.body, symbolize_names: true)
     assert_not_nil json_response.dig(:id)
+    assert_not_nil json_response.dig(:created_at)
   end
 
   test 'should not create with invalid authorization' do
