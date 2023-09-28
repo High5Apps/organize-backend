@@ -34,12 +34,6 @@ class Post::Query
       posts = posts.demands
     end
 
-    created_after_param = params[:created_after]
-    if created_after_param
-      created_after = Time.at(created_after_param.to_f).utc
-      posts = posts.created_after(created_after)
-    end
-
     # Default to sorting by new
     sort_parameter = params[:sort] || 'new'
     if sort_parameter == 'new'
