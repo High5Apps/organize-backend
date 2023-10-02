@@ -59,6 +59,21 @@ class CommentTest < ActiveSupport::TestCase
     assert_not comment.save
   end
 
+  test 'should auto-upvote on successful creation' do
+    assert_difference '@comment.user.upvotes.count', 1 do
+      @comment.dup.save!
+    end
+  end
+
+  test 'should not auto-upvote on update' do
+    new_comment = @comment.dup
+    new_comment.save!
+
+    assert_no_difference '@comment.user.upvotes.count' do
+      new_comment.update! body: 'new body'
+    end
+  end
+
   test 'created_before should filter by created_at' do
     comment = comments(:two)
     created_at = comment.created_at
@@ -169,16 +184,20 @@ class CommentTest < ActiveSupport::TestCase
     older_comment, newer_comment = nil
     post_creator = @post_without_comments.user
 
-    travel_to older_time do
+    travel_to older_time - 1.second do
       older_comment = @post_without_comments.comments
         .create!(body: 'body', user: post_creator)
+
+      travel 1.second
       older_comment.upvotes.build(user: post_creator, value: older_score)
         .save!(validate: false)
     end
 
-    travel_to newer_time do
+    travel_to newer_time - 1.second do
       newer_comment = @post_without_comments.comments
         .create!(body: 'body', user: post_creator)
+
+      travel 1.second
       newer_comment.upvotes.build(user: post_creator, value: newer_score)
         .save!(validate: false)
     end
