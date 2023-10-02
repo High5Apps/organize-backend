@@ -30,4 +30,12 @@ class Post < ApplicationRecord
   validates :body,
     length: { maximum: MAX_BODY_LENGTH }
   validates :user, presence: true
+
+  after_create :create_upvote_for_user
+
+  private
+
+  def create_upvote_for_user
+    upvotes.create! user: user, value: 1
+  end
 end

@@ -103,6 +103,9 @@ class PostQueryTest < ActiveSupport::TestCase
     newer_post.save!
 
     travel 1.second
+    newer_post.upvotes.create!(user: post_creator, value: 0)
+
+    travel 1.second
 
     post_ids = Post::Query.build({ created_before: Time.now, sort: 'hot' }).ids
     assert_operator post_ids.find_index(older_post.id),
@@ -122,6 +125,9 @@ class PostQueryTest < ActiveSupport::TestCase
 
     newer_post = @post_without_upvotes.dup
     newer_post.save!
+
+    travel 1.second
+    newer_post.upvotes.create!(user: post_creator, value: 0)
 
     travel 1.second
 
@@ -146,6 +152,9 @@ class PostQueryTest < ActiveSupport::TestCase
     newer_post.save!
 
     travel 1.second
+    newer_post.upvotes.create!(user: post_creator, value: 0)
+
+    travel 1.second
 
     post_ids = Post::Query.build({ created_before: Time.now, sort: 'hot' }).ids
     assert_operator post_ids.find_index(older_post.id),
@@ -166,6 +175,9 @@ class PostQueryTest < ActiveSupport::TestCase
 
     newer_post = @post_without_upvotes.dup
     newer_post.save!
+
+    travel 1.second
+    newer_post.upvotes.create!(user: post_creator, value: 0)
 
     travel 1.second
 

@@ -50,6 +50,21 @@ class PostTest < ActiveSupport::TestCase
     assert @post.invalid?
   end
 
+  test 'should auto-upvote on successful creation' do
+    assert_difference '@post.user.upvotes.count', 1 do
+      @post.dup.save!
+    end
+  end
+
+  test 'should not auto-upvote on update' do
+    new_post = @post.dup
+    new_post.save!
+
+    assert_no_difference '@post.user.upvotes.count' do
+      new_post.update! title: 'new title'
+    end
+  end
+
   test 'created_before should filter by created_at' do
     post = posts(:two)
     created_at = post.created_at
