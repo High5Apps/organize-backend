@@ -1,6 +1,16 @@
 #!/bin/bash
 
-set -e
+set -eE
+trap cleanup ERR
+
+cleanup()
+{
+  # Stop and remove the local registry
+  docker container stop registry
+  echo '- Stopped'
+  docker container rm registry
+  echo '- Removed'
+}
 
 if [ "$#" -ne 1 ]; then
   echo "Error: Must include ssh target as first arg"
@@ -55,8 +65,4 @@ ssh -R 5001:localhost:5001 $1  << EOF
    && docker compose exec app rake db:migrate
 EOF
 
-# Stop and remove the local registry
-docker container stop registry
-echo '- Stopped'
-docker container rm registry
-echo '- Removed'
+cleanup
