@@ -26,8 +26,8 @@ fi
 # 5001 because 5000 is already used by MacOS/ControlCenter on Macs
 docker run --detach --name registry -p 5001:5000 registry:2
 
-# Build and push the image to the local registry
-docker compose build
+# Build default services and services with the runManually profile
+docker compose --profile runManually build
 
 # Push default services and services with the runManually profile
 docker compose --profile runManually push
