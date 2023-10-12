@@ -17,6 +17,8 @@ services:
       - "127.0.0.1:3000:3000"
     restart: always
   certs:
+    build:
+      context: certs
     image: localhost:5001/organize-certs
     restart: always
     volumes:
@@ -33,6 +35,8 @@ services:
     volumes:
       - db-data:/var/lib/postgresql:rw
   db-upgrade:
+    build:
+      context: db-upgrade
     image: localhost:5001/db-upgrade
     profiles:
       - runManually
@@ -40,6 +44,8 @@ services:
     volumes:
       - db-data:/var/lib/postgresql:rw
   web:
+    build:
+      context: web
     depends_on:
       - app
       - certs

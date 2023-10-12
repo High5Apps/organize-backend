@@ -17,11 +17,10 @@ fi
 docker run --detach --name registry -p 5001:5000 registry:2
 
 # Build and push the image to the local registry
-docker compose -f compose.yaml -f compose.override.dev.yaml build
+docker compose build
 
 # Push default services and services with the runManually profile
-docker compose --profile runManually \
-  -f compose.yaml -f compose.override.dev.yaml push
+docker compose --profile runManually push
 
 # Transfer compose file into the home directory of the ssh target
 echo 'Transferring compose file'

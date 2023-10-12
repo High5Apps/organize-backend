@@ -4,17 +4,10 @@ services:
       target: dev
     environment:
       RAILS_ENV: development
+    image: localhost:5001/organize-app-dev
     volumes:
       - ./app:/usr/src/app
   certs:
-    build:
-      context: certs
     environment:
       SELF_SIGN: true
     restart: "no"
-  db-upgrade:
-    build:
-      context: db-upgrade
-  web:
-    build:
-      context: web
