@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      context: app
+      target: dev
     environment:
       RAILS_ENV: development
     volumes:

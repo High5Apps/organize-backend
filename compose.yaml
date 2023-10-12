@@ -1,5 +1,8 @@
 services:
   app:
+    build:
+      context: app
+      target: prod
     depends_on:
       - db
     environment:
