@@ -1,4 +1,4 @@
-FROM nginx:1.22
+FROM nginx:1.25.2
 
 RUN apt update \
   && apt install -y inotify-tools \
