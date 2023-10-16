@@ -60,7 +60,10 @@ posts = Post.order(:created_at).each do |post|
     # Pick a random member who had joined by that time to be the commenter
     commenter = User.where(joined_at: ...comment_time).sample
 
-    parent = potential_parent_comments.sample if rand < 0.8
+    if rand < 0.8 && !potential_parent_comments.empty?
+      parent = potential_parent_comments.sample
+      next if parent.depth + 1 >= Comment::MAX_COMMENT_DEPTH
+    end
 
     Timecop.freeze comment_time do
       comment = post.comments.create! user: commenter,
