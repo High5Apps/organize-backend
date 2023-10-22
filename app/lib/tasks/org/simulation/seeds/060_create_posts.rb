@@ -70,8 +70,7 @@ def hipster_ipsum_post_body
   paragraphs.join "\n\n"
 end
 
-post_data.each do |employee_id, day_start|
-  user_id = $user_id_map[employee_id]
+post_data.each do |user_id, day_start|
   created_at = random_time_during_day day_start
 
   Timecop.freeze created_at do

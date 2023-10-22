@@ -50,7 +50,7 @@ class Simulation
     puts "-----------------"
 
     run_day_connections(day_start)
-    run_day_posts(day_start)  
+    run_day_posts(day_start)
   end
 
   def run_day_connections(day_start)
@@ -61,7 +61,7 @@ class Simulation
       daily_enthusiasm = rand 0..5
       next if daily_enthusiasm == 0
 
-      puts "Member #{member.id} will ask up to #{daily_enthusiasm} close links to join today"
+      puts "Member #{member.index} will ask up to #{daily_enthusiasm} close links to join today"
       close_links_to_ask = unasked_close_links.to_a.sample(daily_enthusiasm)
       close_links_to_ask.each do |to_ask|
         member.asked_closely_linked_employee_set.add to_ask
@@ -69,7 +69,7 @@ class Simulation
         result = accepted ? "Accepted" : "Rejected"
         already_member = @members.include? to_ask
         action = already_member ? 'connect' : 'join'
-        puts ' '*2 + "Asking Employee #{to_ask.id} to #{action}... #{result}"
+        puts ' '*2 + "Asking Employee #{to_ask.index} to #{action}... #{result}"
 
         next unless accepted
         @members.add to_ask
@@ -94,7 +94,7 @@ class Simulation
       puts unless any_posts_today
       any_posts_today = true
 
-      puts "Member #{member.id} created a post"
+      puts "Member #{member.index} created a post"
       @posts.push [member, day_start]
     end
   end

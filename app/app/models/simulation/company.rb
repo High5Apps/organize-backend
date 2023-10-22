@@ -5,7 +5,7 @@ class Simulation::Company
   # clamped to the number of remaining unplaced employees
   NORMAL_MIN_TEAM_SIZE = 4
   MAX_TEAM_SIZE = 10
-  
+
   attr_reader :size
 
   def initialize(size, random_seed: nil)
@@ -23,7 +23,7 @@ class Simulation::Company
 
   def employees
     return @employees if @employees
-    @employees = (0...@size).map { |i| Employee.new i }
+    @employees = (0...@size).map { |i| Employee.new i, SecureRandom.uuid }
   end
 
   def teams
@@ -155,8 +155,8 @@ class Simulation::Company
   # Each employee is linked to up to 10 random people in the company.
   # Then there's a 50% chance of those links being a close link.
   def create_random_links
-    even_employees = employees.select { |e| e.id.even? }
-    odd_employees = employees.select { |e| e.id.odd? }
+    even_employees = employees.select { |e| e.index.even? }
+    odd_employees = employees.select { |e| e.index.odd? }
 
     even_employees.each do |even_employee|
       random_link_count = rand 0..10

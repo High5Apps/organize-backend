@@ -1,7 +1,7 @@
 print "\tCreating Org... "
 start_time = Time.now
 
-creator = User.find($user_id_map[$simulation.founder.id])
+creator = User.find($simulation.founder.id)
 
 random_local_number = rand 1000..9999
 random_store_number = rand 100..999

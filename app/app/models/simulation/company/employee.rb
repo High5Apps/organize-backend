@@ -1,9 +1,10 @@
 class Simulation::Company::Employee
-  attr_reader :id, :probability_of_joining
+  attr_reader :id, :index, :probability_of_joining
   attr_accessor :team, :linked_employee_set, :closely_linked_employee_set,
     :asked_closely_linked_employee_set
 
-  def initialize(id)
+  def initialize(index, id)
+    @index = index
     @id = id
     @linked_employee_set = Set[]
     @closely_linked_employee_set = Set[]
@@ -14,7 +15,7 @@ class Simulation::Company::Employee
   def unasked_closely_linked_employee_set
     @closely_linked_employee_set - @asked_closely_linked_employee_set
   end
-  
+
   # Without this, a stack overflow can occur when any other error tried to print
   # out the sets, which may link to other sets, which link back to this employee
   def inspect
