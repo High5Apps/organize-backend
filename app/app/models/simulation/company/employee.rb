@@ -1,6 +1,6 @@
 class Simulation::Company::Employee
-  attr_reader :id, :index, :probability_of_joining
-  attr_accessor :team, :linked_employee_set, :closely_linked_employee_set,
+  attr_reader :index, :probability_of_joining
+  attr_accessor :id, :team, :linked_employee_set, :closely_linked_employee_set,
     :asked_closely_linked_employee_set
 
   def initialize(index, id)

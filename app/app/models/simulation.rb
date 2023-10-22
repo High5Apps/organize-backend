@@ -1,7 +1,5 @@
 class Simulation
-  attr_reader :started_at
-  attr_reader :ended_at
-  attr_reader :founder
+  attr_reader :started_at, :ended_at, :founder_id
 
   def initialize
     start = Time.now
@@ -16,13 +14,17 @@ class Simulation
     puts "Initialized company in #{(finish - start).round 3} s"
   end
 
-  def run(days: 10)
+  def run(founder_id:, days: 10)
+    @founder_id = founder_id
     @day = 0
     @connections = []
     @posts = []
     @members = Set[]
-    @members.add @company.most_passionate_employee
-    @founder = @company.most_passionate_employee
+
+    founder = @company.most_passionate_employee
+    founder.id = @founder_id
+    @members.add founder
+
     @ended_at = Time.now.at_midnight
     days.times do
       day_start = @ended_at - (days - @day).days

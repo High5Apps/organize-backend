@@ -19,7 +19,7 @@ post_data = $simulation.to_seed_data[:posts]
 print "\tCreating #{post_data.count} posts... "
 start_time = Time.now
 
-org = Org.first
+org = User.find($simulation.founder_id).org
 
 def random_time_during_day(timestamp)
   Faker::Time.between from: timestamp.at_midnight,

@@ -5,6 +5,9 @@ start_time = Time.now
 
 Timecop.freeze($simulation.started_at) do
   user_ids.each do |user_id|
+    # Don't attempt to recreate the pre-existing founder
+    next if user_id == $simulation.founder_id
+
     key_pair = OpenSSL::PKey::EC.generate "prime256v1"
     User.create! id: user_id, public_key_bytes: key_pair.public_to_der
   end

@@ -1,7 +1,10 @@
 USERS_PER_STEWARD = 20
 
 offices = Office.all
-user_count = User.count
+founder = User.find($simulation.founder_id)
+org = founder.org
+user_ids = org.users.ids
+user_count = user_ids.count
 steward_count = (user_count / USERS_PER_STEWARD)
 
 # -1 because offices already includes a steward
@@ -11,7 +14,7 @@ print "\tCreating #{term_count} terms... "
 start_time = Time.now
 
 Timecop.freeze($simulation.ended_at) do
-  graph = Org.first.graph
+  graph = org.graph
   term_map = {}
 
   offices.each do |office|
@@ -54,7 +57,7 @@ Timecop.freeze($simulation.ended_at) do
   # Handle Stewards
   # Random users that aren't already an elected officer (could be the Founder)
   officer_ids = term_map.values.map(&:user_id)
-  non_officer_ids = User.ids - officer_ids
+  non_officer_ids = user_ids - officer_ids
   steward_ids = non_officer_ids.sample(steward_count)
   steward = Office.find_by_name('Steward')
   steward_ids.each do |steward_id|

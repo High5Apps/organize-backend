@@ -37,11 +37,14 @@ def hipster_ipsum_comment_body
   paragraphs.join "\n\n"
 end
 
-comment_count_estimate = Post.count * APPROXIMATE_COMMENTS_PER_POST
+org = User.find($simulation.founder_id).org
+users = org.users
+posts = org.posts
+comment_count_estimate = posts.count * APPROXIMATE_COMMENTS_PER_POST
 print "\tCreating roughly #{comment_count_estimate.round} comments... "
 start_time = Time.now
 
-posts = Post.order(:created_at).each do |post|
+posts.order(:created_at).each do |post|
   comment_count = COMMENTS_ON_POST_DISTRIBUTION.call
   next unless comment_count > 0
 
@@ -58,7 +61,7 @@ posts = Post.order(:created_at).each do |post|
     comment_time = current_time + time_delta
 
     # Pick a random member who had joined by that time to be the commenter
-    commenter = User.where(joined_at: ...comment_time).sample
+    commenter = users.where(joined_at: ...comment_time).sample
 
     if rand < 0.8 && !potential_parent_comments.empty?
       parent = potential_parent_comments.sample

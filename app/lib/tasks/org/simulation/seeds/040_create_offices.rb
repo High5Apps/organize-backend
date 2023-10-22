@@ -8,6 +8,9 @@ office_names = [
   'Trustee',
 ]
 
+# Only run this if offices haven't already been created
+return if Office.count >= office_names.count
+
 print "\tCreating #{office_names.count} offices... "
 start_time = Time.now
 
