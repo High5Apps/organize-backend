@@ -2,7 +2,7 @@ include ActionView::Helpers::DateHelper
 
 namespace :org do
   desc "Switch any user to be in any Org"
-    task :switch => :environment do |task_name|
+  task :switch => :environment do |task_name|
     puts
     puts 'WARNING: USE THIS COMMAND CAREFULLY!'
     puts 'It has the power to switch any user from one Org to another.'
