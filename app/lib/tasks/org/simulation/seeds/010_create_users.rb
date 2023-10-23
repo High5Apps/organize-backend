@@ -5,8 +5,16 @@ start_time = Time.now
 
 Timecop.freeze($simulation.started_at) do
   user_ids.each do |user_id|
-    # Don't attempt to recreate the pre-existing founder
-    next if user_id == $simulation.founder_id
+    if user_id == $simulation.founder_id
+      # Update founder timestamps to align with simulation timestamps.
+      # Otherwise the founder would have a shorter tenure than other members.
+      founder = User.find(user_id)
+      founder.update! created_at: $simulation.started_at,
+        joined_at: $simulation.started_at
+
+      # Don't attempt to recreate the pre-existing founder
+      next
+    end
 
     key_pair = OpenSSL::PKey::EC.generate "prime256v1"
     User.create! id: user_id, public_key_bytes: key_pair.public_to_der
