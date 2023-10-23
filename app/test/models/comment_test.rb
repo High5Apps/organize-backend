@@ -39,11 +39,18 @@ class CommentTest < ActiveSupport::TestCase
     assert @comment.invalid?
   end
 
+  test 'body should automatically be stripped of whitespace' do
+    expected_content = 'a b c'
+    @comment.body = "\n\n\t\r #{expected_content} \n\t\r"
+    assert @comment.valid?
+    assert_equal expected_content, @comment.body
+  end
+
   test 'comments should have a maximum depth of MAX_COMMENT_DEPTH' do
     comment = @comment.dup
     assert comment.save!
     assert_equal 0, comment.depth
-    
+
     (1...Comment::MAX_COMMENT_DEPTH).each do
       comment = comment.children.build(
         body: 'body',
@@ -86,7 +93,7 @@ class CommentTest < ActiveSupport::TestCase
   test 'includes_pseudonym should include pseudonyms' do
     pseudonyms = Comment.includes_pseudonym.map(&:pseudonym)
     assert_not_empty pseudonyms
-    pseudonyms.each { |p| assert_not_empty p } 
+    pseudonyms.each { |p| assert_not_empty p }
   end
 
   test 'includes_score_from_upvotes_created_before should include score as the sum of upvotes and downvotes' do

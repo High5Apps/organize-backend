@@ -59,13 +59,18 @@ class Comment < ApplicationRecord
       only_integer: true,
     }
 
+  before_validation :strip_whitespace
   after_create :create_upvote_for_user
 
   has_ancestry cache_depth: true, depth_cache_column: :depth
 
   private
-  
+
   def create_upvote_for_user
     upvotes.create! user: user, value: 1
+  end
+
+  def strip_whitespace
+    body&.strip!
   end
 end
