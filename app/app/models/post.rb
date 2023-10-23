@@ -31,11 +31,17 @@ class Post < ApplicationRecord
     length: { maximum: MAX_BODY_LENGTH }
   validates :user, presence: true
 
+  before_validation :strip_whitespace
   after_create :create_upvote_for_user
 
   private
 
   def create_upvote_for_user
     upvotes.create! user: user, value: 1
+  end
+
+  def strip_whitespace
+    title&.strip!
+    body&.strip!
   end
 end
