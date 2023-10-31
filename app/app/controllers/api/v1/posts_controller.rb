@@ -2,6 +2,7 @@ class Api::V1::PostsController < ApplicationController
   PERMITTED_PARAMS = [
     :body,
     :category,
+    { encrypted_title: [:c, :n, :t] },
     :title,
   ]
 
