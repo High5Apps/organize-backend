@@ -19,6 +19,21 @@ class PostTest < ActiveSupport::TestCase
     assert @post.invalid?
   end
 
+  test 'encrypted_title should be present' do
+    @post.encrypted_title = nil
+    assert @post.invalid?
+  end
+
+  test 'encrypted_title should be less than MAX_TITLE_LENGTH' do
+    @post.encrypted_title.c = \
+      Base64.strict_encode64('a' * Post::MAX_TITLE_LENGTH)
+    assert @post.valid?
+
+    @post.encrypted_title.c = \
+      Base64.strict_encode64('a' * (1 + Post::MAX_TITLE_LENGTH))
+    assert @post.invalid?
+  end
+
   test 'title should be present' do
     @post.title = ' '
     assert @post.invalid?

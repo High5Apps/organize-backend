@@ -3,8 +3,7 @@ require "test_helper"
 class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
   setup do
     p = posts(:one)
-    @params = { post: p.attributes.with_indifferent_access }
-
+    @params = { post: p.attributes.as_json.with_indifferent_access }
 
     @user = users(:one)
     setup_test_key(@user)

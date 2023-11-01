@@ -31,13 +31,23 @@ class Post < ApplicationRecord
     length: { maximum: MAX_BODY_LENGTH }
   validates :user, presence: true
 
+  validate :encrypted_title_ciphertext_length_within_range
+
   before_validation :strip_whitespace
   after_create :create_upvote_for_user
+
+  serialize :encrypted_title, EncryptedMessage
 
   private
 
   def create_upvote_for_user
     upvotes.create! user: user, value: 1
+  end
+
+  def encrypted_title_ciphertext_length_within_range
+    length = encrypted_title.decoded_byte_length
+    return errors.add(:encrypted_title, "can't be blank") unless length > 0
+    errors.add(:encrypted_title, 'is too long') if length > MAX_TITLE_LENGTH
   end
 
   def strip_whitespace
