@@ -18,9 +18,8 @@ class EncryptedMessage
     instance_values
   end
 
-  def decoded_byte_length
-    return 0 if c.blank?
-    return Base64.decode64(c).length
+  def decoded_ciphertext_length
+    decoded_attribute_length :c
   end
 
   def self.dump(value)
@@ -38,9 +37,15 @@ class EncryptedMessage
   private
 
   def base64_decoded_byte_length(attribute_name, byte_length)
-    attribute = send(attribute_name)
-    if attribute.blank? || Base64.decode64(attribute).length != byte_length
+    length = decoded_attribute_length attribute_name
+    if length != byte_length
       errors.add(attribute_name, ERROR_MESSAGE_UNEXPECTED_BASE64_BYTE_LENGTH)
     end
+  end
+
+  def decoded_attribute_length(attribute_name)
+    attribute = send(attribute_name)
+    return 0 if attribute.blank?
+    return Base64.decode64(attribute).length
   end
 end

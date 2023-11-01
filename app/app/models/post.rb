@@ -45,7 +45,7 @@ class Post < ApplicationRecord
   end
 
   def encrypted_title_ciphertext_length_within_range
-    length = encrypted_title.decoded_byte_length
+    length = encrypted_title.decoded_ciphertext_length
     return errors.add(:encrypted_title, "can't be blank") unless length > 0
     errors.add(:encrypted_title, 'is too long') if length > MAX_TITLE_LENGTH
   end
