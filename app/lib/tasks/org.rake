@@ -43,11 +43,20 @@ namespace :org do
     print "[#{user.pseudonym.downcase}]: "
     abort unless STDIN.gets.chomp.downcase == user.pseudonym.downcase
 
+    puts
+    puts "Paste the user\'s base64-encoded group key below."
+    puts 'To access your Org\'s base64-encoded group key:'
+    puts '1. Start the app with ENABLE_DEVELOPER_SETTINGS=true'.indent(2)
+    puts '2. Navigate to the Settings screen in the Org tab'.indent(2)
+    puts '3. Under the "Developer" section, tap "Share Group Key"'.indent(2)
+    print '[<group_key_base64>]: '
+    group_key_base64 = STDIN.gets.chomp
+
     puts "Creating seeds..."
     start_time = Time.now
 
     $simulation = Simulation.new
-    $simulation.run founder_id: user.id
+    $simulation.run founder_id: user.id, group_key_base64: group_key_base64
 
     # The unusual code below is a holdover from when these seeds used to be
     # created using rails db:seeds task. It basically runs all seed scripts in

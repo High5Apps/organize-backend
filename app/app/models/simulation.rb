@@ -1,5 +1,5 @@
 class Simulation
-  attr_reader :started_at, :ended_at, :founder_id
+  attr_reader :started_at, :ended_at, :founder_id, :group_key_base64
 
   def initialize
     start = Time.now
@@ -14,8 +14,9 @@ class Simulation
     puts "Initialized company in #{(finish - start).round 3} s"
   end
 
-  def run(founder_id:, days: 10)
+  def run(founder_id:, group_key_base64:, days: 10)
     @founder_id = founder_id
+    @group_key_base64 = group_key_base64
     @day = 0
     @connections = []
     @posts = []
