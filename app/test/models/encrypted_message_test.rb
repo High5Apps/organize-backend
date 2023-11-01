@@ -9,28 +9,28 @@ class EncryptedMessageTest < ActiveSupport::TestCase
     assert @encrypted_message.valid?
   end
 
-  test 'c should be present' do
-    @encrypted_message.c = nil
+  test 'ciphertext should be present' do
+    @encrypted_message.ciphertext = nil
     assert @encrypted_message.invalid?
   end
 
-  test 'n should be present' do
-    @encrypted_message.n = nil
+  test 'nonce should be present' do
+    @encrypted_message.nonce = nil
     assert @encrypted_message.invalid?
   end
 
-  test 'n should have a base64 decoded byte length of BYTE_LENGTH_NONCE' do
-    @encrypted_message.n = 'abc'
+  test 'nonce should have a base64 decoded byte length of BYTE_LENGTH_NONCE' do
+    @encrypted_message.nonce = 'abc'
     assert @encrypted_message.invalid?
   end
 
-  test 't should be present' do
-    @encrypted_message.t = nil
+  test 'auth_tag should be present' do
+    @encrypted_message.auth_tag = nil
     assert @encrypted_message.invalid?
   end
 
-  test 't should have a base64 decoded byte length of BYTE_LENGTH_AUTH_TAG' do
-    @encrypted_message.t = 'abc'
+  test 'auth_tag should have a base64 decoded byte length of BYTE_LENGTH_AUTH_TAG' do
+    @encrypted_message.auth_tag = 'abc'
     assert @encrypted_message.invalid?
   end
 end

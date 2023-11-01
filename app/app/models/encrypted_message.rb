@@ -6,20 +6,23 @@ class EncryptedMessage
   ERROR_MESSAGE_UNEXPECTED_BASE64_BYTE_LENGTH = 'had unexpected byte length when decoded from base64'
 
   attr_accessor :c, :n, :t
+  alias_attribute :ciphertext, :c
+  alias_attribute :nonce, :n
+  alias_attribute :auth_tag, :t
 
-  validates :c, presence: true
-  validates :n, presence: true
-  validates :t, presence: true
+  validates :ciphertext, presence: true
+  validates :nonce, presence: true
+  validates :auth_tag, presence: true
 
-  validate -> { base64_decoded_byte_length :n, BYTE_LENGTH_NONCE }
-  validate -> { base64_decoded_byte_length :t, BYTE_LENGTH_AUTH_TAG }
+  validate -> { base64_decoded_byte_length :nonce, BYTE_LENGTH_NONCE }
+  validate -> { base64_decoded_byte_length :auth_tag, BYTE_LENGTH_AUTH_TAG }
 
   def attributes
     instance_values
   end
 
   def decoded_ciphertext_length
-    decoded_attribute_length :c
+    decoded_attribute_length :ciphertext
   end
 
   def self.dump(value)
