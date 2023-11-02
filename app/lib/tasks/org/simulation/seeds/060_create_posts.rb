@@ -40,17 +40,6 @@ def random_category
   end
 end
 
-def encrypt(message, cipher)
-  encrypted_message = cipher.encrypt message
-
-  # Using strict_encode64 because regular encode64 adds unwanted new lines
-  {
-    c: Base64.strict_encode64(encrypted_message.payload),
-    n: Base64.strict_encode64(encrypted_message.headers.iv),
-    t: Base64.strict_encode64(encrypted_message.headers.auth_tag),
-  }
-end
-
 def hipster_ipsum_post_title
   title_length = rand TITLE_CHARACTER_RANGE
   title = Faker::Hipster.paragraph_by_chars characters: title_length
@@ -81,9 +70,6 @@ def hipster_ipsum_post_body
   paragraphs.join "\n\n"
 end
 
-group_key = Base64.decode64 $simulation.group_key_base64
-cipher = ActiveRecord::Encryption::Cipher::Aes256Gcm.new group_key
-
 post_data.each do |user_id, day_start|
   created_at = random_time_during_day day_start
 
@@ -91,7 +77,7 @@ post_data.each do |user_id, day_start|
     title = hipster_ipsum_post_title
 
     User.find(user_id).posts.create! category: random_category.to_s,
-      encrypted_title: encrypt(title, cipher),
+      encrypted_title: $simulation.encrypt(title),
       body: hipster_ipsum_post_body,
       org: org
   end
