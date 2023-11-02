@@ -1,6 +1,7 @@
 one:
   category: :grievances
   encrypted_title: { c: z+vGgnGosuwxPJUzvV8=, n: apYL9B4eoWgMyCGL, t: Bvq/E/pzEN4NWV5vCrQp0w== }
+  encrypted_body: { c: JhlQWECNOSBH, n: pxPu9aXPGFjG9Tge, t: Mtz8G5pPWTm65nrTIw+wgw== }
   body: 'Post body'
   org: one
   user: one
