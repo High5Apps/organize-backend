@@ -1,7 +1,6 @@
 one:
   category: :grievances
   encrypted_title: { c: z+vGgnGosuwxPJUzvV8=, n: apYL9B4eoWgMyCGL, t: Bvq/E/pzEN4NWV5vCrQp0w== }
-  title: 'Post with body'
   body: 'Post body'
   org: one
   user: one
@@ -10,7 +9,6 @@ one:
 two:
   category: :general
   encrypted_title: { c: 5QCq1GmVwweSmeLMNEypVII=, n: glbd4i3Tl48DQCKx, t: RvylCugm3ZdKn3L7tdHm3Q== }
-  title: 'Post without body'
   org: two
   user: five
   created_at: <%= 1.second.after(Time.at 0).to_fs(:db) %>
@@ -18,7 +16,6 @@ two:
 three:
   category: :demands
   encrypted_title: { c: EfqSH/qSHxCpwxc=, n: +MPyQNx/qCIF8EGg, t: 3PLDfC3/RrFwiJHga0lGFQ== }
-  title: 'Demand post'
   org: one
   user: one
   created_at: <%= 2.seconds.after(Time.at 0).to_fs(:db) %>

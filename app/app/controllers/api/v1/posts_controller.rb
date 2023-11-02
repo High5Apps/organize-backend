@@ -3,7 +3,6 @@ class Api::V1::PostsController < ApplicationController
     :body,
     :category,
     { encrypted_title: [:c, :n, :t] },
-    :title,
   ]
 
   before_action :authenticate_user, only: [:index, :create]

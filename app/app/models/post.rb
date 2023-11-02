@@ -24,9 +24,6 @@ class Post < ApplicationRecord
   validates :category,
     presence: true,
     inclusion: { in: categories }
-  validates :title,
-    presence: true,
-    length: { maximum: MAX_TITLE_LENGTH }
   validates :body,
     length: { maximum: MAX_BODY_LENGTH }
   validates :user, presence: true
@@ -51,7 +48,6 @@ class Post < ApplicationRecord
   end
 
   def strip_whitespace
-    title&.strip!
     body&.strip!
   end
 end

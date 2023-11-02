@@ -34,26 +34,6 @@ class PostTest < ActiveSupport::TestCase
     assert @post.invalid?
   end
 
-  test 'title should be present' do
-    @post.title = ' '
-    assert @post.invalid?
-  end
-
-  test 'title should not be longer than MAX_TITLE_LENGTH' do
-    @post.title = 'a' * Post::MAX_TITLE_LENGTH
-    assert @post.valid?
-
-    @post.title = 'a' * (1 + Post::MAX_TITLE_LENGTH)
-    assert @post.invalid?
-  end
-
-  test 'title should automatically be stripped of whitespace' do
-    expected_content = 'a b c'
-    @post.title = "\n\n\t\r #{expected_content} \n\t\r"
-    assert @post.valid?
-    assert_equal expected_content, @post.title
-  end
-
   test 'body should be optional' do
     @post.body = nil
     assert @post.valid?
@@ -89,8 +69,9 @@ class PostTest < ActiveSupport::TestCase
     new_post = @post.dup
     new_post.save!
 
+    assert_not new_post.general?
     assert_no_difference '@post.user.upvotes.count' do
-      new_post.update! title: 'new title'
+      new_post.general!
     end
   end
 

@@ -92,7 +92,6 @@ post_data.each do |user_id, day_start|
 
     User.find(user_id).posts.create! category: random_category.to_s,
       encrypted_title: encrypt(title, cipher),
-      title: title,
       body: hipster_ipsum_post_body,
       org: org
   end

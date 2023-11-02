@@ -31,7 +31,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create with invalid params' do
     assert_no_difference 'Post.count' do
       post api_v1_posts_url, headers: @authorized_headers, params: {
-        post: @params[:post].except(:title)
+        post: @params[:post].except(:category)
       }
       assert_response :unprocessable_entity
     end
