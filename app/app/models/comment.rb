@@ -49,9 +49,6 @@ class Comment < ApplicationRecord
 
   validates :post, presence: true
   validates :user, presence: true
-  validates :body,
-    presence: true,
-    length: { maximum: MAX_BODY_LENGTH }
   validates :depth,
     numericality: {
       greater_than_or_equal_to: 0,
@@ -61,7 +58,6 @@ class Comment < ApplicationRecord
 
   validate :encrypted_body_ciphertext_length_within_range
 
-  before_validation :strip_whitespace
   after_create :create_upvote_for_user
 
   serialize :encrypted_body, EncryptedMessage
@@ -78,9 +74,5 @@ class Comment < ApplicationRecord
     length = encrypted_body.decoded_ciphertext_length
     return errors.add(:encrypted_body, "can't be blank") unless length > 0
     errors.add(:encrypted_body, 'is too long') if length > MAX_BODY_LENGTH
-  end
-
-  def strip_whitespace
-    body&.strip!
   end
 end

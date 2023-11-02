@@ -35,31 +35,6 @@ class CommentTest < ActiveSupport::TestCase
     assert @comment.invalid?
   end
 
-  test 'body should be present' do
-    @comment.body = nil
-    assert @comment.invalid?
-  end
-
-  test 'body should not be empty' do
-    @comment.body = '       '
-    assert @comment.invalid?
-  end
-
-  test 'body should not be longer than MAX_BODY_LENGTH' do
-    @comment.body = 'a' * Comment::MAX_BODY_LENGTH
-    assert @comment.valid?
-
-    @comment.body = 'a' * (1 + Comment::MAX_BODY_LENGTH)
-    assert @comment.invalid?
-  end
-
-  test 'body should automatically be stripped of whitespace' do
-    expected_content = 'a b c'
-    @comment.body = "\n\n\t\r #{expected_content} \n\t\r"
-    assert @comment.valid?
-    assert_equal expected_content, @comment.body
-  end
-
   test 'comments should have a maximum depth of MAX_COMMENT_DEPTH' do
     comment = @comment.dup
     assert comment.save!
@@ -67,7 +42,6 @@ class CommentTest < ActiveSupport::TestCase
 
     (1...Comment::MAX_COMMENT_DEPTH).each do
       comment = comment.children.build(
-        body: 'body',
         encrypted_body: @comment.encrypted_body,
         post: @comment.post,
         user: @comment.user)
@@ -75,7 +49,6 @@ class CommentTest < ActiveSupport::TestCase
     end
 
     comment = comment.children.build(
-      body: 'body',
       post: @comment.post,
       user: @comment.user)
     assert_not comment.save
@@ -91,8 +64,10 @@ class CommentTest < ActiveSupport::TestCase
     new_comment = @comment.dup
     new_comment.save!
 
+    new_depth = 5
+    assert_not_equal new_depth, new_comment.depth
     assert_no_difference '@comment.user.upvotes.count' do
-      new_comment.update! body: 'new body'
+      new_comment.update! depth: new_depth
     end
   end
 
@@ -209,7 +184,7 @@ class CommentTest < ActiveSupport::TestCase
 
     travel_to older_time - 1.second do
       older_comment = @post_without_comments.comments
-        .create!(body: 'body', encrypted_body: encrypted_body, user: post_creator)
+        .create!(encrypted_body: encrypted_body, user: post_creator)
 
       travel 1.second
       older_comment.upvotes.build(user: post_creator, value: older_score)
@@ -218,7 +193,7 @@ class CommentTest < ActiveSupport::TestCase
 
     travel_to newer_time - 1.second do
       newer_comment = @post_without_comments.comments
-        .create!(body: 'body', encrypted_body: encrypted_body, user: post_creator)
+        .create!(encrypted_body: encrypted_body, user: post_creator)
 
       travel 1.second
       newer_comment.upvotes.build(user: post_creator, value: newer_score)

@@ -1,7 +1,6 @@
 class Api::V1::CommentsController < ApplicationController
   ALLOWED_ATTRIBUTES = [
     :id,
-    :body,
     :encrypted_body,
     :user_id,
     :created_at,
@@ -24,7 +23,6 @@ class Api::V1::CommentsController < ApplicationController
   private_constant :MANUAL_SELECTIONS
 
   PERMITTED_PARAMS = [
-    :body,
     { encrypted_body: [:c, :n, :t] },
   ].freeze
 

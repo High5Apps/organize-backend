@@ -44,7 +44,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
       assert_no_difference 'Comment.count' do
         post url,
           headers: @authorized_headers,
-          params: { comment: @params[:comment].except(:body) }
+          params: { comment: @params[:comment].except(:encrypted_body) }
       end
 
       assert_response :unprocessable_entity
