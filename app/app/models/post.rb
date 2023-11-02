@@ -24,14 +24,11 @@ class Post < ApplicationRecord
   validates :category,
     presence: true,
     inclusion: { in: categories }
-  validates :body,
-    length: { maximum: MAX_BODY_LENGTH }
   validates :user, presence: true
 
   validate :encrypted_title_ciphertext_length_within_range
   validate :encrypted_body_ciphertext_length_within_range
 
-  before_validation :strip_whitespace
   after_create :create_upvote_for_user
 
   serialize :encrypted_body, EncryptedMessage
@@ -52,9 +49,5 @@ class Post < ApplicationRecord
     length = encrypted_title.decoded_ciphertext_length
     return errors.add(:encrypted_title, "can't be blank") unless length > 0
     errors.add(:encrypted_title, 'is too long') if length > MAX_TITLE_LENGTH
-  end
-
-  def strip_whitespace
-    body&.strip!
   end
 end

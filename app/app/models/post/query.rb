@@ -4,7 +4,6 @@ class Post::Query
     category: '',
     encrypted_body: '',
     encrypted_title: '',
-    body: '',
     user_id: '',
     created_at: '',
     pseudonym: '',

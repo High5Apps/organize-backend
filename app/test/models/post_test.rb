@@ -49,26 +49,6 @@ class PostTest < ActiveSupport::TestCase
     assert @post.invalid?
   end
 
-  test 'body should be optional' do
-    @post.body = nil
-    assert @post.valid?
-  end
-
-  test 'body should not be longer than MAX_BODY_LENGTH' do
-    @post.body = 'a' * Post::MAX_BODY_LENGTH
-    assert @post.valid?
-
-    @post.body = 'a' * (1 + Post::MAX_BODY_LENGTH)
-    assert @post.invalid?
-  end
-
-  test 'body should automatically be stripped of whitespace' do
-    expected_content = 'a b c'
-    @post.body = "\n\n\t\r #{expected_content} \n\t\r"
-    assert @post.valid?
-    assert_equal expected_content, @post.body
-  end
-
   test 'user should be present' do
     @post.user = nil
     assert @post.invalid?
