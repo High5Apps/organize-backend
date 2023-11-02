@@ -1,6 +1,7 @@
 one:
   post: one
   user: three
+  encrypted_body: { c: IpGrY2tC1yx7Nh/1, n: +i16VP9Bin0aQSy4, t: e2TGhpVhljvitbHD/s8GzA== }
   body: 'Comment body'
   created_at: <%= 10.seconds.after(Time.at 0).to_fs(:db) %>
   ancestry: '/'
@@ -8,6 +9,7 @@ one:
 two:
   post: one
   user: one
+  encrypted_body: { c: 4X5ca7MR4c7iHLCnZtS8, n: e6vD6s2rRoeDJD40, t: x2sG3WbiDoMUX7pDggkaqA== }
   body: 'Another comment'
   created_at: <%= 11.seconds.after(Time.at 0).to_fs(:db) %>
   ancestry: '/'
@@ -15,6 +17,7 @@ two:
 three:
   post: two
   user: five
+  encrypted_body: { c: lYRp+ud+RF5jHujG3pP3, n: 4fBUpUU+Ah1l2li8, t: m51bgCuTur+MOnp+sumEcg== }
   body: 'Another comment'
   created_at: <%= 12.seconds.after(Time.at 0).to_fs(:db) %>
   ancestry: '/'
@@ -22,6 +25,7 @@ three:
 four:
   post: two
   user: five
+  encrypted_body: { c: G73oRPaWtA==, n: 3Y0SOVWPPpHwx/zR, t: 0u0qE8AxOOXF2ocVo6rKgQ== }
   body: 'A reply'
   created_at: <%= 13.seconds.after(Time.at 0).to_fs(:db) %>
   ancestry: <%= "/#{ActiveRecord::FixtureSet.identify(:three, :uuid)}/" %>
