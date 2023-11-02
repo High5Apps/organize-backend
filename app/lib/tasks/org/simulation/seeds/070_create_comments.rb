@@ -69,8 +69,10 @@ posts.order(:created_at).each do |post|
     end
 
     Timecop.freeze comment_time do
+      body = hipster_ipsum_comment_body
       comment = post.comments.create! user: commenter,
-        body: hipster_ipsum_comment_body,
+        body: body,
+        encrypted_body: $simulation.encrypt(body),
         parent: parent
       potential_parent_comments.push(comment)
     end

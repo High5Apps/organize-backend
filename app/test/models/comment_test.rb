@@ -21,6 +21,20 @@ class CommentTest < ActiveSupport::TestCase
     assert @comment.invalid?
   end
 
+  test 'encrypted_body should be present' do
+    @comment.encrypted_body = nil
+    assert @comment.invalid?
+  end
+
+  test 'encrypted_body should be less than MAX_BODY_LENGTH' do
+    @comment.encrypted_body.c = \
+      Base64.strict_encode64('a' * Comment::MAX_BODY_LENGTH)
+    assert @comment.valid?
+    @comment.encrypted_body.c = \
+      Base64.strict_encode64('a' * (1 + Comment::MAX_BODY_LENGTH))
+    assert @comment.invalid?
+  end
+
   test 'body should be present' do
     @comment.body = nil
     assert @comment.invalid?
@@ -54,6 +68,7 @@ class CommentTest < ActiveSupport::TestCase
     (1...Comment::MAX_COMMENT_DEPTH).each do
       comment = comment.children.build(
         body: 'body',
+        encrypted_body: @comment.encrypted_body,
         post: @comment.post,
         user: @comment.user)
       assert comment.save!
@@ -190,10 +205,11 @@ class CommentTest < ActiveSupport::TestCase
   def create_comments(older_time:, older_score:, newer_time:, newer_score:)
     older_comment, newer_comment = nil
     post_creator = @post_without_comments.user
+    encrypted_body = @comment.encrypted_body
 
     travel_to older_time - 1.second do
       older_comment = @post_without_comments.comments
-        .create!(body: 'body', user: post_creator)
+        .create!(body: 'body', encrypted_body: encrypted_body, user: post_creator)
 
       travel 1.second
       older_comment.upvotes.build(user: post_creator, value: older_score)
@@ -202,7 +218,7 @@ class CommentTest < ActiveSupport::TestCase
 
     travel_to newer_time - 1.second do
       newer_comment = @post_without_comments.comments
-        .create!(body: 'body', user: post_creator)
+        .create!(body: 'body', encrypted_body: encrypted_body, user: post_creator)
 
       travel 1.second
       newer_comment.upvotes.build(user: post_creator, value: newer_score)

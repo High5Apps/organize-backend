@@ -9,11 +9,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
       api_v1_comment_comments_url(comment),
     ]
     @post_without_comments = posts(:three)
-    @params = {
-      comment: {
-        body: 'Comment body',
-      }
-    }
+    @params = { comment: comment.attributes.as_json.with_indifferent_access }
 
     @user = users(:one)
     setup_test_key(@user)

@@ -2,6 +2,7 @@ class Api::V1::CommentsController < ApplicationController
   ALLOWED_ATTRIBUTES = [
     :id,
     :body,
+    :encrypted_body,
     :user_id,
     :created_at,
     :pseudonym,
@@ -24,6 +25,7 @@ class Api::V1::CommentsController < ApplicationController
 
   PERMITTED_PARAMS = [
     :body,
+    { encrypted_body: [:c, :n, :t] },
   ].freeze
 
   before_action :authenticate_user, only: [:index, :create]

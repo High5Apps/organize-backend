@@ -59,8 +59,12 @@ class Comment < ApplicationRecord
       only_integer: true,
     }
 
+  validate :encrypted_body_ciphertext_length_within_range
+
   before_validation :strip_whitespace
   after_create :create_upvote_for_user
+
+  serialize :encrypted_body, EncryptedMessage
 
   has_ancestry cache_depth: true, depth_cache_column: :depth
 
@@ -68,6 +72,12 @@ class Comment < ApplicationRecord
 
   def create_upvote_for_user
     upvotes.create! user: user, value: 1
+  end
+
+  def encrypted_body_ciphertext_length_within_range
+    length = encrypted_body.decoded_ciphertext_length
+    return errors.add(:encrypted_body, "can't be blank") unless length > 0
+    errors.add(:encrypted_body, 'is too long') if length > MAX_BODY_LENGTH
   end
 
   def strip_whitespace
