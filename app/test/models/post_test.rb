@@ -24,13 +24,28 @@ class PostTest < ActiveSupport::TestCase
     assert @post.invalid?
   end
 
-  test 'encrypted_title should be less than MAX_TITLE_LENGTH' do
+  test 'encrypted_title should be no longer than MAX_TITLE_LENGTH' do
     @post.encrypted_title.c = \
       Base64.strict_encode64('a' * Post::MAX_TITLE_LENGTH)
     assert @post.valid?
 
     @post.encrypted_title.c = \
       Base64.strict_encode64('a' * (1 + Post::MAX_TITLE_LENGTH))
+    assert @post.invalid?
+  end
+
+  test 'encrypted_body should be optional' do
+    @post.encrypted_body = nil
+    assert @post.valid?
+  end
+
+  test 'encrypted_body should be no longer than MAX_BODY_LENGTH' do
+    @post.encrypted_body.c = \
+      Base64.strict_encode64('a' * Post::MAX_BODY_LENGTH)
+    assert @post.valid?
+
+    @post.encrypted_body.c = \
+      Base64.strict_encode64('a' * (1 + Post::MAX_BODY_LENGTH))
     assert @post.invalid?
   end
 

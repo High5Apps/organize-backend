@@ -45,6 +45,8 @@ class Simulation
   end
 
   def encrypt(message)
+    return nil if message.nil?
+
     unless @cipher
       group_key = Base64.decode64 @group_key_base64
       @cipher = ActiveRecord::Encryption::Cipher::Aes256Gcm.new group_key

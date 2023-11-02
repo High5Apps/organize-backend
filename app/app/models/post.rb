@@ -29,16 +29,23 @@ class Post < ApplicationRecord
   validates :user, presence: true
 
   validate :encrypted_title_ciphertext_length_within_range
+  validate :encrypted_body_ciphertext_length_within_range
 
   before_validation :strip_whitespace
   after_create :create_upvote_for_user
 
+  serialize :encrypted_body, EncryptedMessage
   serialize :encrypted_title, EncryptedMessage
 
   private
 
   def create_upvote_for_user
     upvotes.create! user: user, value: 1
+  end
+
+  def encrypted_body_ciphertext_length_within_range
+    length = encrypted_body.decoded_ciphertext_length
+    errors.add(:encrypted_body, 'is too long') if length > MAX_BODY_LENGTH
   end
 
   def encrypted_title_ciphertext_length_within_range
