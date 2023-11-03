@@ -4,8 +4,9 @@ class EncryptedMessage
   BYTE_LENGTH_AUTH_TAG = 16
   BYTE_LENGTH_NONCE = 12
   ERROR_MESSAGE_UNEXPECTED_BASE64_BYTE_LENGTH = 'had unexpected byte length when decoded from base64'
+  KEYS = [:c, :n, :t]
 
-  attr_accessor :c, :n, :t
+  attr_accessor *KEYS
   alias_attribute :ciphertext, :c
   alias_attribute :nonce, :n
   alias_attribute :auth_tag, :t
@@ -35,6 +36,10 @@ class EncryptedMessage
 
   def self.load(hash)
     EncryptedMessage.new(hash)
+  end
+
+  def self.permitted_params(attribute)
+    { "encrypted_#{attribute}" => KEYS }
   end
 
   private

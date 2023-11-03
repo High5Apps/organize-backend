@@ -2,8 +2,8 @@ class Api::V1::PostsController < ApplicationController
   PERMITTED_PARAMS = [
     :body,
     :category,
-    { encrypted_body: [:c, :n, :t] },
-    { encrypted_title: [:c, :n, :t] },
+    EncryptedMessage.permitted_params(:body),
+    EncryptedMessage.permitted_params(:title),
   ]
 
   before_action :authenticate_user, only: [:index, :create]

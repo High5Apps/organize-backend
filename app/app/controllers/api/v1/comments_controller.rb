@@ -23,7 +23,7 @@ class Api::V1::CommentsController < ApplicationController
   private_constant :MANUAL_SELECTIONS
 
   PERMITTED_PARAMS = [
-    { encrypted_body: [:c, :n, :t] },
+    EncryptedMessage.permitted_params(:body),
   ].freeze
 
   before_action :authenticate_user, only: [:index, :create]

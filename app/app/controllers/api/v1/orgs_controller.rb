@@ -1,6 +1,6 @@
 class Api::V1::OrgsController < ApplicationController
   PERMITTED_PARAMS = [
-    { encrypted_name: [:c, :n, :t] },
+    EncryptedMessage.permitted_params(:name),
     :name,
     :potential_member_definition,
   ]
