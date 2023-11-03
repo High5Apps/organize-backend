@@ -3,11 +3,7 @@ require "test_helper"
 class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
   setup do
     org = orgs(:one)
-    @params = {
-      org: org.attributes.with_indifferent_access.slice(
-        *Api::V1::OrgsController::PERMITTED_PARAMS,
-      )
-    }
+    @params = { org: org.attributes.as_json.with_indifferent_access }
 
     @user = users(:two)
     setup_test_key(@user)

@@ -9,6 +9,19 @@ class OrgTest < ActiveSupport::TestCase
     assert @org.valid?
   end
 
+  test 'encrypted_name should be present' do
+    @org.encrypted_name = nil
+    assert @org.invalid?
+  end
+  test 'encrypted_name should be less than MAX_NAME_LENGTH' do
+    @org.encrypted_name.c = \
+      Base64.strict_encode64('a' * Org::MAX_NAME_LENGTH)
+    assert @org.valid?
+    @org.encrypted_name.c = \
+      Base64.strict_encode64('a' * (1 + Org::MAX_NAME_LENGTH))
+    assert @org.invalid?
+  end
+
   test 'name should be present' do
     @org.name = ' '
     assert_not @org.valid?

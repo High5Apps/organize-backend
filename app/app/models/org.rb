@@ -12,6 +12,10 @@ class Org < ApplicationRecord
     presence: true,
     length: { maximum: MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH }
 
+  validate :encrypted_name_ciphertext_length_within_range
+
+  serialize :encrypted_name, EncryptedMessage
+
   def graph
     recruit_counts = users.joins(:recruits).group(:id).count
     scanned_connection_counts =
@@ -49,10 +53,18 @@ class Org < ApplicationRecord
       connections: connections,
     }
   end
-  
+
   def next_pseudonym
     seed = id.gsub("-", "").hex
     user_count = users.count
     Users::Pseudonym.new(seed).at(user_count)
+  end
+
+  private
+
+  def encrypted_name_ciphertext_length_within_range
+    length = encrypted_name.decoded_ciphertext_length
+    return errors.add(:encrypted_name, "can't be blank") unless length > 0
+    errors.add(:encrypted_name, 'is too long') if length > MAX_NAME_LENGTH
   end
 end

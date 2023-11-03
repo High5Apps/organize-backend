@@ -1,5 +1,6 @@
 class Api::V1::OrgsController < ApplicationController
   PERMITTED_PARAMS = [
+    { encrypted_name: [:c, :n, :t] },
     :name,
     :potential_member_definition,
   ]
