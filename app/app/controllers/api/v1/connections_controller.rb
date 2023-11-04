@@ -15,7 +15,7 @@ class Api::V1::ConnectionsController < ApplicationController
       existing_connection.touch
       return render json: { id: existing_connection.id }, status: :ok
     end
-      
+
     render json: {
       error_messages: new_connection.errors.full_messages
     }, status: :unprocessable_entity
@@ -30,6 +30,7 @@ class Api::V1::ConnectionsController < ApplicationController
     if org
       render json: {
         org: {
+          encrypted_name: org.encrypted_name,
           id: org.id,
           name: org.name,
           potential_member_definition: org.potential_member_definition,

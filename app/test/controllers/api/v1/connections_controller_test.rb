@@ -85,6 +85,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
 
     json_response = JSON.parse(response.body, symbolize_names: true)
+    assert_not_nil json_response.dig(:org, :encrypted_name)
     assert_not_nil json_response.dig(:org, :id)
     assert_not_nil json_response.dig(:org, :name)
     assert_not_nil json_response.dig(:org, :potential_member_definition)
