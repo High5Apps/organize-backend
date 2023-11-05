@@ -14,10 +14,10 @@ class OrgTest < ActiveSupport::TestCase
     assert @org.invalid?
   end
   test 'encrypted_name should be less than MAX_NAME_LENGTH' do
-    @org.encrypted_name.c = \
+    @org.encrypted_name.ciphertext = \
       Base64.strict_encode64('a' * Org::MAX_NAME_LENGTH)
     assert @org.valid?
-    @org.encrypted_name.c = \
+    @org.encrypted_name.ciphertext = \
       Base64.strict_encode64('a' * (1 + Org::MAX_NAME_LENGTH))
     assert @org.invalid?
   end

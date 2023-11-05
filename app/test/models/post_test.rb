@@ -25,11 +25,11 @@ class PostTest < ActiveSupport::TestCase
   end
 
   test 'encrypted_title should be no longer than MAX_TITLE_LENGTH' do
-    @post.encrypted_title.c = \
+    @post.encrypted_title.ciphertext = \
       Base64.strict_encode64('a' * Post::MAX_TITLE_LENGTH)
     assert @post.valid?
 
-    @post.encrypted_title.c = \
+    @post.encrypted_title.ciphertext = \
       Base64.strict_encode64('a' * (1 + Post::MAX_TITLE_LENGTH))
     assert @post.invalid?
   end
@@ -40,11 +40,11 @@ class PostTest < ActiveSupport::TestCase
   end
 
   test 'encrypted_body should be no longer than MAX_BODY_LENGTH' do
-    @post.encrypted_body.c = \
+    @post.encrypted_body.ciphertext = \
       Base64.strict_encode64('a' * Post::MAX_BODY_LENGTH)
     assert @post.valid?
 
-    @post.encrypted_body.c = \
+    @post.encrypted_body.ciphertext = \
       Base64.strict_encode64('a' * (1 + Post::MAX_BODY_LENGTH))
     assert @post.invalid?
   end

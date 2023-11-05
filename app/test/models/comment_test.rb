@@ -27,10 +27,10 @@ class CommentTest < ActiveSupport::TestCase
   end
 
   test 'encrypted_body should be less than MAX_BODY_LENGTH' do
-    @comment.encrypted_body.c = \
+    @comment.encrypted_body.ciphertext = \
       Base64.strict_encode64('a' * Comment::MAX_BODY_LENGTH)
     assert @comment.valid?
-    @comment.encrypted_body.c = \
+    @comment.encrypted_body.ciphertext = \
       Base64.strict_encode64('a' * (1 + Comment::MAX_BODY_LENGTH))
     assert @comment.invalid?
   end
