@@ -35,21 +35,6 @@ class OrgTest < ActiveSupport::TestCase
     assert @org.invalid?
   end
 
-  test 'potential_member_definition should be present' do
-    @org.potential_member_definition = ' '
-    assert_not @org.valid?
-  end
-
-  test 'potential_member_definition should not be too long' do
-    @org.potential_member_definition =
-      'a' * Org::MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH
-    assert @org.valid?
-
-    @org.potential_member_definition =
-      'a' * (1 + Org::MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH)
-    assert_not @org.valid?
-  end
-
   test 'graph should include users' do
     users = @org.graph[:users]
     assert_equal [users(:one), users(:three), users(:four)].map(&:id),

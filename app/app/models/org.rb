@@ -7,10 +7,6 @@ class Org < ApplicationRecord
   has_many :posts
   has_many :users
 
-  validates :potential_member_definition,
-    presence: true,
-    length: { maximum: MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH }
-
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
   has_encrypted :potential_member_definition,
     present: true,

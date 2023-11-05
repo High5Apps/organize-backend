@@ -88,7 +88,6 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil json_response.dig(:org, :encrypted_name)
     assert_not_nil json_response.dig(:org, :encrypted_potential_member_definition)
     assert_not_nil json_response.dig(:org, :id)
-    assert_not_nil json_response.dig(:org, :potential_member_definition)
     assert_not_nil json_response.dig(:user, :pseudonym)
   end
 

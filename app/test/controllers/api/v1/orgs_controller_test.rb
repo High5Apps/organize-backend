@@ -56,7 +56,6 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_not_empty body.dig(:id)
     assert_not_empty body.dig(:encrypted_name)
     assert_not_empty body.dig(:encrypted_potential_member_definition)
-    assert_not_empty body.dig(:potential_member_definition)
   end
 
   test 'should not show my_org without authorization' do
