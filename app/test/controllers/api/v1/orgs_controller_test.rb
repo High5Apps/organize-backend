@@ -33,7 +33,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create with invalid params' do
     assert_no_difference 'Org.count' do
       post api_v1_orgs_url, headers: @authorized_headers, params: {
-        org: @params[:org].except(:name)
+        org: @params[:org].except(:encrypted_name)
       }
       assert_response :unprocessable_entity
     end
@@ -54,7 +54,6 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_not_empty body.dig(:graph, :users)
     assert_not_empty body.dig(:graph, :connections)
     assert_not_empty body.dig(:id)
-    assert_not_empty body.dig(:name)
     assert_not_empty body.dig(:encrypted_name)
     assert_not_empty body.dig(:potential_member_definition)
   end

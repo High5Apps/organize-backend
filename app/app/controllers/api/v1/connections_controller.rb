@@ -32,7 +32,6 @@ class Api::V1::ConnectionsController < ApplicationController
         org: {
           encrypted_name: org.encrypted_name,
           id: org.id,
-          name: org.name,
           potential_member_definition: org.potential_member_definition,
         }, user: {
           pseudonym: @authenticated_sharer.pseudonym,

@@ -1,7 +1,6 @@
 class Api::V1::OrgsController < ApplicationController
   PERMITTED_PARAMS = [
     EncryptedMessage.permitted_params(:name),
-    :name,
     :potential_member_definition,
   ]
 
@@ -27,7 +26,6 @@ class Api::V1::OrgsController < ApplicationController
       graph: org.graph,
       id: org.id,
       encrypted_name: org.encrypted_name,
-      name: org.name,
       potential_member_definition: org.potential_member_definition,
     }
   end

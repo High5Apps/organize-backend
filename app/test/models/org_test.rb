@@ -22,19 +22,6 @@ class OrgTest < ActiveSupport::TestCase
     assert @org.invalid?
   end
 
-  test 'name should be present' do
-    @org.name = ' '
-    assert_not @org.valid?
-  end
-
-  test 'name should not be too long' do
-    @org.name = 'a' * Org::MAX_NAME_LENGTH
-    assert @org.valid?
-
-    @org.name = 'a' * (1 + Org::MAX_NAME_LENGTH)
-    assert_not @org.valid?
-  end
-
   test 'potential_member_definition should be present' do
     @org.potential_member_definition = ' '
     assert_not @org.valid?

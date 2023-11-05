@@ -7,9 +7,6 @@ class Org < ApplicationRecord
   has_many :posts
   has_many :users
 
-  validates :name,
-    presence: true,
-    length: { maximum: MAX_NAME_LENGTH }
   validates :potential_member_definition,
     presence: true,
     length: { maximum: MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH }

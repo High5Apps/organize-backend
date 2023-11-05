@@ -12,11 +12,9 @@ def random_company_name
 end
 
 Timecop.freeze($simulation.started_at) do
-  name = "Local #{random_local_number}"
   attributes = {
     created_at: $simulation.started_at,
-    encrypted_name: $simulation.encrypt(name),
-    name: name,
+    encrypted_name: $simulation.encrypt("Local #{random_local_number}"),
     potential_member_definition: "An employee of #{random_company_name} at store ##{random_store_number}",
   }
   founder.org.update! attributes

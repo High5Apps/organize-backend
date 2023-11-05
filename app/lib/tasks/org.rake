@@ -36,7 +36,6 @@ namespace :org do
     puts "- ID: #{user.id}".indent(2)
     puts "- Tenure: #{time_ago_in_words(user.created_at)}".indent(2)
     puts "- Current Org".indent(2)
-    puts "- Name: #{user.org.name}".indent(4)
     puts "- ID: #{user.org.id}".indent(4)
     puts
     puts "To confirm, type the user's pseudonym to continue:"
