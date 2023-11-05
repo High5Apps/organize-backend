@@ -26,6 +26,7 @@ class Api::V1::OrgsController < ApplicationController
     render json: {
       graph: org.graph,
       id: org.id,
+      encrypted_name: org.encrypted_name,
       name: org.name,
       potential_member_definition: org.potential_member_definition,
     }
