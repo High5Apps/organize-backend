@@ -55,6 +55,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_not_empty body.dig(:graph, :connections)
     assert_not_empty body.dig(:id)
     assert_not_empty body.dig(:encrypted_name)
+    assert_not_empty body.dig(:encrypted_potential_member_definition)
     assert_not_empty body.dig(:potential_member_definition)
   end
 

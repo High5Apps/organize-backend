@@ -12,6 +12,9 @@ class Org < ApplicationRecord
     length: { maximum: MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH }
 
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
+  has_encrypted :potential_member_definition,
+    present: true,
+    max_length: MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH
 
   def graph
     recruit_counts = users.joins(:recruits).group(:id).count

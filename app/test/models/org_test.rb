@@ -22,6 +22,19 @@ class OrgTest < ActiveSupport::TestCase
     assert @org.invalid?
   end
 
+  test 'encrypted_potential_member_definition should be present' do
+    @org.encrypted_potential_member_definition = nil
+    assert @org.invalid?
+  end
+  test 'encrypted_potential_member_definition should be less than MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH' do
+    @org.encrypted_potential_member_definition.ciphertext = \
+      Base64.strict_encode64('a' * Org::MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH)
+    assert @org.valid?
+    @org.encrypted_potential_member_definition.ciphertext = \
+      Base64.strict_encode64('a' * (1 + Org::MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH))
+    assert @org.invalid?
+  end
+
   test 'potential_member_definition should be present' do
     @org.potential_member_definition = ' '
     assert_not @org.valid?
