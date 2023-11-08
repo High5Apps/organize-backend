@@ -4,6 +4,7 @@ class Org < ApplicationRecord
   MAX_NAME_LENGTH = 35
   MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH = 75
 
+  has_many :ballots
   has_many :posts
   has_many :users
 

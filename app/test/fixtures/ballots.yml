@@ -1,0 +1,11 @@
+one:
+  category: yes_no
+  encrypted_question: { c: b1CoRzCSrLs44HFBboKJo3sY/yd4QIeRN46UaohK7A==, n: VvzkU6c/A7nr4XUF, t: 6aVk/k5S1LURcmKOo9z7LQ== }
+  org: one
+  voting_ends_at: <%= 7.days.from_now.to_fs(:db) %>
+
+two:
+  category: yes_no
+  encrypted_question: { c: TZgZBHg5TAFbX5n0CmNKG7Y3WpyAaNgQaYQx3Ri8wQuo8W8dQwXRvkTvq1OIDx3csH/ZC5HKz7+a6pj9tSInvRcpgcTFsuvwwKfRKi/PSNMQByiSohVSWJn6GgUuxcg=, n: OR1dI6xl+KLvvNrz, t: sDd1/FefWeqmmriHEvxJjQ== }
+  org: two
+  voting_ends_at: <%= 8.days.from_now.to_fs(:db) %>
