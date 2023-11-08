@@ -7,6 +7,8 @@ class Ballot < ApplicationRecord
 
   belongs_to :org
 
+  has_many :candidates
+
   validates :category,
     presence: true,
     inclusion: { in: categories }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_08_114111) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_08_122535) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -23,6 +23,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_08_114111) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["org_id"], name: "index_ballots_on_org_id"
+  end
+
+  create_table "candidates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "ballot_id", null: false
+    t.jsonb "encrypted_title", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ballot_id"], name: "index_candidates_on_ballot_id"
   end
 
   create_table "comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -106,6 +114,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_08_114111) do
   end
 
   add_foreign_key "ballots", "orgs"
+  add_foreign_key "candidates", "ballots"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
   add_foreign_key "connections", "users", column: "scanner_id"

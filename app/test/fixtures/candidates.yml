@@ -1,0 +1,16 @@
+
+one:
+  ballot: one
+  encrypted_title: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+
+one:
+  ballot: one
+  encrypted_title: { c: vSU=, n: 91MGPSBWzGMy2jX5, t: AlWL2Twt6R1Tc+cUxitQwA== }
+
+three:
+  ballot: two
+  encrypted_title: { c: F1C7, n: BjvWzSYdvBe8p7jg, t: NRIInPlbL5GoPphyxe0Qjw== }
+
+four:
+  ballot: two
+  encrypted_title: { c: ElU=, n: pkPA4iAUqKs95fz/, t: afiHLZfmZrZ0D0pGgcuzgQ== }
