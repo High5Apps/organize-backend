@@ -118,11 +118,11 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     assert_only_includes_allowed_attributes comment
   end
 
-  test 'index should format created_at attributes as floats' do
+  test 'index should format created_at attributes as iso8601' do
     get api_v1_post_comments_url(@post), headers: @authorized_headers
     json_response = JSON.parse(response.body, symbolize_names: true)
     created_at = json_response.dig(:comments, 0, :created_at)
-    assert_instance_of Float, created_at
+    assert Time.iso8601(created_at)
   end
 
   test 'index should include multiple comments' do
@@ -146,7 +146,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   test 'index should respect created_before param' do
     comment = comments(:two)
     post = comment.post
-    created_before = comment.created_at.to_f
+    created_before = comment.created_at
 
     get api_v1_post_comments_url(post),
       headers: @authorized_headers,

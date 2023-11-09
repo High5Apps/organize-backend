@@ -15,7 +15,7 @@ class Post::Query
     initial_posts ||= Post.all
 
     created_before_param = params[:created_before] || Upvote::FAR_FUTURE_TIME
-    created_before = Time.at(created_before_param.to_f).utc
+    created_before = Time.parse(created_before_param.to_s).utc
 
     posts = initial_posts
       .created_before(created_before)

@@ -18,7 +18,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
     json_response = JSON.parse(response.body, symbolize_names: true)
     assert_not_nil json_response.dig(:id)
-    assert_not_nil json_response.dig(:created_at)
+    assert Time.iso8601(json_response.dig(:created_at))
   end
 
   test 'should not create with invalid authorization' do
@@ -83,11 +83,11 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'index should format created_at attributes as floats' do
+  test 'index should format created_at attributes as iso8601' do
     get api_v1_posts_url, headers: @authorized_headers
     json_response = JSON.parse(response.body, symbolize_names: true)
     created_at = json_response.dig(:posts, 1, :created_at)
-    assert_instance_of Float, created_at
+    assert Time.iso8601(created_at)
   end
 
   test 'index should include pagination metadata' do

@@ -72,16 +72,20 @@ class PostQueryTest < ActiveSupport::TestCase
     assert_equal first_order, second_order
   end
 
-  test 'hot order should prefer newer posts with equal scores' do
+  test 'hot order should prefer slightly newer posts with equal scores' do
     post_creator = @post_without_upvotes.user
 
     older_post = @post_without_upvotes.dup
     older_post.save!
     older_post.upvotes.create!(user: post_creator, value: 1)
 
+    travel 1.second
+
     newer_post = @post_without_upvotes.dup
     newer_post.save!
     newer_post.upvotes.create!(user: post_creator, value: 1)
+
+    travel 1.second
 
     post_ids = Post::Query.build({ created_before: Time.now, sort: 'hot' }).ids
     assert_operator post_ids.find_index(newer_post.id),
@@ -189,7 +193,7 @@ class PostQueryTest < ActiveSupport::TestCase
   test 'should only include allow-listed attributes' do
     posts = Post::Query.build({}, initial_posts: @user.org.posts)
     post_json = posts.first.as_json.with_indifferent_access
-  
+
     attribute_allow_list = Post::Query::ALLOWED_ATTRIBUTES.keys
 
     attribute_allow_list.each do |attribute|

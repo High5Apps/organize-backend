@@ -40,7 +40,7 @@ class Api::V1::CommentsController < ApplicationController
 
   def index
     created_before_param = params[:created_before] || Upvote::FAR_FUTURE_TIME
-    created_before = Time.at(created_before_param.to_f).utc
+    created_before = Time.parse(created_before_param.to_s).utc
 
     my_id = authenticated_user.id
     comments = @post.comments
