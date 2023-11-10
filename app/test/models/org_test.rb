@@ -13,6 +13,13 @@ class OrgTest < ActiveSupport::TestCase
     @org.encrypted_name = nil
     assert @org.invalid?
   end
+
+  test 'encrypted_name error messages should not include "Encrypted"' do
+    @org.encrypted_name = nil
+    @org.valid?
+    assert_not @org.errors.full_messages.first.include? 'Encrypted'
+  end
+
   test 'encrypted_name should be less than MAX_NAME_LENGTH' do
     @org.encrypted_name.ciphertext = \
       Base64.strict_encode64('a' * Org::MAX_NAME_LENGTH)
@@ -26,6 +33,13 @@ class OrgTest < ActiveSupport::TestCase
     @org.encrypted_potential_member_definition = nil
     assert @org.invalid?
   end
+
+  test 'encrypted_potential_member_definition error messages should not include "Encrypted"' do
+    @org.encrypted_potential_member_definition = nil
+    @org.valid?
+    assert_not @org.errors.full_messages.first.include? 'Encrypted'
+  end
+
   test 'encrypted_potential_member_definition should be less than MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH' do
     @org.encrypted_potential_member_definition.ciphertext = \
       Base64.strict_encode64('a' * Org::MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH)

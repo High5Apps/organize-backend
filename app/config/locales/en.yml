@@ -30,4 +30,17 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  activerecord:
+    attributes:
+      ballot:
+        encrypted_question: 'Question'
+      candidate:
+        encrypted_title: 'Title'
+      comment:
+        encrypted_body: 'Body'
+      org:
+        encrypted_name: 'Name'
+        encrypted_potential_member_definition: 'Potential member definition'
+      post:
+        encrypted_body: 'Body'
+        encrypted_title: 'Title'

@@ -19,6 +19,12 @@ class BallotTest < ActiveSupport::TestCase
     assert @ballot.invalid?
   end
 
+  test 'encrypted_question error messages should not include "Encrypted"' do
+    @ballot.encrypted_question = nil
+    @ballot.valid?
+    assert_not @ballot.errors.full_messages.first.include? 'Encrypted'
+  end
+
   test 'encrypted_question should be no longer than MAX_QUESTION_LENGTH' do
     @ballot.encrypted_question.ciphertext = \
       Base64.strict_encode64('a' * Ballot::MAX_QUESTION_LENGTH)

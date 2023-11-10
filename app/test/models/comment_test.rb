@@ -26,6 +26,12 @@ class CommentTest < ActiveSupport::TestCase
     assert @comment.invalid?
   end
 
+  test 'encrypted_body error messages should not include "Encrypted"' do
+    @comment.encrypted_body = nil
+    @comment.valid?
+    assert_not @comment.errors.full_messages.first.include? 'Encrypted'
+  end
+
   test 'encrypted_body should be less than MAX_BODY_LENGTH' do
     @comment.encrypted_body.ciphertext = \
       Base64.strict_encode64('a' * Comment::MAX_BODY_LENGTH)

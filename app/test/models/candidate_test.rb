@@ -19,6 +19,12 @@ class CandidateTest < ActiveSupport::TestCase
     assert @candidate.invalid?
   end
 
+  test 'encrypted_title error messages should not include "Encrypted"' do
+    @candidate.encrypted_title = nil
+    @candidate.valid?
+    assert_not @candidate.errors.full_messages.first.include? 'Encrypted'
+  end
+
   test 'encrypted_title should be no longer than MAX_TITLE_LENGTH' do
     @candidate.encrypted_title.ciphertext = \
       Base64.strict_encode64('a' * Candidate::MAX_TITLE_LENGTH)

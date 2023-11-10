@@ -24,6 +24,12 @@ class PostTest < ActiveSupport::TestCase
     assert @post.invalid?
   end
 
+  test 'encrypted_title error messages should not include "Encrypted"' do
+    @post.encrypted_title = nil
+    @post.valid?
+    assert_not @post.errors.full_messages.first.include? 'Encrypted'
+  end
+
   test 'encrypted_title should be no longer than MAX_TITLE_LENGTH' do
     @post.encrypted_title.ciphertext = \
       Base64.strict_encode64('a' * Post::MAX_TITLE_LENGTH)
@@ -47,6 +53,13 @@ class PostTest < ActiveSupport::TestCase
     @post.encrypted_body.ciphertext = \
       Base64.strict_encode64('a' * (1 + Post::MAX_BODY_LENGTH))
     assert @post.invalid?
+  end
+
+  test 'encrypted_body error messages should not include "Encrypted"' do
+    @post.encrypted_body.ciphertext = \
+      Base64.strict_encode64('a' * (1 + Post::MAX_BODY_LENGTH))
+    @post.valid?
+    assert_not @post.errors.full_messages.first.include? 'Encrypted'
   end
 
   test 'user should be present' do
