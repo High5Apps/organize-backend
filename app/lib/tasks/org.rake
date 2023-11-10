@@ -48,8 +48,7 @@ namespace :org do
     puts '1. Start the app with ENABLE_DEVELOPER_SETTINGS=true'.indent(2)
     puts '2. Navigate to the Settings screen in the Org tab'.indent(2)
     puts '3. Under the "Developer" section, tap "Share Group Key"'.indent(2)
-    print '[<group_key_base64>]: '
-    group_key_base64 = STDIN.gets.chomp
+    group_key_base64 = STDIN.getpass('[<group_key_base64>]: ').chomp
 
     puts "Creating seeds..."
     start_time = Time.now
