@@ -67,7 +67,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not show my_org with invalid authorization' do
     get api_v1_my_org_url,
-      headers: authorized_headers(@user_in_org, '*', 1.minute.ago)
+      headers: authorized_headers(@user_in_org, '*', expiration: 1.minute.ago)
     assert_response :unauthorized
   end
 
