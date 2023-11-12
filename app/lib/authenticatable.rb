@@ -1,15 +1,17 @@
 module Authenticatable
   HEADER_AUTHORIZATION = 'Authorization'.freeze
+  HEADER_SHARER_AUTHORIZATION = 'Sharer-Authorization'.freeze
   SCOPE_CREATE_CONNECTIONS = 'create:connections'.freeze
   SCOPE_ALL = '*'.freeze
 
   def authenticated_user
     return @authenticated_user if @authenticated_user
 
-    @authenticated_user = authenticate(auth_token, SCOPE_ALL)
+    @authenticated_user = authenticate scope: SCOPE_ALL
   end
 
-  def authenticate(jwt, scope)
+  def authenticate(scope:, header: HEADER_AUTHORIZATION)
+    jwt = auth_token(header)
     user_id = unauthenticated_user_id(jwt)
     user = User.find_by_id(user_id)
     return nil unless user;
@@ -28,8 +30,8 @@ module Authenticatable
 
   private
 
-  def auth_token
-    auth_header = request.headers[HEADER_AUTHORIZATION]
+  def auth_token(header_name)
+    auth_header = request.headers[header_name]
     auth_header&.start_with?('Bearer ') ? auth_header[7..] : nil
   end
 

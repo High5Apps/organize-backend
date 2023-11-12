@@ -45,8 +45,9 @@ class Api::V1::ConnectionsController < ApplicationController
   private
 
   def authenticate_sharer
-    @authenticated_sharer = authenticate params[:sharer_jwt],
-      Authenticatable::SCOPE_CREATE_CONNECTIONS
+    @authenticated_sharer = authenticate(
+      scope: Authenticatable::SCOPE_CREATE_CONNECTIONS,
+      header: Authenticatable::HEADER_SHARER_AUTHORIZATION)
     render_unauthorized unless @authenticated_sharer
   end
 end

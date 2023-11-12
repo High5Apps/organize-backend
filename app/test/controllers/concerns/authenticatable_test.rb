@@ -91,6 +91,7 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
 
   test 'should authorize any scope with * scope' do
     auth_token = @user.create_auth_token(FAKE_AUTH_TIMEOUT.from_now, SCOPE_ALL)
-    assert @authentication.authenticate(auth_token, 'read:foos')
+    @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
+    assert @authentication.authenticate(scope: 'read:foos')
   end
 end
