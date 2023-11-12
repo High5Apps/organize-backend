@@ -5,12 +5,13 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
+      resources :ballots, only: [:create]
       resources :connections,  only: [:create]
       resources :orgs, only: [:create]
       resources :posts, concerns: :upvotable, only: [:index, :create] do
-        resources :comments, 
+        resources :comments,
           concerns: :upvotable,
-          only: [:index, :create], 
+          only: [:index, :create],
           shallow: true do
             resources :comments, only: [:create]
           end
