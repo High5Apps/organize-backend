@@ -32,7 +32,11 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create with invalid authorization' do
     @commentable_urls.each do |url|
       assert_no_difference 'Comment.count' do
-        post url, headers: { Authorization: 'bad'}, params: @params
+        post url,
+          headers: authorized_headers(@user,
+            Authenticatable::SCOPE_ALL,
+            expiration: 1.second.ago),
+          params: @params
       end
 
       assert_response :unauthorized
@@ -93,7 +97,10 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not index with invalid authorization' do
-    get api_v1_post_comments_url(@post), headers: { Authorization: 'bad'}
+    get api_v1_post_comments_url(@post),
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
     assert_response :unauthorized
   end
 

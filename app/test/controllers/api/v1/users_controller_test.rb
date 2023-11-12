@@ -34,7 +34,10 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not show with invalid authorization' do
-    get api_v1_user_url(@user_in_org), headers: { Authorization: 'bad' }
+    get api_v1_user_url(@user_in_org),
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
     assert_response :unauthorized
   end
 

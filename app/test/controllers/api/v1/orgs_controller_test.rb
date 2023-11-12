@@ -25,7 +25,11 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create with invalid authorization' do
     assert_no_difference 'Org.count' do
-      post api_v1_orgs_url, headers: { Authorization: 'bad'}, params: @params
+      post api_v1_orgs_url,
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago),
+      params: @params
       assert_response :unauthorized
     end
   end
@@ -69,7 +73,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
   test 'should not show my_org with invalid authorization' do
     headers = authorized_headers @user_in_org,
       Authenticatable::SCOPE_ALL,
-      expiration: 1.minute.ago
+      expiration: 1.second.ago
     get api_v1_my_org_url, headers: headers
     assert_response :unauthorized
   end

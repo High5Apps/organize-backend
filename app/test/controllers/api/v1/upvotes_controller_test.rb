@@ -33,7 +33,11 @@ class Api::V1::UpvotesControllerTest < ActionDispatch::IntegrationTest
   test 'should not create with invalid authorization' do
     @upvotable_urls.each do |url|
       assert_no_difference 'Upvote.count' do
-        post url, headers: { Authorization: 'bad'}, params: @params
+        post url,
+          headers: authorized_headers(@user,
+            Authenticatable::SCOPE_ALL,
+            expiration: 1.second.ago),
+          params: @params
       end
 
       assert_response :unauthorized

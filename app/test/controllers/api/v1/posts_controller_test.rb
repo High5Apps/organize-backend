@@ -23,7 +23,11 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create with invalid authorization' do
     assert_no_difference 'Post.count' do
-      post api_v1_posts_url, headers: { Authorization: 'bad'}, params: @params
+      post api_v1_posts_url,
+        headers: authorized_headers(@user,
+          Authenticatable::SCOPE_ALL,
+          expiration: 1.second.ago),
+        params: @params
       assert_response :unauthorized
     end
   end
@@ -53,7 +57,10 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not index with invalid authorization' do
-    get api_v1_posts_url, headers: { Authorization: 'bad'}
+    get api_v1_posts_url,
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
     assert_response :unauthorized
   end
 
