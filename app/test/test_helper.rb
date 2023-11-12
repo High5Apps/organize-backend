@@ -17,8 +17,8 @@ class ActiveSupport::TestCase
     user.update(public_key_bytes: key_pair.public_to_der)
   end
 
-  def authorized_headers(
-    requester, scope, expiration: nil, header: 'Authorization'
+  def authorized_headers(requester, scope, expiration: nil,
+    header: Authenticatable::HEADER_AUTHORIZATION
   )
     expiration ||= 1.minute.from_now
     token = requester.create_auth_token(expiration, scope)

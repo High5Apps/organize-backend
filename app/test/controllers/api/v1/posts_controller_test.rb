@@ -7,7 +7,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
     @user = users(:one)
     setup_test_key(@user)
-    @authorized_headers = authorized_headers(@user, '*')
+    @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
   end
 
   test 'should create with valid params' do

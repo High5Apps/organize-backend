@@ -1,8 +1,12 @@
 module Authenticatable
+  HEADER_AUTHORIZATION = 'Authorization'.freeze
+  SCOPE_CREATE_CONNECTIONS = 'create:connections'.freeze
+  SCOPE_ALL = '*'.freeze
+
   def authenticated_user
     return @authenticated_user if @authenticated_user
 
-    @authenticated_user = authenticate(auth_token, '*')
+    @authenticated_user = authenticate(auth_token, SCOPE_ALL)
   end
 
   def authenticate(jwt, scope)
@@ -25,12 +29,12 @@ module Authenticatable
   private
 
   def auth_token
-    auth_header = request.headers['Authorization']
+    auth_header = request.headers[HEADER_AUTHORIZATION]
     auth_header&.start_with?('Bearer ') ? auth_header[7..] : nil
   end
 
   def authorize(jwt, scope)
-    [scope, '*'].include? jwt[:scp]
+    [scope, SCOPE_ALL].include? jwt[:scp]
   end
 
   def unauthenticated_user_id(jwt)

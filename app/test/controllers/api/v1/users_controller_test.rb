@@ -6,7 +6,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     setup_test_key(@user)
     @user_in_org = users(:three)
     @user_in_other_org = users(:two)
-    @authorized_headers = authorized_headers(@user, '*')
+    @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
     @params = {
       user: @user.attributes.with_indifferent_access.slice(
         *Api::V1::UsersController::PERMITTED_PARAMS,

@@ -7,7 +7,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
 
     @user = users(:two)
     setup_test_key(@user)
-    @authorized_headers = authorized_headers(@user, '*')
+    @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
 
     @user_in_org = users(:one)
     setup_test_key(@user_in_org)
@@ -47,7 +47,8 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should show my_org' do
-    get api_v1_my_org_url, headers: authorized_headers(@user_in_org, '*')
+    get api_v1_my_org_url,
+      headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL)
     assert_response :ok
 
     body = JSON.parse(response.body, symbolize_names: true)
@@ -66,8 +67,10 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not show my_org with invalid authorization' do
-    get api_v1_my_org_url,
-      headers: authorized_headers(@user_in_org, '*', expiration: 1.minute.ago)
+    headers = authorized_headers @user_in_org,
+      Authenticatable::SCOPE_ALL,
+      expiration: 1.minute.ago
+    get api_v1_my_org_url, headers: headers
     assert_response :unauthorized
   end
 
@@ -75,7 +78,8 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     user_without_org = users(:two)
     assert_nil user_without_org.org
 
-    get api_v1_my_org_url, headers: authorized_headers(user_without_org, '*')
+    get api_v1_my_org_url,
+      headers: authorized_headers(user_without_org, Authenticatable::SCOPE_ALL)
     assert_response :not_found
   end
 end

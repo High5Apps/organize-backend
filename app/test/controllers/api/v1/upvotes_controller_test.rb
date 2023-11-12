@@ -4,7 +4,7 @@ class Api::V1::UpvotesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     setup_test_key(@user)
-    @authorized_headers = authorized_headers(@user, '*')
+    @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
 
     post = posts(:three)
     comment = comments(:two)
@@ -35,7 +35,7 @@ class Api::V1::UpvotesControllerTest < ActionDispatch::IntegrationTest
       assert_no_difference 'Upvote.count' do
         post url, headers: { Authorization: 'bad'}, params: @params
       end
-  
+
       assert_response :unauthorized
     end
   end
@@ -47,7 +47,7 @@ class Api::V1::UpvotesControllerTest < ActionDispatch::IntegrationTest
           headers: @authorized_headers,
           params: { upvote: @params[:upvote].except(:value) }
       end
-  
+
       assert_response :unprocessable_entity
     end
   end
@@ -63,7 +63,7 @@ class Api::V1::UpvotesControllerTest < ActionDispatch::IntegrationTest
       assert_no_difference 'Upvote.count' do
         post url, headers: @authorized_headers, params: @params
       end
-  
+
       assert_response :not_found
     end
   end

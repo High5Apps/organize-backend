@@ -9,7 +9,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_not @sharer.directly_connected_to?(@scanner.id)
 
     @params = sharer_params(@sharer)
-    @authorized_headers = authorized_headers(@scanner, '*')
+    @authorized_headers = authorized_headers @scanner,
+      Authenticatable::SCOPE_ALL
   end
 
   test 'should create with valid params' do
@@ -64,7 +65,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     setup_test_key(original_scanner)
 
     post api_v1_connections_url,
-      headers: authorized_headers(original_sharer, '*'),
+      headers: authorized_headers(original_sharer, Authenticatable::SCOPE_ALL),
       params: sharer_params(original_scanner)
     assert_response :ok
   end
@@ -112,7 +113,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   private
 
   def sharer_params(sharer, expiration=1.minute.from_now)
-    sharer_jwt = sharer.create_auth_token(expiration, 'create:connections')
+    sharer_jwt = sharer.create_auth_token expiration,
+      Authenticatable::SCOPE_CREATE_CONNECTIONS
     { sharer_jwt: sharer_jwt }
   end
 end

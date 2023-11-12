@@ -13,7 +13,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
 
     @user = users(:one)
     setup_test_key(@user)
-    @authorized_headers = authorized_headers(@user, '*')
+    @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
   end
 
   test 'should create with valid params' do
@@ -170,7 +170,8 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     user = post.user
     setup_test_key(user)
 
-    get api_v1_post_comments_url(post), headers: authorized_headers(user, '*')
+    get api_v1_post_comments_url(post),
+      headers: authorized_headers(user, Authenticatable::SCOPE_ALL)
     json_response = JSON.parse(response.body, symbolize_names: true)
     parent_comment = json_response.dig(:comments)
       .find { |c| c[:id] == comment_with_reply.id }
