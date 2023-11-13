@@ -32,9 +32,10 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def create_candidates_params
-    params.permit(
-      candidates: [EncryptedMessage.permitted_params(:title)]
-    )[:candidates] || []
+    return [] unless params.has_key? :candidates
+    params.slice(:candidates)
+      .permit(candidates: [EncryptedMessage.permitted_params(:title)])
+      .require(:candidates)
   end
 
   def limit_candidate_count
