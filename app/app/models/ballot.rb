@@ -1,6 +1,10 @@
 class Ballot < ApplicationRecord
   include Encryptable
 
+  scope :active_at, ->(time) { where.not(voting_ends_at: ..time) }
+  scope :created_before, ->(time) { where(created_at: ...time) }
+  scope :inactive_at, ->(time) { where(voting_ends_at: ..time) }
+
   MAX_QUESTION_LENGTH = 120
 
   enum category: [:yes_no]

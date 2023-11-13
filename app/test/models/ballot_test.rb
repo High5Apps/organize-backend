@@ -49,4 +49,46 @@ class BallotTest < ActiveSupport::TestCase
     @ballot.voting_ends_at = Time.now
     assert @ballot.invalid?
   end
+
+  test 'active_at should include ballots where voting_ends_at is in the future' do
+    b1, b2, b3 = create_ballots_with_voting_ends_at(
+      [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now])
+    query = Ballot.active_at(b2.voting_ends_at)
+    assert_not query.exists?(id: [b1, b2])
+    assert query.exists?(id: b3)
+  end
+
+  test 'created_before should include ballots where created_at is in the past' do
+    b1, b2, b3 = create_ballots_with_created_at(
+      [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now])
+    query = Ballot.created_before(b2.created_at)
+    assert query.exists?(id: b1)
+    assert_not query.exists?(id: [b2, b3])
+  end
+
+  test 'inactive_at should include ballots where voting_ends_at is past or now' do
+    b1, b2, b3 = create_ballots_with_voting_ends_at(
+      [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now])
+    query = Ballot.inactive_at(b2.voting_ends_at)
+    assert query.exists?(id: [b1, b2])
+    assert_not query.exists?(id: b3)
+  end
+
+  private
+
+  def create_ballots_with_voting_ends_at(voting_ends_ats)
+    voting_ends_ats.map do |voting_ends_at|
+      ballot = @ballot.dup
+      ballot.update! voting_ends_at: voting_ends_at
+      ballot
+    end
+  end
+
+  def create_ballots_with_created_at(created_ats)
+    created_ats.map do |created_at|
+      ballot = @ballot.dup
+      ballot.update! created_at: created_at
+      ballot
+    end
+  end
 end
