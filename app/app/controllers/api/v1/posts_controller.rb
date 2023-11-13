@@ -30,13 +30,6 @@ class Api::V1::PostsController < ApplicationController
     params.require(:post).permit(PERMITTED_PARAMS)
   end
 
-  def check_org_membership
-    @org = authenticated_user.org
-    unless @org
-      render_error :not_found, ['You must join an Org first']
-    end
-  end
-
   def query_params
     params.merge requester_id: authenticated_user.id
   end

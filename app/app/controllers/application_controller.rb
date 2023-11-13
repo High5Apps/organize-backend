@@ -7,6 +7,13 @@ class ApplicationController < ActionController::API
     render_unauthorized unless authenticated_user
   end
 
+  def check_org_membership
+    @org = authenticated_user.org
+    unless @org
+      render_error :not_found, ['You must join an Org first']
+    end
+  end
+
   def pagination_dict(collection)
     {
       current_page: collection.current_page,
