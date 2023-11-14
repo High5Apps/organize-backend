@@ -16,6 +16,12 @@ class Ballot::Query
       .created_before(created_before)
       .select(ALLOWED_ATTRIBUTES)
 
+    active_at_param = params[:active_at]
+    if active_at_param
+      active_at = Time.parse(active_at_param.to_s).utc
+      ballots = ballots.active_at(active_at)
+    end
+
     ballots
   end
 end
