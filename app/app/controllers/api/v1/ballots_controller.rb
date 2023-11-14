@@ -1,10 +1,4 @@
 class Api::V1::BallotsController < ApplicationController
-  ALLOWED_ATTRIBUTES = [
-    :category,
-    :encrypted_question,
-    :id,
-    :voting_ends_at,
-  ]
   MAX_CANDIDATES_PER_CREATE = 100.freeze
 
   before_action :authenticate_user, only: [:index, :create]
@@ -30,7 +24,8 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def index
-    ballots = authenticated_user.org.ballots.select(ALLOWED_ATTRIBUTES)
+    ballots = Ballot::Query.build params,
+      initial_ballots: authenticated_user.org.ballots
     render json: { ballots: ballots }
   end
 

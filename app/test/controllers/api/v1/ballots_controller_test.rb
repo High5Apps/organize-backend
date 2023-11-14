@@ -136,19 +136,6 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test 'index should only include allow-listed attributes' do
-    get api_v1_ballots_url, headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    ballot = json_response.dig(:ballots, 0)
-    assert_not_nil ballot
-
-    attribute_allow_list = Api::V1::BallotsController::ALLOWED_ATTRIBUTES
-    assert_equal attribute_allow_list.count, ballot.keys.count
-    attribute_allow_list.each do |attribute|
-      assert ballot.key? attribute
-    end
-  end
-
   test 'index should only include ballots from requester Org' do
     get api_v1_ballots_url, headers: @authorized_headers
     json_response = JSON.parse(response.body, symbolize_names: true)
