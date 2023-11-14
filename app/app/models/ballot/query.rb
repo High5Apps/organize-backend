@@ -9,7 +9,12 @@ class Ballot::Query
   def self.build(params={}, initial_ballots: nil)
     initial_ballots ||= Ballot.all
 
-    ballots = initial_ballots.select(ALLOWED_ATTRIBUTES)
+    created_before_param = params[:created_before] || Time.now
+    created_before = Time.parse(created_before_param.to_s).utc
+
+    ballots = initial_ballots
+      .created_before(created_before)
+      .select(ALLOWED_ATTRIBUTES)
 
     ballots
   end
