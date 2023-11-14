@@ -154,4 +154,26 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     voting_ends_at = json_response.dig(:ballots, 0, :voting_ends_at)
     assert Time.iso8601(voting_ends_at)
   end
+
+  test 'index should not include pagination metadata when page param is not included' do
+    get api_v1_ballots_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    assert_nil json_response[:meta]
+  end
+
+  test 'index should include pagination metadata when page param is included' do
+    get api_v1_ballots_url, headers: @authorized_headers, params: { page: 0 }
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    metadata = json_response[:meta]
+    assert json_response[:meta].key?(:current_page)
+    assert json_response[:meta].key?(:next_page)
+  end
+
+  test 'index should respect page param' do
+    page = 99
+    get api_v1_ballots_url, headers: @authorized_headers, params: { page: page }
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    current_page = json_response.dig(:meta, :current_page)
+    assert_equal page, current_page
+  end
 end

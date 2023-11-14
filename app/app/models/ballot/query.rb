@@ -28,6 +28,11 @@ class Ballot::Query
       ballots = ballots.inactive_at(inactive_at)
     end
 
+    page_param = params[:page]
+    if page_param
+      ballots = ballots.page(page_param)
+    end
+
     # Default to sorting by new
     sort_parameter = params[:sort] || 'active'
     if sort_parameter == 'active'

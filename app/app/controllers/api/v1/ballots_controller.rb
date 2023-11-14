@@ -26,7 +26,10 @@ class Api::V1::BallotsController < ApplicationController
   def index
     ballots = Ballot::Query.build params,
       initial_ballots: authenticated_user.org.ballots
-    render json: { ballots: ballots }
+    render json: {
+      ballots: ballots,
+      meta: (pagination_dict(ballots) if params[:page]),
+    }.compact
   end
 
   private
