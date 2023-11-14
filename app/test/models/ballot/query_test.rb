@@ -37,4 +37,11 @@ class BallotQueryTest < ActiveSupport::TestCase
     assert_not_equal Ballot.all.to_a.count, ballots.to_a.count
     assert_equal Ballot.active_at(ballot.voting_ends_at).sort, ballots.sort
   end
+
+  test 'should respect inactive_at param' do
+    ballot = ballots(:two)
+    ballots = Ballot::Query.build({ inactive_at: ballot.voting_ends_at })
+    assert_not_equal Ballot.all.to_a.count, ballots.to_a.count
+    assert_equal Ballot.inactive_at(ballot.voting_ends_at).sort, ballots.sort
+  end
 end

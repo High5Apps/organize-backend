@@ -22,6 +22,12 @@ class Ballot::Query
       ballots = ballots.active_at(active_at)
     end
 
+    inactive_at_param = params[:inactive_at]
+    if inactive_at_param
+      inactive_at = Time.parse(inactive_at_param.to_s).utc
+      ballots = ballots.inactive_at(inactive_at)
+    end
+
     ballots
   end
 end
