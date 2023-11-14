@@ -114,4 +114,57 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :created
   end
+
+  test 'should index with valid authorization' do
+    get api_v1_ballots_url, headers: @authorized_headers
+    assert_response :ok
+  end
+
+  test 'should not index with invalid authorization' do
+    get api_v1_ballots_url,
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
+    assert_response :unauthorized
+  end
+
+  test 'should not index if user is not in an Org' do
+    @user.update!(org: nil)
+    assert_nil @user.reload.org
+
+    get api_v1_ballots_url, headers: @authorized_headers
+    assert_response :not_found
+  end
+
+  test 'index should only include allow-listed attributes' do
+    get api_v1_ballots_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    ballot = json_response.dig(:ballots, 0)
+    assert_not_nil ballot
+
+    attribute_allow_list = Api::V1::BallotsController::ALLOWED_ATTRIBUTES
+    assert_equal attribute_allow_list.count, ballot.keys.count
+    attribute_allow_list.each do |attribute|
+      assert ballot.key? attribute
+    end
+  end
+
+  test 'index should only include ballots from requester Org' do
+    get api_v1_ballots_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    ballot_jsons = json_response.dig(:ballots)
+    ballot_ids = ballot_jsons.map {|b| b[:id]}
+    assert_not_equal 0, ballot_ids.length
+    ballots = Ballot.find(ballot_ids)
+    ballots.each do |ballot|
+      assert_equal @user.org, ballot.org
+    end
+  end
+
+  test 'index should format voting_ends_at attributes as iso8601' do
+    get api_v1_ballots_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    voting_ends_at = json_response.dig(:ballots, 0, :voting_ends_at)
+    assert Time.iso8601(voting_ends_at)
+  end
 end
