@@ -34,6 +34,7 @@ en:
     attributes:
       ballot:
         encrypted_question: 'Question'
+        voting_ends_at: '"Voting ends on"'
       candidate:
         encrypted_title: 'Title'
       comment:
