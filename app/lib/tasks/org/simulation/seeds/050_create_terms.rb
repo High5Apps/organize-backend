@@ -33,15 +33,15 @@ Timecop.freeze($simulation.ended_at) do
       vp_id = connection_ids.max_by {|id| graph[:users][id][:connection_count]}
       vp_id
     when 'Secretary', 'Treasurer'
-      # Random user
-      User.ids.sample
+      # Random user in Org
+      user_ids.sample
     when 'Steward'
       # Handled below after all other officers are created
     when 'Trustee'
       # Random user that isn't connected to the treasurer
       treasurer = term_map['Treasurer'].user
       connection_ids = treasurer.scanners.ids + treasurer.sharers.ids
-      user_ids_not_connected_to_treasurer = User.ids - connection_ids
+      user_ids_not_connected_to_treasurer = user_ids - connection_ids
       user_ids_not_connected_to_treasurer.sample
     else
       throw "Unhandled Office name: #{office.name}"
