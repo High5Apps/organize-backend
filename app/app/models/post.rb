@@ -11,7 +11,7 @@ class Post < ApplicationRecord
     ).gsub(/\s+/, ' '))
   }
 
-  MAX_TITLE_LENGTH = 120
+  MAX_TITLE_LENGTH = 140
   MAX_BODY_LENGTH = 10000
 
   enum category: [:general, :grievances, :demands]

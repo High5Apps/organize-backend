@@ -5,7 +5,7 @@ class Ballot < ApplicationRecord
   scope :created_before, ->(time) { where(created_at: ...time) }
   scope :inactive_at, ->(time) { where(voting_ends_at: ..time) }
 
-  MAX_QUESTION_LENGTH = 120
+  MAX_QUESTION_LENGTH = 140
 
   enum category: [:yes_no]
 
