@@ -1,6 +1,6 @@
 one:
   encrypted_name: { c: kg5kt834S4Wwbw==, n: zp4HCpw9R5Ykf7wu, t: yq5J6E9+spj1IfeP42fahQ== }
-  encrypted_potential_member_definition: { c: gw+vgHOgqMNuveQr6BM9PEV46cWz2m7CGhi05Jdi0O1A35g=, n: iO2jsSBOPIzvB/r8, t: k/1t2cyQwKWSuocylDbsHA== }
+  encrypted_member_definition: { c: gw+vgHOgqMNuveQr6BM9PEV46cWz2m7CGhi05Jdi0O1A35g=, n: iO2jsSBOPIzvB/r8, t: k/1t2cyQwKWSuocylDbsHA== }
 two:
   encrypted_name: { c: 9E2ejlGrKOPA4g==, n: yw0XKAspGE8EvcTb, t: v6JqBndNRdicM6cITs+8gA== }
-  encrypted_potential_member_definition: { c: AV66RB7JJpDkHbVz45V0wh3q+jSpQemkeWPY6Soj+o0E6g==, n: zMgm/fFJvs2phc7a, t: HFsTHJEMi8Kz4k8vX8nfVQ== }
+  encrypted_member_definition: { c: AV66RB7JJpDkHbVz45V0wh3q+jSpQemkeWPY6Soj+o0E6g==, n: zMgm/fFJvs2phc7a, t: HFsTHJEMi8Kz4k8vX8nfVQ== }

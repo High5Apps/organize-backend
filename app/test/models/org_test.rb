@@ -29,23 +29,23 @@ class OrgTest < ActiveSupport::TestCase
     assert @org.invalid?
   end
 
-  test 'encrypted_potential_member_definition should be present' do
-    @org.encrypted_potential_member_definition = nil
+  test 'encrypted_member_definition should be present' do
+    @org.encrypted_member_definition = nil
     assert @org.invalid?
   end
 
-  test 'encrypted_potential_member_definition error messages should not include "Encrypted"' do
-    @org.encrypted_potential_member_definition = nil
+  test 'encrypted_member_definition error messages should not include "Encrypted"' do
+    @org.encrypted_member_definition = nil
     @org.valid?
     assert_not @org.errors.full_messages.first.include? 'Encrypted'
   end
 
-  test 'encrypted_potential_member_definition should be less than MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH' do
-    @org.encrypted_potential_member_definition.ciphertext = \
-      Base64.strict_encode64('a' * Org::MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH)
+  test 'encrypted_member_definition should be less than MAX_MEMBER_DEFINITION_LENGTH' do
+    @org.encrypted_member_definition.ciphertext = \
+      Base64.strict_encode64('a' * Org::MAX_MEMBER_DEFINITION_LENGTH)
     assert @org.valid?
-    @org.encrypted_potential_member_definition.ciphertext = \
-      Base64.strict_encode64('a' * (1 + Org::MAX_POTENTIAL_MEMBER_DEFINITION_LENGTH))
+    @org.encrypted_member_definition.ciphertext = \
+      Base64.strict_encode64('a' * (1 + Org::MAX_MEMBER_DEFINITION_LENGTH))
     assert @org.invalid?
   end
 

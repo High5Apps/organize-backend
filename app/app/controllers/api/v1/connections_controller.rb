@@ -31,7 +31,7 @@ class Api::V1::ConnectionsController < ApplicationController
       render json: {
         org: {
           encrypted_name: org.encrypted_name,
-          encrypted_potential_member_definition: org.encrypted_potential_member_definition,
+          encrypted_member_definition: org.encrypted_member_definition,
           id: org.id,
         }, user: {
           pseudonym: @authenticated_sharer.pseudonym,

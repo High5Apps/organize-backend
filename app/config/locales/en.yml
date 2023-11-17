@@ -41,7 +41,7 @@ en:
         encrypted_body: 'Body'
       org:
         encrypted_name: 'Name'
-        encrypted_potential_member_definition: 'Potential member definition'
+        encrypted_member_definition: 'Member definition'
       post:
         encrypted_body: 'Body'
         encrypted_title: 'Title'
