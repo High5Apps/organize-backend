@@ -8,12 +8,12 @@ QUESTION_CHARACTER_RANGE = 20..Ballot::MAX_QUESTION_LENGTH
 
 def hipster_ipsum_ballot_question
   question_length = rand QUESTION_CHARACTER_RANGE
-  question = Faker::Hipster.paragraph_by_chars characters: question_length
-  question = question.delete '.' # Remove all periods
-  split_question = question.split
-  split_question.pop # Remove last word to ensure no partial words
-  question = split_question.join ' '
-  "#{question}?"
+  question = Faker::Hipster.paragraph_by_chars(characters: question_length)
+    .delete('.') # Remove all periods
+    .downcase
+    .split[...-1] # Remove last word to ensure no partial words
+    .join ' '
+  "Should we #{question}?"
 end
 
 def create_fake_ballot(org, category:, isActive:)
