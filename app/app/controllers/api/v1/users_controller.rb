@@ -1,4 +1,8 @@
 class Api::V1::UsersController < ApplicationController
+  ALLOWED_ATTRIBUTES = [
+    :id,
+    :pseudonym,
+  ]
   PERMITTED_PARAMS = [
     :public_key_bytes,
   ]
@@ -16,14 +20,12 @@ class Api::V1::UsersController < ApplicationController
 
   def show
     user = authenticated_user.org.users.find_by(id: params[:id])
-    if user
-      render json: {
-        id: user.id,
-        pseudonym: user.pseudonym,
-      }, status: :ok
-    else
-      render_error :not_found, ["No user found with id #{params[:id]}"]
+
+    unless user
+      return render_error :not_found, ["No user found with id #{params[:id]}"]
     end
+
+    render json: user.slice(ALLOWED_ATTRIBUTES)
   end
 
   private

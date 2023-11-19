@@ -46,10 +46,18 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
 
     get api_v1_user_url(@user_in_org), headers: @authorized_headers
     assert_response :ok
+  end
 
+  test 'show should only include ALLOWED_ATTRIBUTES' do
+    get api_v1_user_url(@user_in_org), headers: @authorized_headers
     json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_not_nil json_response.dig(:id)
-    assert_not_nil json_response.dig(:pseudonym)
+
+    attribute_allow_list = Api::V1::UsersController::ALLOWED_ATTRIBUTES
+    assert_equal attribute_allow_list.count, json_response.keys.count
+    attribute_allow_list.each do |attribute|
+      assert json_response.key? attribute
+      assert_not_nil json_response[attribute]
+    end
   end
 
   test 'should not show users in other Orgs' do
