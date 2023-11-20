@@ -10,14 +10,14 @@ class Ballot < ApplicationRecord
   enum category: [:yes_no]
 
   belongs_to :user
-  belongs_to :org
 
   has_many :candidates
+
+  has_one :org, through: :user
 
   validates :category,
     presence: true,
     inclusion: { in: categories }
-  validates :org, presence: true
   validates :user, presence: true
   validates :voting_ends_at, future: true
 

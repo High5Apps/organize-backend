@@ -5,7 +5,7 @@ class BallotQueryTest < ActiveSupport::TestCase
 
   test 'should respect initial_posts' do
     org = @user.org
-    assert Ballot.where.not(org: org).exists?
+    assert_not_equal Ballot.count, org.ballots.count
     ballot_ids = Ballot::Query.build({}, initial_ballots: org.ballots).ids
     ballots = Ballot.find(ballot_ids)
     assert ballots.all? { |ballot| ballot.org == org }

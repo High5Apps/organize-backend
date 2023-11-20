@@ -33,9 +33,8 @@ def create_fake_ballot(org, category:, isActive:)
   creator = org.users.where(joined_at: ...created_at).sample
 
   Timecop.freeze created_at do
-    org.ballots.create! category: category,
+    creator.ballots.create! category: category,
       encrypted_question: encrypted_question,
-      user_id: creator.id,
       voting_ends_at: voting_ends_at
   end
 end

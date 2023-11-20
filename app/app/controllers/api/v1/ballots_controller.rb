@@ -10,7 +10,7 @@ class Api::V1::BallotsController < ApplicationController
       new_ballot = nil
 
       ActiveRecord::Base.transaction do
-        new_ballot = authenticated_user.org.ballots.create! create_ballot_params
+        new_ballot = authenticated_user.ballots.create! create_ballot_params
 
         create_candidates_params.each do |create_params|
           candidate = new_ballot.candidates.create! create_params
@@ -40,7 +40,6 @@ class Api::V1::BallotsController < ApplicationController
         :category,
         EncryptedMessage.permitted_params(:question),
         :voting_ends_at)
-      .merge(user_id: authenticated_user.id)
   end
 
   def create_candidates_params

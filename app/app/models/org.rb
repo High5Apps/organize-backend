@@ -4,9 +4,10 @@ class Org < ApplicationRecord
   MAX_NAME_LENGTH = 35
   MAX_MEMBER_DEFINITION_LENGTH = 75
 
-  has_many :ballots
   has_many :posts
   has_many :users
+
+  has_many :ballots, through: :users
 
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
   has_encrypted :member_definition,

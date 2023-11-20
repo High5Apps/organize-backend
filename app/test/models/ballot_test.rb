@@ -35,11 +35,6 @@ class BallotTest < ActiveSupport::TestCase
     assert @ballot.invalid?
   end
 
-  test 'org should be present' do
-    @ballot.org = nil
-    assert @ballot.invalid?
-  end
-
   test 'user should be present' do
     @ballot.user = nil
     assert @ballot.invalid?
