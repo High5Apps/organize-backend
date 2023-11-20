@@ -29,9 +29,13 @@ def create_fake_ballot(org, category:, isActive:)
 
   encrypted_question = $simulation.encrypt hipster_ipsum_ballot_question
 
+  # Pick a random member who had joined by that time to be the creator
+  creator = org.users.where(joined_at: ...created_at).sample
+
   Timecop.freeze created_at do
     org.ballots.create! category: category,
       encrypted_question: encrypted_question,
+      user_id: creator.id,
       voting_ends_at: voting_ends_at
   end
 end

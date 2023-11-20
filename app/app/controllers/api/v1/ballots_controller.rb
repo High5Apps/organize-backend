@@ -35,10 +35,12 @@ class Api::V1::BallotsController < ApplicationController
   private
 
   def create_ballot_params
-    params.require(:ballot).permit(
-      :category,
-      EncryptedMessage.permitted_params(:question),
-      :voting_ends_at)
+    params.require(:ballot)
+      .permit(
+        :category,
+        EncryptedMessage.permitted_params(:question),
+        :voting_ends_at)
+      .merge(user_id: authenticated_user.id)
   end
 
   def create_candidates_params

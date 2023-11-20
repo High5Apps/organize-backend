@@ -40,6 +40,11 @@ class BallotTest < ActiveSupport::TestCase
     assert @ballot.invalid?
   end
 
+  test 'user should be present' do
+    @ballot.user = nil
+    assert @ballot.invalid?
+  end
+
   test 'voting_ends_at should be present' do
     @ballot.voting_ends_at = nil
     assert @ballot.invalid?

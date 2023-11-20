@@ -9,19 +9,20 @@ class User < ApplicationRecord
     foreign_key: 'recruiter_id',
     optional: true
 
+  has_many :ballots
   has_many :comments
   has_many :posts
   has_many :recruits, foreign_key: 'recruiter_id', class_name: 'User'
   has_many :shared_connections,
-    foreign_key: 'sharer_id', 
+    foreign_key: 'sharer_id',
     class_name: 'Connection'
   has_many :scanners, through: :shared_connections
 
   has_many :scanned_connections,
     foreign_key: 'scanner_id',
     class_name: 'Connection'
-  has_many :sharers, 
-    through: :scanned_connections, 
+  has_many :sharers,
+    through: :scanned_connections,
     class_name: 'User'
 
   has_many :terms

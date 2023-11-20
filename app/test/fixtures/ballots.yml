@@ -3,6 +3,7 @@ one:
   created_at: <%= 1.second.ago.to_fs(:db) %>
   encrypted_question: { c: b1CoRzCSrLs44HFBboKJo3sY/yd4QIeRN46UaohK7A==, n: VvzkU6c/A7nr4XUF, t: 6aVk/k5S1LURcmKOo9z7LQ== }
   org: one
+  user: one
   voting_ends_at: <%= 7.days.from_now.to_fs(:db) %>
 
 two:
@@ -10,6 +11,7 @@ two:
   created_at: <%= 2.seconds.ago.to_fs(:db) %>
   encrypted_question: { c: TZgZBHg5TAFbX5n0CmNKG7Y3WpyAaNgQaYQx3Ri8wQuo8W8dQwXRvkTvq1OIDx3csH/ZC5HKz7+a6pj9tSInvRcpgcTFsuvwwKfRKi/PSNMQByiSohVSWJn6GgUuxcg=, n: OR1dI6xl+KLvvNrz, t: sDd1/FefWeqmmriHEvxJjQ== }
   org: two
+  user: five
   voting_ends_at: <%= 8.days.from_now.to_fs(:db) %>
 
 three:
@@ -17,6 +19,7 @@ three:
   created_at: <%= 3.seconds.ago.to_fs(:db) %>
   encrypted_question: { c: 5MhTS8qx, n: /vzKrziCov8SuZDD, t: qefHd8VWSDospergwVKSSw== }
   org: one
+  user: three
   voting_ends_at: <%= 9.day.from_now.to_fs(:db) %>
 
 four:
@@ -24,6 +27,7 @@ four:
   created_at: <%= 10.days.ago.to_fs(:db) %>
   encrypted_question: { c: wmVBrA==, n: egt32EtsI9fjbKI0, t: Yw7T9bEyFtazrVCy4VyOGA== }
   org: one
+  user: four
   voting_ends_at: <%= 2.days.ago.to_fs(:db) %>
 
 five:
@@ -31,4 +35,5 @@ five:
   created_at: <%= 20.days.ago.to_fs(:db) %>
   encrypted_question: { c: 1OP8/g==, n: hRJZmT+wcf/2Ydh8, t: 10jh891TTvqJTFQeGYAZYw== }
   org: one
+  user: one
   voting_ends_at: <%= 1.day.ago.to_fs(:db) %>

@@ -3,6 +3,7 @@ class Ballot::Query
     :category,
     :encrypted_question,
     :id,
+    :user_id,
     :voting_ends_at,
   ]
 

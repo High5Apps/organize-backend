@@ -9,6 +9,7 @@ class Ballot < ApplicationRecord
 
   enum category: [:yes_no]
 
+  belongs_to :user
   belongs_to :org
 
   has_many :candidates
@@ -17,6 +18,7 @@ class Ballot < ApplicationRecord
     presence: true,
     inclusion: { in: categories }
   validates :org, presence: true
+  validates :user, presence: true
   validates :voting_ends_at, future: true
 
   has_encrypted :question, present: true, max_length: MAX_QUESTION_LENGTH
