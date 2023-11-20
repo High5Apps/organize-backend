@@ -10,6 +10,10 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     ]
     @post_without_comments = posts(:three)
     @params = { comment: comment.attributes.as_json.with_indifferent_access }
+    @nonexistent_commentable_urls = [
+      api_v1_post_comments_url('bad-post-id'),
+      api_v1_comment_comments_url('bad-comment-id'),
+    ]
 
     @user = users(:one)
     setup_test_key(@user)
@@ -56,13 +60,9 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create on a nonexistent commentable' do
-    nonexistent_commentable_urls = [
-      api_v1_post_comments_url('bad-post-id'),
-      api_v1_comment_comments_url('bad-comment-id'),
-    ]
-    assert_equal @commentable_urls.count, nonexistent_commentable_urls.count
+    assert_equal @commentable_urls.count, @nonexistent_commentable_urls.count
 
-    nonexistent_commentable_urls.each do |url|
+    @nonexistent_commentable_urls.each do |url|
       assert_no_difference 'Comment.count' do
         post url, headers: @authorized_headers, params: @params
       end
@@ -83,6 +83,19 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @commentable_urls.count, commentable_urls_in_other_orgs.count
 
     commentable_urls_in_other_orgs.each do |url|
+      assert_no_difference 'Comment.count' do
+        post url, headers: @authorized_headers, params: @params
+      end
+
+      assert_response :not_found
+    end
+  end
+
+  test 'should not create if user is not in an org and commentables do not exist' do
+    @user.update!(org: nil)
+    assert_nil @user.reload.org
+
+    @nonexistent_commentable_urls.each do |url|
       assert_no_difference 'Comment.count' do
         post url, headers: @authorized_headers, params: @params
       end

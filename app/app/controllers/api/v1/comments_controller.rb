@@ -79,7 +79,8 @@ class Api::V1::CommentsController < ApplicationController
       @commentable_relation = comment&.children
     end
 
-    unless @post&.org == authenticated_user.org
+    user_org = authenticated_user.org
+    unless user_org && (@post&.org == user_org)
       render_error :not_found, ['Commentable not found']
     end
   end
