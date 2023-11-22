@@ -176,4 +176,65 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     current_page = json_response.dig(:meta, :current_page)
     assert_equal page, current_page
   end
+
+  test 'should show ballots from request Org with valid auth' do
+    assert_equal @ballot.org, @user.org
+
+    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    assert_response :ok
+  end
+
+  test 'show should only include allowed ballot attributes' do
+    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    ballot = JSON.parse(response.body, symbolize_names: true)[:ballot]
+    assert_only_includes_allowed_attributes ballot,
+      Api::V1::BallotsController::ALLOWED_BALLOT_ATTRIBUTES
+  end
+
+  test 'show should only include allowed candidate attributes' do
+    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    candidates = JSON.parse(response.body, symbolize_names: true)[:candidates]
+    candidates.each do |candidate|
+      assert_only_includes_allowed_attributes candidate,
+        Api::V1::BallotsController::ALLOWED_CANDIDATE_ATTRIBUTES
+    end
+  end
+
+  test 'show should only include candidates for the requested ballot' do
+    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    response_json = JSON.parse(response.body, symbolize_names: true)
+    candidate_jsons = response_json[:candidates]
+    assert_not_equal 0, candidate_jsons.count
+    assert_equal @ballot.candidates.ids.sort,
+      candidate_jsons.map {|c| c[:id]}.sort
+  end
+
+  test 'should not show with invalid auth' do
+    get api_v1_ballot_url(@ballot),
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
+    assert_response :unauthorized
+  end
+
+  test 'should not show for non-existent ballots' do
+    get api_v1_ballot_url('bad-ballot_id'), headers: @authorized_headers
+    assert_response :not_found
+  end
+
+  test 'should not show ballots in other Orgs' do
+    ballot_in_another_org = ballots(:two)
+    assert_not_equal @user.org, ballot_in_another_org.org
+    get api_v1_ballot_url(ballot_in_another_org), headers: @authorized_headers
+    assert_response :not_found
+  end
+
+  private
+
+  def assert_only_includes_allowed_attributes(model, allowed_attributes)
+    assert_equal allowed_attributes.count, model.keys.count
+    allowed_attributes.each do |attribute|
+      assert model.key? attribute
+    end
+  end
 end

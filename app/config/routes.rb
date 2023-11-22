@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
-      resources :ballots, only: [:index, :create] do
+      resources :ballots, only: [:index, :create, :show] do
         resources :candidates, only: [:index]
       end
       resources :connections,  only: [:create]

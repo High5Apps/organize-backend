@@ -1,8 +1,10 @@
 class Api::V1::BallotsController < ApplicationController
+  ALLOWED_BALLOT_ATTRIBUTES = Ballot::Query::ALLOWED_ATTRIBUTES
+  ALLOWED_CANDIDATE_ATTRIBUTES = [:encrypted_title, :id]
   MAX_CANDIDATES_PER_CREATE = 100.freeze
 
-  before_action :authenticate_user, only: [:index, :create]
-  before_action :check_org_membership, only: [:index, :create]
+  before_action :authenticate_user, only: [:index, :create, :show]
+  before_action :check_org_membership, only: [:index, :create, :show]
   before_action :limit_candidate_count, only: [:create]
 
   def create
@@ -30,6 +32,21 @@ class Api::V1::BallotsController < ApplicationController
       ballots: ballots,
       meta: (pagination_dict(ballots) if params[:page]),
     }.compact
+  end
+
+  def show
+    ballot = @org.ballots.find_by(id: params[:id])
+
+    unless ballot
+      return render_error :not_found, ["No ballot found with id #{params[:id]}"]
+    end
+
+    candidates = ballot.candidates.select(ALLOWED_CANDIDATE_ATTRIBUTES)
+
+    render json: {
+      ballot: ballot.slice(ALLOWED_BALLOT_ATTRIBUTES),
+      candidates: candidates,
+    }
   end
 
   private
