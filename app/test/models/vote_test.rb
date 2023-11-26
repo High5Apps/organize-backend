@@ -29,10 +29,10 @@ class VoteTest < ActiveSupport::TestCase
     assert @vote.invalid?
   end
 
-  test 'candidate_ids length should be less than MAX_CANDIDATE_IDS_PER_VOTE' do
+  test 'candidate_ids length should be less than ballot.max_candidate_ids_per_vote' do
     ballot_candidate_ids = @vote.ballot.candidates.ids
     assert_operator ballot_candidate_ids.length,
-      :>, Vote::MAX_CANDIDATE_IDS_PER_VOTE
+      :>, @vote.ballot.max_candidate_ids_per_vote
     @vote.candidate_ids = ballot_candidate_ids
     assert @vote.invalid?
   end
@@ -41,6 +41,13 @@ class VoteTest < ActiveSupport::TestCase
     canididate_from_another_ballot = candidates(:three)
     assert_not_equal @vote.ballot, canididate_from_another_ballot.ballot
     @vote.candidate_ids = [canididate_from_another_ballot.id]
+    @vote.save validate: false
+    assert @vote.invalid?
+  end
+
+  test 'candidate_ids should not contain duplicates' do
+    @vote.ballot.max_candidate_ids_per_vote = 2
+    @vote.candidate_ids = @vote.candidate_ids * 2
     @vote.save validate: false
     assert @vote.invalid?
   end
