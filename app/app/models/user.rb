@@ -21,6 +21,7 @@ class User < ApplicationRecord
     class_name: 'Connection'
   has_many :terms
   has_many :upvotes
+  has_many :votes
 
   has_many :offices, through: :terms
   has_many :scanners, through: :shared_connections

@@ -1,0 +1,19 @@
+one:
+  ballot: one
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:one, :uuid) %>]
+  user: one
+
+two:
+  ballot: two
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:four, :uuid) %>]
+  user: five
+
+three:
+  ballot: two
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:two, :uuid) %>]
+  user: four
+
+five:
+  ballot: one
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:one, :uuid) %>]
+  user: three

@@ -12,6 +12,7 @@ class Ballot < ApplicationRecord
   belongs_to :user
 
   has_many :candidates
+  has_many :votes
 
   has_one :org, through: :user
 
