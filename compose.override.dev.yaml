@@ -11,3 +11,7 @@ services:
     environment:
       SELF_SIGN: true
     restart: "no"
+  web:
+    build:
+      target: dev
+    image: localhost:5001/organize-web-dev
