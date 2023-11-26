@@ -11,6 +11,8 @@ class Vote < ApplicationRecord
   validate :no_duplicates
   validate :not_overvoting
 
+  after_save :validate_saved_before_voting_ends
+
   private
 
   def candidates_are_a_subset_of_ballot_candidates
@@ -38,6 +40,13 @@ class Vote < ApplicationRecord
     if candidate_ids.length > max
       errors.add :base,
         "must not contain more than #{max} #{'choice'.pluralize(max)}"
+    end
+  end
+
+  def validate_saved_before_voting_ends
+    unless updated_at < ballot.voting_ends_at
+      errors.add(:base, 'must be saved before voting ends')
+      raise ActiveRecord::RecordInvalid
     end
   end
 end

@@ -56,4 +56,29 @@ class VoteTest < ActiveSupport::TestCase
     @vote.user = nil
     assert @vote.invalid?
   end
+
+  test 'created_at must be before ballot.voting_ends_at' do
+    new_vote = @vote.dup
+    travel_to @vote.ballot.voting_ends_at - 1.second do
+      assert new_vote.save
+    end
+
+    new_vote = @vote.dup
+    travel_to @vote.ballot.voting_ends_at do
+      assert_not new_vote.save
+    end
+  end
+
+  test 'updated_at must be before ballot.voting_ends_at' do
+    original_candidate_ids = @vote.candidate_ids
+    travel_to @vote.ballot.voting_ends_at - 1.second do
+      @vote.candidate_ids = []
+      assert @vote.save
+    end
+
+    travel_to @vote.ballot.voting_ends_at do
+      @vote.candidate_ids = original_candidate_ids
+      assert_not @vote.save
+    end
+  end
 end
