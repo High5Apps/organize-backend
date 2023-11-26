@@ -1,5 +1,7 @@
 class Api::V1::BallotsController < ApplicationController
-  ALLOWED_BALLOT_ATTRIBUTES = Ballot::Query::ALLOWED_ATTRIBUTES
+  ALLOWED_BALLOT_ATTRIBUTES = Ballot::Query::ALLOWED_ATTRIBUTES + [
+    :max_candidate_ids_per_vote,
+  ]
   ALLOWED_CANDIDATE_ATTRIBUTES = [:encrypted_title, :id]
   MAX_CANDIDATES_PER_CREATE = 100.freeze
 
