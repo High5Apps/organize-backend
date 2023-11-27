@@ -52,6 +52,13 @@ class User < ApplicationRecord
     Connection.between(id, user_id)
   end
 
+  def my_vote_candidate_ids(ballot)
+    votes.where(ballot_id: ballot.id)
+      .order(created_at: :desc)
+      .first
+      &.candidate_ids || []
+  end
+
   private
 
     attr_reader :private_key

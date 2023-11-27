@@ -184,6 +184,13 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
   end
 
+  test 'show should only include allowed attributes' do
+    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    assert_only_includes_allowed_attributes json_response,
+      Api::V1::BallotsController::ALLOWED_ATTRIBUTES
+  end
+
   test 'show should only include allowed ballot attributes' do
     get api_v1_ballot_url(@ballot), headers: @authorized_headers
     ballot = JSON.parse(response.body, symbolize_names: true)[:ballot]

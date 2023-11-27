@@ -1,5 +1,12 @@
+zero:
+  ballot: one
+  created_at: <%= Time.now.to_fs(:db) %>
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:two, :uuid) %>]
+  user: one
+
 one:
   ballot: one
+  created_at: <%= 1.second.from_now.to_fs(:db) %>
   candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:one, :uuid) %>]
   user: one
 

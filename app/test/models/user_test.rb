@@ -44,4 +44,15 @@ class UserTest < ActiveSupport::TestCase
       @user_without_org.save
     end
   end
+
+  test "my_vote_candidate_ids should return user's most recently created vote's candidate_ids" do
+    ballot_with_vote = ballots(:one)
+    my_vote_candidate_ids = @user.my_vote_candidate_ids(ballot_with_vote)
+    assert_equal votes(:one).candidate_ids, my_vote_candidate_ids
+  end
+
+  test 'my_vote_candidate_ids should return [] when user has not voted on ballot' do
+    ballot_without_vote = ballots(:three)
+    assert_equal [], @user.my_vote_candidate_ids(ballot_without_vote)
+  end
 end

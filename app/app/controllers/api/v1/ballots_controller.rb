@@ -1,4 +1,9 @@
 class Api::V1::BallotsController < ApplicationController
+  ALLOWED_ATTRIBUTES = [
+    :ballot,
+    :candidates,
+    :my_vote,
+  ]
   ALLOWED_BALLOT_ATTRIBUTES = Ballot::Query::ALLOWED_ATTRIBUTES + [
     :max_candidate_ids_per_vote,
   ]
@@ -48,6 +53,7 @@ class Api::V1::BallotsController < ApplicationController
     render json: {
       ballot: ballot.slice(ALLOWED_BALLOT_ATTRIBUTES),
       candidates: candidates,
+      my_vote: authenticated_user.my_vote_candidate_ids(ballot),
     }
   end
 
