@@ -4,7 +4,11 @@ BALLOT_DISTRIBUTION_MAX = 30
 
 BALLOTS_DISTRIBUTION = -> { [(1/rand).round, BALLOT_DISTRIBUTION_MAX].min }
 
-QUESTION_CHARACTER_RANGE = 20..Ballot::MAX_QUESTION_LENGTH
+QUESTION_PREFIX = 'Should we '
+QUESTION_SUFFIX = '?'
+question_range_max = \
+  Ballot::MAX_QUESTION_LENGTH - QUESTION_PREFIX.length - QUESTION_SUFFIX.length
+QUESTION_CHARACTER_RANGE = 20..question_range_max
 
 def hipster_ipsum_ballot_question
   question_length = rand QUESTION_CHARACTER_RANGE
@@ -13,7 +17,7 @@ def hipster_ipsum_ballot_question
     .downcase
     .split[...-1] # Remove last word to ensure no partial words
     .join ' '
-  "Should we #{question}?"
+  "#{QUESTION_PREFIX}#{question}#{QUESTION_SUFFIX}"
 end
 
 def create_fake_ballot(org, category:, isActive:)
