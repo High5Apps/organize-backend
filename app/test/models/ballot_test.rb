@@ -74,6 +74,76 @@ class BallotTest < ActiveSupport::TestCase
     assert_not query.exists?(id: b3)
   end
 
+  test 'results should be ordered by most votes first' do
+    vote_counts = @ballot.results.map { |r| r[:vote_count] }
+    assert_not_equal 0, vote_counts.length
+    assert vote_counts.all? { |vc| vc != 0 }
+    assert_equal vote_counts.uniq, vote_counts
+
+    # Reverse is needed because sort is an ascending sort
+    assert_equal vote_counts.sort.reverse, vote_counts
+  end
+
+  test 'results should order tied vote counts by descending candidate_id' do
+    tied_results = ballots(:two).results
+    vote_counts = tied_results.map { |r| r[:vote_count] }
+    assert_equal 1, vote_counts.uniq.length
+
+    candidate_ids = tied_results.map { |r| r[:candidate_id] }
+
+    # Reverse is needed because sort is an ascending sort
+    assert_equal candidate_ids.sort.reverse, candidate_ids
+  end
+
+  test 'results should only include a single vote per voter' do
+    voters_count = @ballot.votes.joins(:user).group(:user_id).count.length
+    vote_count = @ballot.votes.count
+    assert_operator vote_count, :>, voters_count
+
+    total_result_vote_count = @ballot.results.map { |r| r[:vote_count] }.sum
+    assert_equal voters_count, total_result_vote_count
+  end
+
+  test "results should only include each voter's most recent vote" do
+    assert_equal 1, @ballot.max_candidate_ids_per_vote
+    initial_results = @ballot.results
+    initial_results_map = initial_results.index_by { |r| r[:candidate_id] }
+
+    most_recent_vote = @ballot.votes.order(created_at: :desc).first
+    most_recent_vote_candidate_id = most_recent_vote.candidate_ids.first
+    other_candidate = @ballot.candidates
+      .where.not(id: most_recent_vote_candidate_id).first
+    assert_not_nil other_candidate
+    assert_not_equal most_recent_vote_candidate_id, other_candidate
+
+    older_vote = most_recent_vote.dup
+    older_vote.candidate_ids = [other_candidate.id]
+    older_vote.created_at = most_recent_vote.created_at - 1.second
+    older_vote.save!
+    assert_equal initial_results, @ballot.results
+
+    newer_vote = older_vote.dup
+    newer_vote.created_at = most_recent_vote.created_at + 1.second
+    newer_vote.save!
+    assert_not_equal initial_results, @ballot.results
+
+    final_results_map = @ballot.results.index_by { |r| r[:candidate_id] }
+    assert_equal 1 + initial_results_map[other_candidate.id][:vote_count],
+      final_results_map[other_candidate.id][:vote_count]
+    assert_equal initial_results_map[most_recent_vote_candidate_id][:vote_count],
+      1 + final_results_map[most_recent_vote_candidate_id][:vote_count]
+  end
+
+  test 'results should include info for all candidates, not just vote receivers' do
+    ballot_with_fewer_votes_than_candidates = ballots(:three)
+    vote_count = ballot_with_fewer_votes_than_candidates.votes.count
+    candidate_count = ballot_with_fewer_votes_than_candidates.candidates.count
+    assert_operator vote_count, :<, candidate_count
+
+    results = ballots(:three).results
+    assert_equal candidate_count, results.length
+  end
+
   private
 
   def create_ballots_with_voting_ends_at(voting_ends_ats)
