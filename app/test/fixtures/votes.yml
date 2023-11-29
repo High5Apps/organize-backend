@@ -17,7 +17,7 @@ two:
 
 three:
   ballot: two
-  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:two, :uuid) %>]
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:three, :uuid) %>]
   user: four
 
 five:

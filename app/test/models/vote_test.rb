@@ -6,7 +6,7 @@ class VoteTest < ActiveSupport::TestCase
   end
 
   test 'should be valid' do
-    assert @vote.valid?
+    assert Vote.all.all?(&:valid?)
   end
 
   test 'ballot should be present' do
