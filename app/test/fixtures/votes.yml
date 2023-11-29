@@ -22,5 +22,17 @@ three:
 
 five:
   ballot: one
+  created_at: <%= 2.seconds.from_now.to_fs(:db) %>
   candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:one, :uuid) %>]
   user: three
+
+six:
+  ballot: one
+  created_at: <%= Time.now.to_fs(:db) %>
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:two, :uuid) %>]
+  user: four
+
+seven:
+  ballot: three
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:five, :uuid) %>]
+  user: four

@@ -3,6 +3,7 @@ require "test_helper"
 class VoteTest < ActiveSupport::TestCase
   setup do
     @vote = votes(:one)
+    @ballot_without_votes = ballots(:five)
   end
 
   test 'should be valid' do
@@ -80,5 +81,50 @@ class VoteTest < ActiveSupport::TestCase
       @vote.candidate_ids = original_candidate_ids
       assert_not @vote.save
     end
+  end
+
+  test 'most_recent should only include a single vote per voter for a given ballot' do
+    ballots.each do |ballot|
+      voters_count = ballot.votes.joins(:user).group(:user_id).count.length
+      vote_count = ballot.votes.count
+      assert_operator vote_count, :>=, voters_count
+
+      most_recent_vote_count = ballot.votes.most_recent.count
+      assert_equal voters_count, most_recent_vote_count
+    end
+  end
+
+  test "most_recent should only include each voter's latest vote" do
+    assert_equal 0, @ballot_without_votes.votes.count
+    assert_equal 0, @ballot_without_votes.votes.most_recent.count
+
+    candidate_id = @ballot_without_votes.candidates.first.id
+    3.times do |n|
+      created_at = @ballot_without_votes.created_at + n.seconds
+      travel_to created_at do
+        vote = @ballot_without_votes.votes.create! user: users(:one),
+          candidate_ids: [candidate_id]
+        assert_equal [vote.id], @ballot_without_votes.votes.most_recent.ids
+      end
+    end
+  end
+
+  test 'most_recent should break tied created_ats by descending vote_id' do
+    assert_equal 0, @ballot_without_votes.votes.count
+
+    candidate_id = @ballot_without_votes.candidates.first.id
+    created_at = @ballot_without_votes.voting_ends_at - 1.second
+    travel_to created_at do
+      2.times do
+        @ballot_without_votes.votes.create! user: users(:one),
+          candidate_ids: [candidate_id]
+      end
+    end
+
+    assert_equal 1, @ballot_without_votes.votes.pluck(:created_at).uniq.length
+    vote_ids = @ballot_without_votes.votes.most_recent.ids
+
+    # Reverse is needed because sort is an ascending sort
+    assert_equal vote_ids.sort.reverse, vote_ids
   end
 end
