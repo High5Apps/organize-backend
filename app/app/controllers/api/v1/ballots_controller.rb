@@ -3,6 +3,7 @@ class Api::V1::BallotsController < ApplicationController
     :ballot,
     :candidates,
     :my_vote,
+    :results,
   ]
   ALLOWED_BALLOT_ATTRIBUTES = Ballot::Query::ALLOWED_ATTRIBUTES + [
     :max_candidate_ids_per_vote,
@@ -54,7 +55,8 @@ class Api::V1::BallotsController < ApplicationController
       ballot: ballot.slice(ALLOWED_BALLOT_ATTRIBUTES),
       candidates: candidates,
       my_vote: authenticated_user.my_vote_candidate_ids(ballot),
-    }
+      results: (ballot.results unless Time.now < ballot.voting_ends_at),
+  }.compact
   end
 
   private

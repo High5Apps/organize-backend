@@ -188,7 +188,24 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_ballot_url(@ballot), headers: @authorized_headers
     json_response = JSON.parse(response.body, symbolize_names: true)
     assert_only_includes_allowed_attributes json_response,
-      Api::V1::BallotsController::ALLOWED_ATTRIBUTES
+      Api::V1::BallotsController::ALLOWED_ATTRIBUTES,
+      optional_attributes: [:results]
+  end
+
+  test 'show should not include results until voting ends' do
+    travel_to @ballot.voting_ends_at - 1.second do
+      get api_v1_ballot_url(@ballot),
+        headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
+      results = JSON.parse(response.body, symbolize_names: true)[:results]
+      assert_nil results
+    end
+
+    travel_to @ballot.voting_ends_at do
+      get api_v1_ballot_url(@ballot),
+        headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
+      results = JSON.parse(response.body, symbolize_names: true)[:results]
+      assert_not_empty results
+    end
   end
 
   test 'show should only include allowed ballot attributes' do
@@ -238,9 +255,15 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   private
 
-  def assert_only_includes_allowed_attributes(model, allowed_attributes)
-    assert_equal allowed_attributes.count, model.keys.count
-    allowed_attributes.each do |attribute|
+  def assert_only_includes_allowed_attributes(
+    model, allowed_attributes, optional_attributes: []
+  )
+    model.keys.each do |key|
+      assert allowed_attributes.include? key
+    end
+
+    required_attributes = allowed_attributes - optional_attributes
+    required_attributes.each do |attribute|
       assert model.key? attribute
     end
   end
