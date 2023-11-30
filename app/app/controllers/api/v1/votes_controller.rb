@@ -24,9 +24,8 @@ class Api::V1::VotesController < ApplicationController
   end
 
   def check_ballot_belongs_to_org
-    @org = authenticated_user.org
-    @ballot = @org&.ballots&.find_by id: params[:ballot_id]
-    unless @org && @ballot && (@org == @ballot.org)
+    @ballot = authenticated_user&.org&.ballots&.find_by id: params[:ballot_id]
+    unless @ballot
       render_error :not_found, ['Ballot not found']
     end
   end
