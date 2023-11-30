@@ -25,6 +25,7 @@ class Vote < ApplicationRecord
   validate :candidates_are_a_subset_of_ballot_candidates
   validate :no_duplicates
   validate :not_overvoting
+  validate :user_and_ballot_in_same_org
 
   after_save :validate_saved_before_voting_ends
 
@@ -56,6 +57,11 @@ class Vote < ApplicationRecord
       errors.add :base,
         "must not contain more than #{max} #{'choice'.pluralize(max)}"
     end
+  end
+
+  def user_and_ballot_in_same_org
+    return if ballot.blank? || user.blank?
+    errors.add :ballot, 'not found' unless user.org.id == ballot.org.id
   end
 
   def validate_saved_before_voting_ends
