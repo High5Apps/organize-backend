@@ -14,6 +14,15 @@ class Vote < ApplicationRecord
       .where('votes.id = first_id')
   }
 
+  scope :most_recent_unnested, -> {
+    most_recent.select('*').joins(%Q(
+      JOIN (
+        #{select('*, unnest(candidate_ids) as candidate_id').to_sql}
+      ) AS unnested_votes
+        ON unnested_votes.id = votes.id
+    ).gsub(/\s+/, ' '))
+  }
+
   belongs_to :ballot
   belongs_to :user
 

@@ -1,13 +1,13 @@
 zero:
   ballot: one
   created_at: <%= Time.now.to_fs(:db) %>
-  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:two, :uuid) %>]
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:one, :uuid) %>]
   user: one
 
 one:
   ballot: one
   created_at: <%= 1.second.from_now.to_fs(:db) %>
-  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:one, :uuid) %>]
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:two, :uuid) %>]
   user: one
 
 two:
@@ -23,13 +23,13 @@ three:
 five:
   ballot: one
   created_at: <%= 2.seconds.from_now.to_fs(:db) %>
-  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:one, :uuid) %>]
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:two, :uuid) %>]
   user: three
 
 six:
   ballot: one
   created_at: <%= Time.now.to_fs(:db) %>
-  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:two, :uuid) %>]
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:one, :uuid) %>]
   user: four
 
 seven:

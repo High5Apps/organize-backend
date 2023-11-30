@@ -25,12 +25,10 @@ class Ballot < ApplicationRecord
   has_encrypted :question, present: true, max_length: MAX_QUESTION_LENGTH
 
   def results
-    votes.most_recent
-      .group(:candidate_id)
-      .order(vote_count: :desc)
-      .pluck('unnest(candidate_ids) as candidate_id, count(1) as vote_count')
-      .to_h
-      .reverse_merge(candidates.pluck('id, 0').to_h)
+    candidates.left_outer_joins_with_most_recent_unnested_votes
+      .group(:id)
+      .order(count_all: :desc, id: :desc)
+      .count(:all)
       .map do |candidate_id, vote_count|
         { candidate_id: candidate_id, vote_count: vote_count }
       end
