@@ -6,7 +6,7 @@ class Candidate < ApplicationRecord
       LEFT OUTER JOIN (
         #{Vote.most_recent_unnested.to_sql}
       ) AS votes
-        ON votes.candidate_id = candidates.id
+        ON votes.unnested_candidate_id = candidates.id
     ).gsub(/\s+/, ' '))
   }
 

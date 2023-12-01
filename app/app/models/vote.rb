@@ -17,7 +17,7 @@ class Vote < ApplicationRecord
   scope :most_recent_unnested, -> {
     most_recent.select('*').joins(%Q(
       JOIN (
-        #{select('*, unnest(candidate_ids) as candidate_id').to_sql}
+        #{select('*, unnest(candidate_ids) as unnested_candidate_id').to_sql}
       ) AS unnested_votes
         ON unnested_votes.id = votes.id
     ).gsub(/\s+/, ' '))

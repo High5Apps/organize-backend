@@ -3,6 +3,7 @@ require "test_helper"
 class BallotTest < ActiveSupport::TestCase
   setup do
     @ballot = ballots(:one)
+    @ballot_without_votes = ballots(:five)
   end
 
   test 'should be valid' do
@@ -75,73 +76,114 @@ class BallotTest < ActiveSupport::TestCase
   end
 
   test 'results should be ordered by most votes first' do
-    vote_counts = @ballot.results.map { |r| r[:vote_count] }
-    assert_not_equal 0, vote_counts.length
-    assert vote_counts.all? { |vc| vc != 0 }
-    assert_equal vote_counts.uniq, vote_counts
+    users = @ballot_without_votes.org.users.limit(3)
+    candidates = @ballot_without_votes.candidates
+    [
+      [candidates.first.id, candidates.first.id, candidates.second.id],
+      [candidates.second.id, candidates.second.id, candidates.first.id],
+    ].each do |distribution|
+      expected_winner = distribution.first
+      expected_loser = distribution.last
 
-    # Reverse is needed because sort is an ascending sort
-    assert_equal vote_counts.sort.reverse, vote_counts
+      distribution.permutation.each do |vote_order|
+        @ballot_without_votes.votes.destroy_all
+        assert_empty @ballot_without_votes.votes
+
+        vote_info = vote_order.map.with_index do |candidate_id, i|
+          { user: users[i], candidate_ids: [candidate_id]}
+        end
+
+        create_votes @ballot_without_votes, vote_info
+        results = @ballot_without_votes.reload.results
+        assert_equal 2, results.length
+
+        candidate_ids = results.map { |r| r[:candidate_id] }
+        assert_equal expected_winner, candidate_ids.first
+        assert_equal expected_loser, candidate_ids.second
+
+        candidate_vote_counts = results.map { |r| r[:vote_count] }
+        assert_equal 2, candidate_vote_counts.first
+        assert_equal 1, candidate_vote_counts.second
+      end
+    end
   end
 
   test 'results should order tied vote counts by descending candidate_id' do
-    tied_results = ballots(:two).results
-    vote_counts = tied_results.map { |r| r[:vote_count] }
-    assert_equal 1, vote_counts.uniq.length
+    users = @ballot_without_votes.org.users
+    candidates = @ballot_without_votes.candidates
+    [users.first, users.second].permutation.each do |user_order|
+      [candidates.first.id, candidates.second.id].permutation do |vote_order|
+        @ballot_without_votes.votes.destroy_all
+        assert_empty @ballot_without_votes.votes
 
-    candidate_ids = tied_results.map { |r| r[:candidate_id] }
+        vote_info = user_order.map.with_index do |user, i|
+          { user: user, candidate_ids: [vote_order[i]]}
+        end
+        create_votes @ballot_without_votes, vote_info
 
-    # Reverse is needed because sort is an ascending sort
-    assert_equal candidate_ids.sort.reverse, candidate_ids
-  end
+        results = @ballot_without_votes.reload.results
+        candidate_vote_counts = results.map { |r| r[:vote_count] }
+        assert_equal 1, candidate_vote_counts.uniq.length
 
-  test 'results should only include a single vote per voter' do
-    voters_count = @ballot.votes.joins(:user).group(:user_id).count.length
-    vote_count = @ballot.votes.count
-    assert_operator vote_count, :>, voters_count
+        candidate_ids = results.map { |r| r[:candidate_id] }
 
-    total_result_vote_count = @ballot.results.map { |r| r[:vote_count] }.sum
-    assert_equal voters_count, total_result_vote_count
+        # Reverse is needed because sort is an ascending sort
+        assert_equal candidate_ids.sort.reverse, candidate_ids
+      end
+    end
   end
 
   test "results should only include each voter's most recent vote" do
-    assert_equal 1, @ballot.max_candidate_ids_per_vote
-    initial_results = @ballot.results
-    initial_results_map = initial_results.index_by { |r| r[:candidate_id] }
+    users = @ballot_without_votes.org.users
+    candidates = @ballot_without_votes.candidates
+    [
+      [
+        { user: users.first, candidate_ids: [candidates.first.id]},
+        { user: users.first, candidate_ids: [candidates.second.id]},
+      ],[
+        { user: users.first, candidate_ids: [candidates.second.id]},
+        { user: users.first, candidate_ids: [candidates.first.id]},
+      ]
+    ].each do |vote_info|
+      @ballot_without_votes.votes.destroy_all
+      assert_empty @ballot_without_votes.votes
 
-    most_recent_vote = @ballot.votes.order(created_at: :desc).first
-    most_recent_vote_candidate_id = most_recent_vote.candidate_ids.first
-    other_candidate = @ballot.candidates
-      .where.not(id: most_recent_vote_candidate_id).first
-    assert_not_nil other_candidate
-    assert_not_equal most_recent_vote_candidate_id, other_candidate
+      create_votes @ballot_without_votes, vote_info
 
-    older_vote = most_recent_vote.dup
-    older_vote.candidate_ids = [other_candidate.id]
-    older_vote.created_at = most_recent_vote.created_at - 1.second
-    older_vote.save!
-    assert_equal initial_results, @ballot.results
-
-    newer_vote = older_vote.dup
-    newer_vote.created_at = most_recent_vote.created_at + 1.second
-    newer_vote.save!
-    assert_not_equal initial_results, @ballot.results
-
-    final_results_map = @ballot.results.index_by { |r| r[:candidate_id] }
-    assert_equal 1 + initial_results_map[other_candidate.id][:vote_count],
-      final_results_map[other_candidate.id][:vote_count]
-    assert_equal initial_results_map[most_recent_vote_candidate_id][:vote_count],
-      1 + final_results_map[most_recent_vote_candidate_id][:vote_count]
+      assert_equal 2, @ballot_without_votes.reload.votes.count
+      results = @ballot_without_votes.results
+      assert_equal 1, results.first[:vote_count]
+      assert_equal vote_info.last[:candidate_ids].first,
+        results.first[:candidate_id]
+      assert_equal 0, results.second[:vote_count]
+      assert_equal vote_info.first[:candidate_ids].first,
+        results.second[:candidate_id]
+    end
   end
 
   test 'results should include info for all candidates, not just vote receivers' do
-    ballot_with_fewer_votes_than_candidates = ballots(:three)
-    vote_count = ballot_with_fewer_votes_than_candidates.votes.count
-    candidate_count = ballot_with_fewer_votes_than_candidates.candidates.count
-    assert_operator vote_count, :<, candidate_count
+    # No votes
+    @ballot_without_votes.votes.destroy_all
+    assert_empty @ballot_without_votes.votes
 
-    results = ballots(:three).results
-    assert_equal candidate_count, results.length
+    results = @ballot_without_votes.results
+    assert_equal @ballot_without_votes.candidates.count, results.length
+    results.each do |r|
+      assert r[:candidate_id].present?
+      assert_equal 0, r[:vote_count]
+    end
+
+    # One vote
+    candidate_id = @ballot_without_votes.candidates.first.id
+    create_votes @ballot_without_votes, [{
+      user: @ballot_without_votes.user,
+      candidate_ids: [candidate_id]
+    }]
+    results = @ballot_without_votes.reload.results
+    assert_equal 2, results.length
+    assert_equal 1, results.first[:vote_count]
+    assert_equal candidate_id, results.first[:candidate_id]
+    assert_equal 0, results.last[:vote_count]
   end
 
   private
@@ -159,6 +201,13 @@ class BallotTest < ActiveSupport::TestCase
       ballot = @ballot.dup
       ballot.update! created_at: created_at
       ballot
+    end
+  end
+
+  def create_votes(ballot, votes_info)
+    votes_info.each do |vote_info|
+      vote_info[:user].votes.create! ballot: ballot,
+        candidate_ids: vote_info[:candidate_ids]
     end
   end
 end

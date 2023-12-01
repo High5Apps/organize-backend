@@ -27,8 +27,11 @@ class Ballot < ApplicationRecord
   def results
     candidates.left_outer_joins_with_most_recent_unnested_votes
       .group(:id)
-      .order(count_all: :desc, id: :desc)
-      .count(:all)
+      .order(count_unnested_candidate_id: :desc, id: :desc)
+      # Note that it's important to count :unnested_candidate_id instead of :all
+      # or :candidate_id, because of the left join. Otherwise, every candidate
+      # would receive at least one vote.
+      .count(:unnested_candidate_id)
       .map do |candidate_id, vote_count|
         { candidate_id: candidate_id, vote_count: vote_count }
       end
