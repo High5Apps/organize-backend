@@ -51,8 +51,9 @@ class OrgTest < ActiveSupport::TestCase
 
   test 'graph should include users' do
     users = @org.graph[:users]
-    assert_equal [users(:one), users(:three), users(:four)].map(&:id),
-      users.map { |id, _| id }
+    assert_equal [
+      users(:one), users(:three), users(:four), users(:seven),
+    ].map(&:id), users.map { |id, _| id }
 
     first_user = users[users(:one).id]
     second_user = users[users(:three).id]
@@ -67,7 +68,7 @@ class OrgTest < ActiveSupport::TestCase
     assert_equal 0, second_user[:recruit_count]
     assert_equal 0, third_user[:recruit_count]
 
-    assert_equal 2, first_user[:connection_count]
+    assert_equal 3, first_user[:connection_count]
     assert_equal 1, second_user[:connection_count]
     assert_equal 1, third_user[:connection_count]
 
@@ -80,8 +81,12 @@ class OrgTest < ActiveSupport::TestCase
     connections = @org.graph[:connections]
     c1 = connections(:one)
     c2 = connections(:two)
-    assert_equal [[c1.sharer_id, c1.scanner_id], [c2.sharer_id, c2.scanner_id]],
-      connections
+    c3 = connections(:three)
+    assert_equal [
+      [c1.sharer_id, c1.scanner_id],
+      [c2.sharer_id, c2.scanner_id],
+      [c3.sharer_id, c3.scanner_id],
+    ], connections
   end
 
   test 'next_pseudonym should change when user count changes' do

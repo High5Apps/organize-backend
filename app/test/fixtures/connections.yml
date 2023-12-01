@@ -4,3 +4,6 @@ one:
 two:
   sharer: four
   scanner: one
+three:
+  sharer: one
+  scanner: seven
