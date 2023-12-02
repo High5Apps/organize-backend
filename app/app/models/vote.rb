@@ -75,7 +75,7 @@ class Vote < ApplicationRecord
 
   def validate_saved_before_voting_ends
     unless updated_at < ballot.voting_ends_at
-      errors.add(:base, 'must be saved before voting ends')
+      errors.add(:base, "Vote can't be changed after voting ends")
       raise ActiveRecord::RecordInvalid
     end
   end
