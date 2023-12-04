@@ -10,6 +10,12 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
       candidates: @ballot.candidates.as_json,
     }
 
+    @multi_choice_ballot = ballots(:multi_choice_one)
+    @multi_choice_params = {
+      ballot: @multi_choice_ballot.as_json,
+      candidates: @multi_choice_ballot.candidates.as_json
+    }
+
     @user = users(:one)
     setup_test_key(@user)
     @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
@@ -61,15 +67,15 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create with more candidates than MAX_CANDIDATES_PER_CREATE' do
-    valid_params = @params
+    valid_params = @multi_choice_params
     valid_params[:candidates] =
-      [@ballot.candidates.first.as_json] * MAX_CANDIDATES
+      [@multi_choice_ballot.candidates.first.as_json] * MAX_CANDIDATES
     post api_v1_ballots_url, headers: @authorized_headers, params: valid_params
     assert_response :created
 
-    invalid_params = @params
+    invalid_params = @multi_choice_params
     invalid_params[:candidates] =
-      [@ballot.candidates.first.as_json] * (1 + MAX_CANDIDATES)
+      [@multi_choice_ballot.candidates.first.as_json] * (1 + MAX_CANDIDATES)
 
     assert_no_difference 'Ballot.count' do
       assert_no_difference 'Candidate.count' do
@@ -101,18 +107,6 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
     post api_v1_ballots_url, headers: @authorized_headers, params: @params
     assert_response :not_found
-  end
-
-  test 'create candidates should be optional' do
-    params = @params.except(:candidates)
-
-    assert_difference 'Ballot.count', 1 do
-      assert_no_difference 'Candidate.count' do
-        post api_v1_ballots_url, headers: @authorized_headers, params: params
-      end
-    end
-
-    assert_response :created
   end
 
   test 'should index with valid authorization' do

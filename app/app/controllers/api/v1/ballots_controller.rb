@@ -14,6 +14,7 @@ class Api::V1::BallotsController < ApplicationController
   before_action :authenticate_user, only: [:index, :create, :show]
   before_action :check_org_membership, only: [:index, :create, :show]
   before_action :limit_candidate_count, only: [:create]
+  before_action :validate_yes_no, only: [:create]
 
   def create
     begin
@@ -80,6 +81,15 @@ class Api::V1::BallotsController < ApplicationController
     if create_candidates_params.count > MAX_CANDIDATES_PER_CREATE
       render_error :unprocessable_entity,
         ["Ballot can't have more than #{MAX_CANDIDATES_PER_CREATE} candidates"]
+    end
+  end
+
+  def validate_yes_no
+    return unless create_ballot_params[:category] == 'yes_no'
+
+    unless create_candidates_params.count == 2
+      render_error :unprocessable_entity,
+        ['Yes/No ballots must have 2 candidates']
     end
   end
 end
