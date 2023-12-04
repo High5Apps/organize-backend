@@ -32,3 +32,11 @@ five:
   encrypted_question: { c: 1OP8/g==, n: hRJZmT+wcf/2Ydh8, t: 10jh891TTvqJTFQeGYAZYw== }
   user: one
   voting_ends_at: <%= 1.week.from_now.to_fs(:db) %>
+
+multi_choice_one:
+  category: multiple_choice
+  created_at: <%= 1.second.ago.to_fs(:db) %>
+  encrypted_question: { c: 1OP8/g==, n: hRJZmT+wcf/2Ydh8, t: 10jh891TTvqJTFQeGYAZYw== }
+  max_candidate_ids_per_vote: 3
+  user: one
+  voting_ends_at: <%= 1.week.from_now.to_fs(:db) %>

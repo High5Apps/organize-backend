@@ -7,7 +7,7 @@ class Ballot < ApplicationRecord
 
   MAX_QUESTION_LENGTH = 140
 
-  enum category: [:yes_no]
+  enum category: [:yes_no, :multiple_choice]
 
   belongs_to :user
 

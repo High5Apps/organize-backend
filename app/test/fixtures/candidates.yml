@@ -38,3 +38,15 @@ nine:
 ten:
   ballot: five
   encrypted_title: { c: WeI=, n: 5fGiE9zZOepjWPSV, t: ZUBM8LBVcO0sShrCrj5NyQ== }
+
+multi_choice_one:
+  ballot: multi_choice_one
+  encrypted_title: { c: hl4K, n: vZH/AIyxGwySrtEw, t: yUw0Wmi1DnTey8MBGv/yOA== }
+
+multi_choice_two:
+  ballot: multi_choice_one
+  encrypted_title: { c: YOo=, n: A5mIjt7aqtcyv2SV, t: pN1/qXMSU3fHNvtSSBnUrg== }
+
+multi_choice_three:
+  ballot: multi_choice_one
+  encrypted_title: { c: 8qTP, n: r5tJYCuEhkrpD88n, t: zJAVOh10yIum/hkFMNEd7Q== }
