@@ -19,6 +19,8 @@ class Ballot < ApplicationRecord
   validates :category,
     presence: true,
     inclusion: { in: categories }
+  validates :max_candidate_ids_per_vote,
+    numericality: { allow_nil: true, greater_than: 0, only_integer: true }
   validates :user, presence: true
   validates :voting_ends_at, future: true
 

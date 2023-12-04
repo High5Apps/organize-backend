@@ -36,6 +36,25 @@ class BallotTest < ActiveSupport::TestCase
     assert @ballot.invalid?
   end
 
+  test 'max_candidate_ids_per_vote should be optional' do
+    @ballot.max_candidate_ids_per_vote = nil
+    assert @ballot.valid?
+  end
+
+  test 'max_candidate_ids_per_vote should default to 1' do
+    assert_equal 1, Ballot.new.max_candidate_ids_per_vote
+  end
+
+  test 'max_candidate_ids_per_vote should not less than 1' do
+    @ballot.max_candidate_ids_per_vote = 0
+    assert @ballot.invalid?
+  end
+
+  test 'max_candidate_ids_per_vote should be an integer' do
+    @ballot.max_candidate_ids_per_vote = 1.5
+    assert @ballot.invalid?
+  end
+
   test 'user should be present' do
     @ballot.user = nil
     assert @ballot.invalid?
