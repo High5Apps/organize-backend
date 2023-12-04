@@ -63,9 +63,11 @@ class Api::V1::BallotsController < ApplicationController
   private
 
   def create_ballot_params
+    is_multiple_choice = params.dig(:ballot, :category) == 'multiple_choice'
     params.require(:ballot)
       .permit(
         :category,
+        (:max_candidate_ids_per_vote if is_multiple_choice),
         EncryptedMessage.permitted_params(:question),
         :voting_ends_at)
   end
