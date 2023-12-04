@@ -13,7 +13,7 @@ class Api::V1::BallotsController < ApplicationController
 
   before_action :authenticate_user, only: [:index, :create, :show]
   before_action :check_org_membership, only: [:index, :create, :show]
-  before_action :limit_candidate_count, only: [:create]
+  before_action :validate_multiple_choice, only: [:create]
   before_action :validate_yes_no, only: [:create]
 
   def create
@@ -83,6 +83,28 @@ class Api::V1::BallotsController < ApplicationController
     if create_candidates_params.count > MAX_CANDIDATES_PER_CREATE
       render_error :unprocessable_entity,
         ["Ballot can't have more than #{MAX_CANDIDATES_PER_CREATE} candidates"]
+    end
+  end
+
+  def validate_multiple_choice
+    return unless create_ballot_params[:category] == 'multiple_choice'
+
+    candidate_count = create_candidates_params.count
+    unless candidate_count >= 2
+      return render_error :unprocessable_entity,
+        ['Multiple choice ballots must have at least 2 candidates']
+    end
+
+    unless candidate_count <= MAX_CANDIDATES_PER_CREATE
+      return render_error :unprocessable_entity,
+        ["Multiple choice ballots can't have more than #{MAX_CANDIDATES_PER_CREATE} candidates"]
+    end
+
+    max_candidate_ids_per_vote = \
+      create_ballot_params[:max_candidate_ids_per_vote].to_i || 1
+    unless max_candidate_ids_per_vote <= candidate_count
+      return render_error :unprocessable_entity,
+        ["Max selections can't be more than the number of candidates"]
     end
   end
 

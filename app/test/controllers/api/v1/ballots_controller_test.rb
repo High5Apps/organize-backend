@@ -66,7 +66,16 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
-  test 'should not create with more candidates than MAX_CANDIDATES_PER_CREATE' do
+  test 'should not create multiple choice with less than 2 candidates' do
+    [nil, [], [@multi_choice_params[:candidates][0]]].each do |candidates|
+      post api_v1_ballots_url,
+        headers: @authorized_headers,
+        params: @multi_choice_params.merge(candidates: candidates)
+      assert_response :unprocessable_entity
+    end
+  end
+
+  test 'should not create multiple choice with more candidates than MAX_CANDIDATES_PER_CREATE' do
     valid_params = @multi_choice_params
     valid_params[:candidates] =
       [@multi_choice_ballot.candidates.first.as_json] * MAX_CANDIDATES
@@ -86,6 +95,22 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :unprocessable_entity
+  end
+
+  test 'should not create multiple choice with fewer candidates than max selections' do
+    [
+      [@multi_choice_ballot.candidates.count, :created],
+      [1 + @multi_choice_ballot.candidates.count, :unprocessable_entity],
+    ].each do |max_candidate_ids_per_vote, expected_response|
+      post api_v1_ballots_url,
+        headers: @authorized_headers,
+        params: @multi_choice_params.merge({
+          ballot: @multi_choice_params[:ballot].merge({
+            max_candidate_ids_per_vote: max_candidate_ids_per_vote
+          })
+        })
+      assert_response expected_response
+    end
   end
 
   test 'create multiple_choice should permit max_candidate_ids_per_vote' do
