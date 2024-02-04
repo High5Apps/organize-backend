@@ -73,7 +73,7 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def create_candidates_params
-    return [] unless params.has_key? :candidates
+    return [] unless params[:candidates]&.any?
     params.slice(:candidates)
       .permit(candidates: [EncryptedMessage.permitted_params(:title)])
       .require(:candidates)
