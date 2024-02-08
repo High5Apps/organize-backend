@@ -23,7 +23,6 @@ class User < ApplicationRecord
   has_many :upvotes
   has_many :votes
 
-  has_many :offices, through: :terms
   has_many :scanners, through: :shared_connections
   has_many :sharers, through: :scanned_connections
 
@@ -77,8 +76,7 @@ class User < ApplicationRecord
       self.joined_at = Time.current
 
       unless org.users.any?
-        founder = Office.find_or_create_by name: 'Founder'
-        terms.build category: :founder, office: founder
+        terms.build category: :founder
       end
     end
 end

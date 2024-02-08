@@ -14,11 +14,6 @@ class TermTest < ActiveSupport::TestCase
     assert_not @term.valid?
   end
 
-  test 'office should be present' do
-    @term.office = nil
-    assert_not @term.valid?
-  end
-
   test 'category should be present' do
     @term.category = nil
     assert @term.invalid?

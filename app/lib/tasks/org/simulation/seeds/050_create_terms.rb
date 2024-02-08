@@ -1,6 +1,6 @@
 USERS_PER_STEWARD = 20
 
-offices = Office.all
+offices = Term.categories.keys
 founder = User.find($simulation.founder_id)
 org = founder.org
 user_ids = org.users.ids
@@ -18,41 +18,40 @@ Timecop.freeze($simulation.ended_at) do
   term_map = {}
 
   offices.each do |office|
-    user_id = case office.name
-    when 'Founder'
+    user_id = case office
+    when 'founder'
       # Already automatically created during first Org creation
-    when 'President'
+    when 'president'
       # Most popular node. i.e. the node with the most connections
       president_id_data = graph[:users].max_by {|id, u| u[:connection_count]}
       president_id = president_id_data.first
       president_id
-    when 'Vice President'
+    when 'vice_president'
       # President's most popular connection
-      president = term_map['President'].user
+      president = term_map['president'].user
       connection_ids = president.scanners.ids + president.sharers.ids
       vp_id = connection_ids.max_by {|id| graph[:users][id][:connection_count]}
       vp_id
-    when 'Secretary', 'Treasurer'
+    when 'secretary', 'treasurer'
       # Random user in Org
       user_ids.sample
-    when 'Steward'
+    when 'steward'
       # Handled below after all other officers are created
-    when 'Trustee'
+    when 'trustee'
       # Random user that isn't connected to the treasurer
-      treasurer = term_map['Treasurer'].user
+      treasurer = term_map['treasurer'].user
       connection_ids = treasurer.scanners.ids + treasurer.sharers.ids
       user_ids_not_connected_to_treasurer = user_ids - connection_ids
       user_ids_not_connected_to_treasurer.sample
     else
-      throw "Unhandled Office name: #{office.name}"
+      throw "Unhandled office: #{office}"
     end
 
     next unless user_id
 
-    category = office.name.parameterize(separator: '_').to_sym
-    term = User.find(user_id).terms.create!(category:, office:)
+    term = User.find(user_id).terms.create!(category: office)
 
-    term_map[office.name] = term
+    term_map[office] = term
   end
 
   # Handle Stewards
@@ -60,10 +59,8 @@ Timecop.freeze($simulation.ended_at) do
   officer_ids = term_map.values.map(&:user_id)
   non_officer_ids = user_ids - officer_ids
   steward_ids = non_officer_ids.sample(steward_count)
-  steward = Office.find_by_name('Steward')
   steward_ids.each do |steward_id|
-    category = steward.name.parameterize(separator: '_').to_sym
-    User.find(steward_id).terms.create!(category:, office: steward)
+    User.find(steward_id).terms.create!(category: :steward)
   end
 end
 

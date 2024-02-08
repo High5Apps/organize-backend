@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_08_125605) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_08_135808) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -56,12 +56,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_08_125605) do
     t.index ["sharer_id"], name: "index_connections_on_sharer_id"
   end
 
-  create_table "offices", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "orgs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -83,11 +77,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_08_125605) do
 
   create_table "terms", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "user_id", null: false
-    t.uuid "office_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "category", null: false
-    t.index ["office_id"], name: "index_terms_on_office_id"
     t.index ["user_id"], name: "index_terms_on_user_id"
   end
 
@@ -133,7 +125,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_08_125605) do
   add_foreign_key "connections", "users", column: "scanner_id"
   add_foreign_key "connections", "users", column: "sharer_id"
   add_foreign_key "posts", "users"
-  add_foreign_key "terms", "offices"
   add_foreign_key "terms", "users"
   add_foreign_key "upvotes", "comments"
   add_foreign_key "upvotes", "posts"
