@@ -22,7 +22,8 @@ module Encryptable
       define_method(validate_max_length_method_name) do
         length = send(encrypted_attribute_name).decoded_ciphertext_length
         if length > max_length
-          errors.add(encrypted_attribute_name, 'is too long')
+          errors.add(encrypted_attribute_name,
+            "is too long. Emojis count more. Length: #{length}, max: #{max_length}")
         end
       end
     end
