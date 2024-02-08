@@ -49,7 +49,8 @@ Timecop.freeze($simulation.ended_at) do
 
     next unless user_id
 
-    term = User.find(user_id).terms.create!(office: office)
+    category = office.name.parameterize(separator: '_').to_sym
+    term = User.find(user_id).terms.create!(category:, office:)
 
     term_map[office.name] = term
   end
@@ -61,7 +62,8 @@ Timecop.freeze($simulation.ended_at) do
   steward_ids = non_officer_ids.sample(steward_count)
   steward = Office.find_by_name('Steward')
   steward_ids.each do |steward_id|
-    User.find(steward_id).terms.create!(office: steward)
+    category = steward.name.parameterize(separator: '_').to_sym
+    User.find(steward_id).terms.create!(category:, office: steward)
   end
 end
 

@@ -18,4 +18,9 @@ class TermTest < ActiveSupport::TestCase
     @term.office = nil
     assert_not @term.valid?
   end
+
+  test 'category should be present' do
+    @term.category = nil
+    assert @term.invalid?
+  end
 end

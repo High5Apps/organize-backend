@@ -78,7 +78,7 @@ class User < ApplicationRecord
 
       unless org.users.any?
         founder = Office.find_or_create_by name: 'Founder'
-        terms.build office: founder
+        terms.build category: :founder, office: founder
       end
     end
 end
