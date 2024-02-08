@@ -74,7 +74,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     headers = authorized_headers @user_in_org,
       Authenticatable::SCOPE_ALL,
       expiration: 1.second.ago
-    get api_v1_my_org_url, headers: headers
+    get(api_v1_my_org_url, headers:)
     assert_response :unauthorized
   end
 

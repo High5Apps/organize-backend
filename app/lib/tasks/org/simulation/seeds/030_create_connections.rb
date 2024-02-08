@@ -5,7 +5,7 @@ start_time = Time.now
 
 connection_data.each do |sharer_id, scanner_id, timestamp|
   Timecop.freeze(timestamp) do
-    Connection.create sharer_id: sharer_id, scanner_id: scanner_id
+    Connection.create sharer_id:, scanner_id:
   end
 end
 

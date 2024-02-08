@@ -31,12 +31,12 @@ class Org < ApplicationRecord
       [
         id,
         {
-        connection_count: connection_count,
-        id: id,
-        joined_at: d[1],
-        offices: offices[id],
-        pseudonym: d[2],
-        recruit_count: recruit_counts[id] || 0,
+          connection_count:,
+          id:,
+          joined_at: d[1],
+          offices: offices[id],
+          pseudonym: d[2],
+          recruit_count: recruit_counts[id] || 0,
         },
       ]
     end
@@ -49,7 +49,7 @@ class Org < ApplicationRecord
 
     {
       users: nodes,
-      connections: connections,
+      connections:,
     }
   end
 

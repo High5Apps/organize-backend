@@ -70,7 +70,7 @@ class Post::Query
       "SUM(CASE WHEN upvotes.user_id = :requester_id THEN value ELSE 0 END) AS my_vote",
       requester_id: params[:requester_id]])
 
-    attributes = ALLOWED_ATTRIBUTES.merge(my_vote: my_vote, score: score)
+    attributes = ALLOWED_ATTRIBUTES.merge(my_vote:, score:)
     attributes.map { |k,v| (v.blank?) ? k : v }
   end
 end

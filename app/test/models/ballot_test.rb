@@ -136,7 +136,7 @@ class BallotTest < ActiveSupport::TestCase
         assert_empty @ballot_without_votes.votes
 
         vote_info = user_order.map.with_index do |user, i|
-          { user: user, candidate_ids: [vote_order[i]]}
+          { user:, candidate_ids: [vote_order[i]]}
         end
         create_votes @ballot_without_votes, vote_info
 
@@ -210,7 +210,7 @@ class BallotTest < ActiveSupport::TestCase
   def create_ballots_with_voting_ends_at(voting_ends_ats)
     voting_ends_ats.map do |voting_ends_at|
       ballot = @ballot.dup
-      ballot.update! voting_ends_at: voting_ends_at
+      ballot.update!(voting_ends_at:)
       ballot
     end
   end
@@ -218,14 +218,14 @@ class BallotTest < ActiveSupport::TestCase
   def create_ballots_with_created_at(created_ats)
     created_ats.map do |created_at|
       ballot = @ballot.dup
-      ballot.update! created_at: created_at
+      ballot.update!(created_at:)
       ballot
     end
   end
 
   def create_votes(ballot, votes_info)
     votes_info.each do |vote_info|
-      vote_info[:user].votes.create! ballot: ballot,
+      vote_info[:user].votes.create! ballot:,
         candidate_ids: vote_info[:candidate_ids]
     end
   end

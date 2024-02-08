@@ -38,7 +38,7 @@ class Api::V1::BallotsController < ApplicationController
     ballots = Ballot::Query.build params,
       initial_ballots: authenticated_user.org.ballots
     render json: {
-      ballots: ballots,
+      ballots:,
       meta: (pagination_dict(ballots) if params[:page]),
     }.compact
   end
@@ -50,11 +50,9 @@ class Api::V1::BallotsController < ApplicationController
       return render_error :not_found, ["No ballot found with id #{params[:id]}"]
     end
 
-    candidates = ballot.candidates.select(ALLOWED_CANDIDATE_ATTRIBUTES)
-
     render json: {
       ballot: ballot.slice(ALLOWED_BALLOT_ATTRIBUTES),
-      candidates: candidates,
+      candidates: ballot.candidates.select(ALLOWED_CANDIDATE_ATTRIBUTES),
       my_vote: authenticated_user.my_vote_candidate_ids(ballot),
       results: (ballot.results unless Time.now < ballot.voting_ends_at),
   }.compact

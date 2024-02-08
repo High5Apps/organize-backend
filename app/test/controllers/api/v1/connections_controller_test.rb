@@ -113,7 +113,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     headers = authorized_headers @scanner,
       Authenticatable::SCOPE_CREATE_CONNECTIONS,
       header: Authenticatable::HEADER_SHARER_AUTHORIZATION
-    get api_v1_connection_preview_url, headers: headers
+    get(api_v1_connection_preview_url, headers:)
     assert_response :not_found
   end
 end

@@ -57,7 +57,7 @@ class Api::V1::CommentsController < ApplicationController
           replies: children,
         }
       end
-    render json: { comments: comments }
+    render json: { comments: }
   end
 
   private

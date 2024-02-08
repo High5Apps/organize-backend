@@ -170,7 +170,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
 
     get api_v1_post_comments_url(post),
       headers: @authorized_headers,
-      params: { created_before: created_before }
+      params: { created_before: }
     json_response = JSON.parse(response.body, symbolize_names: true)
     comment_jsons = json_response.dig(:comments)
     comment_created_ats = comment_jsons.map { |comment| comment[:created_at] }

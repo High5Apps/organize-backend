@@ -27,9 +27,7 @@ class ApplicationController < ActionController::API
   end
 
   def render_error(status, error_messages)
-    render json: {
-      error_messages: error_messages
-    }, status: status
+    render json: { error_messages: }, status:
   end
 
   rescue_from ActionController::ParameterMissing do |e|

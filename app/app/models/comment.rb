@@ -8,7 +8,7 @@ class Comment < ApplicationRecord
     left_outer_joins_with_most_recent_upvotes_created_before(time)
       .select(Comment.sanitize_sql_array([
         "SUM(CASE WHEN upvotes.user_id = :my_id THEN value ELSE 0 END) AS my_vote",
-        my_id: my_id]))
+        my_id:]))
   }
   scope :includes_pseudonym, -> {
     select(:pseudonym).joins(:user).group(:id, :pseudonym)
@@ -67,6 +67,6 @@ class Comment < ApplicationRecord
   private
 
   def create_upvote_for_user
-    upvotes.create! user: user, value: 1
+    upvotes.create! user:, value: 1
   end
 end

@@ -36,6 +36,6 @@ class Post < ApplicationRecord
   private
 
   def create_upvote_for_user
-    upvotes.create! user: user, value: 1
+    upvotes.create! user:, value: 1
   end
 end

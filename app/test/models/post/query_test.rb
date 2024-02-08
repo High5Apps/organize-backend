@@ -9,7 +9,7 @@ class PostQueryTest < ActiveSupport::TestCase
 
   test 'should respect initial_posts' do
     org = @user.org
-    assert Post.where.not(org: org)
+    assert Post.where.not(org:)
     post_ids = Post::Query.build({}, initial_posts: org.posts).ids
     posts = Post.find(post_ids)
     assert posts.all? { |post| post.org == org }
@@ -215,7 +215,7 @@ class PostQueryTest < ActiveSupport::TestCase
     post = upvote.post
     created_before = upvote.created_at
 
-    windowed_posts = Post::Query.build({ created_before: created_before })
+    windowed_posts = Post::Query.build({ created_before: })
     windowed_score = windowed_posts.find(post.id).score
     unwindowed_score = Post::Query.build.find(post.id).score
     assert_not_equal unwindowed_score, windowed_score

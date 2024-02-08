@@ -21,7 +21,7 @@ class Api::V1::PostsController < ApplicationController
 
   def index
     posts = Post::Query.build query_params, initial_posts: @org.posts
-    render json: { posts: posts, meta: pagination_dict(posts) }
+    render json: { posts:, meta: pagination_dict(posts) }
   end
 
   private

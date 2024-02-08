@@ -107,7 +107,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should respect page param' do
     page = 99
-    get api_v1_posts_url, headers: @authorized_headers, params: { page: page }
+    get api_v1_posts_url, headers: @authorized_headers, params: { page: }
     json_response = JSON.parse(response.body, symbolize_names: true)
     current_page = json_response.dig(:meta, :current_page)
     assert_equal page, current_page

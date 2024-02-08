@@ -70,7 +70,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     [nil, [], [@multi_choice_params[:candidates][0]]].each do |candidates|
       post api_v1_ballots_url,
         headers: @authorized_headers,
-        params: @multi_choice_params.merge(candidates: candidates)
+        params: @multi_choice_params.merge(candidates:)
       assert_response :unprocessable_entity
     end
   end
@@ -106,7 +106,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
         headers: @authorized_headers,
         params: @multi_choice_params.merge({
           ballot: @multi_choice_params[:ballot].merge({
-            max_candidate_ids_per_vote: max_candidate_ids_per_vote
+            max_candidate_ids_per_vote:
           })
         })
       assert_response expected_response
@@ -144,7 +144,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
     assert_no_difference 'Ballot.count' do
       assert_no_difference 'Candidate.count' do
-        post api_v1_ballots_url, headers: @authorized_headers, params: params
+        post api_v1_ballots_url, headers: @authorized_headers, params:
       end
     end
 
@@ -215,7 +215,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should respect page param' do
     page = 99
-    get api_v1_ballots_url, headers: @authorized_headers, params: { page: page }
+    get api_v1_ballots_url, headers: @authorized_headers, params: { page: }
     json_response = JSON.parse(response.body, symbolize_names: true)
     current_page = json_response.dig(:meta, :current_page)
     assert_equal page, current_page

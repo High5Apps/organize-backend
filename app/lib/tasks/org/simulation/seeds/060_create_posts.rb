@@ -60,7 +60,7 @@ def hipster_ipsum_post_body
   paragraphs = (0...paragraph_count).map do
     characters = \
       [MIN_CHARACTERS_PER_PARAGRAPH, max_characters_per_paragraph].max
-    p = Faker::Hipster.paragraph_by_chars characters: characters
+    p = Faker::Hipster.paragraph_by_chars(characters:)
 
     # Remove the final sentence to ensure no partial words
     p.delete_suffix! '.' # Remove the final period
@@ -77,7 +77,7 @@ post_data.each do |user_id, day_start|
     User.find(user_id).posts.create! category: random_category.to_s,
       encrypted_title: $simulation.encrypt(hipster_ipsum_post_title),
       encrypted_body: $simulation.encrypt(hipster_ipsum_post_body),
-      org: org
+      org:
   end
 end
 

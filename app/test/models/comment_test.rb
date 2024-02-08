@@ -190,7 +190,7 @@ class CommentTest < ActiveSupport::TestCase
 
     travel_to older_time - 1.second do
       older_comment = @post_without_comments.comments
-        .create!(encrypted_body: encrypted_body, user: post_creator)
+        .create!(encrypted_body:, user: post_creator)
 
       travel 1.second
       older_comment.upvotes.build(user: post_creator, value: older_score)
@@ -199,7 +199,7 @@ class CommentTest < ActiveSupport::TestCase
 
     travel_to newer_time - 1.second do
       newer_comment = @post_without_comments.comments
-        .create!(encrypted_body: encrypted_body, user: post_creator)
+        .create!(encrypted_body:, user: post_creator)
 
       travel 1.second
       newer_comment.upvotes.build(user: post_creator, value: newer_score)

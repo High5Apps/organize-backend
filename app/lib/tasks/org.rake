@@ -54,7 +54,7 @@ namespace :org do
     start_time = Time.now
 
     $simulation = Simulation.new
-    $simulation.run founder_id: user.id, group_key_base64: group_key_base64
+    $simulation.run(founder_id: user.id, group_key_base64:)
 
     # The unusual code below is a holdover from when these seeds used to be
     # created using rails db:seeds task. It basically runs all seed scripts in

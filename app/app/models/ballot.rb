@@ -34,8 +34,6 @@ class Ballot < ApplicationRecord
       # or :candidate_id, because of the left join. Otherwise, every candidate
       # would receive at least one vote.
       .count(:unnested_candidate_id)
-      .map do |candidate_id, vote_count|
-        { candidate_id: candidate_id, vote_count: vote_count }
-      end
+      .map { |candidate_id, vote_count| { candidate_id:, vote_count: } }
   end
 end

@@ -27,7 +27,7 @@ def hipster_ipsum_comment_body
   paragraphs = (0...paragraph_count).map do
     characters = \
       [MIN_CHARACTERS_PER_PARAGRAPH, max_characters_per_paragraph].max
-    p = Faker::Hipster.paragraph_by_chars characters: characters
+    p = Faker::Hipster.paragraph_by_chars(characters:)
 
     # Remove the final sentence to ensure no partial words
     p.delete_suffix! '.' # Remove the final period
@@ -69,9 +69,9 @@ posts.order(:created_at).each do |post|
     end
 
     Timecop.freeze comment_time do
-      comment = post.comments.create! user: commenter,
+      comment = post.comments.create!(user: commenter,
         encrypted_body: $simulation.encrypt(hipster_ipsum_comment_body),
-        parent: parent
+        parent:)
       potential_parent_comments.push(comment)
     end
   end
