@@ -1,6 +1,6 @@
 USERS_PER_STEWARD = 20
 
-offices = Term.categories.keys
+offices = Term.offices.keys
 founder = User.find($simulation.founder_id)
 org = founder.org
 user_ids = org.users.ids
@@ -49,7 +49,7 @@ Timecop.freeze($simulation.ended_at) do
 
     next unless user_id
 
-    term = User.find(user_id).terms.create!(category: office)
+    term = User.find(user_id).terms.create!(office:)
 
     term_map[office] = term
   end
@@ -60,7 +60,7 @@ Timecop.freeze($simulation.ended_at) do
   non_officer_ids = user_ids - officer_ids
   steward_ids = non_officer_ids.sample(steward_count)
   steward_ids.each do |steward_id|
-    User.find(steward_id).terms.create!(category: :steward)
+    User.find(steward_id).terms.create!(office: :steward)
   end
 end
 

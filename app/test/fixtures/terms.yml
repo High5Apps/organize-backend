@@ -1,15 +1,15 @@
 one:
-  category: :founder
+  office: :founder
   user: one
 
 two:
-  category: :founder
+  office: :founder
   user: five
 
 three:
-  category: president
+  office: president
   user: four
 
 five:
-  category: secretary
+  office: secretary
   user: one

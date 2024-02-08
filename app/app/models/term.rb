@@ -1,5 +1,5 @@
 class Term < ApplicationRecord
-  enum category: [
+  enum office: [
     :founder,
     :president,
     :vice_president,
@@ -11,8 +11,8 @@ class Term < ApplicationRecord
 
   belongs_to :user
 
-  validates :category,
+  validates :office,
     presence: true,
-    inclusion: { in: categories }
+    inclusion: { in: offices }
   validates :user, presence: true
 end
