@@ -10,7 +10,7 @@ class Candidate < ApplicationRecord
     ).gsub(/\s+/, ' '))
   }
 
-  MAX_TITLE_LENGTH = 30
+  MAX_TITLE_LENGTH = 60
 
   belongs_to :ballot
 
