@@ -1,6 +1,6 @@
 USERS_PER_STEWARD = 20
 
-offices = Term.offices.keys
+offices = Office::TYPE_SYMBOLS
 founder = User.find($simulation.founder_id)
 org = founder.org
 user_ids = org.users.ids
@@ -19,27 +19,27 @@ Timecop.freeze($simulation.ended_at) do
 
   offices.each do |office|
     user_id = case office
-    when 'founder'
+    when :founder
       # Already automatically created during first Org creation
-    when 'president'
+    when :president
       # Most popular node. i.e. the node with the most connections
       president_id_data = graph[:users].max_by {|id, u| u[:connection_count]}
       president_id = president_id_data.first
       president_id
-    when 'vice_president'
+    when :vice_president
       # President's most popular connection
-      president = term_map['president'].user
+      president = term_map[:president].user
       connection_ids = president.scanners.ids + president.sharers.ids
       vp_id = connection_ids.max_by {|id| graph[:users][id][:connection_count]}
       vp_id
-    when 'secretary', 'treasurer'
+    when :secretary, :treasurer
       # Random user in Org
       user_ids.sample
-    when 'steward'
+    when :steward
       # Handled below after all other officers are created
-    when 'trustee'
+    when :trustee
       # Random user that isn't connected to the treasurer
-      treasurer = term_map['treasurer'].user
+      treasurer = term_map[:treasurer].user
       connection_ids = treasurer.scanners.ids + treasurer.sharers.ids
       user_ids_not_connected_to_treasurer = user_ids - connection_ids
       user_ids_not_connected_to_treasurer.sample

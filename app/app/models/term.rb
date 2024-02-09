@@ -1,13 +1,5 @@
 class Term < ApplicationRecord
-  enum office: [
-    :founder,
-    :president,
-    :vice_president,
-    :secretary,
-    :treasurer,
-    :steward,
-    :trustee,
-  ]
+  enum office: Office::TYPE_SYMBOLS
 
   belongs_to :user
 
