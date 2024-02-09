@@ -9,6 +9,7 @@ Rails.application.routes.draw do
         resources :votes, only: [:create]
       end
       resources :connections,  only: [:create]
+      resources :offices, only: [:index]
       resources :orgs, only: [:create]
       resources :posts, concerns: :upvotable, only: [:index, :create] do
         resources :comments,
