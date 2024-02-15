@@ -22,6 +22,10 @@ class EncryptedMessage
     instance_values
   end
 
+  def blank?
+    decoded_ciphertext_length == 0
+  end
+
   def decoded_ciphertext_length
     decoded_attribute_length :ciphertext
   end

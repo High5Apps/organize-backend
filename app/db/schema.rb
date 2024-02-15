@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_15_093752) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_15_122117) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -31,10 +31,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_093752) do
 
   create_table "candidates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "ballot_id", null: false
-    t.jsonb "encrypted_title", null: false
+    t.jsonb "encrypted_title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "user_id"
     t.index ["ballot_id"], name: "index_candidates_on_ballot_id"
+    t.index ["user_id"], name: "index_candidates_on_user_id"
   end
 
   create_table "comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -123,6 +125,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_15_093752) do
 
   add_foreign_key "ballots", "users"
   add_foreign_key "candidates", "ballots"
+  add_foreign_key "candidates", "users"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
   add_foreign_key "connections", "users", column: "scanner_id"

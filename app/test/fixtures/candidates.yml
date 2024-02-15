@@ -50,3 +50,11 @@ multi_choice_two:
 multi_choice_three:
   ballot: multi_choice_one
   encrypted_title: { c: 8qTP, n: r5tJYCuEhkrpD88n, t: zJAVOh10yIum/hkFMNEd7Q== }
+
+election_one_choice_one:
+  ballot: election_one
+  user: one
+
+election_one_choice_two:
+  ballot: election_one
+  user: three

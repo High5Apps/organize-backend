@@ -10,6 +10,7 @@ class User < ApplicationRecord
     optional: true
 
   has_many :ballots
+  has_many :candidates
   has_many :comments
   has_many :posts
   has_many :recruits, foreign_key: 'recruiter_id', class_name: 'User'
