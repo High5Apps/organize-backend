@@ -4,10 +4,13 @@ class BallotTest < ActiveSupport::TestCase
   setup do
     @ballot = ballots(:one)
     @ballot_without_votes = ballots(:five)
+    @election = ballots(:election_one)
   end
 
   test 'should be valid' do
     assert @ballot.valid?
+    assert @ballot_without_votes.valid?
+    assert @election.valid?
   end
 
   test 'category should be present' do
@@ -55,6 +58,50 @@ class BallotTest < ActiveSupport::TestCase
     assert @ballot.invalid?
   end
 
+  test 'office should be optional for non-elections' do
+    @ballot.office = nil
+    assert @ballot.valid?
+  end
+
+  test 'office should be required for elections' do
+    @election.office = nil
+    assert @election.invalid?
+  end
+
+  test 'nominations_end_at should be optional for non-elections' do
+    @ballot.nominations_end_at = nil
+    assert @ballot.valid?
+  end
+
+  test 'nominations_end_at should be required for elections' do
+    @election.nominations_end_at = nil
+    assert @election.invalid?
+  end
+
+  test 'nominations_end_at should be after created_at for elections' do
+    @election.nominations_end_at = @election.created_at
+    assert @election.invalid?
+    @election.nominations_end_at = @election.created_at + 1.second
+    assert @election.valid?
+  end
+
+  test 'term_ends_at should be optional for non-elections' do
+    @ballot.term_ends_at = nil
+    assert @ballot.valid?
+  end
+
+  test 'term_ends_at should be required for elections' do
+    @election.term_ends_at = nil
+    assert @election.invalid?
+  end
+
+  test 'term_ends_at should be after voting_ends_at for elections' do
+    @election.term_ends_at = @election.voting_ends_at
+    assert @election.invalid?
+    @election.term_ends_at = @election.voting_ends_at + 1.second
+    assert @election.valid?
+  end
+
   test 'user should be present' do
     @ballot.user = nil
     assert @ballot.invalid?
@@ -65,9 +112,18 @@ class BallotTest < ActiveSupport::TestCase
     assert @ballot.invalid?
   end
 
-  test 'voting_ends_at should be in the future' do
-    @ballot.voting_ends_at = Time.now
+  test 'voting_ends_at should be after created_at for non-elections' do
+    @ballot.voting_ends_at = @ballot.created_at
     assert @ballot.invalid?
+    @ballot.voting_ends_at = @ballot.created_at + 1.second
+    assert @ballot.valid?
+  end
+
+  test 'voting_ends_at should be after nominations_end_at for elections' do
+    @election.voting_ends_at = @election.nominations_end_at
+    assert @election.invalid?
+    @election.voting_ends_at = @election.nominations_end_at + 1.second
+    assert @election.valid?
   end
 
   test 'active_at should include ballots where voting_ends_at is in the future' do

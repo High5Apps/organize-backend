@@ -7,7 +7,8 @@ class Ballot < ApplicationRecord
 
   MAX_QUESTION_LENGTH = 140
 
-  enum category: [:yes_no, :multiple_choice]
+  enum category: [:yes_no, :multiple_choice, :election]
+  enum office: Office::TYPE_SYMBOLS
 
   belongs_to :user
 
@@ -21,8 +22,27 @@ class Ballot < ApplicationRecord
     inclusion: { in: categories }
   validates :max_candidate_ids_per_vote,
     numericality: { allow_nil: true, greater_than: 0, only_integer: true }
+  validates :office, inclusion: { in: offices }, if: :election?
+  validates :nominations_end_at,
+    presence: true,
+    after_created_at: true,
+    if: :election?
   validates :user, presence: true
-  validates :voting_ends_at, future: true
+  validates :term_ends_at,
+    presence: true,
+    comparison: {
+      greater_than: :voting_ends_at,
+      message: 'must be after voting end',
+    },
+    if: :election?
+  validates :voting_ends_at, presence: true
+  validates :voting_ends_at, after_created_at: true, unless: :election?
+  validates :voting_ends_at,
+    comparison: {
+      greater_than: :nominations_end_at,
+      message: 'must be after nominations end',
+    },
+    if: :election?
 
   has_encrypted :question, present: true, max_length: MAX_QUESTION_LENGTH
 

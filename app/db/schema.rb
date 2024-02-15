@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_08_142555) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_15_093752) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -23,6 +23,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_08_142555) do
     t.datetime "updated_at", null: false
     t.uuid "user_id", null: false
     t.integer "max_candidate_ids_per_vote", default: 1, null: false
+    t.integer "office"
+    t.datetime "nominations_end_at"
+    t.datetime "term_ends_at"
     t.index ["user_id"], name: "index_ballots_on_user_id"
   end
 
