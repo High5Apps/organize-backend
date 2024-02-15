@@ -66,6 +66,19 @@ class BallotTest < ActiveSupport::TestCase
     assert @ballot.invalid?
   end
 
+  test 'max_candidate_ids_per_vote must be 1 for elections except for stewards' do
+    assert @election.election?
+    Office::TYPE_SYMBOLS.each do |office|
+      @election.office = office
+      @election.max_candidate_ids_per_vote = 2
+      if office == :steward
+        assert @election.valid?
+      else
+        assert @election.invalid?
+      end
+    end
+  end
+
   test 'office should be absent for non-elections' do
     @ballot.office = 'president'
     assert @ballot.invalid?
