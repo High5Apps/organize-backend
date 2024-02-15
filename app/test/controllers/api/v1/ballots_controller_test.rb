@@ -16,6 +16,11 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
       candidates: @multi_choice_ballot.candidates.as_json
     }
 
+    @election = ballots(:election_one)
+    @election_params = {
+      ballot: @election.as_json,
+    }
+
     @user = users(:one)
     setup_test_key(@user)
     @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
@@ -37,7 +42,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_not_empty json_response.dig(:id)
   end
 
-  test 'should not crate with invalid authorization' do
+  test 'should not create with invalid authorization' do
     assert_no_difference 'Ballot.count' do
       assert_no_difference 'Candidate.count' do
         post api_v1_ballots_url,
@@ -63,6 +68,18 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
+    assert_response :unprocessable_entity
+  end
+
+  test 'should not create election with any candidates' do
+    post api_v1_ballots_url,
+      headers: @authorized_headers,
+      params: @election_params
+    assert_response :created
+
+    post api_v1_ballots_url,
+      headers: @authorized_headers,
+      params: @election_params.merge(candidates: @election.candidates.as_json)
     assert_response :unprocessable_entity
   end
 

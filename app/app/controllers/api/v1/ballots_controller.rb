@@ -13,6 +13,7 @@ class Api::V1::BallotsController < ApplicationController
 
   before_action :authenticate_user, only: [:index, :create, :show]
   before_action :check_org_membership, only: [:index, :create, :show]
+  before_action :validate_election, only: [:create]
   before_action :validate_multiple_choice, only: [:create]
   before_action :validate_yes_no, only: [:create]
 
@@ -65,6 +66,9 @@ class Api::V1::BallotsController < ApplicationController
       .permit(
         :category,
         :max_candidate_ids_per_vote,
+        :office,
+        :nominations_end_at,
+        :term_ends_at,
         EncryptedMessage.permitted_params(:question),
         :voting_ends_at)
   end
@@ -80,6 +84,15 @@ class Api::V1::BallotsController < ApplicationController
     if create_candidates_params.count > MAX_CANDIDATES_PER_CREATE
       render_error :unprocessable_entity,
         ["Ballot can't have more than #{MAX_CANDIDATES_PER_CREATE} candidates"]
+    end
+  end
+
+  def validate_election
+    return unless create_ballot_params[:category] == 'election'
+
+    unless create_candidates_params.count == 0
+      return render_error :unprocessable_entity,
+        ['Election candidates must be created via nominations']
     end
   end
 
