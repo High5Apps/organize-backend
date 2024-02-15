@@ -22,6 +22,9 @@ class Ballot < ApplicationRecord
     inclusion: { in: categories }
   validates :max_candidate_ids_per_vote,
     numericality: { allow_nil: true, greater_than: 0, only_integer: true }
+  validates :max_candidate_ids_per_vote,
+    numericality: { allow_nil: true, equal_to: 1 },
+    if: :yes_no?
   validates :office, inclusion: { in: offices }, if: :election?
   validates :office, absence: true, unless: :election?
   validates :nominations_end_at,

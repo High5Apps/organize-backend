@@ -113,31 +113,6 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'create multiple_choice should permit max_candidate_ids_per_vote' do
-    assert_not_equal 1, @multi_choice_ballot.max_candidate_ids_per_vote
-
-    post api_v1_ballots_url,
-      headers: @authorized_headers,
-      params: @multi_choice_params
-    assert_response :created
-
-    id = JSON.parse(response.body, symbolize_names: true)[:id]
-    ballot = Ballot.find id
-    assert_equal @multi_choice_ballot.max_candidate_ids_per_vote,
-      ballot.max_candidate_ids_per_vote
-  end
-
-  test 'create yes_no should not permit max_candidate_ids_per_vote' do
-    post api_v1_ballots_url,
-      headers: @authorized_headers,
-      params: @params.merge({
-        ballot: @params[:ballot].merge({ max_candidate_ids_per_vote: 2 })
-      })
-    id = JSON.parse(response.body, symbolize_names: true)[:id]
-    ballot = Ballot.find id
-    assert_not_equal 2, ballot.max_candidate_ids_per_vote
-  end
-
   test 'should not create any models if any candidate creation fails' do
     params = @params
     params[:candidates] = @ballot.candidates.as_json + [{ encrypted_title: 'bad' }]

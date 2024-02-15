@@ -5,12 +5,14 @@ class BallotTest < ActiveSupport::TestCase
     @ballot = ballots(:one)
     @ballot_without_votes = ballots(:five)
     @election = ballots(:election_one)
+    @multi_choice_ballot = ballots(:multi_choice_one)
   end
 
   test 'should be valid' do
     assert @ballot.valid?
     assert @ballot_without_votes.valid?
     assert @election.valid?
+    assert @multi_choice_ballot.valid?
   end
 
   test 'category should be present' do
@@ -40,21 +42,27 @@ class BallotTest < ActiveSupport::TestCase
   end
 
   test 'max_candidate_ids_per_vote should be optional' do
-    @ballot.max_candidate_ids_per_vote = nil
-    assert @ballot.valid?
+    @multi_choice_ballot.max_candidate_ids_per_vote = nil
+    assert @multi_choice_ballot.valid?
   end
 
   test 'max_candidate_ids_per_vote should default to 1' do
     assert_equal 1, Ballot.new.max_candidate_ids_per_vote
   end
 
-  test 'max_candidate_ids_per_vote should not less than 1' do
-    @ballot.max_candidate_ids_per_vote = 0
-    assert @ballot.invalid?
+  test 'max_candidate_ids_per_vote should not be less than 1' do
+    @multi_choice_ballot.max_candidate_ids_per_vote = 0
+    assert @multi_choice_ballot.invalid?
   end
 
   test 'max_candidate_ids_per_vote should be an integer' do
-    @ballot.max_candidate_ids_per_vote = 1.5
+    @multi_choice_ballot.max_candidate_ids_per_vote = 1.5
+    assert @multi_choice_ballot.invalid?
+  end
+
+  test 'max_candidate_ids_per_vote must be 1 for yes_no ballots' do
+    assert @ballot.yes_no?
+    @ballot.max_candidate_ids_per_vote = 2
     assert @ballot.invalid?
   end
 
