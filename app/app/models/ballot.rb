@@ -23,10 +23,12 @@ class Ballot < ApplicationRecord
   validates :max_candidate_ids_per_vote,
     numericality: { allow_nil: true, greater_than: 0, only_integer: true }
   validates :office, inclusion: { in: offices }, if: :election?
+  validates :office, absence: true, unless: :election?
   validates :nominations_end_at,
     presence: true,
     after_created_at: true,
     if: :election?
+  validates :nominations_end_at, absence: true, unless: :election?
   validates :user, presence: true
   validates :term_ends_at,
     presence: true,
@@ -35,6 +37,7 @@ class Ballot < ApplicationRecord
       message: 'must be after voting end',
     },
     if: :election?
+  validates :term_ends_at, absence: true, unless: :election?
   validates :voting_ends_at, presence: true
   validates :voting_ends_at, after_created_at: true, unless: :election?
   validates :voting_ends_at,

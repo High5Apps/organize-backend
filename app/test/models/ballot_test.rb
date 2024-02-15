@@ -58,9 +58,9 @@ class BallotTest < ActiveSupport::TestCase
     assert @ballot.invalid?
   end
 
-  test 'office should be optional for non-elections' do
-    @ballot.office = nil
-    assert @ballot.valid?
+  test 'office should be absent for non-elections' do
+    @ballot.office = 'president'
+    assert @ballot.invalid?
   end
 
   test 'office should be required for elections' do
@@ -68,9 +68,9 @@ class BallotTest < ActiveSupport::TestCase
     assert @election.invalid?
   end
 
-  test 'nominations_end_at should be optional for non-elections' do
-    @ballot.nominations_end_at = nil
-    assert @ballot.valid?
+  test 'nominations_end_at should be absent for non-elections' do
+    @ballot.nominations_end_at = Time.now
+    assert @ballot.invalid?
   end
 
   test 'nominations_end_at should be required for elections' do
@@ -85,9 +85,9 @@ class BallotTest < ActiveSupport::TestCase
     assert @election.valid?
   end
 
-  test 'term_ends_at should be optional for non-elections' do
-    @ballot.term_ends_at = nil
-    assert @ballot.valid?
+  test 'term_ends_at should be absent for non-elections' do
+    @ballot.term_ends_at = Time.now
+    assert @ballot.invalid?
   end
 
   test 'term_ends_at should be required for elections' do
