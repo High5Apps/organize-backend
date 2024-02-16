@@ -1,15 +1,19 @@
 one:
+  ends_at: <%= 1000.years.from_now.to_fs(:db) %>
   office: :founder
   user: one
 
 two:
+  ends_at: <%= 1000.years.from_now.to_fs(:db) %>
   office: :founder
   user: five
 
 three:
+  ends_at: <%= 1.year.from_now.to_fs(:db) %>
   office: president
   user: four
 
 five:
+  ends_at: <%= 1.year.from_now.to_fs(:db) %>
   office: secretary
   user: one

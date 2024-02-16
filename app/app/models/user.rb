@@ -77,7 +77,7 @@ class User < ApplicationRecord
       self.joined_at = Time.current
 
       unless org.users.any?
-        terms.build office: :founder
+        terms.build ends_at: 1000.years.from_now, office: :founder
       end
     end
 end

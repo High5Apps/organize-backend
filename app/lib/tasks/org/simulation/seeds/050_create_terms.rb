@@ -17,6 +17,9 @@ catch :stop_creating_terms do
     graph = org.graph
     term_map = {}
 
+    # Set a 1-year term length for every office
+    ends_at = 1.year.from_now
+
     offices.each do |office|
       user_id = case office
       when :founder
@@ -62,7 +65,7 @@ catch :stop_creating_terms do
 
       next unless user_id
 
-      term = User.find(user_id).terms.create!(office:)
+      term = User.find(user_id).terms.create!(ends_at:, office:)
 
       term_map[office] = term
     end
@@ -73,7 +76,7 @@ catch :stop_creating_terms do
     non_officer_ids = user_ids - officer_ids
     steward_ids = non_officer_ids.sample(steward_count)
     steward_ids.each do |steward_id|
-      User.find(steward_id).terms.create!(office: :steward)
+      User.find(steward_id).terms.create!(ends_at:, office: :steward)
     end
   end
 end

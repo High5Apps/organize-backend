@@ -3,6 +3,9 @@ class Term < ApplicationRecord
 
   belongs_to :user
 
+  validates :ends_at,
+    presence: true,
+    after_created_at: true
   validates :office,
     presence: true,
     inclusion: { in: offices }
