@@ -58,3 +58,19 @@ election_one_choice_one:
 election_one_choice_two:
   ballot: election_one
   user: three
+
+election_president_winner:
+  ballot: election_president
+  user: four
+
+election_president_loser:
+  ballot: election_president
+  user: one
+
+election_secretary_winner:
+  ballot: election_secretary
+  user: one
+
+election_secretary_loser:
+  ballot: election_secretary
+  user: three

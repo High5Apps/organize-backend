@@ -51,3 +51,25 @@ election_one:
   nominations_end_at: <%= 6.days.from_now.to_fs(:db) %>
   term_ends_at: <%= (13 + 365).days.from_now.to_fs(:db) %>
   voting_ends_at: <%= 13.days.from_now.to_fs(:db) %>
+
+election_president:
+  category: election
+  created_at: <%= 14.days.ago.to_fs(:db) %>
+  encrypted_question: { c: 1OP8/g==, n: hRJZmT+wcf/2Ydh8, t: 10jh891TTvqJTFQeGYAZYw== }
+  max_candidate_ids_per_vote: 1
+  office: president
+  user: one
+  nominations_end_at: <%= 7.days.ago.to_fs(:db) %>
+  term_ends_at: <%= 1.year.from_now.to_fs(:db) %>
+  voting_ends_at: <%= 1.second.ago.to_fs(:db) %>
+
+election_secretary:
+  category: election
+  created_at: <%= 14.days.ago.to_fs(:db) %>
+  encrypted_question: { c: 1OP8/g==, n: hRJZmT+wcf/2Ydh8, t: 10jh891TTvqJTFQeGYAZYw== }
+  max_candidate_ids_per_vote: 1
+  office: secretary
+  user: one
+  nominations_end_at: <%= 7.days.ago.to_fs(:db) %>
+  term_ends_at: <%= 1.year.from_now.to_fs(:db) %>
+  voting_ends_at: <%= 1.second.ago.to_fs(:db) %>

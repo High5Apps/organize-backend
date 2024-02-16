@@ -36,3 +36,13 @@ seven:
   ballot: three
   candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:five, :uuid) %>]
   user: four
+
+election_president_vote:
+  ballot: election_president
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:election_president_winner, :uuid) %>]
+  user: three
+
+election_secretary_vote:
+  ballot: election_secretary
+  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:election_secretary_winner, :uuid) %>]
+  user: four
