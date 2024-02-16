@@ -31,4 +31,23 @@ class TermTest < ActiveSupport::TestCase
     @term.user = nil
     assert_not @term.valid?
   end
+
+  test 'active_at should include terms where ends_at is in the future' do
+    t1, t2, t3 = create_terms_with_ends_at(
+      [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now])
+    query = Term.active_at(t2.ends_at)
+    assert_not query.exists?(id: t1)
+    assert_not query.exists?(id: t2)
+    assert query.exists?(id: t3)
+  end
+
+  private
+
+  def create_terms_with_ends_at(ends_ats)
+    ends_ats.map do |ends_at|
+      term = @term.dup
+      term.update!(ends_at:)
+      term
+    end
+  end
 end
