@@ -8,9 +8,21 @@ class OfficeTest < ActiveSupport::TestCase
     @term = terms :three
   end
 
-  test 'availability should include all offices' do
-    expected = Office::TYPE_STRINGS
-    assert_equal expected.sort, availability_in.map{ |o| o[:type] }.sort
+  test 'availability should include all offices when office param absent' do
+    assert_equal Office::TYPE_STRINGS.sort,
+      Office.availability_in(@org).map{ |o| o[:type] }.sort
+  end
+
+  test 'availability should filter by office param when present' do
+    Office::TYPE_STRINGS.each do |office|
+      assert_equal office, Office.availability_in(@org, office)[:type]
+    end
+  end
+
+  test 'availability should throw unless office param is a String' do
+    assert_raises do
+      Office.availability_in(@org, :founder)
+    end
   end
 
   test 'availability should be open if there is no active term or election' do
@@ -53,12 +65,9 @@ class OfficeTest < ActiveSupport::TestCase
 
   private
 
-  def availability_in
-    Office.availability_in(@org)
-  end
-
   def assert_availability_open_except_for offices
     assert_equal offices.sort,
-      availability_in.filter { |o| !o[:open] }.map { |o| o[:type] }.sort
+      Office.availability_in(@org)
+        .filter { |o| !o[:open] }.map { |o| o[:type] }.sort
   end
 end

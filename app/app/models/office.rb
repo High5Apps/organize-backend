@@ -27,7 +27,11 @@ class Office
     TYPE_SYMBOLS[@index]
   end
 
-  def self.availability_in org
+  def self.availability_in org, office=nil
+    if office && !office.is_a?(String)
+      raise 'office param must be a string'
+    end
+
     # It's not open if there's already an active election for the office
     active_election_offices = org.ballots.election.active_at(Time.now)
       .pluck(:office)
@@ -45,6 +49,12 @@ class Office
     offices = office_types.map do |type|
       open = open_offices.include?(type)
       { type:, open: }
+    end
+
+    if office
+      offices.filter{ |o| o[:type] == office }.first
+    else
+      offices
     end
   end
 end

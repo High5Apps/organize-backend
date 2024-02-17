@@ -147,6 +147,22 @@ class BallotTest < ActiveSupport::TestCase
     assert @election.valid?
   end
 
+  test 'should not create unless office is open' do
+    org = orgs :two
+    assert_equal ['founder'],
+      Office.availability_in(org).filter{ |o| !o[:open] }.map{ |o| o[:type] }
+    user = org.users.first
+    ballot_template = ballots :election_one
+
+    Office::TYPE_STRINGS.each do |office|
+      attributes = \
+        ballot_template.attributes.merge id: nil, office:, user_id: user.id
+      ballot = user.ballots.create! attributes if office != 'founder'
+      assert_not user.ballots.build(attributes).save
+      ballot&.destroy!
+    end
+  end
+
   test 'active_at should include ballots where voting_ends_at is in the future' do
     b1, b2, b3 = create_ballots_with_voting_ends_at(
       [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now])

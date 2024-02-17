@@ -18,7 +18,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
     @election = ballots(:election_one)
     @election_params = {
-      ballot: @election.as_json,
+      ballot: @election.attributes.merge(office: 'trustee').as_json,
     }
 
     @user = users(:one)

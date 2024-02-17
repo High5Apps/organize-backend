@@ -54,6 +54,8 @@ class Ballot < ApplicationRecord
     },
     if: :election?
 
+  validate :office_open, on: :create, if: :election?
+
   has_encrypted :question, present: true, max_length: MAX_QUESTION_LENGTH
 
   def results
@@ -65,5 +67,13 @@ class Ballot < ApplicationRecord
       # would receive at least one vote.
       .count(:unnested_candidate_id)
       .map { |candidate_id, vote_count| { candidate_id:, vote_count: } }
+  end
+
+  private
+
+  def office_open
+    unless Office.availability_in(org, office)[:open]
+      errors.add :office, 'is already filled or currently has an open election'
+    end
   end
 end
