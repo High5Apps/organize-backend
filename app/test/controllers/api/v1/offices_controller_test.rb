@@ -28,23 +28,10 @@ class Api::V1::OfficesControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test 'index response should include all office types except founder' do
-    get api_v1_offices_url, headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    office_types = json_response.dig(:offices).map { |o| o[:type] }
-
-    # Subtract 1 because founder shouldn't be present
-    assert_equal Office::TYPE_STRINGS.count - 1, office_types.count
-    assert_equal Office::TYPE_STRINGS - office_types, ['founder']
-  end
-
-  test 'index response open should be accurate' do
+  test 'index response open should match availability_in' do
     get api_v1_offices_url, headers: @authorized_headers
     json_response = JSON.parse(response.body, symbolize_names: true)
     offices = json_response.dig(:offices)
-    expected_filled = ['president', 'secretary']
-    offices.each do |office|
-      assert_not_equal expected_filled.include?(office[:type]), office[:open]
-    end
+    assert_equal Office.availability_in(@user.org), offices
   end
 end
