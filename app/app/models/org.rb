@@ -8,6 +8,7 @@ class Org < ApplicationRecord
   has_many :users
 
   has_many :ballots, through: :users
+  has_many :terms, through: :users
 
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
   has_encrypted :member_definition,
@@ -20,8 +21,8 @@ class Org < ApplicationRecord
       users.joins(:scanned_connections).group(:id).count
     shared_connection_counts =
       users.joins(:shared_connections).group(:id).count
-    offices = users.joins(:terms).group('users.id')
-      .pluck('users.id', 'array_agg(terms.office)').to_h
+    offices = terms.group('terms.user_id')
+      .pluck('terms.user_id', 'array_agg(terms.office)').to_h
       .transform_values {|arr| arr.map {|v| Office.new(v).title } }
     user_data = users.pluck :id, :joined_at, :pseudonym
     user_entries = user_data.map do |d|
