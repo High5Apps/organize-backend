@@ -190,14 +190,20 @@ class BallotTest < ActiveSupport::TestCase
   test 'order_by_active should order by earliest voting_ends_at' do
     ballots = Ballot.order_by_active
     assert_not_empty ballots
-    assert_equal ballots.sort_by{ |b| [b.voting_ends_at, b.id] }, ballots
+    sorted_ballots = ballots.sort_by do |b|
+      [[b.nominations_end_at, b.voting_ends_at].compact.min, b.id]
+    end
+    assert_equal sorted_ballots, ballots
   end
 
   test 'order_by_active should break ties by lowest id' do
     set_all_ballot_timestamps_equal
     ballots = Ballot.order_by_active
     assert_not_empty ballots
-    assert_equal ballots.sort_by{ |b| [b.voting_ends_at, b.id] }, ballots
+    sorted_ballots = ballots.sort_by do |b|
+      [[b.nominations_end_at, b.voting_ends_at].compact.min, b.id]
+    end
+    assert_equal sorted_ballots, ballots
   end
 
   test 'order_by_inactive should order by latest voting_ends_at' do
@@ -219,9 +225,17 @@ class BallotTest < ActiveSupport::TestCase
       ballots
   end
 
-  test 'order_by_active should be the opposite of order_by_inactive' do
-    active = Ballot.order_by_active
-    inactive = Ballot.order_by_inactive
+  test 'order_by_active should be the opposite of order_by_inactive for non-elections' do
+    ballots = Ballot.not_election
+    active = ballots.order_by_active.pluck :id
+    inactive = ballots.order_by_inactive.pluck :id
+    assert_equal active, inactive.reverse
+  end
+
+  test 'order_by_active should be the opposite of order_by_inactive for elections once nominations end' do
+    ballots = Ballot.election.where(nominations_end_at: ...Time.now)
+    active = ballots.order_by_active.pluck :id
+    inactive = ballots.order_by_inactive.pluck :id
     assert_equal active, inactive.reverse
   end
 
