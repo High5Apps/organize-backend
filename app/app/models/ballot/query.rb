@@ -34,12 +34,12 @@ class Ballot::Query
       ballots = ballots.page(page_param)
     end
 
-    # Default to sorting by new
+    # Default to sorting by active
     sort_parameter = params[:sort] || 'active'
     if sort_parameter == 'active'
-      ballots = ballots.order(voting_ends_at: :asc, id: :asc)
+      ballots = ballots.order_by_active
     elsif sort_parameter == 'inactive'
-      ballots = ballots.order(voting_ends_at: :desc, id: :desc)
+      ballots = ballots.order_by_inactive
     end
 
     ballots

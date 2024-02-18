@@ -4,6 +4,8 @@ class Ballot < ApplicationRecord
   scope :active_at, ->(time) { where.not(voting_ends_at: ..time) }
   scope :created_before, ->(time) { where(created_at: ...time) }
   scope :inactive_at, ->(time) { where(voting_ends_at: ..time) }
+  scope :order_by_active, -> { order(voting_ends_at: :asc, id: :asc) }
+  scope :order_by_inactive, -> { order(voting_ends_at: :desc, id: :desc) }
 
   MAX_QUESTION_LENGTH = 140
 

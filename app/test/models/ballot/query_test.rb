@@ -45,32 +45,21 @@ class BallotQueryTest < ActiveSupport::TestCase
     assert_equal Ballot.inactive_at(ballot.voting_ends_at).sort, ballots.sort
   end
 
-  test 'should order posts with newest first by default' do
-    voting_ends_ats = Ballot::Query.build.pluck :voting_ends_at
-    assert_not_equal 0, voting_ends_ats.count
-    assert_equal voting_ends_ats.sort, voting_ends_ats
+  test 'should order posts by active by default' do
+    ballot_ids = Ballot::Query.build.pluck :id
+    assert_not_empty ballot_ids
+    assert_equal Ballot.order_by_active.pluck(:id), ballot_ids
   end
 
-  test 'should order ballots with voting ending earliest first when sort param is active' do
-    voting_ends_ats = Ballot::Query.build({ sort: 'active' })
-      .pluck :voting_ends_at
-    assert_not_equal 0, voting_ends_ats.count
-    assert_equal voting_ends_ats.sort, voting_ends_ats
+  test 'active sort param should order ballots by active' do
+    ballot_ids = Ballot::Query.build({ sort: 'active' }).pluck :id
+    assert_not_empty ballot_ids
+    assert_equal Ballot.order_by_active.pluck(:id), ballot_ids
   end
 
-  test 'should order ballots with voting ending latest first when sort param is inactive' do
-    voting_ends_ats = Ballot::Query.build({ sort: 'inactive' })
-      .pluck :voting_ends_at
-
-    assert_not_equal 0, voting_ends_ats.count
-
-    # Reverse is needed because sort is an ascending sort
-    assert_equal voting_ends_ats.sort.reverse, voting_ends_ats
-  end
-
-  test 'sorting by active should be the opposite of sorting by inactive' do
-    active = Ballot::Query.build({ sort: 'active' })
-    inactive = Ballot::Query.build({ sort: 'inactive' })
-    assert_equal active, inactive.reverse
+  test 'inactive sort param should order ballots by inactive' do
+    ballot_ids = Ballot::Query.build({ sort: 'inactive' }).pluck :id
+    assert_not_empty ballot_ids
+    assert_equal Ballot.order_by_inactive.pluck(:id), ballot_ids
   end
 end

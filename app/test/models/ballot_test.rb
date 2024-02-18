@@ -187,6 +187,44 @@ class BallotTest < ActiveSupport::TestCase
     assert_not query.exists?(id: b3)
   end
 
+  test 'order_by_active should order by earliest voting_ends_at' do
+    ballots = Ballot.order_by_active
+    assert_not_empty ballots
+    assert_equal ballots.sort_by{ |b| [b.voting_ends_at, b.id] }, ballots
+  end
+
+  test 'order_by_active should break ties by lowest id' do
+    set_all_ballot_timestamps_equal
+    ballots = Ballot.order_by_active
+    assert_not_empty ballots
+    assert_equal ballots.sort_by{ |b| [b.voting_ends_at, b.id] }, ballots
+  end
+
+  test 'order_by_inactive should order by latest voting_ends_at' do
+    ballots = Ballot.order_by_inactive
+    assert_not_empty ballots
+
+    # Reverse is needed because sort is an ascending sort
+    assert_equal ballots.sort_by{ |b| [b.voting_ends_at, b.id] }.reverse,
+      ballots
+  end
+
+  test 'order_by_inactive should break ties by highest id' do
+    set_all_ballot_timestamps_equal
+    ballots = Ballot.order_by_inactive
+    assert_not_empty ballots
+
+    # Reverse is needed because sort is an ascending sort
+    assert_equal ballots.sort_by{ |b| [b.voting_ends_at, b.id] }.reverse,
+      ballots
+  end
+
+  test 'order_by_active should be the opposite of order_by_inactive' do
+    active = Ballot.order_by_active
+    inactive = Ballot.order_by_inactive
+    assert_equal active, inactive.reverse
+  end
+
   test 'results should be ordered by most votes first' do
     users = @ballot_without_votes.org.users.limit(3)
     candidates = @ballot_without_votes.candidates
@@ -320,6 +358,19 @@ class BallotTest < ActiveSupport::TestCase
     votes_info.each do |vote_info|
       vote_info[:user].votes.create! ballot:,
         candidate_ids: vote_info[:candidate_ids]
+    end
+  end
+
+  def set_all_ballot_timestamps_equal
+    voting_ends_at = Time.now
+    Ballot.all.each do |ballot|
+      nominations_end_at = nil
+
+      if ballot.nominations_end_at
+        nominations_end_at = voting_ends_at - 1.second
+      end
+
+      ballot.update! voting_ends_at:, nominations_end_at:
     end
   end
 end
