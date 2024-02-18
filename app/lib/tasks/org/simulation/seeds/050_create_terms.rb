@@ -51,7 +51,7 @@ catch :stop_creating_terms do
         # Handled below after all other officers are created
       when :trustee
         # No need for a trustee without a treasurer
-        treasurer = term_map[:treasurer].user
+        treasurer = term_map[:treasurer]&.user
         next unless treasurer
         next unless rand < 0.25
 
