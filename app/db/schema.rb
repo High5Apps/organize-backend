@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_16_093808) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_19_072351) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -59,6 +59,18 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_16_093808) do
     t.datetime "updated_at", null: false
     t.index ["scanner_id"], name: "index_connections_on_scanner_id"
     t.index ["sharer_id"], name: "index_connections_on_sharer_id"
+  end
+
+  create_table "nominations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "ballot_id", null: false
+    t.uuid "nominator_id", null: false
+    t.uuid "nominee_id", null: false
+    t.boolean "accepted"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ballot_id"], name: "index_nominations_on_ballot_id"
+    t.index ["nominator_id"], name: "index_nominations_on_nominator_id"
+    t.index ["nominee_id", "ballot_id"], name: "index_nominations_on_nominee_id_and_ballot_id", unique: true
   end
 
   create_table "orgs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -131,6 +143,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_16_093808) do
   add_foreign_key "comments", "users"
   add_foreign_key "connections", "users", column: "scanner_id"
   add_foreign_key "connections", "users", column: "sharer_id"
+  add_foreign_key "nominations", "ballots"
+  add_foreign_key "nominations", "users", column: "nominator_id"
+  add_foreign_key "nominations", "users", column: "nominee_id"
   add_foreign_key "posts", "users"
   add_foreign_key "terms", "users"
   add_foreign_key "upvotes", "comments"

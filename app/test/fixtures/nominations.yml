@@ -1,0 +1,47 @@
+election_one_choice_one:
+  accepted: true
+  ballot: election_one
+  nominator: four
+  nominee: one
+
+election_one_choice_two:
+  accepted: true
+  ballot: election_one
+  nominator: seven
+  nominee: three
+
+election_one_choice_three:
+  accepted: false
+  ballot: election_one
+  nominator: one
+  nominee: four
+
+election_one_choice_four:
+  # neither accepted nor declined
+  ballot: election_one
+  nominator: three
+  nominee: seven
+
+election_president_winner:
+  accepted: true
+  ballot: election_president
+  nominator: three
+  nominee: four
+
+election_president_loser:
+  accepted: true
+  ballot: election_president
+  nominator: three
+  nominee: one
+
+election_secretary_winner:
+  accepted: true
+  ballot: election_secretary
+  nominator: four
+  nominee: one
+
+election_secretary_loser:
+  accepted: true
+  ballot: election_secretary
+  nominator: seven
+  nominee: three

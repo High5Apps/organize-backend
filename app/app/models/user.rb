@@ -12,7 +12,13 @@ class User < ApplicationRecord
   has_many :ballots
   has_many :candidates
   has_many :comments
+  has_many :created_nominations,
+    foreign_key: 'nominator_id',
+    class_name: 'Nomination'
   has_many :posts
+  has_many :received_nominations,
+    foreign_key: 'nominee_id',
+    class_name: 'Nomination'
   has_many :recruits, foreign_key: 'recruiter_id', class_name: 'User'
   has_many :scanned_connections,
     foreign_key: 'scanner_id',
