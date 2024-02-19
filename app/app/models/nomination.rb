@@ -3,6 +3,8 @@ class Nomination < ApplicationRecord
   belongs_to :nominator, class_name: 'User'
   belongs_to :nominee, class_name: 'User'
 
+  has_one :candidate
+
   validates :ballot, presence: true
   validates :nominator, presence: true
   validates :nominee,
@@ -24,7 +26,7 @@ class Nomination < ApplicationRecord
   end
 
   def create_candidate_for_nominee
-    ballot.candidates.create! user: nominee
+    create_candidate! ballot:, user: nominee
   end
 
   def not_self_nomination

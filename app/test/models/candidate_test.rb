@@ -16,12 +16,33 @@ class CandidateTest < ActiveSupport::TestCase
     assert @candidate.invalid?
   end
 
-  test 'encrypted_title should be absent for elections' do
+  test 'nomination should be present when ballot is an election' do
+    assert @election_candidate.ballot.election?
+    @election_candidate.nomination = nil
+    assert @election_candidate.invalid?
+  end
+
+  test 'nomination should be absent when ballot is a non-election' do
+    assert_not @candidate.ballot.election?
+    @candidate.nomination = nominations :election_one_choice_one
+    assert @candidate.invalid?
+  end
+
+  test 'nomination nominee should match candidate user' do
+    ballot = ballots :election_one
+    nomination = nominations :election_one_choice_four
+    other_user = users :four
+    assert_not_equal nomination.nominee, other_user
+    candidate = ballot.candidates.build nomination:, user: other_user
+    assert_not candidate.save
+  end
+
+  test 'encrypted_title should be absent when ballot is an election' do
     @election_candidate.encrypted_title = @candidate.encrypted_title
     assert @election_candidate.invalid?
   end
 
-  test 'encrypted_title should be present for non-elections' do
+  test 'encrypted_title should be present when ballot is a non-election' do
     @candidate.encrypted_title = nil
     assert @candidate.invalid?
   end

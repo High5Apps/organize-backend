@@ -53,24 +53,30 @@ multi_choice_three:
 
 election_one_choice_one:
   ballot: election_one
+  nomination: election_one_choice_one
   user: one
 
 election_one_choice_two:
   ballot: election_one
+  nomination: election_one_choice_two
   user: three
 
 election_president_winner:
   ballot: election_president
+  nomination: election_president_winner
   user: four
 
 election_president_loser:
   ballot: election_president
+  nomination: election_president_loser
   user: one
 
 election_secretary_winner:
   ballot: election_secretary
+  nomination: election_secretary_winner
   user: one
 
 election_secretary_loser:
   ballot: election_secretary
+  nomination: election_secretary_loser
   user: three
