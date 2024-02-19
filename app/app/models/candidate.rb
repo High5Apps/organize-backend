@@ -15,16 +15,26 @@ class Candidate < ApplicationRecord
   belongs_to :ballot
   belongs_to :user, optional: true
 
-  validate :either_title_or_user_present
+  validates :ballot, presence: true
+  validates :user, absence: true, unless: -> { ballot&.election? }
+  validates :user, presence: true, if: -> { ballot&.election? }
+
+  validate :encrypted_title_absent, if: -> { ballot&.election? }
+  validate :encrypted_title_present, unless: -> { ballot&.election? }
 
   has_encrypted :title, max_length: MAX_TITLE_LENGTH
 
   private
 
-  def either_title_or_user_present
-    unless (encrypted_title.blank? && !user.blank?) \
-        || (!encrypted_title.blank? && user.blank?)
-      errors.add :base, 'must have either title or user reference'
+  def encrypted_title_absent
+    unless encrypted_title&.blank?
+      errors.add :encrypted_title, 'Must be absent for elections'
+    end
+  end
+
+  def encrypted_title_present
+    if encrypted_title&.blank?
+      errors.add :encrypted_title, 'Must be present for non-elections'
     end
   end
 end

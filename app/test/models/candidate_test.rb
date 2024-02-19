@@ -16,18 +16,14 @@ class CandidateTest < ActiveSupport::TestCase
     assert @candidate.invalid?
   end
 
-  test 'either encrypted_title or user should be present' do
+  test 'encrypted_title should be absent for elections' do
+    @election_candidate.encrypted_title = @candidate.encrypted_title
+    assert @election_candidate.invalid?
+  end
+
+  test 'encrypted_title should be present for non-elections' do
     @candidate.encrypted_title = nil
     assert @candidate.invalid?
-
-    @candidate.reload.user = users(:one)
-    assert @candidate.invalid?
-
-    @election_candidate.user = nil
-    assert @election_candidate.invalid?
-
-    @election_candidate.reload.encrypted_title = @candidate.encrypted_title
-    assert @election_candidate.invalid?
   end
 
   test 'encrypted_title error messages should not include "Encrypted"' do
@@ -45,5 +41,15 @@ class CandidateTest < ActiveSupport::TestCase
     @candidate.encrypted_title.ciphertext = \
       Base64.strict_encode64('a' * (1 + Candidate::MAX_TITLE_LENGTH))
     assert @candidate.invalid?
+  end
+
+  test 'user should be absent for non-elections' do
+    @candidate.user = users :one
+    assert @candidate.invalid?
+  end
+
+  test 'user should be present for elections' do
+    @election_candidate.user = nil
+    assert @election_candidate.invalid?
   end
 end
