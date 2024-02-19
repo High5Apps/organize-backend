@@ -11,7 +11,21 @@ class Nomination < ApplicationRecord
 
   validate :not_self_nomination
 
+  before_validation :check_unaccepted, if: :will_save_change_to_accepted?
+  after_update :create_candidate_for_nominee,
+    if: -> { saved_change_to_accepted? from: nil, to: true }
+
   private
+
+  def check_unaccepted
+    unless accepted_in_database.nil?
+      errors.add :accepted, "can't be modified"
+    end
+  end
+
+  def create_candidate_for_nominee
+    ballot.candidates.create! user: nominee
+  end
 
   def not_self_nomination
     return unless nominator && nominee
