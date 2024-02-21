@@ -44,7 +44,11 @@ class OfficeTest < ActiveSupport::TestCase
   test 'availability for non-stewards should not be open if there is a term outside cooldown' do
     (Office::TYPE_STRINGS - ['founder', 'steward']).each do |office|
       attributes = @term.attributes.merge id: nil, office:, user_id: @user.id
-      term = @user.terms.create! attributes
+      term = @user.terms.build attributes
+
+      # Can't validate because the user didn't actually win an election
+      term.save! validate: false
+
       travel_to term.ends_at - Term::COOLDOWN_PERIOD
       assert_availability_open_except_for ['founder']
       travel -1.second
@@ -56,7 +60,11 @@ class OfficeTest < ActiveSupport::TestCase
   test 'availability for stewards should disregard if there is a term outside cooldown' do
     office = 'steward'
     attributes = @term.attributes.merge id: nil, office:, user_id: @user.id
-    term = @user.terms.create! attributes
+    term = @user.terms.build attributes
+
+    # Can't validate because the user didn't actually win an election
+    term.save! validate: false
+
     travel_to term.ends_at - Term::COOLDOWN_PERIOD
     assert_availability_open_except_for ['founder']
     travel -1.second

@@ -3,10 +3,23 @@ require "test_helper"
 class TermTest < ActiveSupport::TestCase
   setup do
     @term = terms(:one)
+    @non_founder_term = terms(:three)
   end
 
   test 'should be valid' do
     assert @term.valid?
+  end
+
+  test 'ballot should be absent for founders' do
+    assert @term.founder?
+    @term.ballot = @non_founder_term.ballot
+    assert @term.invalid?
+  end
+
+  test 'ballot should be present for non-founders' do
+    assert_not @non_founder_term.founder?
+    @non_founder_term.ballot = nil
+    assert @non_founder_term.invalid?
   end
 
   test 'ends_at should be present' do
@@ -30,6 +43,24 @@ class TermTest < ActiveSupport::TestCase
   test 'user should be present' do
     @term.user = nil
     assert_not @term.valid?
+  end
+
+  test "user should be org's first member for founder terms" do
+    user = users :three
+    founder_term = @term
+    assert @term.founder?
+    assert_not_equal user, @term.user
+
+    term = founder_term.dup
+    founder_term.destroy!
+    term.user = user
+    assert term.invalid?
+  end
+
+  test 'user should have won election for non-founder terms' do
+    assert @non_founder_term.valid?
+    @non_founder_term.ballot.votes.destroy_all
+    assert @non_founder_term.invalid?
   end
 
   test 'active_at should include terms where ends_at is in the future' do

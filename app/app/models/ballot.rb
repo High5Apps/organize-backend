@@ -26,6 +26,7 @@ class Ballot < ApplicationRecord
 
   has_many :candidates
   has_many :nominations
+  has_many :terms
   has_many :votes
 
   has_one :org, through: :user
