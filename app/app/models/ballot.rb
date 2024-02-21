@@ -112,6 +112,14 @@ class Ballot < ApplicationRecord
     reversed_results.reverse
   end
 
+  def winners
+    results.filter{ |result| result[:rank] < max_candidate_ids_per_vote }
+  end
+
+  def winner?(candidate_id)
+    winners.map{ |winner| winner[:candidate_id] }.include? candidate_id
+  end
+
   private
 
   def office_open

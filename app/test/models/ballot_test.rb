@@ -398,6 +398,31 @@ class BallotTest < ActiveSupport::TestCase
     end
   end
 
+  test 'winner? should only be true iff rank < max_candidate_ids_per_vote' do
+    ballots.each do |ballot|
+      max_winners = ballot.max_candidate_ids_per_vote
+      ballot.results.each do |result|
+        is_winner = result[:rank] < max_winners
+        assert_equal is_winner, ballot.winner?(result[:candidate_id])
+      end
+    end
+  end
+
+  test 'winner? should be false when candidate_id is nil' do
+    assert_equal false, @ballot.winner?(nil)
+  end
+
+  test 'winners should only contain winners' do
+    ballots.each do |ballot|
+      max_winners = ballot.max_candidate_ids_per_vote
+      winners = ballot.winners
+      ballot.results.each do |result|
+        assert_equal ballot.winner?(result[:candidate_id]),
+          winners.include?(result)
+      end
+    end
+  end
+
   private
 
   def create_ballots_with_voting_ends_at(voting_ends_ats)
