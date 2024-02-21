@@ -72,7 +72,8 @@ class Ballot < ApplicationRecord
   has_encrypted :question, present: true, max_length: MAX_QUESTION_LENGTH
 
   def results
-    candidates.left_outer_joins_with_most_recent_unnested_votes
+    results = candidates
+      .left_outer_joins_with_most_recent_unnested_votes
       .group(:id)
       .order(count_unnested_candidate_id: :desc, id: :desc)
       # Note that it's important to count :unnested_candidate_id instead of :all
@@ -80,6 +81,35 @@ class Ballot < ApplicationRecord
       # would receive at least one vote.
       .count(:unnested_candidate_id)
       .map { |candidate_id, vote_count| { candidate_id:, vote_count: } }
+
+    # Downrank considering ties. Lower rank is better. Zero is the best.
+    # A candidate is a winner iff its rank is strictly less than the ballot's
+    # max_candidate_ids_per_vote.
+    # Iterate results from least to highest vote-receivers:
+    # - The lowest vote-receiver automatically receives the highest/worst rank,
+    #   equal to the number of candidates - 1
+    # - For successive candidates:
+    #   - If the candidate tied with the next worst candidate, the candidate's
+    #     rank is set equal to the next worst candidate's rank
+    #   - Otherwise, the candidate's rank is set to its ideal rank, which is its
+    #     index in the results sorted from best to worst. "Ideal" because this
+    #     rank would have been its rank if ties weren't considered.
+    reversed_results = results.reverse
+    reversed_results.each_with_index do |result, i|
+      rank = results.count - 1 - i
+      next_worst_result = (i - 1) < 0 ? nil : reversed_results[i - 1]
+      if next_worst_result
+        is_tied_with_next_worst_result = \
+          next_worst_result[:vote_count] == result[:vote_count]
+        if is_tied_with_next_worst_result
+          rank = next_worst_result[:rank]
+        end
+      end
+
+      result[:rank] = rank
+    end
+
+    reversed_results.reverse
   end
 
   private

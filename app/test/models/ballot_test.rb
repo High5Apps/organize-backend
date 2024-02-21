@@ -350,6 +350,54 @@ class BallotTest < ActiveSupport::TestCase
     assert_equal 0, results.last[:vote_count]
   end
 
+  test 'results should include tie-aware downranked rank' do
+    users = @multi_choice_ballot.org.users
+    candidates = @multi_choice_ballot.candidates
+    [{
+      expected_ranks: [2, 2, 2],
+      vote_info: [],
+    }, {
+      expected_ranks: [0, 2, 2],
+      vote_info: [
+        { user: users.first, candidate_ids: [candidates.first.id] },
+      ],
+    }, {
+      expected_ranks: [0, 2, 2],
+      vote_info: [
+        { user: users.second, candidate_ids: [candidates.second.id] },
+      ],
+    }, {
+      expected_ranks: [1, 1, 2],
+      vote_info: [
+        { user: users.first, candidate_ids: [candidates.first.id] },
+        { user: users.second, candidate_ids: [candidates.second.id] },
+      ],
+    }, {
+      expected_ranks: [1, 1, 2],
+      vote_info: [
+        { user: users.first, candidate_ids: [candidates.second.id] },
+        { user: users.second, candidate_ids: [candidates.first.id] },
+      ],
+    }, {
+      expected_ranks: [2, 2, 2],
+      vote_info: [
+        { user: users.first, candidate_ids: [candidates.second.id] },
+        { user: users.second, candidate_ids: [candidates.first.id] },
+        { user: users.third, candidate_ids: [candidates.third.id] },
+      ],
+    }].each.with_index do |test_info, i|
+      expected_ranks = test_info[:expected_ranks]
+      vote_info = test_info[:vote_info]
+
+      @multi_choice_ballot.votes.destroy_all
+      assert_empty @multi_choice_ballot.reload.votes
+
+      create_votes @multi_choice_ballot, vote_info
+      ranks = @multi_choice_ballot.results.map{ |r| r[:rank] }
+      assert_equal expected_ranks, ranks
+    end
+  end
+
   private
 
   def create_ballots_with_voting_ends_at(voting_ends_ats)
