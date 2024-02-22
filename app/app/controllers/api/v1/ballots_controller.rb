@@ -8,7 +8,11 @@ class Api::V1::BallotsController < ApplicationController
   ALLOWED_BALLOT_ATTRIBUTES = Ballot::Query::ALLOWED_ATTRIBUTES + [
     :max_candidate_ids_per_vote,
   ]
-  ALLOWED_CANDIDATE_ATTRIBUTES = [:encrypted_title, :id]
+  ALLOWED_CANDIDATE_ATTRIBUTES = [:id]
+  ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES = \
+    ALLOWED_CANDIDATE_ATTRIBUTES + [:pseudonym]
+  ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES = \
+    ALLOWED_CANDIDATE_ATTRIBUTES + [:encrypted_title]
   MAX_CANDIDATES_PER_CREATE = 100.freeze
 
   before_action :authenticate_user, only: [:index, :create, :show]
@@ -51,9 +55,15 @@ class Api::V1::BallotsController < ApplicationController
       return render_error :not_found, ["No ballot found with id #{params[:id]}"]
     end
 
+    selected_attributes = ballot.election? ?
+      ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES :
+      ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES
+    candidates = ballot.candidates.left_outer_joins(:user)
+      .select(selected_attributes)
+
     render json: {
       ballot: ballot.slice(ALLOWED_BALLOT_ATTRIBUTES),
-      candidates: ballot.candidates.select(ALLOWED_CANDIDATE_ATTRIBUTES),
+      candidates:,
       my_vote: authenticated_user.my_vote_candidate_ids(ballot),
       results: (ballot.results unless Time.now < ballot.voting_ends_at),
   }.compact
