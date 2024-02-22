@@ -4,6 +4,7 @@ class VoteTest < ActiveSupport::TestCase
   setup do
     @vote = votes(:one)
     @ballot_without_votes = ballots(:five)
+    @election_vote = votes(:election_president_vote)
   end
 
   test 'should be valid' do
@@ -58,28 +59,51 @@ class VoteTest < ActiveSupport::TestCase
     assert @vote.invalid?
   end
 
-  test 'created_at must be before ballot.voting_ends_at' do
-    new_vote = @vote.dup
-    travel_to @vote.ballot.voting_ends_at - 1.second do
-      assert new_vote.save
-    end
-
+  test 'created_at should be before ballot.voting_ends_at' do
     new_vote = @vote.dup
     travel_to @vote.ballot.voting_ends_at do
       assert_not new_vote.save
     end
+
+    new_vote = @vote.dup
+    travel_to @vote.ballot.voting_ends_at - 1.second do
+      assert new_vote.save
+    end
   end
 
-  test 'updated_at must be before ballot.voting_ends_at' do
-    original_candidate_ids = @vote.candidate_ids
-    travel_to @vote.ballot.voting_ends_at - 1.second do
-      @vote.candidate_ids = []
-      assert @vote.save
+  test 'created_at should not be before ballot.nominations_end_at' do
+    new_vote = @election_vote.dup
+    travel_to @election_vote.ballot.nominations_end_at - 1.second do
+      assert_not new_vote.save
     end
 
+    new_vote = @election_vote.dup
+    travel_to @election_vote.ballot.nominations_end_at do
+      assert new_vote.save
+    end
+  end
+
+  test 'updated_at should be before ballot.voting_ends_at' do
     travel_to @vote.ballot.voting_ends_at do
-      @vote.candidate_ids = original_candidate_ids
+      @vote.reload.candidate_ids = []
       assert_not @vote.save
+    end
+
+    travel_to @vote.ballot.voting_ends_at - 1.second do
+      @vote.reload.candidate_ids = []
+      assert @vote.save
+    end
+  end
+
+  test 'updated_at should not be before ballot.nominations_end_at' do
+    travel_to @election_vote.ballot.nominations_end_at - 1.second do
+      @election_vote.reload.candidate_ids = []
+      assert_not @election_vote.save
+    end
+
+    travel_to @election_vote.ballot.nominations_end_at do
+      @election_vote.reload.candidate_ids = []
+      assert @election_vote.save
     end
   end
 

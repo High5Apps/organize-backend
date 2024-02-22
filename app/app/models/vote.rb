@@ -36,6 +36,7 @@ class Vote < ApplicationRecord
   validate :not_overvoting
   validate :user_and_ballot_in_same_org
 
+  after_save :validate_saved_after_nominations_end
   after_save :validate_saved_before_voting_ends
 
   private
@@ -73,7 +74,18 @@ class Vote < ApplicationRecord
     errors.add :ballot, 'not found' unless user.org.id == ballot.org.id
   end
 
+  def validate_saved_after_nominations_end
+    return unless ballot
+
+    if ballot.nominations_end_at && (updated_at < ballot.nominations_end_at)
+      errors.add(:base, "Vote can't be created before nominations end")
+      raise ActiveRecord::RecordInvalid
+    end
+  end
+
   def validate_saved_before_voting_ends
+    return unless ballot
+
     unless updated_at < ballot.voting_ends_at
       errors.add(:base, "Vote can't be changed after voting ends")
       raise ActiveRecord::RecordInvalid
