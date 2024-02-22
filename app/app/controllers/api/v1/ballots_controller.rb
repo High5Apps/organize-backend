@@ -80,13 +80,6 @@ class Api::V1::BallotsController < ApplicationController
       .require(:candidates)
   end
 
-  def limit_candidate_count
-    if create_candidates_params.count > MAX_CANDIDATES_PER_CREATE
-      render_error :unprocessable_entity,
-        ["Ballot can't have more than #{MAX_CANDIDATES_PER_CREATE} choices"]
-    end
-  end
-
   def validate_election
     return unless create_ballot_params[:category] == 'election'
 
