@@ -4,16 +4,19 @@ class Ballot < ApplicationRecord
   scope :active_at, ->(time) { where.not(voting_ends_at: ..time) }
   scope :created_before, ->(time) { where(created_at: ...time) }
   scope :inactive_at, ->(time) { where(voting_ends_at: ..time) }
-  scope :order_by_active, -> {
-    # Order by the earlier of nominations_end_at (if it exists) and
-    # voting_ends_at, then break ties by lowest id
-    order(Arel.sql(%(
-      LEAST(
-        COALESCE(ballots.nominations_end_at, DATE 'infinity'),
-        ballots.voting_ends_at
-      ) ASC,
-      ballots.id ASC
-    ).gsub(/\s+/, ' ')))
+  scope :order_by_active, ->(time) {
+    # If in nominations, use nomination_end, otherwise use voting_end
+    # Break ties by lowest id
+    order(Arel.sql(Ballot.sanitize_sql_array([
+      %(
+        CASE
+          WHEN :time < ballots.nominations_end_at
+            THEN ballots.nominations_end_at
+          ELSE ballots.voting_ends_at
+        END ASC,
+        ballots.id ASC
+      ).gsub(/\s+/, ' '),
+      time:])))
   }
   scope :order_by_inactive, -> { order(voting_ends_at: :desc, id: :desc) }
 

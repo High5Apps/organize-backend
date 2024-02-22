@@ -11,7 +11,9 @@ class Ballot::Query
   def self.build(params={}, initial_ballots: nil)
     initial_ballots ||= Ballot.all
 
-    created_before_param = params[:created_before] || Time.now
+    now = Time.now
+
+    created_before_param = params[:created_before] || now
     created_before = Time.parse(created_before_param.to_s).utc
 
     ballots = initial_ballots
@@ -38,7 +40,7 @@ class Ballot::Query
     # Default to sorting by active
     sort_parameter = params[:sort] || 'active'
     if sort_parameter == 'active'
-      ballots = ballots.order_by_active
+      ballots = ballots.order_by_active(active_at || now)
     elsif sort_parameter == 'inactive'
       ballots = ballots.order_by_inactive
     end

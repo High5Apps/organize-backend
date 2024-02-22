@@ -48,13 +48,13 @@ class BallotQueryTest < ActiveSupport::TestCase
   test 'should order posts by active by default' do
     ballot_ids = Ballot::Query.build.pluck :id
     assert_not_empty ballot_ids
-    assert_equal Ballot.order_by_active.pluck(:id), ballot_ids
+    assert_equal Ballot.order_by_active(Time.now).pluck(:id), ballot_ids
   end
 
   test 'active sort param should order ballots by active' do
     ballot_ids = Ballot::Query.build({ sort: 'active' }).pluck :id
     assert_not_empty ballot_ids
-    assert_equal Ballot.order_by_active.pluck(:id), ballot_ids
+    assert_equal Ballot.order_by_active(Time.now).pluck(:id), ballot_ids
   end
 
   test 'inactive sort param should order ballots by inactive' do
