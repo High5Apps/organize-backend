@@ -11,7 +11,7 @@ def random_company_name
   companies_string.split(',').sample
 end
 
-Timecop.freeze($simulation.started_at) do
+travel_to $simulation.started_at do
   attributes = {
     created_at: $simulation.started_at,
     encrypted_name: $simulation.encrypt("Local #{random_local_number}"),

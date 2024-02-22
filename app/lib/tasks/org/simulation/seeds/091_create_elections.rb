@@ -53,7 +53,7 @@ offices.each do |office|
   nominations_end_at = voting_ends_at - 1.day
   created_at = nominations_end_at - 1.day
 
-  Timecop.freeze created_at do
+  travel_to created_at do
     founder.ballots.create!({
       category: 'election',
       encrypted_question:,

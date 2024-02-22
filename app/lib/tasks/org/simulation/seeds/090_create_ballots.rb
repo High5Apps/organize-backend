@@ -39,7 +39,7 @@ def create_fake_ballot(org, category:, isActive:)
   # Pick a random member who had joined by that time to be the creator
   creator = org.users.where(joined_at: ...created_at).sample
 
-  Timecop.freeze created_at do
+  travel_to created_at do
     creator.ballots.create! category:, encrypted_question:, voting_ends_at:
   end
 end

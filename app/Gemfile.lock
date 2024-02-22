@@ -165,7 +165,6 @@ GEM
     rubystats (0.4.1)
       matrix
     thor (1.2.1)
-    timecop (0.9.6)
     timeout (0.3.2)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -188,7 +187,6 @@ DEPENDENCIES
   puma (~> 5.0)
   rails (~> 7.0.2, >= 7.0.2.4)
   rubystats (~> 0.4.1)
-  timecop (~> 0.9)
   tzinfo-data
 
 RUBY VERSION

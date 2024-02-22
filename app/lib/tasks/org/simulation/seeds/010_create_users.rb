@@ -3,7 +3,7 @@ user_ids = $simulation.to_seed_data[:user_ids]
 print "\tCreating #{user_ids.count} users... "
 start_time = Time.now
 
-Timecop.freeze($simulation.started_at) do
+travel_to $simulation.started_at do
   user_ids.each do |user_id|
     if user_id == $simulation.founder_id
       # Update founder timestamps to align with simulation timestamps.

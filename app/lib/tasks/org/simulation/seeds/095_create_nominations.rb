@@ -16,7 +16,7 @@ elections.each do |election|
     nominator_id, nominee_id = nominators_and_nominees.shift 2
     nomination_created_at = rand (election.created_at)...nominations_end
     nomination = nil
-    Timecop.freeze nomination_created_at do
+    travel_to nomination_created_at do
       nomination = election.nominations.create!(nominator_id:, nominee_id:)
     end
 
@@ -32,7 +32,7 @@ elections.each do |election|
     end
 
     accepted_or_declined_at = rand nomination_created_at...nominations_end
-    Timecop.freeze accepted_or_declined_at do
+    travel_to accepted_or_declined_at do
       nomination.update!(accepted:)
     end
   end

@@ -68,7 +68,7 @@ posts.order(:created_at).each do |post|
       next if parent.depth + 1 >= Comment::MAX_COMMENT_DEPTH
     end
 
-    Timecop.freeze comment_time do
+    travel_to comment_time do
       comment = post.comments.create!(user: commenter,
         encrypted_body: $simulation.encrypt(hipster_ipsum_comment_body),
         parent:)

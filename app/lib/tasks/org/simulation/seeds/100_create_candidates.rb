@@ -10,7 +10,7 @@ print "\tCreating about #{approximate_candidate_count} candidates... "
 start_time = Time.now
 
 yes_no_ballots.all.each do |ballot|
-  Timecop.freeze ballot.created_at do
+  travel_to ballot.created_at do
     ballot.candidates.create! encrypted_title: $simulation.encrypt('Yes')
     ballot.candidates.create! encrypted_title: $simulation.encrypt('No')
   end
@@ -23,7 +23,7 @@ def hipster_ipsum_candidate_title
 end
 
 multiple_choice_ballots.all.each do |ballot|
-  Timecop.freeze ballot.created_at do
+  travel_to ballot.created_at do
     candidate_count = rand 2..10
     selection_count = rand 1..candidate_count
 

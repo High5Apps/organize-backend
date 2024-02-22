@@ -44,7 +44,6 @@ end
 
 # Used in simulation and db seeds
 gem "rubystats", "~> 0.4.1"
-gem 'timecop', '~> 0.9'
 
 # Used for random db seed data
 gem 'faker', '~> 3'

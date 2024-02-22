@@ -73,7 +73,7 @@ end
 post_data.each do |user_id, day_start|
   created_at = random_time_during_day day_start
 
-  Timecop.freeze created_at do
+  travel_to created_at do
     User.find(user_id).posts.create! category: random_category.to_s,
       encrypted_title: $simulation.encrypt(hipster_ipsum_post_title),
       encrypted_body: $simulation.encrypt(hipster_ipsum_post_body),
