@@ -23,7 +23,7 @@ class Org < ApplicationRecord
       users.joins(:shared_connections).group(:id).count
     offices = terms.group('terms.user_id')
       .pluck('terms.user_id', 'array_agg(terms.office)').to_h
-      .transform_values {|arr| arr.map {|v| Office.new(v).title } }
+      .transform_values { |arr| arr.sort.map {|v| Office.new(v).title } }
     user_data = users.pluck :id, :joined_at, :pseudonym
     user_entries = user_data.map do |d|
       id = d[0];
