@@ -4,6 +4,7 @@ class Ballot::Query
     :encrypted_question,
     :id,
     :nominations_end_at,
+    :office,
     :user_id,
     :voting_ends_at,
   ]
