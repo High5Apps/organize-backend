@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  scope :joined_before, ->(time) { where(joined_at: ...time) }
+
   PUBLIC_KEY_LENGTH = 91
 
   attr_writer :private_key

@@ -55,4 +55,29 @@ class UserTest < ActiveSupport::TestCase
     ballot_without_vote = ballots(:three)
     assert_equal [], @user.my_vote_candidate_ids(ballot_without_vote)
   end
+
+  test 'joined_before should include users where joined_at is in the past' do
+    u1, u2, u3 = create_users_with_joined_at(
+      [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now])
+    query = User.joined_before u2.joined_at
+    assert query.exists? id: u1
+    assert_not query.exists? id: u2
+    assert_not query.exists? id: u3
+  end
+
+  private
+
+  def create_users_with_joined_at(joined_ats)
+    public_key_bytes = users(:one).public_key_bytes
+    org = orgs(:one).dup
+    org.save!
+
+    joined_ats.map do |joined_at|
+      travel_to joined_at do
+        user = User.create!(public_key_bytes:)
+        user.update!(org:)
+        user
+      end
+    end
+  end
 end
