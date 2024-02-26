@@ -1,4 +1,4 @@
-class User::Pseudonyms::Animals
+class User::Pseudonym::Animal
   LIST_OF_100 = [
     'Alpaca',
     'Ant',

@@ -3,8 +3,8 @@ class User::Pseudonym
 
   def initialize(seed, adjectives: nil, animals: nil)
     @seed = seed
-    @adjectives = adjectives || User::Pseudonyms::Adjectives::LIST_OF_100
-    @animals = animals || User::Pseudonyms::Animals::LIST_OF_100
+    @adjectives = adjectives || User::Pseudonym::Adjective::LIST_OF_100
+    @animals = animals || User::Pseudonym::Animal::LIST_OF_100
   end
 
   def at(index)
