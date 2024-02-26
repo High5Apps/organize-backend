@@ -16,7 +16,7 @@ ballots.all.each do |ballot|
   max_candidate_ids_per_vote = ballot.max_candidate_ids_per_vote
   selection_map = {}
 
-  potential_voter_ids = users.where(joined_at: ...ballot.created_at).ids
+  potential_voter_ids = users.joined_before(ballot.created_at).ids
   voter_turnout_fraction = VOTER_TURNOUT_DISTRIBUTION.rng.clamp(0, 1)
   voter_turnout_count = (potential_voter_ids.count * voter_turnout_fraction)
     .floor
