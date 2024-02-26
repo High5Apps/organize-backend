@@ -22,4 +22,12 @@ class UserQueryTest < ActiveSupport::TestCase
 
     assert_equal attribute_allow_list.count, user_json.keys.count
   end
+
+  test 'should respect joined_before param' do
+    last_user_joined_at = User.where.not(joined_at: nil)
+      .order(joined_at: :desc).first.joined_at
+    user_ids = User::Query.build({ joined_before: last_user_joined_at }).ids
+    assert_not_equal user_ids.count, User.count
+    assert_equal User.joined_before(last_user_joined_at).ids.sort, user_ids.sort
+  end
 end
