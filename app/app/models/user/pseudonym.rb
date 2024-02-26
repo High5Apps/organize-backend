@@ -1,10 +1,10 @@
-class Users::Pseudonym
+class User::Pseudonym
   attr_reader :adjectives, :animals
 
   def initialize(seed, adjectives: nil, animals: nil)
     @seed = seed
-    @adjectives = adjectives || Users::Pseudonyms::Adjectives::LIST_OF_100
-    @animals = animals || Users::Pseudonyms::Animals::LIST_OF_100
+    @adjectives = adjectives || User::Pseudonyms::Adjectives::LIST_OF_100
+    @animals = animals || User::Pseudonyms::Animals::LIST_OF_100
   end
 
   def at(index)

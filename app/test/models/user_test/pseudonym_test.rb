@@ -15,10 +15,10 @@ class PseudonymTest < ActiveSupport::TestCase
   TEST_COMBINATION_COUNT = TEST_ADJECTIVES.length * TEST_ANIMALS.length
 
   setup do
-    @real_pseudonym = Users::Pseudonym.new(SEED)
+    @real_pseudonym = User::Pseudonym.new(SEED)
     @create_test_pseudonym = ->(seed) do
-      Users::Pseudonym.new(
-        seed, 
+      User::Pseudonym.new(
+        seed,
         adjectives: TEST_ADJECTIVES,
         animals: TEST_ANIMALS)
     end

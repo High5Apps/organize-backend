@@ -1,4 +1,4 @@
-class Users::Pseudonyms::Adjectives
+class User::Pseudonyms::Adjectives
   LIST_OF_100 = [
     'Adorable',
     'Adventurous',

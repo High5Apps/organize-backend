@@ -57,6 +57,6 @@ class Org < ApplicationRecord
   def next_pseudonym
     seed = id.gsub("-", "").hex
     user_count = users.count
-    Users::Pseudonym.new(seed).at(user_count)
+    User::Pseudonym.new(seed).at(user_count)
   end
 end
