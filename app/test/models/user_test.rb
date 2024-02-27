@@ -65,6 +65,22 @@ class UserTest < ActiveSupport::TestCase
     assert_not query.exists? id: u3
   end
 
+  test 'with_recruit_count should include the recruit_count in the relation' do
+    expected_recruit_counts = @user.org.users.joins(:recruits).group(:id).count
+    users_with_recruit_counts = @user.org.users.with_recruit_count
+    users_with_recruit_counts.each do |user|
+      assert_not_nil user.id
+      assert_equal expected_recruit_counts[user.id] || 0, user.recruit_count
+    end
+  end
+
+  test 'with_recruit_count should sum to (member count - 1) for an org' do
+    orgs.each do |org|
+      assert_equal org.users.count - 1,
+        org.users.with_recruit_count.sum(:recruit_count)
+    end
+  end
+
   private
 
   def create_users_with_joined_at(joined_ats)

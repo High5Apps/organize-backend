@@ -1,5 +1,15 @@
 class User < ApplicationRecord
   scope :joined_before, ->(time) { where(joined_at: ...time) }
+  scope :with_recruit_count, -> {
+    from(
+      joins("LEFT OUTER JOIN (#{
+        joins(:recruits).group(:id)
+          .select('users.id AS user_id, COUNT(*) AS recruit_count_inner')
+          .to_sql
+      }) AS recruit_counts ON users.id = recruit_counts.user_id")
+        .select('*', 'COALESCE(recruit_count_inner, 0) AS recruit_count'),
+      :users)
+  }
 
   PUBLIC_KEY_LENGTH = 91
 
