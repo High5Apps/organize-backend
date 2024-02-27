@@ -1,5 +1,16 @@
 class User < ApplicationRecord
   scope :joined_before, ->(time) { where(joined_at: ...time) }
+  scope :with_offices, -> {
+    from(
+      joins("LEFT OUTER JOIN (#{
+        joins(:terms).group(:id)
+          .select(
+            'users.id AS user_id, array_agg(terms.office) AS offices_inner')
+          .to_sql
+      }) AS offices ON users.id = offices.user_id")
+        .select('*', 'COALESCE(offices_inner, ARRAY[]::integer[]) AS offices'),
+      :users)
+  }
   scope :with_recruit_count, -> {
     from(
       joins("LEFT OUTER JOIN (#{

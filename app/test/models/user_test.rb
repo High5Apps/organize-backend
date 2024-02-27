@@ -65,6 +65,16 @@ class UserTest < ActiveSupport::TestCase
     assert_not query.exists? id: u3
   end
 
+  test 'with_offices should include offices in the relation' do
+    expected_offices = @user.org.users.joins(:terms).group(:id)
+      .pluck(:id, 'array_agg(terms.office) AS offices').to_h
+    users_with_offices = @user.org.users.with_offices
+    users_with_offices.each do |user|
+      assert_not_nil user.id
+      assert_equal expected_offices[user.id] || [], user.offices
+    end
+  end
+
   test 'with_recruit_count should include the recruit_count in the relation' do
     expected_recruit_counts = @user.org.users.joins(:recruits).group(:id).count
     users_with_recruit_counts = @user.org.users.with_recruit_count
