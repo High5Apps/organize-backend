@@ -1,4 +1,6 @@
 class Connection < ApplicationRecord
+  scope :created_before, ->(time) { where(created_at: ...time) }
+
   ERROR_MESSAGE_ALREADY_CONNECTED = "You're already connected to that user"
   ERROR_MESSAGE_DIFFERENT_ORGS = 'You must be in the same org'
   ERROR_MESSAGE_SELF_CONNECTION = "You can't connect to yourself"
