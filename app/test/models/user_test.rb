@@ -65,37 +65,37 @@ class UserTest < ActiveSupport::TestCase
     assert_not query.exists? id: u3
   end
 
-  test 'with_seniority_score_columns should include offices in the relation' do
+  test 'with_seniority_stats should include offices in the relation' do
     expected_offices = @user.org.users.joins(:terms).group(:id)
       .pluck(:id, 'array_agg(terms.office) AS offices').to_h
-    users_with_offices = @user.org.users.with_seniority_score_columns
+    users_with_offices = @user.org.users.with_seniority_stats
     users_with_offices.each do |user|
       assert_not_nil user.id
       assert_equal expected_offices[user.id] || [], user.offices
     end
   end
 
-  test 'with_seniority_score_columns should include the recruit_count in the relation' do
+  test 'with_seniority_stats should include the recruit_count in the relation' do
     expected_recruit_counts = @user.org.users.joins(:recruits).group(:id).count
-    users_with_recruit_counts = @user.org.users.with_seniority_score_columns
+    users_with_recruit_counts = @user.org.users.with_seniority_stats
     users_with_recruit_counts.each do |user|
       assert_not_nil user.id
       assert_equal expected_recruit_counts[user.id] || 0, user.recruit_count
     end
   end
 
-  test 'with_seniority_score_columns recruit_count should sum to (member count - 1) for an org' do
+  test 'with_seniority_stats recruit_count should sum to (member count - 1) for an org' do
     orgs.each do |org|
       assert_equal org.users.count - 1,
-        org.users.with_seniority_score_columns.sum(:recruit_count)
+        org.users.with_seniority_stats.sum(:recruit_count)
     end
   end
 
-  test 'with_seniority_score_columns should include connection_count in the relation' do
+  test 'with_seniority_stats should include connection_count in the relation' do
     scanned_counts = @user.org.users.joins(:scanned_connections).group(:id).count
     shared_counts = @user.org.users.joins(:shared_connections).group(:id).count
 
-    users_with_counts = @user.org.users.with_seniority_score_columns
+    users_with_counts = @user.org.users.with_seniority_stats
     users_with_counts.each do |user|
       assert_not_nil user.id
       expected_count = \

@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   scope :joined_before, ->(time) { where(joined_at: ...time) }
-  scope :with_seniority_score_columns, -> {
+  scope :with_seniority_stats, -> {
     from(
       joins("LEFT OUTER JOIN (#{
         joins(:terms).group(:id)
