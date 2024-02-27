@@ -1,5 +1,7 @@
 class Term < ApplicationRecord
-  scope :active_at, ->(time) { where.not(ends_at: ..time) }
+  scope :active_at, ->(time) {
+    where(created_at: ..time).where.not(ends_at: ..time)
+  }
 
   COOLDOWN_PERIOD = 2.months
 

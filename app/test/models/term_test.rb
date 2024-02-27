@@ -63,9 +63,22 @@ class TermTest < ActiveSupport::TestCase
     assert @non_founder_term.invalid?
   end
 
+  test 'active_at should not include terms where created_at is in the future' do
+    freeze_time do
+      created_ats = [1.second.ago, Time.now, 1.second.from_now]
+      ends_ats = [3.seconds.from_now] * created_ats.count
+      t1, t2, t3 = create_terms_with(created_ats:, ends_ats:)
+      query = Term.active_at(Time.now)
+      assert query.exists?(id: t1)
+      assert query.exists?(id: t2)
+      assert_not query.exists?(id: t3)
+    end
+  end
+
   test 'active_at should include terms where ends_at is in the future' do
-    t1, t2, t3 = create_terms_with_ends_at(
-      [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now])
+    ends_ats = [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now]
+    created_ats = [1.second.ago] * ends_ats.count
+    t1, t2, t3 = create_terms_with(created_ats:, ends_ats:)
     query = Term.active_at(t2.ends_at)
     assert_not query.exists?(id: t1)
     assert_not query.exists?(id: t2)
@@ -74,10 +87,11 @@ class TermTest < ActiveSupport::TestCase
 
   private
 
-  def create_terms_with_ends_at(ends_ats)
-    ends_ats.map do |ends_at|
+  def create_terms_with(created_ats:, ends_ats:)
+    ends_ats.map.with_index do |ends_at, i|
+      created_at = created_ats[i]
       term = @term.dup
-      term.update!(ends_at:)
+      term.update!(created_at:, ends_at:)
       term
     end
   end
