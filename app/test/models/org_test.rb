@@ -58,6 +58,7 @@ class OrgTest < ActiveSupport::TestCase
     first_user = users[users(:one).id]
     second_user = users[users(:three).id]
     third_user = users[users(:four).id]
+    fourth_user = users[users(:seven).id]
 
     assert_equal 6, first_user.keys.count
     assert_not_equal 0, first_user[:joined_at]
@@ -65,12 +66,14 @@ class OrgTest < ActiveSupport::TestCase
     assert_not_empty first_user[:id]
 
     assert_equal 2, first_user[:recruit_count]
-    assert_equal 0, second_user[:recruit_count]
+    assert_equal 1, second_user[:recruit_count]
     assert_equal 0, third_user[:recruit_count]
+    assert_equal 0, fourth_user[:recruit_count]
 
-    assert_equal 3, first_user[:connection_count]
-    assert_equal 1, second_user[:connection_count]
+    assert_equal 2, first_user[:connection_count]
+    assert_equal 2, second_user[:connection_count]
     assert_equal 1, third_user[:connection_count]
+    assert_equal 1, fourth_user[:connection_count]
 
     assert_equal ['Founder', 'Secretary'], first_user[:offices]
     assert_nil second_user[:offices]

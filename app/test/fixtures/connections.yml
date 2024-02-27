@@ -5,5 +5,8 @@ two:
   sharer: four
   scanner: one
 three:
-  sharer: one
+  sharer: three
   scanner: seven
+four:
+  sharer: five
+  scanner: six
