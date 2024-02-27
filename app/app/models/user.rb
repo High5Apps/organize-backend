@@ -21,6 +21,37 @@ class User < ApplicationRecord
         .select('*', 'COALESCE(recruit_count_inner, 0) AS recruit_count'),
       :users)
   }
+  scope :with_scanned_connection_count, -> {
+    from(
+      joins("LEFT OUTER JOIN (#{
+        joins(:scanned_connections).group(:id)
+          .select('users.id AS user_id, COUNT(*) AS scanned_count_inner')
+          .to_sql
+      }) AS scanned_counts ON users.id = scanned_counts.user_id")
+        .select(
+          '*','COALESCE(scanned_count_inner, 0) AS scanned_connection_count'),
+      :users)
+  }
+  scope :with_shared_connection_count, -> {
+    from(
+      joins("LEFT OUTER JOIN (#{
+        joins(:shared_connections).group(:id)
+          .select('users.id AS user_id, COUNT(*) AS shared_count_inner')
+          .to_sql
+      }) AS shared_counts ON users.id = shared_counts.user_id")
+        .select(
+          '*','COALESCE(shared_count_inner, 0) AS shared_connection_count'),
+      :users)
+  }
+  scope :with_connection_count, -> {
+    connection_count = \
+      'scanned_connection_count + shared_connection_count AS connection_count'
+    from(
+      with_scanned_connection_count
+        .with_shared_connection_count
+        .select('*', connection_count),
+      :users)
+  }
 
   PUBLIC_KEY_LENGTH = 91
 

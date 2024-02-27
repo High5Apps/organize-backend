@@ -91,6 +91,37 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  test 'with_scanned_connection_count should include scanned_connection_count in the relation' do
+    expected_counts = @user.org.users.joins(:scanned_connections).group(:id).count
+    users_with_counts = @user.org.users.with_scanned_connection_count
+    users_with_counts.each do |user|
+      assert_not_nil user.id
+      assert_equal expected_counts[user.id] || 0, user.scanned_connection_count
+    end
+  end
+
+  test 'with_shared_connection_count should include shared_connection_count in the relation' do
+    expected_counts = @user.org.users.joins(:shared_connections).group(:id).count
+    users_with_counts = @user.org.users.with_shared_connection_count
+    users_with_counts.each do |user|
+      assert_not_nil user.id
+      assert_equal expected_counts[user.id] || 0, user.shared_connection_count
+    end
+  end
+
+  test 'with_connection_count should include connection_count in the relation' do
+    scanned_counts = @user.org.users.joins(:scanned_connections).group(:id).count
+    shared_counts = @user.org.users.joins(:shared_connections).group(:id).count
+
+    users_with_counts = @user.org.users.with_connection_count
+    users_with_counts.each do |user|
+      assert_not_nil user.id
+      expected_count = \
+        (scanned_counts[user.id] || 0) + (shared_counts[user.id] || 0)
+      assert_equal expected_count, user.connection_count
+    end
+  end
+
   private
 
   def create_users_with_joined_at(joined_ats)
