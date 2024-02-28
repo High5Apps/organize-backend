@@ -61,7 +61,7 @@ posts.order(:created_at).each do |post|
     comment_time = current_time + time_delta
 
     # Pick a random member who had joined by that time to be the commenter
-    commenter = users.joined_before(comment_time).sample
+    commenter = users.joined_at_or_before(comment_time).sample
 
     if rand < 0.8 && !potential_parent_comments.empty?
       parent = potential_parent_comments.sample

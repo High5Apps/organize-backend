@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  scope :joined_before, ->(time) { where(joined_at: ...time) }
+  scope :joined_at_or_before, ->(time) { where(joined_at: ..time) }
   scope :with_seniority_stats, ->(time = nil) {
     time ||= Time.now
     from(

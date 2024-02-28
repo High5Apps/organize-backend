@@ -7,7 +7,7 @@ start_time = Time.now
 
 elections.each do |election|
   nominations_end = election.nominations_end_at
-  joined_users = users.joined_before(nominations_end)
+  joined_users = users.joined_at_or_before(nominations_end)
   max_nomination_count = rand 1..10
   nominators_and_nominees = joined_users.ids.sample 2 * max_nomination_count
   nomination_count = nominators_and_nominees.count / 2

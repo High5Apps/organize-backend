@@ -37,7 +37,7 @@ def create_fake_ballot(org, category:, isActive:)
     QUESTION_PREFIXES[category], QUESTION_SUFFIX)
 
   # Pick a random member who had joined by that time to be the creator
-  creator = org.users.joined_before(created_at).sample
+  creator = org.users.joined_at_or_before(created_at).sample
 
   travel_to created_at do
     creator.ballots.create! category:, encrypted_question:, voting_ends_at:

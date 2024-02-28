@@ -10,11 +10,11 @@ class User::Query
 
     now = Time.now
 
-    joined_before_param = params[:joined_before] || now
-    joined_before = Time.parse(joined_before_param.to_s).utc
+    joined_at_or_before_param = params[:joined_at_or_before] || now
+    joined_at_or_before = Time.parse(joined_at_or_before_param.to_s).utc
 
     users = initial_users
-      .joined_before(joined_before)
+      .joined_at_or_before(joined_at_or_before)
       .select(ALLOWED_ATTRIBUTES)
 
     users
