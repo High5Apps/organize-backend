@@ -1,6 +1,6 @@
 class Upvote < ApplicationRecord
-  scope :most_recent_created_before, ->(time) {
-    most_recent_upvote_for_each_user_on_each_upvotable_before_time = select(
+  scope :most_recent_created_at_or_before, ->(time) {
+    most_recent_upvote_for_each_user_on_each_upvotable_at_or_before_time = select(
       '*',
       %(
         FIRST_VALUE(upvotes.id) OVER (
@@ -8,10 +8,10 @@ class Upvote < ApplicationRecord
           ORDER BY upvotes.created_at DESC, upvotes.id DESC
         ) AS first_id
       ).gsub(/\s+/, ' ')
-    ).where('upvotes.created_at < ?', time)
+    ).where(created_at: ..time)
 
     from(
-      most_recent_upvote_for_each_user_on_each_upvotable_before_time,
+      most_recent_upvote_for_each_user_on_each_upvotable_at_or_before_time,
       :upvotes
     ).where('upvotes.id = first_id')
   }

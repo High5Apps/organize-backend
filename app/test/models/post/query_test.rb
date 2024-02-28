@@ -225,7 +225,7 @@ class PostQueryTest < ActiveSupport::TestCase
   test 'created_at_or_before should apply to upvotes' do
     upvote = upvotes(:three)
     post = upvote.post
-    created_at_or_before = upvote.created_at
+    created_at_or_before = upvote.created_at - 1.second
 
     windowed_posts = Post::Query.build({ created_at_or_before: })
     windowed_score = windowed_posts.find(post.id).score
@@ -233,7 +233,7 @@ class PostQueryTest < ActiveSupport::TestCase
     assert_not_equal unwindowed_score, windowed_score
 
     expected_score = Post.find(post.id).upvotes
-      .filter{ |uv| uv.created_at < created_at_or_before }
+      .filter{ |uv| uv.created_at <= created_at_or_before }
       .map(&:value)
       .sum
     assert_equal expected_score, windowed_score

@@ -20,7 +20,7 @@ class Comment < ApplicationRecord
   scope :left_outer_joins_with_most_recent_upvotes_created_before, ->(time) {
     joins(%Q(
       LEFT OUTER JOIN (
-        #{Upvote.most_recent_created_before(time).to_sql}
+        #{Upvote.most_recent_created_at_or_before(time).to_sql}
       ) AS upvotes
         ON upvotes.comment_id = comments.id
     ).gsub(/\s+/, ' '))

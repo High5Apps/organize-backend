@@ -70,17 +70,17 @@ class UpvoteTest < ActiveSupport::TestCase
     assert @post_upvote.invalid?
   end
 
-  test 'most_recent_created_before should not include newer post upvotes' do
+  test 'most_recent_created_at_or_before should not include newer post upvotes' do
     assert_not_equal 0, @post_upvote.value
 
-    time_now = Upvote.order(created_at: :desc).first.created_at + 1.second
+    time_now = Upvote.order(created_at: :desc).first.created_at
     opposite_value = -1 * @post_upvote.value
 
     assert_difference -> {
       Upvote.where(post: @post_upvote.post).sum(:value)
     }, opposite_value do
       assert_no_difference -> {
-        Upvote.most_recent_created_before(time_now)
+        Upvote.most_recent_created_at_or_before(time_now)
           .where(post: @post_upvote.post)
           .sum(:value)
       } do
@@ -93,17 +93,17 @@ class UpvoteTest < ActiveSupport::TestCase
     end
   end
 
-  test 'most_recent_created_before should not include newer comment upvotes' do
+  test 'most_recent_created_at_or_before should not include newer comment upvotes' do
     assert_not_equal 0, @comment_upvote.value
 
-    time_now = Upvote.order(created_at: :desc).first.created_at + 1.second
+    time_now = Upvote.order(created_at: :desc).first.created_at
     opposite_value = -1 * @comment_upvote.value
 
     assert_difference -> {
       Upvote.where(comment: @comment_upvote.comment).sum(:value)
     }, opposite_value do
       assert_no_difference -> {
-        Upvote.most_recent_created_before(time_now)
+        Upvote.most_recent_created_at_or_before(time_now)
           .where(comment: @comment_upvote.comment)
           .sum(:value)
       } do

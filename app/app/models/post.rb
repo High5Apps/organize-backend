@@ -2,10 +2,10 @@ class Post < ApplicationRecord
   include Encryptable
 
   scope :created_at_or_before, ->(time) { where(created_at: ..time) }
-  scope :left_outer_joins_with_most_recent_upvotes_created_before, ->(time) {
+  scope :left_outer_joins_with_most_recent_upvotes_created_at_or_before, ->(time) {
     joins(%Q(
       LEFT OUTER JOIN (
-        #{Upvote.most_recent_created_before(time).to_sql}
+        #{Upvote.most_recent_created_at_or_before(time).to_sql}
       ) AS upvotes
         ON upvotes.post_id = posts.id
     ).gsub(/\s+/, ' '))
