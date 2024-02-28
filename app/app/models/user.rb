@@ -1,25 +1,31 @@
 class User < ApplicationRecord
   scope :joined_before, ->(time) { where(joined_at: ...time) }
-  scope :with_seniority_stats, -> {
+  scope :with_seniority_stats, ->(time = nil) {
+    time ||= Time.now
     from(
       joins("LEFT OUTER JOIN (#{
-        joins(:terms).group(:id)
+        joins(:terms).group(:id).merge(Term.active_at time)
           .select(
             'users.id AS user_id, array_agg(terms.office) AS offices_inner')
           .to_sql
       }) AS offices ON users.id = offices.user_id")
         .joins("LEFT OUTER JOIN (#{
-          joins(:recruits).group(:id)
+          # Can't use scope merging here because both tables are Users.
+          # Attempting otherwise causes the scope to be applied to the users and
+          # not the recruits
+          joins(:recruits).where(recruits: { joined_at: ..time }).group(:id)
             .select('users.id AS user_id, COUNT(*) AS recruit_count_inner')
             .to_sql
         }) AS recruit_counts ON users.id = recruit_counts.user_id")
         .joins("LEFT OUTER JOIN (#{
           joins(:scanned_connections).group(:id)
+            .merge(Connection.created_before time)
             .select('users.id AS user_id, COUNT(*) AS scanned_count_inner')
             .to_sql
         }) AS scanned_counts ON users.id = scanned_counts.user_id")
         .joins("LEFT OUTER JOIN (#{
           joins(:shared_connections).group(:id)
+            .merge(Connection.created_before time)
             .select('users.id AS user_id, COUNT(*) AS shared_count_inner')
             .to_sql
         }) AS shared_counts ON users.id = shared_counts.user_id")

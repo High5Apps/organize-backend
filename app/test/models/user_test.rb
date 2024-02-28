@@ -66,22 +66,60 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'with_seniority_stats should include offices in the relation' do
-    expected_offices = @user.org.users.joins(:terms).group(:id)
-      .pluck(:id, 'array_agg(terms.office) AS offices').to_h
-    users_with_offices = @user.org.users.with_seniority_stats
+    now = Time.now
+    expected_offices = @user.org.users.joins(:terms).merge(Term.active_at now)
+      .group(:id).pluck(:id, 'array_agg(terms.office) AS offices').to_h
+    users_with_offices = @user.org.users.with_seniority_stats(now)
     users_with_offices.each do |user|
       assert_not_nil user.id
       assert_equal expected_offices[user.id] || [], user.offices
     end
   end
 
+  test 'with_seniority_stats should not include offices inactive at time' do
+    assert_empty @user.org.terms.trustee
+    term = @user.terms.build(office: :trustee, ends_at: 1.minute.from_now)
+    term.save!(validate: false)
+    trustee_index = Office::TYPE_SYMBOLS.index :trustee
+
+    at_term_creation = @user.org.users
+      .with_seniority_stats(term.created_at)
+    assert_includes at_term_creation.flat_map(&:offices), trustee_index
+
+    before_term_creation = @user.org.users
+      .with_seniority_stats(term.created_at - 1.second)
+    assert_not_includes before_term_creation.flat_map(&:offices), trustee_index
+
+    before_term_end = @user.org.users
+      .with_seniority_stats(term.ends_at - 1.second)
+    assert_includes before_term_end.flat_map(&:offices), trustee_index
+
+    at_term_end = @user.org.users
+      .with_seniority_stats(term.ends_at)
+    assert_not_includes before_term_creation.flat_map(&:offices), trustee_index
+  end
+
   test 'with_seniority_stats should include the recruit_count in the relation' do
-    expected_recruit_counts = @user.org.users.joins(:recruits).group(:id).count
-    users_with_recruit_counts = @user.org.users.with_seniority_stats
+    now = Time.now
+    expected_recruit_counts = @user.org.users.joins(:recruits)
+      .where(recruits: { joined_at: ..now }).group(:id).count
+    users_with_recruit_counts = @user.org.users.with_seniority_stats(now)
     users_with_recruit_counts.each do |user|
       assert_not_nil user.id
       assert_equal expected_recruit_counts[user.id] || 0, user.recruit_count
     end
+  end
+
+  test 'with_seniority_stats should not include recruits created after time' do
+    after_user_seven_joined = \
+      @user.org.users.with_seniority_stats(users(:seven).joined_at)
+    recruiter = after_user_seven_joined.find users(:three).id
+    recruit_count = recruiter.recruit_count
+
+    before_user_seven_joined = \
+      @user.org.users.with_seniority_stats(users(:seven).joined_at - 1.second)
+    recruiter = before_user_seven_joined.find users(:three).id
+    assert_equal -1, recruiter.recruit_count - recruit_count
   end
 
   test 'with_seniority_stats recruit_count should sum to (member count - 1) for an org' do
@@ -92,10 +130,13 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'with_seniority_stats should include connection_count in the relation' do
-    scanned_counts = @user.org.users.joins(:scanned_connections).group(:id).count
-    shared_counts = @user.org.users.joins(:shared_connections).group(:id).count
+    now = Time.now
+    scanned_counts = @user.org.users.joins(:scanned_connections)
+      .merge(Connection.created_before now).group(:id).count
+    shared_counts = @user.org.users.joins(:shared_connections)
+      .merge(Connection.created_before now).group(:id).count
 
-    users_with_counts = @user.org.users.with_seniority_stats
+    users_with_counts = @user.org.users.with_seniority_stats(now)
     users_with_counts.each do |user|
       assert_not_nil user.id
       expected_count = \
@@ -104,7 +145,45 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  test 'with_seniority_stats should not include shared_connections created after time' do
+    correct_connection_created_ats_to_match_user_joined_ats
+
+    connection = connections(:three)
+    after_connection = \
+      @user.org.users.with_seniority_stats(connection.created_at + 1.second)
+    sharer = after_connection.find connection.sharer.id
+    connection_count = sharer.connection_count
+
+    at_connection = \
+      @user.org.users.with_seniority_stats(connection.created_at)
+    sharer = at_connection.find connection.sharer.id
+    assert_equal -1, sharer.connection_count - connection_count
+  end
+
+  test 'with_seniority_stats should not include scanned_connections created after time' do
+    correct_connection_created_ats_to_match_user_joined_ats
+
+    connection = connections(:three)
+    after_connection = \
+      @user.org.users.with_seniority_stats(connection.created_at + 1.second)
+    scanner = after_connection.find connection.scanner.id
+    connection_count = scanner.connection_count
+
+    at_connection = \
+      @user.org.users.with_seniority_stats(connection.created_at)
+      scanner = at_connection.find connection.scanner.id
+    assert_equal -1, scanner.connection_count - connection_count
+  end
+
   private
+
+  def correct_connection_created_ats_to_match_user_joined_ats
+    # Without this, connection fixture created_ats are all automatically and
+    # incorrectly set to be the fixture creation time
+    connections.each do |connection|
+      connection.update! created_at: connection.scanner.joined_at
+    end
+  end
 
   def create_users_with_joined_at(joined_ats)
     public_key_bytes = users(:one).public_key_bytes
