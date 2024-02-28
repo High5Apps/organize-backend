@@ -14,13 +14,14 @@ class Post::Query
   def self.build(params={}, initial_posts: nil)
     initial_posts ||= Post.all
 
-    created_before_param = params[:created_before] || Upvote::FAR_FUTURE_TIME
-    created_before = Time.parse(created_before_param.to_s).utc
+    created_at_or_before_param = \
+      params[:created_at_or_before] || Upvote::FAR_FUTURE_TIME
+    created_at_or_before = Time.parse(created_at_or_before_param.to_s).utc
 
     posts = initial_posts
-      .created_before(created_before)
+      .created_at_or_before(created_at_or_before)
       .joins(:user)
-      .left_outer_joins_with_most_recent_upvotes_created_before(created_before)
+      .left_outer_joins_with_most_recent_upvotes_created_before(created_at_or_before)
       .page(params[:page])
       .group(:id, :pseudonym)
       .select(*selections(params))
@@ -51,7 +52,7 @@ class Post::Query
             :time_division)
           )^:gravity DESC, posts.id DESC
         ).gsub(/\s+/, ' '),
-        cutoff_time: created_before,
+        cutoff_time: created_at_or_before,
         gravity: 1.5,
         time_division: 1.hour])))
     end
