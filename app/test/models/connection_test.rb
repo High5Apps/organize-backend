@@ -76,9 +76,9 @@ class ConnectionTest < ActiveSupport::TestCase
   end
 
   test 'shared_connections should be correct' do
-    shared_connections = users(:four).shared_connections
+    shared_connections = users(:three).shared_connections
     assert_equal 1, shared_connections.count
-    assert_equal shared_connections.first, connections(:two)
+    assert_equal shared_connections.first, connections(:three)
   end
 
   test 'directly_connected_to? should be correct' do
