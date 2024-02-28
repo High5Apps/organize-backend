@@ -14,11 +14,11 @@ class Ballot::Query
 
     now = Time.now
 
-    created_before_param = params[:created_before] || now
-    created_before = Time.parse(created_before_param.to_s).utc
+    created_at_or_before_param = params[:created_at_or_before] || now
+    created_at_or_before = Time.parse(created_at_or_before_param.to_s).utc
 
     ballots = initial_ballots
-      .created_before(created_before)
+      .created_at_or_before(created_at_or_before)
       .select(ALLOWED_ATTRIBUTES)
 
     active_at_param = params[:active_at]
