@@ -65,6 +65,37 @@ class UserTest < ActiveSupport::TestCase
     assert_not query.exists? id: u3
   end
 
+  test 'order_by_service should not reduce the number of users' do
+    now = Time.now
+    assert_equal @user.org.users.count,
+      @user.org.users.with_service_stats(now).order_by_service(now).to_a.count
+  end
+
+  test 'order_by_service should match sort_by_service' do
+    now = Time.now
+    orgs.each do |org|
+      users = org.users
+      expected_ordered_users = sort_by_service(users, now)
+      ordered_users = users.with_service_stats.order_by_service(now)
+      assert_equal expected_ordered_users.map(&:id), ordered_users.map(&:id)
+    end
+  end
+
+  test 'order_by_service should break ties by highest user_id' do
+    now = Time.now
+    org = @user.org
+    users = org.users
+    users.update_all(joined_at: now, recruiter_id: nil)
+    assert_not_empty users
+    assert_empty users.where.not(joined_at: now)
+    assert_empty users.where.not(recruiter_id: nil)
+    Connection.destroy_all
+    assert_empty Connection.all
+
+    ordered_users = users.with_service_stats.order_by_service(now)
+    assert_equal users.order(id: :desc).ids, ordered_users.map(&:id)
+  end
+
   test 'with_service_stats should include offices in the relation' do
     now = Time.now
     expected_offices = @user.org.users.joins(:terms).merge(Term.active_at now)
@@ -193,5 +224,14 @@ class UserTest < ActiveSupport::TestCase
         user
       end
     end
+  end
+
+  def sort_by_service(relation, time)
+    expected_ordered_users = relation.with_service_stats(time)
+      .sort_by do |u|
+        tenureInMonths = ((time - u.joined_at) / 1.month)
+        [tenureInMonths + u.connection_count + 3 * u.recruit_count, u.id]
+      end
+      .reverse # Reverse because sort_by uses an ascending sort
   end
 end

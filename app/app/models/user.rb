@@ -1,5 +1,17 @@
 class User < ApplicationRecord
   scope :joined_at_or_before, ->(time) { where(joined_at: ..time) }
+  scope :order_by_service, ->(time) {
+    # Must be used with with_service_stats scope
+    order(Arel.sql(User.sanitize_sql_array([
+      %(
+        (EXTRACT(EPOCH FROM(:time - users.joined_at)) / :time_division)
+          + users.connection_count
+          + (3 * users.recruit_count) DESC,
+          users.id DESC
+      ).gsub(/\s+/, ' '),
+      time: time,
+      time_division: 1.month])))
+  }
   scope :with_service_stats, ->(time = nil) {
     time ||= Time.now
     from(
