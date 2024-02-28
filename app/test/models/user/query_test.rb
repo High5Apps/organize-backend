@@ -35,6 +35,16 @@ class UserQueryTest < ActiveSupport::TestCase
       user_ids.sort
   end
 
+  test 'office sort should sort by min_office' do
+    now = Time.now
+    expected_users = @org.users.with_service_stats.order(:min_office)
+    users = User::Query.build({
+      joined_at_or_before: now,
+      sort: 'office',
+    }, initial_users: @org.users)
+    assert_equal expected_users.map(&:id), users.map(&:id)
+  end
+
   test 'service sort should use order_by_service' do
     now = Time.now
     expected_users = @org.users.with_service_stats(now).order_by_service(now)

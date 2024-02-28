@@ -24,6 +24,8 @@ class User::Query
     sort_parameter = params[:sort]
     if sort_parameter == 'service'
       users = users.order_by_service(joined_at_or_before)
+    elsif sort_parameter == 'office'
+      users = users.order(:min_office)
     end
 
     users
