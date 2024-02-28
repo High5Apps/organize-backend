@@ -19,7 +19,7 @@ Rails.application.routes.draw do
             resources :comments, only: [:create]
           end
       end
-      resources :users, only: [:create, :show]
+      resources :users, only: [:index, :create, :show]
 
       get 'connection_preview', to: 'connections#preview'
       get 'org', to: 'orgs#my_org', as: 'my_org'

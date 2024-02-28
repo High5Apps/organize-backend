@@ -33,6 +33,39 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'should index with valid authorization' do
+    get api_v1_users_url, headers: @authorized_headers
+    assert_response :ok
+  end
+
+  test 'should not index with invalid authorization' do
+    get api_v1_users_url,
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
+    assert_response :unauthorized
+  end
+
+  test 'should not index if user is not in an Org' do
+    @user.update!(org: nil)
+    assert_nil @user.reload.org
+
+    get api_v1_users_url, headers: @authorized_headers
+    assert_response :not_found
+  end
+
+  test 'index should only include users from requester Org' do
+    get api_v1_users_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    user_jsons = json_response.dig(:users)
+    user_ids = user_jsons.map { |u| u[:id] }
+    assert_not_empty user_ids
+    users = User.find(user_ids)
+    users.each do |user|
+      assert_equal @user.org, user.org
+    end
+  end
+
   test 'should not show with invalid authorization' do
     get api_v1_user_url(@user_in_org),
       headers: authorized_headers(@user,

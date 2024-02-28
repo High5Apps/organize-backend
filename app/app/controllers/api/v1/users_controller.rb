@@ -7,7 +7,8 @@ class Api::V1::UsersController < ApplicationController
     :public_key_bytes,
   ]
 
-  before_action :authenticate_user, only: [:show]
+  before_action :authenticate_user, only: [:index, :show]
+  before_action :check_org_membership, only: [:index]
 
   def create
     new_user = User.new(create_params)
@@ -16,6 +17,11 @@ class Api::V1::UsersController < ApplicationController
     else
       render_error :unprocessable_entity, new_user.errors.full_messages
     end
+  end
+
+  def index
+    users = User::Query.build params, initial_users: @org.users
+    render json: { users: }
   end
 
   def show
