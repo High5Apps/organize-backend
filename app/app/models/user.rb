@@ -19,13 +19,13 @@ class User < ApplicationRecord
         }) AS recruit_counts ON users.id = recruit_counts.user_id")
         .joins("LEFT OUTER JOIN (#{
           joins(:scanned_connections).group(:id)
-            .merge(Connection.created_before time)
+            .merge(Connection.created_at_or_before time)
             .select('users.id AS user_id, COUNT(*) AS scanned_count_inner')
             .to_sql
         }) AS scanned_counts ON users.id = scanned_counts.user_id")
         .joins("LEFT OUTER JOIN (#{
           joins(:shared_connections).group(:id)
-            .merge(Connection.created_before time)
+            .merge(Connection.created_at_or_before time)
             .select('users.id AS user_id, COUNT(*) AS shared_count_inner')
             .to_sql
         }) AS shared_counts ON users.id = shared_counts.user_id")

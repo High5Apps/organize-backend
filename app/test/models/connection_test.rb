@@ -127,7 +127,7 @@ class ConnectionTest < ActiveSupport::TestCase
     assert_equal Connection::ERROR_MESSAGE_DIFFERENT_ORGS, error_messages.first
   end
 
-  test 'created_before should only include connections with created_at before time' do
+  test 'created_at_or_before should not include connections with created_at after time' do
     c1 = connections :one
     c2 = connections :two
     c3 = connections :three
@@ -135,9 +135,9 @@ class ConnectionTest < ActiveSupport::TestCase
       c1.update! created_at: 1.second.ago
       c2.update! created_at: Time.now
       c3.update! created_at: 1.second.from_now
-      query = Connection.created_before(Time.now)
+      query = Connection.created_at_or_before(Time.now)
       assert query.exists?(id: c1)
-      assert_not query.exists?(id: c2)
+      assert query.exists?(id: c2)
       assert_not query.exists?(id: c3)
     end
   end

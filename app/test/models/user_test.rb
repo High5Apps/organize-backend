@@ -132,9 +132,9 @@ class UserTest < ActiveSupport::TestCase
   test 'with_seniority_stats should include connection_count in the relation' do
     now = Time.now
     scanned_counts = @user.org.users.joins(:scanned_connections)
-      .merge(Connection.created_before now).group(:id).count
+      .merge(Connection.created_at_or_before now).group(:id).count
     shared_counts = @user.org.users.joins(:shared_connections)
-      .merge(Connection.created_before now).group(:id).count
+      .merge(Connection.created_at_or_before now).group(:id).count
 
     users_with_counts = @user.org.users.with_seniority_stats(now)
     users_with_counts.each do |user|
@@ -149,14 +149,14 @@ class UserTest < ActiveSupport::TestCase
     correct_connection_created_ats_to_match_user_joined_ats
 
     connection = connections(:three)
-    after_connection = \
-      @user.org.users.with_seniority_stats(connection.created_at + 1.second)
-    sharer = after_connection.find connection.sharer.id
-    connection_count = sharer.connection_count
-
     at_connection = \
       @user.org.users.with_seniority_stats(connection.created_at)
     sharer = at_connection.find connection.sharer.id
+    connection_count = sharer.connection_count
+
+    before_connection = \
+      @user.org.users.with_seniority_stats(connection.created_at - 1.second)
+    sharer = before_connection.find connection.sharer.id
     assert_equal -1, sharer.connection_count - connection_count
   end
 
@@ -164,14 +164,14 @@ class UserTest < ActiveSupport::TestCase
     correct_connection_created_ats_to_match_user_joined_ats
 
     connection = connections(:three)
-    after_connection = \
-      @user.org.users.with_seniority_stats(connection.created_at + 1.second)
-    scanner = after_connection.find connection.scanner.id
-    connection_count = scanner.connection_count
-
     at_connection = \
       @user.org.users.with_seniority_stats(connection.created_at)
-      scanner = at_connection.find connection.scanner.id
+    scanner = at_connection.find connection.scanner.id
+    connection_count = scanner.connection_count
+
+    before_connection = \
+      @user.org.users.with_seniority_stats(connection.created_at - 1.second)
+      scanner = before_connection.find connection.scanner.id
     assert_equal -1, scanner.connection_count - connection_count
   end
 
