@@ -65,78 +65,76 @@ class UserTest < ActiveSupport::TestCase
     assert_not query.exists? id: u3
   end
 
-  test 'with_seniority_stats should include offices in the relation' do
+  test 'with_service_stats should include offices in the relation' do
     now = Time.now
     expected_offices = @user.org.users.joins(:terms).merge(Term.active_at now)
       .group(:id).pluck(:id, 'array_agg(terms.office) AS offices').to_h
-    users_with_offices = @user.org.users.with_seniority_stats(now)
+    users_with_offices = @user.org.users.with_service_stats(now)
     users_with_offices.each do |user|
       assert_not_nil user.id
       assert_equal expected_offices[user.id] || [], user.offices
     end
   end
 
-  test 'with_seniority_stats should not include offices inactive at time' do
+  test 'with_service_stats should not include offices inactive at time' do
     assert_empty @user.org.terms.trustee
     term = @user.terms.build(office: :trustee, ends_at: 1.minute.from_now)
     term.save!(validate: false)
     trustee_index = Office::TYPE_SYMBOLS.index :trustee
 
-    at_term_creation = @user.org.users
-      .with_seniority_stats(term.created_at)
+    at_term_creation = @user.org.users.with_service_stats(term.created_at)
     assert_includes at_term_creation.flat_map(&:offices), trustee_index
 
     before_term_creation = @user.org.users
-      .with_seniority_stats(term.created_at - 1.second)
+      .with_service_stats(term.created_at - 1.second)
     assert_not_includes before_term_creation.flat_map(&:offices), trustee_index
 
     before_term_end = @user.org.users
-      .with_seniority_stats(term.ends_at - 1.second)
+      .with_service_stats(term.ends_at - 1.second)
     assert_includes before_term_end.flat_map(&:offices), trustee_index
 
-    at_term_end = @user.org.users
-      .with_seniority_stats(term.ends_at)
+    at_term_end = @user.org.users.with_service_stats(term.ends_at)
     assert_not_includes before_term_creation.flat_map(&:offices), trustee_index
   end
 
-  test 'with_seniority_stats should include the recruit_count in the relation' do
+  test 'with_service_stats should include the recruit_count in the relation' do
     now = Time.now
     expected_recruit_counts = @user.org.users.joins(:recruits)
       .where(recruits: { joined_at: ..now }).group(:id).count
-    users_with_recruit_counts = @user.org.users.with_seniority_stats(now)
+    users_with_recruit_counts = @user.org.users.with_service_stats(now)
     users_with_recruit_counts.each do |user|
       assert_not_nil user.id
       assert_equal expected_recruit_counts[user.id] || 0, user.recruit_count
     end
   end
 
-  test 'with_seniority_stats should not include recruits created after time' do
+  test 'with_service_stats should not include recruits created after time' do
     after_user_seven_joined = \
-      @user.org.users.with_seniority_stats(users(:seven).joined_at)
+      @user.org.users.with_service_stats(users(:seven).joined_at)
     recruiter = after_user_seven_joined.find users(:three).id
     recruit_count = recruiter.recruit_count
 
     before_user_seven_joined = \
-      @user.org.users.with_seniority_stats(users(:seven).joined_at - 1.second)
+      @user.org.users.with_service_stats(users(:seven).joined_at - 1.second)
     recruiter = before_user_seven_joined.find users(:three).id
     assert_equal -1, recruiter.recruit_count - recruit_count
   end
 
-  test 'with_seniority_stats recruit_count should sum to (member count - 1) for an org' do
+  test 'with_service_stats recruit_count should sum to (member count - 1) for an org' do
     orgs.each do |org|
       assert_equal org.users.count - 1,
-        org.users.with_seniority_stats.sum(:recruit_count)
+        org.users.with_service_stats.sum(:recruit_count)
     end
   end
 
-  test 'with_seniority_stats should include connection_count in the relation' do
+  test 'with_service_stats should include connection_count in the relation' do
     now = Time.now
     scanned_counts = @user.org.users.joins(:scanned_connections)
       .merge(Connection.created_at_or_before now).group(:id).count
     shared_counts = @user.org.users.joins(:shared_connections)
       .merge(Connection.created_at_or_before now).group(:id).count
 
-    users_with_counts = @user.org.users.with_seniority_stats(now)
+    users_with_counts = @user.org.users.with_service_stats(now)
     users_with_counts.each do |user|
       assert_not_nil user.id
       expected_count = \
@@ -145,33 +143,31 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test 'with_seniority_stats should not include shared_connections created after time' do
+  test 'with_service_stats should not include shared_connections created after time' do
     correct_connection_created_ats_to_match_user_joined_ats
 
     connection = connections(:three)
-    at_connection = \
-      @user.org.users.with_seniority_stats(connection.created_at)
+    at_connection = @user.org.users.with_service_stats(connection.created_at)
     sharer = at_connection.find connection.sharer.id
     connection_count = sharer.connection_count
 
     before_connection = \
-      @user.org.users.with_seniority_stats(connection.created_at - 1.second)
+      @user.org.users.with_service_stats(connection.created_at - 1.second)
     sharer = before_connection.find connection.sharer.id
     assert_equal -1, sharer.connection_count - connection_count
   end
 
-  test 'with_seniority_stats should not include scanned_connections created after time' do
+  test 'with_service_stats should not include scanned_connections created after time' do
     correct_connection_created_ats_to_match_user_joined_ats
 
     connection = connections(:three)
-    at_connection = \
-      @user.org.users.with_seniority_stats(connection.created_at)
+    at_connection = @user.org.users.with_service_stats(connection.created_at)
     scanner = at_connection.find connection.scanner.id
     connection_count = scanner.connection_count
 
     before_connection = \
-      @user.org.users.with_seniority_stats(connection.created_at - 1.second)
-      scanner = before_connection.find connection.scanner.id
+      @user.org.users.with_service_stats(connection.created_at - 1.second)
+    scanner = before_connection.find connection.scanner.id
     assert_equal -1, scanner.connection_count - connection_count
   end
 
