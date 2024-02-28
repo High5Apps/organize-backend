@@ -34,4 +34,14 @@ class UserQueryTest < ActiveSupport::TestCase
     assert_equal User.joined_at_or_before(before_last_user_joined).ids.sort,
       user_ids.sort
   end
+
+  test 'service sort should use order_by_service' do
+    now = Time.now
+    expected_users = @org.users.with_service_stats(now).order_by_service(now)
+    users = User::Query.build({
+      joined_at_or_before: now,
+      sort: 'service',
+    }, initial_users: @org.users)
+    assert_equal expected_users.map(&:id), users.map(&:id)
+  end
 end

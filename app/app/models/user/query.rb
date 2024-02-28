@@ -1,8 +1,11 @@
 class User::Query
   ALLOWED_ATTRIBUTES = [
+    :connection_count,
     :id,
     :joined_at,
+    :offices,
     :pseudonym,
+    :recruit_count,
   ]
 
   def self.build(params={}, initial_users: nil)
@@ -15,7 +18,13 @@ class User::Query
 
     users = initial_users
       .joined_at_or_before(joined_at_or_before)
+      .with_service_stats
       .select(ALLOWED_ATTRIBUTES)
+
+    sort_parameter = params[:sort]
+    if sort_parameter == 'service'
+      users = users.order_by_service(joined_at_or_before)
+    end
 
     users
   end
