@@ -163,21 +163,21 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'index should respect created_before param' do
+  test 'index should respect created_at_or_before param' do
     comment = comments(:two)
     post = comment.post
-    created_before = comment.created_at
+    created_at_or_before = comment.created_at
 
     get api_v1_post_comments_url(post),
       headers: @authorized_headers,
-      params: { created_before: }
+      params: { created_at_or_before: }
     json_response = JSON.parse(response.body, symbolize_names: true)
     comment_jsons = json_response.dig(:comments)
     comment_created_ats = comment_jsons.map { |comment| comment[:created_at] }
 
     assert_not_empty comment_created_ats
     comment_created_ats.each do |created_at|
-      assert_operator created_at, :<, created_before
+      assert_operator created_at, :<=, created_at_or_before
     end
   end
 

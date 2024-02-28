@@ -39,17 +39,18 @@ class Api::V1::CommentsController < ApplicationController
   end
 
   def index
-    created_before_param = params[:created_before] || Upvote::FAR_FUTURE_TIME
-    created_before = Time.parse(created_before_param.to_s).utc
+    created_at_or_before_param = \
+      params[:created_at_or_before] || Upvote::FAR_FUTURE_TIME
+    created_at_or_before = Time.parse(created_at_or_before_param.to_s).utc
 
     my_id = authenticated_user.id
     comments = @post.comments
-      .created_before(created_before)
+      .created_at_or_before(created_at_or_before)
       .includes_pseudonym
-      .includes_score_from_upvotes_created_before(created_before)
-      .includes_my_vote_from_upvotes_created_before(created_before, my_id)
+      .includes_score_from_upvotes_created_at_or_before(created_at_or_before)
+      .includes_my_vote_from_upvotes_created_at_or_before(created_at_or_before, my_id)
       .select(*MANUAL_SELECTIONS)
-      .order_by_hot_created_before(created_before)
+      .order_by_hot_created_at_or_before(created_at_or_before)
       .arrange_serializable do |parent, children|
         {
           **parent.attributes
