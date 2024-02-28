@@ -66,6 +66,21 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'index should include pagination metadata' do
+    get api_v1_users_url, headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    assert_not_nil json_response.dig(:meta, :current_page)
+    assert json_response.dig(:meta).key?(:next_page)
+  end
+
+  test 'index should respect page param' do
+    page = 99
+    get api_v1_users_url, headers: @authorized_headers, params: { page: }
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    current_page = json_response.dig(:meta, :current_page)
+    assert_equal page, current_page
+  end
+
   test 'should not show with invalid authorization' do
     get api_v1_user_url(@user_in_org),
       headers: authorized_headers(@user,

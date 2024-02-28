@@ -21,7 +21,7 @@ class Api::V1::UsersController < ApplicationController
 
   def index
     users = User::Query.build params, initial_users: @org.users
-    render json: { users: }
+    render json: { meta: pagination_dict(users), users: }
   end
 
   def show

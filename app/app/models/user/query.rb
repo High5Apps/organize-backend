@@ -19,6 +19,7 @@ class User::Query
     users = initial_users
       .joined_at_or_before(joined_at_or_before)
       .with_service_stats
+      .page(params[:page])
       .select(ALLOWED_ATTRIBUTES)
 
     filter_parameter = params[:filter]
