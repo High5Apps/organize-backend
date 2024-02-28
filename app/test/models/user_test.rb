@@ -128,6 +128,17 @@ class UserTest < ActiveSupport::TestCase
     assert_not_includes before_term_creation.flat_map(&:offices), trustee_index
   end
 
+  test 'with_service_stats should include min_office in the relation' do
+    users_with_min_office = User.with_service_stats
+    users_with_min_office.each do |user|
+      if user.offices.blank?
+        assert_nil user.min_office
+      else
+        assert_equal user.offices.min, user.min_office
+      end
+    end
+  end
+
   test 'with_service_stats should include the recruit_count in the relation' do
     now = Time.now
     expected_recruit_counts = @user.org.users.joins(:recruits)

@@ -18,7 +18,9 @@ class User < ApplicationRecord
       joins("LEFT OUTER JOIN (#{
         joins(:terms).group(:id).merge(Term.active_at time)
           .select(
-            'users.id AS user_id, array_agg(terms.office) AS offices_inner')
+            'users.id AS user_id',
+            'array_agg(terms.office) AS offices_inner',
+            'MIN(terms.office) AS min_office')
           .to_sql
       }) AS offices ON users.id = offices.user_id")
         .joins("LEFT OUTER JOIN (#{
