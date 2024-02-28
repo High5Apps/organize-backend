@@ -35,6 +35,13 @@ class UserQueryTest < ActiveSupport::TestCase
       user_ids.sort
   end
 
+  test 'officer filter should match officer scope' do
+    expected_user_ids = User.with_service_stats.officers.ids
+    assert_not_empty expected_user_ids
+    user_ids = User::Query.build({ filter: 'officer' }).ids
+    assert_equal expected_user_ids.sort, user_ids.sort
+  end
+
   test 'office sort should sort by min_office' do
     now = Time.now
     expected_users = @org.users.with_service_stats.order(:min_office)
