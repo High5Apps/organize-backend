@@ -65,6 +65,14 @@ class UserTest < ActiveSupport::TestCase
     assert_not query.exists? id: u3
   end
 
+  test 'officers should contain all active officers' do
+    now = Time.now
+    org = @user.org
+    expected_officer_ids = org.terms.active_at(now).pluck(:user_id).uniq
+    officer_ids = org.users.with_service_stats(now).officers.to_a.map(&:id)
+    assert_equal expected_officer_ids.sort, officer_ids.sort
+  end
+
   test 'order_by_service should not reduce the number of users' do
     now = Time.now
     assert_equal @user.org.users.count,
