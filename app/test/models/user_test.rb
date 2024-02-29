@@ -111,7 +111,7 @@ class UserTest < ActiveSupport::TestCase
     users_with_offices = @user.org.users.with_service_stats(now)
     users_with_offices.each do |user|
       assert_not_nil user.id
-      assert_equal expected_offices[user.id] || [], user.offices
+      assert_equal expected_offices[user.id] || [], user.office_numbers
     end
   end
 
@@ -122,18 +122,20 @@ class UserTest < ActiveSupport::TestCase
     trustee_index = Office::TYPE_SYMBOLS.index :trustee
 
     at_term_creation = @user.org.users.with_service_stats(term.created_at)
-    assert_includes at_term_creation.flat_map(&:offices), trustee_index
+    assert_includes at_term_creation.flat_map(&:office_numbers), trustee_index
 
     before_term_creation = @user.org.users
       .with_service_stats(term.created_at - 1.second)
-    assert_not_includes before_term_creation.flat_map(&:offices), trustee_index
+    assert_not_includes before_term_creation.flat_map(&:office_numbers),
+      trustee_index
 
     before_term_end = @user.org.users
       .with_service_stats(term.ends_at - 1.second)
-    assert_includes before_term_end.flat_map(&:offices), trustee_index
+    assert_includes before_term_end.flat_map(&:office_numbers), trustee_index
 
     at_term_end = @user.org.users.with_service_stats(term.ends_at)
-    assert_not_includes before_term_creation.flat_map(&:offices), trustee_index
+    assert_not_includes before_term_creation.flat_map(&:office_numbers),
+      trustee_index
   end
 
   test 'with_service_stats should include min_office in the relation' do
@@ -142,7 +144,7 @@ class UserTest < ActiveSupport::TestCase
       if user.offices.blank?
         assert_nil user.min_office
       else
-        assert_equal user.offices.min, user.min_office
+        assert_equal user.office_numbers.min, user.min_office
       end
     end
   end

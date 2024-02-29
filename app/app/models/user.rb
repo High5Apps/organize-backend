@@ -122,6 +122,14 @@ class User < ApplicationRecord
       &.candidate_ids || []
   end
 
+  def offices
+    office_numbers&.map { |o| Office.new(o).to_s }
+  end
+
+  def office_numbers
+    attributes['offices']
+  end
+
   private
 
     attr_reader :private_key
