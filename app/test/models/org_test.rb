@@ -52,32 +52,33 @@ class OrgTest < ActiveSupport::TestCase
   test 'graph should include users' do
     users = @org.graph[:users]
     assert_equal [
-      users(:one), users(:three), users(:four), users(:seven),
+      users(:one), users(:four), users(:seven), users(:three),
     ].map(&:id), users.map { |id, _| id }
 
     first_user = users[users(:one).id]
-    second_user = users[users(:three).id]
-    third_user = users[users(:four).id]
-    fourth_user = users[users(:seven).id]
+    second_user = users[users(:four).id]
+    third_user = users[users(:seven).id]
+    fourth_user = users[users(:three).id]
 
-    assert_equal 6, first_user.keys.count
+    assert_equal 6, first_user.attributes.count
     assert_not_equal 0, first_user[:joined_at]
     assert_not_empty first_user[:pseudonym]
     assert_not_empty first_user[:id]
 
     assert_equal 2, first_user[:recruit_count]
-    assert_equal 1, second_user[:recruit_count]
+    assert_equal 0, second_user[:recruit_count]
     assert_equal 0, third_user[:recruit_count]
-    assert_equal 0, fourth_user[:recruit_count]
+    assert_equal 1, fourth_user[:recruit_count]
 
     assert_equal 2, first_user[:connection_count]
-    assert_equal 2, second_user[:connection_count]
+    assert_equal 1, second_user[:connection_count]
     assert_equal 1, third_user[:connection_count]
-    assert_equal 1, fourth_user[:connection_count]
+    assert_equal 2, fourth_user[:connection_count]
 
-    assert_equal ['Founder', 'Secretary'], first_user[:offices]
-    assert_nil second_user[:offices]
-    assert_equal ['President'], third_user[:offices]
+    assert_equal ['founder', 'secretary'], first_user.offices
+    assert_equal ['president'], second_user.offices
+    assert_empty third_user.offices
+    assert_empty fourth_user.offices
   end
 
   test 'graph should include connections as [[sharer_id, scanner_id]]' do
