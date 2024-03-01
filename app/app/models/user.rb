@@ -4,6 +4,10 @@ class User < ApplicationRecord
     # Must be used with with_service_stats scope
     where.not(min_office: nil)
   }
+  scope :order_by_office, ->(time) {
+    # Must be used with with_service_stats scope
+    order(:min_office, 'users.id')
+  }
   scope :order_by_service, ->(time) {
     # Must be used with with_service_stats scope
     order(Arel.sql(User.sanitize_sql_array([

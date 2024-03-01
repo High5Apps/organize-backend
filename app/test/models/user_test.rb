@@ -73,6 +73,19 @@ class UserTest < ActiveSupport::TestCase
     assert_equal expected_officer_ids.sort, officer_ids.sort
   end
 
+  test 'order_by_office should sort by min_office, breaking ties by lowest user_id' do
+    now = Time.now
+
+    # This is needed because sort_by can't compare nil values
+    higherThanLowestOffice = Office::TYPE_SYMBOLS.count
+    expected_users = User.with_service_stats(now)
+      .sort_by do |user|
+        [user.min_office || higherThanLowestOffice, user.id]
+      end
+    users = User.with_service_stats(now).order_by_office(now)
+    assert_equal expected_users.map(&:id), users.map(&:id)
+  end
+
   test 'order_by_service should not reduce the number of users' do
     now = Time.now
     assert_equal @user.org.users.count,
