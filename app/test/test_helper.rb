@@ -28,4 +28,12 @@ class ActiveSupport::TestCase
   def bearer(token)
     "Bearer #{token}"
   end
+
+  def assert_contains_pagination_data
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    meta = json_response.dig(:meta)
+    assert_not_nil meta&.dig(:current_page)
+    assert meta&.key?(:next_page)
+    meta
+  end
 end
