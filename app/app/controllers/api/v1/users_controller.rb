@@ -20,7 +20,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def index
-    users = User::Query.build params, initial_users: @org.users
+    users = User::Query.new(params, initial_users: @org.users).relation
     render json: { meta: pagination_dict(users), users: }
   end
 
