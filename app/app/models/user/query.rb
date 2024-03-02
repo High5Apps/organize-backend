@@ -7,13 +7,21 @@ class User::Query
     :pseudonym,
     :recruit_count,
   ]
+  PAGINATION_BYPASSING_FILTERS = ['officer']
 
   def initialize(params={}, initial_users: nil)
     @params = params
     @initial_users = initial_users || User.all
   end
 
+  def paginates?
+    values = relation.values
+    (values[:limit] && values[:offset]) != nil
+  end
+
   def relation
+    return @relation if @relation
+
     now = Time.now
 
     joined_at_or_before_param = @params[:joined_at_or_before] || now
@@ -22,10 +30,14 @@ class User::Query
     users = @initial_users
       .joined_at_or_before(joined_at_or_before)
       .with_service_stats
-      .page(@params[:page])
       .select(ALLOWED_ATTRIBUTES)
 
     filter_parameter = @params[:filter]
+
+    unless PAGINATION_BYPASSING_FILTERS.include? filter_parameter
+      users = users.page(@params[:page])
+    end
+
     if filter_parameter == 'officer'
       users = users.officers
     end
@@ -37,6 +49,7 @@ class User::Query
       users = users.order_by_office(joined_at_or_before)
     end
 
-    users
+    @relation = users
+    @relation
   end
 end

@@ -20,8 +20,12 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def index
-    users = User::Query.new(params, initial_users: @org.users).relation
-    render json: { meta: pagination_dict(users), users: }
+    @query = User::Query.new(params, initial_users: @org.users)
+    users = @query.relation
+    render json: {
+      meta: (pagination_dict(users) if @query.paginates?),
+      users:,
+    }.compact
   end
 
   def show

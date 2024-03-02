@@ -66,9 +66,18 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'index should include pagination metadata' do
+  test 'index should include pagination metadata by default' do
     get api_v1_users_url, headers: @authorized_headers
     assert_contains_pagination_data
+  end
+
+  test 'index should only include pagination metadata if query paginates' do
+    filter = User::Query::PAGINATION_BYPASSING_FILTERS.first
+    get api_v1_users_url, headers: @authorized_headers, params: { filter: }
+    assert_not @controller.view_assigns['query'].paginates?
+
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    assert_nil json_response.dig(:meta)
   end
 
   test 'index should respect page param' do
