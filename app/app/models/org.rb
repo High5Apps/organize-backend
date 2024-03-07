@@ -16,22 +16,11 @@ class Org < ApplicationRecord
     max_length: MAX_MEMBER_DEFINITION_LENGTH
 
   def graph
-    now = Time.now
-    users_with_stats = users.joined_at_or_before(now)
-      .with_service_stats(now)
-      .order_by_office(now)
-      .select(User::Query::ALLOWED_ATTRIBUTES)
-    nodes = users_with_stats.map{|u| [u.id, u] }.to_h
-
     connections = Connection.where(scanner_id: user_ids).or(
       Connection.where(sharer_id: user_ids)
     ).pluck :sharer_id, :scanner_id
 
-    {
-      user_ids:,
-      users: nodes,
-      connections:,
-    }
+    { connections:, user_ids: }
   end
 
   def next_pseudonym
