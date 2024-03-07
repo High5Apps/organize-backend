@@ -28,6 +28,7 @@ class Org < ApplicationRecord
     ).pluck :sharer_id, :scanner_id
 
     {
+      user_ids:,
       users: nodes,
       connections:,
     }

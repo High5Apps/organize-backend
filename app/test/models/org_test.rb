@@ -49,6 +49,10 @@ class OrgTest < ActiveSupport::TestCase
     assert @org.invalid?
   end
 
+  test 'graph should include user_ids' do
+    assert_equal @org.users.ids.sort, @org.graph[:user_ids].sort
+  end
+
   test 'graph should include users' do
     users = @org.graph[:users]
     assert_equal [
