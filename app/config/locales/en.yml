@@ -45,3 +45,9 @@ en:
       post:
         encrypted_body: 'Body'
         encrypted_title: 'Title'
+    errors:
+      models:
+        nomination:
+          attributes:
+            nominee:
+              taken: 'has already been nominated'
