@@ -56,19 +56,13 @@ class Ballot < ApplicationRecord
   validates :user, presence: true
   validates :term_ends_at,
     presence: true,
-    comparison: {
-      greater_than: :voting_ends_at,
-      message: 'must be after voting end',
-    },
+    comparison: { greater_than: :voting_ends_at },
     if: :election?
   validates :term_ends_at, absence: true, unless: :election?
   validates :voting_ends_at, presence: true
   validates :voting_ends_at, after_created_at: true, unless: :election?
   validates :voting_ends_at,
-    comparison: {
-      greater_than: :nominations_end_at,
-      message: 'must be after nominations end',
-    },
+    comparison: { greater_than: :nominations_end_at },
     if: :election?
 
   validate :office_open, on: :create, if: :election?

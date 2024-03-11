@@ -47,6 +47,12 @@ en:
         encrypted_title: 'Title'
     errors:
       models:
+        ballot:
+          attributes:
+            term_ends_at:
+              greater_than: 'must be after voting end'
+            voting_ends_at:
+              greater_than: 'must be after nominations end'
         nomination:
           attributes:
             nominee:
