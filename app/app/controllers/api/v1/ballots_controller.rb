@@ -20,6 +20,11 @@ class Api::V1::BallotsController < ApplicationController
     :nominator,
     :nominee,
   ]
+  ALLOWED_RESULTS_ATTRIBUTES = [
+    :candidate_id,
+    :rank,
+    :vote_count,
+  ]
   MAX_CANDIDATES_PER_CREATE = 100.freeze
 
   before_action :authenticate_user, only: [:index, :create, :show]

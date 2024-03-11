@@ -277,6 +277,20 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'show should only include allowed results attributes' do
+    travel_to @ballot.voting_ends_at do
+      get api_v1_ballot_url(@ballot),
+        headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
+    end
+
+    results = JSON.parse(response.body, symbolize_names: true)[:results]
+    assert_not_empty results
+    results.each do |result|
+      assert_only_includes_allowed_attributes result,
+        Api::V1::BallotsController::ALLOWED_RESULTS_ATTRIBUTES
+    end
+  end
+
   test 'show should only include allowed ballot attributes' do
     get api_v1_ballot_url(@ballot), headers: @authorized_headers
     ballot = JSON.parse(response.body, symbolize_names: true)[:ballot]
