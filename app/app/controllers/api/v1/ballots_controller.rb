@@ -3,6 +3,7 @@ class Api::V1::BallotsController < ApplicationController
     :ballot,
     :candidates,
     :my_vote,
+    :nominations,
     :results,
   ]
   ALLOWED_BALLOT_ATTRIBUTES = Ballot::Query::ALLOWED_ATTRIBUTES + [
@@ -13,6 +14,12 @@ class Api::V1::BallotsController < ApplicationController
     ALLOWED_CANDIDATE_ATTRIBUTES + [:pseudonym]
   ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES = \
     ALLOWED_CANDIDATE_ATTRIBUTES + [:encrypted_title]
+  ALLOWED_NOMINATION_ATTRIBUTES = [
+    :accepted,
+    :id,
+    :nominator,
+    :nominee,
+  ]
   MAX_CANDIDATES_PER_CREATE = 100.freeze
 
   before_action :authenticate_user, only: [:index, :create, :show]
@@ -65,6 +72,7 @@ class Api::V1::BallotsController < ApplicationController
       ballot: ballot.slice(ALLOWED_BALLOT_ATTRIBUTES),
       candidates:,
       my_vote: authenticated_user.my_vote_candidate_ids(ballot),
+      nominations: (nominations(ballot) if ballot.during_nominations?),
       results: (ballot.results unless Time.now < ballot.voting_ends_at),
   }.compact
   end
@@ -88,6 +96,16 @@ class Api::V1::BallotsController < ApplicationController
     params.slice(:candidates)
       .permit(candidates: [EncryptedMessage.permitted_params(:title)])
       .require(:candidates)
+  end
+
+  def nominations(ballot)
+    allowed_candidate_attributes = ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES
+    ballot.nominations.includes(:nominator, :nominee).map do |nomination|
+      nomination.slice(ALLOWED_NOMINATION_ATTRIBUTES).merge({
+        nominator: nomination.nominator.slice(allowed_candidate_attributes),
+        nominee: nomination.nominee.slice(allowed_candidate_attributes),
+      })
+    end
   end
 
   def validate_election

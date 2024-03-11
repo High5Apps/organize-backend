@@ -221,7 +221,44 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     json_response = JSON.parse(response.body, symbolize_names: true)
     assert_only_includes_allowed_attributes json_response,
       Api::V1::BallotsController::ALLOWED_ATTRIBUTES,
-      optional_attributes: [:results]
+      optional_attributes: [:nominations, :results]
+  end
+
+  test 'show should only include nominations during nominations' do
+    [
+      [@election.nominations_end_at - 1.second, true],
+      [@election.nominations_end_at, false],
+    ].each do |time, during_nominations|
+      travel_to time do
+        assert_equal during_nominations, @election.during_nominations?
+        get api_v1_ballot_url(@election),
+          headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
+      end
+
+      nominations = JSON.parse(response.body, symbolize_names: true)
+        .dig(:nominations)
+      assert_nil(nominations) unless during_nominations
+      assert_not_nil(nominations) if during_nominations
+    end
+  end
+
+  test 'show should only include allowed nominations attributes' do
+    travel_to @election.nominations_end_at - 1.second do
+      get api_v1_ballot_url(@election),
+        headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
+    end
+
+    nominations = JSON.parse(response.body, symbolize_names: true)[:nominations]
+    assert_not_empty nominations
+    nominations.each do |nomination|
+      assert_only_includes_allowed_attributes nomination,
+        Api::V1::BallotsController::ALLOWED_NOMINATION_ATTRIBUTES
+
+      [nomination[:nominator], nomination[:nominee]].each do |user|
+        assert_only_includes_allowed_attributes user,
+          Api::V1::BallotsController::ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES
+      end
+    end
   end
 
   test 'show should not include results until voting ends' do
