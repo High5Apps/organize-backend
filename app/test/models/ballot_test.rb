@@ -163,6 +163,24 @@ class BallotTest < ActiveSupport::TestCase
     end
   end
 
+  test 'during_nominations? should be false for non-elections' do
+    assert_not @ballot.election?
+    assert_not @ballot.during_nominations?
+  end
+
+  test 'during_nominations? should be true between created_at and nominations_end_at' do
+    [
+      [@election.created_at - 1.second, false],
+      [@election.created_at, true],
+      [@election.nominations_end_at - 1.second, true],
+      [@election.nominations_end_at, false],
+    ].each do |time, expected|
+      travel_to time do
+        assert_equal expected, @election.during_nominations?
+      end
+    end
+  end
+
   test 'active_at should include ballots where voting_ends_at is in the future' do
     b1, b2, b3 = create_ballots_with_voting_ends_at(
       [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now])
