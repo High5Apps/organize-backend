@@ -25,7 +25,7 @@ class Api::V1::NominationsController < ApplicationController
         nomination: @nomination.slice(:id, *PERMITTED_UPDATE_PARAMS),
       }
     else
-      render_error :unprocessable_entity, new_nomination.errors.full_messages
+      render_error :unprocessable_entity, @nomination.errors.full_messages
     end
   end
 
