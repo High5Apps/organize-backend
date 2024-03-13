@@ -285,11 +285,18 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'show should only include allowed ballot attributes' do
+  test 'show should only include allowed ballot attributes for non-elections' do
     get api_v1_ballot_url(@ballot), headers: @authorized_headers
     ballot = JSON.parse(response.body, symbolize_names: true)[:ballot]
     assert_only_includes_allowed_attributes ballot,
       Api::V1::BallotsController::ALLOWED_BALLOT_ATTRIBUTES
+  end
+
+  test 'show should only include allowed ballot attributes for elections' do
+    get api_v1_ballot_url(@election), headers: @authorized_headers
+    ballot = JSON.parse(response.body, symbolize_names: true)[:ballot]
+    assert_only_includes_allowed_attributes ballot,
+      Api::V1::BallotsController::ALLOWED_BALLOT_ELECTION_ATTRIBUTES
   end
 
   test 'show should only include allowed candidate attributes' do
