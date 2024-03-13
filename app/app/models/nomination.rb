@@ -17,6 +17,8 @@ class Nomination < ApplicationRecord
   after_update :create_candidate_for_nominee,
     if: -> { saved_change_to_accepted? from: nil, to: true }
 
+  after_save :validate_saved_before_nominations_end
+
   private
 
   def check_unaccepted
@@ -33,6 +35,15 @@ class Nomination < ApplicationRecord
     return unless nominator && nominee
     if nominator == nominee
       errors.add :base, "Can't nominate yourself"
+    end
+  end
+
+  def validate_saved_before_nominations_end
+    return unless ballot
+
+    unless updated_at < ballot.nominations_end_at
+      errors.add(:base, "Nomination can't be changed after nominations end")
+      raise ActiveRecord::RecordInvalid
     end
   end
 end

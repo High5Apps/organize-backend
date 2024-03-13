@@ -57,6 +57,33 @@ class NominationTest < ActiveSupport::TestCase
     assert_not nomination.save
   end
 
+  test 'should not be able to create a nomination after nominations end' do
+    nominations_end_at = @unaccepted_nomination.ballot.nominations_end_at
+    [
+      [nominations_end_at, false],
+      [nominations_end_at - 1.second, true],
+    ].each do |time, expect_save|
+      nomination = @unaccepted_nomination.dup
+      @unaccepted_nomination.destroy!
+      travel_to time do
+        assert_equal expect_save, nomination.save
+      end
+    end
+  end
+
+  test 'should not be able to accept or decline a nomination after nominations end' do
+    nominations_end_at = @unaccepted_nomination.ballot.nominations_end_at
+    [
+      [nominations_end_at, false],
+      [nominations_end_at - 1.second, true
+    ]].each do |time, expect_save|
+      travel_to time do
+        assert_equal expect_save,
+          @unaccepted_nomination.reload.update(accepted: true)
+      end
+    end
+  end
+
   test 'should create a candidate for the nominee when nomination is accepted' do
     assert_changes -> {
       @unaccepted_nomination.ballot.candidates
