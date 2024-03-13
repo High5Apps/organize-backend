@@ -11,6 +11,7 @@ class Nomination < ApplicationRecord
     presence: true,
     uniqueness: { scope: :ballot }
 
+  validate :ballot_is_election
   validate :not_self_nomination
 
   before_validation :check_unaccepted, if: :will_save_change_to_accepted?
@@ -38,8 +39,16 @@ class Nomination < ApplicationRecord
     end
   end
 
-  def validate_saved_before_nominations_end
+  def ballot_is_election
     return unless ballot
+
+    unless ballot.election?
+      errors.add(:base, "Can't nominate candidates for non-elections")
+    end
+  end
+
+  def validate_saved_before_nominations_end
+    return unless ballot&.election?
 
     unless updated_at < ballot.nominations_end_at
       errors.add(:base, "Nomination can't be changed after nominations end")

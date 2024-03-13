@@ -84,6 +84,16 @@ class NominationTest < ActiveSupport::TestCase
     end
   end
 
+  test 'should not create a nomination on non-elections' do
+    ballot = ballots :one
+    assert_not ballot.election?
+
+    attributes = @unaccepted_nomination.attributes
+      .except('id', 'created_at', 'updated_at')
+    nomination = ballot.nominations.build attributes
+    assert_not nomination.save
+  end
+
   test 'should create a candidate for the nominee when nomination is accepted' do
     assert_changes -> {
       @unaccepted_nomination.ballot.candidates
