@@ -224,21 +224,15 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
       optional_attributes: [:nominations, :results]
   end
 
-  test 'show should only include nominations during nominations' do
-    [
-      [@election.nominations_end_at - 1.second, true],
-      [@election.nominations_end_at, false],
-    ].each do |time, during_nominations|
-      travel_to time do
-        assert_equal during_nominations, @election.during_nominations?
-        get api_v1_ballot_url(@election),
-          headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
-      end
+  test 'show should only include nominations for elections' do
+    [[@election, true], [@ballot, false]].each do |ballot, expect_nominations|
+      get api_v1_ballot_url(ballot),
+        headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
 
       nominations = JSON.parse(response.body, symbolize_names: true)
         .dig(:nominations)
-      assert_nil(nominations) unless during_nominations
-      assert_not_nil(nominations) if during_nominations
+      assert_nil(nominations) unless expect_nominations
+      assert_not_nil(nominations) if expect_nominations
     end
   end
 

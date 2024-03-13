@@ -77,7 +77,7 @@ class Api::V1::BallotsController < ApplicationController
       ballot: ballot.slice(ALLOWED_BALLOT_ATTRIBUTES),
       candidates:,
       my_vote: authenticated_user.my_vote_candidate_ids(ballot),
-      nominations: (nominations(ballot) if ballot.during_nominations?),
+      nominations: (nominations(ballot) if ballot.election?),
       results: (ballot.results unless Time.now < ballot.voting_ends_at),
   }.compact
   end

@@ -69,12 +69,6 @@ class Ballot < ApplicationRecord
 
   has_encrypted :question, present: true, max_length: MAX_QUESTION_LENGTH
 
-  def during_nominations?
-    return false unless election?
-    now = Time.now
-    (now >= created_at) && (now < nominations_end_at)
-  end
-
   def results
     results = candidates
       .left_outer_joins_with_most_recent_unnested_votes
