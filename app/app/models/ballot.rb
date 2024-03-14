@@ -21,6 +21,7 @@ class Ballot < ApplicationRecord
   scope :order_by_inactive, -> { order(voting_ends_at: :desc, id: :desc) }
 
   MAX_QUESTION_LENGTH = 140
+  MIN_TERM_ACCEPTANCE_PERIOD = 24.hours
 
   enum category: [:yes_no, :multiple_choice, :election]
   enum office: Office::TYPE_SYMBOLS
@@ -56,9 +57,16 @@ class Ballot < ApplicationRecord
   validates :user, presence: true
   validates :term_ends_at,
     presence: true,
-    comparison: { greater_than: :voting_ends_at },
+    comparison: { greater_than: :term_starts_at },
     if: :election?
   validates :term_ends_at, absence: true, unless: :election?
+  validates :term_starts_at,
+      presence: true,
+      comparison: {
+        greater_than_or_equal_to: ->(ballot) {
+          ballot.voting_ends_at + MIN_TERM_ACCEPTANCE_PERIOD } },
+      if: :election?
+  validates :term_starts_at, absence: true, unless: :election?
   validates :voting_ends_at, presence: true
   validates :voting_ends_at, after_created_at: true, unless: :election?
   validates :voting_ends_at,

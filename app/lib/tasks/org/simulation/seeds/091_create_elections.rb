@@ -49,7 +49,8 @@ offices.each do |office|
   voting_ends_at = $simulation.ended_at + {
     results: -1.day, nominations: 2.days, voting: 1.day,
   }[state]
-  term_ends_at = voting_ends_at + 1.year
+  term_starts_at = voting_ends_at + 1.day
+  term_ends_at = term_starts_at + 1.year
   nominations_end_at = voting_ends_at - 1.day
   created_at = nominations_end_at - 1.day
 
@@ -61,6 +62,7 @@ offices.each do |office|
       nominations_end_at:,
       office:,
       term_ends_at:,
+      term_starts_at:,
       voting_ends_at:,
     })
   end

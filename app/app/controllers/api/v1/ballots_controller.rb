@@ -11,6 +11,7 @@ class Api::V1::BallotsController < ApplicationController
   ]
   ALLOWED_BALLOT_ELECTION_ATTRIBUTES = ALLOWED_BALLOT_ATTRIBUTES + [
     :term_ends_at,
+    :term_starts_at,
   ]
   ALLOWED_CANDIDATE_ATTRIBUTES = [:id]
   ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES = \
@@ -99,6 +100,7 @@ class Api::V1::BallotsController < ApplicationController
         :office,
         :nominations_end_at,
         :term_ends_at,
+        :term_starts_at,
         EncryptedMessage.permitted_params(:question),
         :voting_ends_at)
   end

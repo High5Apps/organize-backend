@@ -34,6 +34,7 @@ en:
     attributes:
       ballot:
         encrypted_question: 'Question'
+        term_starts_at: '"Term starts on"'
         voting_ends_at: '"Voting ends on"'
       candidate:
         encrypted_title: 'Title'
@@ -50,7 +51,9 @@ en:
         ballot:
           attributes:
             term_ends_at:
-              greater_than: 'must be after voting end'
+              greater_than: 'must be after term starts'
+            term_starts_at:
+              greater_than_or_equal_to: 'must be at least 24 hours after voting ends to give the election winner enough time to accept office. A "lame duck" period of 1 to 6 weeks is usually recommended before the next term starts, so that the outgoing officer has time to wrap things up.'
             voting_ends_at:
               greater_than: 'must be after nominations end'
         nomination:

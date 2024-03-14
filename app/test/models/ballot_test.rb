@@ -116,10 +116,29 @@ class BallotTest < ActiveSupport::TestCase
     assert @election.invalid?
   end
 
-  test 'term_ends_at should be after voting_ends_at for elections' do
-    @election.term_ends_at = @election.voting_ends_at
+  test 'term_ends_at should be after term_starts_at for elections' do
+    @election.term_ends_at = @election.term_starts_at
     assert @election.invalid?
-    @election.term_ends_at = @election.voting_ends_at + 1.second
+    @election.term_ends_at = @election.term_starts_at + 1.second
+    assert @election.valid?
+  end
+
+  test 'term_starts_at should be absent for non-elections' do
+    @ballot.term_starts_at = Time.now
+    assert @ballot.invalid?
+  end
+
+  test 'term_starts_at should be required for elections' do
+    @election.term_starts_at = nil
+    assert @election.invalid?
+  end
+
+  test 'term_starts_at should be at least MIN_TERM_ACCEPTANCE_PERIOD after voting_ends_at for elections' do
+    acceptable_term_starts_at = \
+      @election.voting_ends_at + Ballot::MIN_TERM_ACCEPTANCE_PERIOD
+    @election.term_starts_at = acceptable_term_starts_at - 1.second
+    assert @election.invalid?
+    @election.term_starts_at = acceptable_term_starts_at
     assert @election.valid?
   end
 
@@ -470,12 +489,14 @@ class BallotTest < ActiveSupport::TestCase
     voting_ends_at = Time.now
     Ballot.all.each do |ballot|
       nominations_end_at = nil
+      term_starts_at = nil
 
-      if ballot.nominations_end_at
+      if ballot.election?
         nominations_end_at = voting_ends_at - 1.second
+        term_starts_at = voting_ends_at + Ballot::MIN_TERM_ACCEPTANCE_PERIOD
       end
 
-      ballot.update! voting_ends_at:, nominations_end_at:
+      ballot.update! nominations_end_at:, term_starts_at:, voting_ends_at:
     end
   end
 
