@@ -1,21 +1,25 @@
 one:
   ends_at: <%= 1000.years.from_now.to_fs(:db) %>
   office: :founder
+  starts_at: <%= 1.second.ago.to_fs(:db) %>
   user: one
 
 two:
   ends_at: <%= 1000.years.from_now.to_fs(:db) %>
   office: :founder
+  starts_at: <%= 1.second.ago.to_fs(:db) %>
   user: five
 
 three:
   ballot: election_president
   ends_at: <%= 1.year.from_now.to_fs(:db) %>
   office: president
+  starts_at: <%= 1.day.from_now.to_fs(:db) %>
   user: four
 
 five:
   ballot: election_secretary
   ends_at: <%= 1.year.from_now.to_fs(:db) %>
   office: secretary
+  starts_at: <%= 1.day.from_now.to_fs(:db) %>
   user: one

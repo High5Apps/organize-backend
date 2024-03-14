@@ -14,10 +14,14 @@ class Term < ApplicationRecord
   validates :ballot, presence: true, unless: :founder?
   validates :ends_at,
     presence: true,
-    after_created_at: true
+    comparison: { greater_than: :starts_at }
   validates :office,
     presence: true,
     inclusion: { in: offices }
+  validates :starts_at, presence: true
+  validates :starts_at,
+    after_created_at: true,
+    unless: :founder?
   validates :user, presence: true
 
   validate :user_is_first_member, if: :founder?

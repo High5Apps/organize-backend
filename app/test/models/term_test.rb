@@ -30,11 +30,11 @@ class TermTest < ActiveSupport::TestCase
     assert @founder_term.invalid?
   end
 
-  test 'ends_at should be after created_at' do
-    @founder_term.ends_at = @founder_term.created_at
+  test 'ends_at should be after starts_at' do
+    @founder_term.ends_at = @founder_term.starts_at
     assert @founder_term.invalid?
 
-    @founder_term.ends_at = @founder_term.created_at + 1.second
+    @founder_term.ends_at = @founder_term.starts_at + 1.second
     assert @founder_term.valid?
   end
 
@@ -46,6 +46,19 @@ class TermTest < ActiveSupport::TestCase
   test 'user should be present' do
     @founder_term.user = nil
     assert_not @founder_term.valid?
+  end
+
+  test 'starts_at should be present' do
+    @founder_term.starts_at = nil
+    assert @founder_term.invalid?
+  end
+
+  test 'starts_at should be after created_at for non-founders' do
+    @non_founder_term.starts_at = @non_founder_term.created_at
+    assert @non_founder_term.invalid?
+
+    @non_founder_term.starts_at = @non_founder_term.created_at + 1.second
+    assert @non_founder_term.valid?
   end
 
   test "user should be org's first member for founder terms" do

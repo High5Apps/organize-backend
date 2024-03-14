@@ -129,26 +129,30 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'with_service_stats should not include offices inactive at time' do
-    assert_empty @user.org.terms.trustee
-    term = @user.terms.build(office: :trustee, ends_at: 1.minute.from_now)
-    term.save!(validate: false)
-    trustee_index = Office::TYPE_SYMBOLS.index :trustee
+    office = :trustee
+    assert_empty @user.org.terms.where(office:)
+    travel_to 1.second.ago
+    term = terms(:three).dup
+    term.office = office
+    term.save!
+    travel_back
+    office_index = Office::TYPE_SYMBOLS.index office
 
     at_term_creation = @user.org.users.with_service_stats(term.created_at)
-    assert_includes at_term_creation.flat_map(&:office_numbers), trustee_index
+    assert_includes at_term_creation.flat_map(&:office_numbers), office_index
 
     before_term_creation = @user.org.users
       .with_service_stats(term.created_at - 1.second)
     assert_not_includes before_term_creation.flat_map(&:office_numbers),
-      trustee_index
+      office_index
 
     before_term_end = @user.org.users
       .with_service_stats(term.ends_at - 1.second)
-    assert_includes before_term_end.flat_map(&:office_numbers), trustee_index
+    assert_includes before_term_end.flat_map(&:office_numbers), office_index
 
     at_term_end = @user.org.users.with_service_stats(term.ends_at)
     assert_not_includes before_term_creation.flat_map(&:office_numbers),
-      trustee_index
+    office_index
   end
 
   test 'with_service_stats should include min_office in the relation' do

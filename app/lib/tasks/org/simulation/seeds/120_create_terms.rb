@@ -8,11 +8,14 @@ elections_with_results.each do |election|
   election.winners.each do |winner|
     candidate = Candidate.find winner[:candidate_id]
     ballot = candidate.ballot
-    ballot.terms.create!({
-      ends_at: ballot.term_ends_at,
-      office: ballot.office,
-      user: candidate.user,
-    })
+    travel_to ballot.term_starts_at - 1.second do
+      ballot.terms.create!({
+        ends_at: ballot.term_ends_at,
+        office: ballot.office,
+        starts_at: ballot.term_starts_at,
+        user: candidate.user,
+      })
+    end
   end
 end
 
