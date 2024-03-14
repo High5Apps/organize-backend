@@ -74,6 +74,9 @@ class Ballot < ApplicationRecord
     if: :election?
 
   validate :office_open, on: :create, if: :election?
+  validate :term_starts_at_is_not_before_the_previous_term_ends,
+    on: :create,
+    if: :election?
 
   has_encrypted :question, present: true, max_length: MAX_QUESTION_LENGTH
 
@@ -131,6 +134,14 @@ class Ballot < ApplicationRecord
   def office_open
     unless Office.availability_in(org, office)[:open]
       errors.add :office, 'is already filled or currently has an open election'
+    end
+  end
+
+  def term_starts_at_is_not_before_the_previous_term_ends
+    return unless term_starts_at && office
+
+    if org.terms.where(office:).active_at(term_starts_at).exists?
+      errors.add :term_starts_at, "can't be before the previous term ends"
     end
   end
 end

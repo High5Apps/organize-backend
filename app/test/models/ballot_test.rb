@@ -142,6 +142,30 @@ class BallotTest < ActiveSupport::TestCase
     assert @election.valid?
   end
 
+  test 'term_starts_at should not be before the previous term ends' do
+    president_election = ballots :election_president
+    during_president_cooldown_period = \
+      president_election.term_ends_at - Term::COOLDOWN_PERIOD + 1.second
+    travel_to during_president_cooldown_period do
+      acceptable_start = president_election.term_ends_at
+      unacceptable_start = acceptable_start - 1.second
+      [
+        [unacceptable_start, false],
+        [acceptable_start, true],
+      ].each do |start, expect_valid|
+        new_president_election = president_election.dup
+        new_president_election.assign_attributes(
+          nominations_end_at: \
+            start - Ballot::MIN_TERM_ACCEPTANCE_PERIOD - 1.second,
+          term_ends_at: start + 1.year,
+          term_starts_at: start,
+          voting_ends_at: start - Ballot::MIN_TERM_ACCEPTANCE_PERIOD,
+        )
+        assert_equal expect_valid, new_president_election.save
+      end
+    end
+  end
+
   test 'user should be present' do
     @ballot.user = nil
     assert @ballot.invalid?
@@ -488,15 +512,15 @@ class BallotTest < ActiveSupport::TestCase
   def set_all_ballot_timestamps_equal
     voting_ends_at = Time.now
     Ballot.all.each do |ballot|
-      nominations_end_at = nil
-      term_starts_at = nil
+      ballot.voting_ends_at = voting_ends_at
 
       if ballot.election?
-        nominations_end_at = voting_ends_at - 1.second
-        term_starts_at = voting_ends_at + Ballot::MIN_TERM_ACCEPTANCE_PERIOD
+        ballot.nominations_end_at = voting_ends_at - 1.second
+        ballot.term_starts_at = voting_ends_at + Ballot::MIN_TERM_ACCEPTANCE_PERIOD
+        ballot.term_ends_at = ballot.term_starts_at + 1.second
       end
 
-      ballot.update! nominations_end_at:, term_starts_at:, voting_ends_at:
+      ballot.save!
     end
   end
 
