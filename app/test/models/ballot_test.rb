@@ -210,7 +210,8 @@ class BallotTest < ActiveSupport::TestCase
     b1, b2, b3 = create_ballots_with_voting_ends_at(
       [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now])
     query = Ballot.active_at(b2.voting_ends_at)
-    assert_not query.exists?(id: [b1, b2])
+    assert_not query.exists?(id: b1)
+    assert_not query.exists?(id: b2)
     assert query.exists?(id: b3)
   end
 
@@ -227,8 +228,19 @@ class BallotTest < ActiveSupport::TestCase
     b1, b2, b3 = create_ballots_with_voting_ends_at(
       [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now])
     query = Ballot.inactive_at(b2.voting_ends_at)
-    assert query.exists?(id: [b1, b2])
+    assert query.exists?(id: b1)
+    assert query.exists?(id: b2)
     assert_not query.exists?(id: b3)
+  end
+
+  test 'in_term_acceptance_period should include inactive ballots with term_starts_at in the future' do
+    term_start = @election.term_starts_at
+    b1, b2, b3 = create_ballots_with_term_starts_at(
+      [term_start + 1.second, term_start + 2.seconds, term_start + 3.seconds])
+    query = Ballot.in_term_acceptance_period(b2.term_starts_at)
+    assert_not query.exists?(id: b1)
+    assert_not query.exists?(id: b2)
+    assert query.exists?(id: b3)
   end
 
   test 'order_by_active should order by earliest upcoming deadline' do
@@ -485,6 +497,15 @@ class BallotTest < ActiveSupport::TestCase
   end
 
   private
+
+  def create_ballots_with_term_starts_at(term_starts_ats)
+    term_starts_ats.map do |term_starts_at|
+      election = @election.dup
+      election.term_starts_at = term_starts_at
+      election.save validate: false
+      election
+    end
+  end
 
   def create_ballots_with_voting_ends_at(voting_ends_ats)
     voting_ends_ats.map do |voting_ends_at|

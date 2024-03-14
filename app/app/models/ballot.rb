@@ -4,6 +4,9 @@ class Ballot < ApplicationRecord
   scope :active_at, ->(time) { where.not(voting_ends_at: ..time) }
   scope :created_at_or_before, ->(time) { where(created_at: ..time) }
   scope :inactive_at, ->(time) { where(voting_ends_at: ..time) }
+  scope :in_term_acceptance_period, ->(time) {
+    election.inactive_at(time).where.not(term_starts_at: ..time)
+  }
   scope :order_by_active, ->(time) {
     # If in nominations, use nomination_end, otherwise use voting_end
     # Break ties by lowest id
