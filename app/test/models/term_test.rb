@@ -77,22 +77,21 @@ class TermTest < ActiveSupport::TestCase
     assert @non_founder_term.invalid?
   end
 
-  test 'active_at should not include terms where created_at is in the future' do
-    freeze_time do
-      created_ats = [1.second.ago, Time.now, 1.second.from_now]
-      ends_ats = [3.seconds.from_now] * created_ats.count
-      t1, t2, t3 = create_terms_with(created_ats:, ends_ats:)
-      query = Term.active_at(Time.now)
-      assert query.exists?(id: t1)
-      assert query.exists?(id: t2)
-      assert_not query.exists?(id: t3)
-    end
+  test 'active_at should not include terms where starts_at is in the future' do
+    now = Time.now
+    starts_ats = [now - 1.second, now, now + 1.second]
+    ends_ats = [now + 3.seconds] * starts_ats.count
+    t1, t2, t3 = create_terms_with(ends_ats:, starts_ats:)
+    query = Term.active_at(now)
+    assert query.exists?(id: t1)
+    assert query.exists?(id: t2)
+    assert_not query.exists?(id: t3)
   end
 
   test 'active_at should include terms where ends_at is in the future' do
     ends_ats = [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now]
-    created_ats = [1.second.ago] * ends_ats.count
-    t1, t2, t3 = create_terms_with(created_ats:, ends_ats:)
+    starts_ats = [1.second.ago] * ends_ats.count
+    t1, t2, t3 = create_terms_with(ends_ats:, starts_ats:)
     query = Term.active_at(t2.ends_at)
     assert_not query.exists?(id: t1)
     assert_not query.exists?(id: t2)
@@ -101,11 +100,15 @@ class TermTest < ActiveSupport::TestCase
 
   private
 
-  def create_terms_with(created_ats:, ends_ats:)
+  def create_terms_with(ends_ats:, starts_ats:)
     ends_ats.map.with_index do |ends_at, i|
-      created_at = created_ats[i]
-      term = @founder_term.dup
-      term.update!(created_at:, ends_at:)
+      starts_at = starts_ats[i]
+      term = @non_founder_term.dup
+
+      travel_to starts_at - 1.second do
+        term.update!(ends_at:, starts_at:)
+      end
+
       term
     end
   end
