@@ -2,59 +2,60 @@ require "test_helper"
 
 class TermTest < ActiveSupport::TestCase
   setup do
-    @term = terms(:one)
+    @founder_term = terms(:one)
     @non_founder_term = terms(:three)
   end
 
+  test 'preconditions' do
+    assert @founder_term.founder?
+    assert_not @non_founder_term.founder?
+  end
+
   test 'should be valid' do
-    assert @term.valid?
+    assert @founder_term.valid?
   end
 
   test 'ballot should be absent for founders' do
-    assert @term.founder?
-    @term.ballot = @non_founder_term.ballot
-    assert @term.invalid?
+    @founder_term.ballot = @non_founder_term.ballot
+    assert @founder_term.invalid?
   end
 
   test 'ballot should be present for non-founders' do
-    assert_not @non_founder_term.founder?
     @non_founder_term.ballot = nil
     assert @non_founder_term.invalid?
   end
 
   test 'ends_at should be present' do
-    @term.ends_at = nil
-    assert @term.invalid?
+    @founder_term.ends_at = nil
+    assert @founder_term.invalid?
   end
 
   test 'ends_at should be after created_at' do
-    @term.ends_at = @term.created_at
-    assert @term.invalid?
+    @founder_term.ends_at = @founder_term.created_at
+    assert @founder_term.invalid?
 
-    @term.ends_at = @term.created_at + 1.second
-    assert @term.valid?
+    @founder_term.ends_at = @founder_term.created_at + 1.second
+    assert @founder_term.valid?
   end
 
   test 'office should be present' do
-    @term.office = nil
-    assert @term.invalid?
+    @founder_term.office = nil
+    assert @founder_term.invalid?
   end
 
   test 'user should be present' do
-    @term.user = nil
-    assert_not @term.valid?
+    @founder_term.user = nil
+    assert_not @founder_term.valid?
   end
 
   test "user should be org's first member for founder terms" do
     user = users :three
-    founder_term = @term
-    assert @term.founder?
-    assert_not_equal user, @term.user
+    assert_not_equal user, @founder_term.user
 
-    term = founder_term.dup
-    founder_term.destroy!
-    term.user = user
-    assert term.invalid?
+    new_founder_term = @founder_term.dup
+    @founder_term.destroy!
+    new_founder_term.user = user
+    assert new_founder_term.invalid?
   end
 
   test 'user should have won election for non-founder terms' do
@@ -90,7 +91,7 @@ class TermTest < ActiveSupport::TestCase
   def create_terms_with(created_ats:, ends_ats:)
     ends_ats.map.with_index do |ends_at, i|
       created_at = created_ats[i]
-      term = @term.dup
+      term = @founder_term.dup
       term.update!(created_at:, ends_at:)
       term
     end
