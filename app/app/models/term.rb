@@ -10,6 +10,7 @@ class Term < ApplicationRecord
   belongs_to :ballot, optional: true
   belongs_to :user
 
+  validates :accepted, inclusion: { in: [true, false] }
   validates :ballot, absence: true, if: :founder?
   validates :ballot, presence: true, unless: :founder?
   validates :ends_at,

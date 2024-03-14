@@ -8,8 +8,10 @@ elections_with_results.each do |election|
   election.winners.each do |winner|
     candidate = Candidate.find winner[:candidate_id]
     ballot = candidate.ballot
+    accepted = rand < 0.9
     travel_to ballot.term_starts_at - 1.second do
       ballot.terms.create!({
+        accepted: accepted,
         ends_at: ballot.term_ends_at,
         office: ballot.office,
         starts_at: ballot.term_starts_at,

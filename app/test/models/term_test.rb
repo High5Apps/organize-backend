@@ -13,6 +13,17 @@ class TermTest < ActiveSupport::TestCase
 
   test 'should be valid' do
     assert @founder_term.valid?
+    assert @non_founder_term.valid?
+  end
+
+  test 'accepted should be present' do
+    @non_founder_term.accepted = nil
+    assert @non_founder_term.invalid?
+  end
+
+  test 'accepted can be false' do
+    @non_founder_term.accepted = false
+    assert @non_founder_term.valid?
   end
 
   test 'ballot should be absent for founders' do

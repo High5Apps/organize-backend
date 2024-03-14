@@ -1,16 +1,19 @@
 one:
+  accepted: true
   ends_at: <%= 1000.years.from_now.to_fs(:db) %>
   office: :founder
   starts_at: <%= 1.second.ago.to_fs(:db) %>
   user: one
 
 two:
+  accepted: true
   ends_at: <%= 1000.years.from_now.to_fs(:db) %>
   office: :founder
   starts_at: <%= 1.second.ago.to_fs(:db) %>
   user: five
 
 three:
+  accepted: true
   ballot: election_president
   ends_at: <%= 1.year.from_now.to_fs(:db) %>
   office: president
@@ -18,6 +21,7 @@ three:
   user: four
 
 five:
+  accepted: true
   ballot: election_secretary
   ends_at: <%= 1.year.from_now.to_fs(:db) %>
   office: secretary
