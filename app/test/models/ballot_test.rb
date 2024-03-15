@@ -239,6 +239,18 @@ class BallotTest < ActiveSupport::TestCase
     assert_not query.exists?(id: b3)
   end
 
+  test 'in_nominations should include ballots with nominations_end_at in the future' do
+    nominations_end = @election.nominations_end_at
+    b1, b2, b3 = create_ballots_with_nominations_end_at([
+      nominations_end + 1.second,
+      nominations_end + 2.seconds,
+      nominations_end + 3.seconds])
+    query = Ballot.in_nominations(b2.nominations_end_at)
+    assert_not query.exists?(id: b1)
+    assert_not query.exists?(id: b2)
+    assert query.exists?(id: b3)
+  end
+
   test 'in_term_acceptance_period should include inactive ballots with term_starts_at in the future' do
     term_start = @election.term_starts_at
     b1, b2, b3 = create_ballots_with_term_starts_at(
@@ -503,6 +515,15 @@ class BallotTest < ActiveSupport::TestCase
   end
 
   private
+
+  def create_ballots_with_nominations_end_at(nominations_end_ats)
+    nominations_end_ats.map do |nominations_end_at|
+      election = @election.dup
+      election.nominations_end_at = nominations_end_at
+      election.save validate: false
+      election
+    end
+  end
 
   def create_ballots_with_term_starts_at(term_starts_ats)
     term_starts_ats.map do |term_starts_at|
