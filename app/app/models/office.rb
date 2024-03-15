@@ -35,11 +35,15 @@ class Office
     now = Time.now
     elections = org.ballots.election
 
-    # It's not open if there's already an active election for the office
-    active_election_offices = elections.active_at(now).pluck(:office)
+    # It's not open if there's already an election in nominations
+    in_nominations = elections.in_nominations(now).pluck(:office)
+
+    # It's not open if there's already an active election with candidates
+    active_with_candidates = elections.active_at(now)
+      .where.associated(:candidates).pluck(:office)
 
     # It's not open if there's an election awaiting term acceptance by a winner
-    elections_awaiting_acceptance = elections
+    awaiting_acceptance = elections
       .in_term_acceptance_period(now)
       .to_a
       .filter { |election| election.winners.count > 0 }
@@ -47,14 +51,13 @@ class Office
 
     # It's not open if there's already a term that's outside of its cooldown
     # period. (Doesn't apply to stewards, since there can be multiple.)
-    filled_offices_outside_cooldown = org.terms
+    filled_and_before_cooldown = org.terms
       .active_at(now + Term::COOLDOWN_PERIOD)
       .pluck(:office) - ['steward']
 
     office_types = Office::TYPE_STRINGS
-    open_offices = \
-      office_types - filled_offices_outside_cooldown - active_election_offices \
-      - elections_awaiting_acceptance
+    open_offices = office_types - in_nominations - active_with_candidates -
+      awaiting_acceptance - filled_and_before_cooldown
 
     offices = office_types.map do |type|
       open = open_offices.include?(type)

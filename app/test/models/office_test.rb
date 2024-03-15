@@ -31,13 +31,44 @@ class OfficeTest < ActiveSupport::TestCase
     assert_availability_open_except_for ['founder']
   end
 
-  test 'availability should not be open if there is an active election' do
-    (Office::TYPE_STRINGS - ['founder']).each do |office|
-      attributes = @election.attributes.merge \
-        id: nil, office:, user_id: @user.id
-      ballot = @user.ballots.create! attributes
-      assert_availability_open_except_for ['founder', ballot.office]
-      ballot.destroy!
+  test 'availability should not be open if there is an election in nominations' do
+    org = orgs :one
+    election = destroy_all_elections_but_one org
+    election.candidates.destroy_all
+    assert_empty election.candidates
+
+    travel_to election.nominations_end_at - 1.second do
+      (Office::TYPE_STRINGS - ['founder']).each do |office|
+        election.update!(office:)
+        assert_availability_open_except_for([office], org:)
+      end
+    end
+  end
+
+  test 'availability should not be open if there is an active election with candidates' do
+    org = orgs :one
+    election = destroy_all_elections_but_one org
+    assert_not_empty election.candidates
+
+    travel_to election.voting_ends_at - 1.second do
+      (Office::TYPE_STRINGS - ['founder']).each do |office|
+        election.update!(office:)
+        assert_availability_open_except_for([office], org:)
+      end
+    end
+  end
+
+  test 'availablility should not be affected by active elections without candidates' do
+    org = orgs :one
+    election = destroy_all_elections_but_one org
+    election.candidates.destroy_all
+    assert_empty election.candidates
+
+    travel_to election.voting_ends_at - 1.second do
+      (Office::TYPE_STRINGS - ['founder']).each do |office|
+        election.update!(office:)
+        assert_availability_open_except_for([], org:)
+      end
     end
   end
 
