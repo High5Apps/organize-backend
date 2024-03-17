@@ -109,6 +109,21 @@ class TermTest < ActiveSupport::TestCase
     assert query.exists?(id: t3)
   end
 
+  test 'active_at should not include terms that were declined' do
+    ends_ats = [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now]
+    starts_ats = [1.second.ago] * ends_ats.count
+    t1, t2, t3 = create_terms_with(ends_ats:, starts_ats:)
+
+    [true, false].each do |accepted|
+      [t1, t2, t3].each { |t| t.update!(accepted:) }
+      query = Term.active_at(starts_ats.first)
+      [t1, t2, t3].each do |t|
+        assert query.exists?(id: t) if accepted
+        assert_not query.exists?(id: t) unless accepted
+      end
+    end
+  end
+
   private
 
   def create_terms_with(ends_ats:, starts_ats:)

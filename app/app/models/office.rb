@@ -49,8 +49,8 @@ class Office
       .filter { |election| election.winners.count > 0 }
       .map {|election| election[:office] }
 
-    # It's not open if there's already a term that's outside of its cooldown
-    # period. (Doesn't apply to stewards, since there can be multiple.)
+    # It's not open if there's already an active term that's before of its
+    # cooldown period. (Doesn't apply to stewards, since there can be multiple.)
     filled_and_before_cooldown = org.terms
       .active_at(now + Term::COOLDOWN_PERIOD)
       .pluck(:office) - ['steward']
