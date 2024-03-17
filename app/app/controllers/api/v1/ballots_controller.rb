@@ -16,7 +16,6 @@ class Api::V1::BallotsController < ApplicationController
   ]
   ALLOWED_CANDIDATE_ATTRIBUTES = [:id]
   ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES = ALLOWED_CANDIDATE_ATTRIBUTES + [
-    :pseudonym,
     :user_id,
   ]
   ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES = \
