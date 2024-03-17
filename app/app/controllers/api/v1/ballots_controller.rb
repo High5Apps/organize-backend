@@ -25,6 +25,10 @@ class Api::V1::BallotsController < ApplicationController
     :nominator,
     :nominee,
   ]
+  ALLOWED_NOMINATION_USER_ATTRIBUTES = [
+    :id,
+    :pseudonym,
+  ]
   ALLOWED_RESULTS_ATTRIBUTES = [
     :candidate_id,
     :rank,
@@ -122,11 +126,11 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def nominations(ballot)
-    allowed_candidate_attributes = ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES
+    allowed_user_attributes = ALLOWED_NOMINATION_USER_ATTRIBUTES
     ballot.nominations.includes(:nominator, :nominee).map do |nomination|
       nomination.slice(ALLOWED_NOMINATION_ATTRIBUTES).merge({
-        nominator: nomination.nominator.slice(allowed_candidate_attributes),
-        nominee: nomination.nominee.slice(allowed_candidate_attributes),
+        nominator: nomination.nominator.slice(allowed_user_attributes),
+        nominee: nomination.nominee.slice(allowed_user_attributes),
       })
     end
   end

@@ -250,7 +250,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
       [nomination[:nominator], nomination[:nominee]].each do |user|
         assert_only_includes_allowed_attributes user,
-          Api::V1::BallotsController::ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES
+          Api::V1::BallotsController::ALLOWED_NOMINATION_USER_ATTRIBUTES
       end
     end
   end
