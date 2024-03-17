@@ -226,8 +226,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show should only include nominations for elections' do
     [[@election, true], [@ballot, false]].each do |ballot, expect_nominations|
-      get api_v1_ballot_url(ballot),
-        headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
+      get api_v1_ballot_url(ballot), headers: @authorized_headers
 
       nominations = JSON.parse(response.body, symbolize_names: true)
         .dig(:nominations)
@@ -239,6 +238,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   test 'show should only include allowed nominations attributes' do
     travel_to @election.nominations_end_at - 1.second do
       get api_v1_ballot_url(@election),
+        # Can't use @authorized_headers due to travel_to
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
     end
 
@@ -258,6 +258,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   test 'show should not include results until voting ends' do
     travel_to @ballot.voting_ends_at - 1.second do
       get api_v1_ballot_url(@ballot),
+        # Can't use @authorized_headers due to travel_to
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
       results = JSON.parse(response.body, symbolize_names: true)[:results]
       assert_nil results
@@ -265,6 +266,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
     travel_to @ballot.voting_ends_at do
       get api_v1_ballot_url(@ballot),
+        # Can't use @authorized_headers due to travel_to
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
       results = JSON.parse(response.body, symbolize_names: true)[:results]
       assert_not_empty results
@@ -274,6 +276,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   test 'show should only include allowed results attributes' do
     travel_to @ballot.voting_ends_at do
       get api_v1_ballot_url(@ballot),
+        # Can't use @authorized_headers due to travel_to
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
     end
 
