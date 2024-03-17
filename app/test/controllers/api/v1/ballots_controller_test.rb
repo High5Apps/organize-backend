@@ -221,7 +221,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     json_response = JSON.parse(response.body, symbolize_names: true)
     assert_only_includes_allowed_attributes json_response,
       Api::V1::BallotsController::ALLOWED_ATTRIBUTES,
-      optional_attributes: [:nominations, :results]
+      optional_attributes: [:nominations, :results, :terms]
   end
 
   test 'show should only include nominations for elections' do
@@ -285,6 +285,37 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     results.each do |result|
       assert_only_includes_allowed_attributes result,
         Api::V1::BallotsController::ALLOWED_RESULTS_ATTRIBUTES
+    end
+  end
+
+  test 'show should not include terms until voting ends' do
+    [
+      [@election.voting_ends_at - 1.second, false],
+      [@election.voting_ends_at, true],
+    ].each do |time, expected_presence|
+      travel_to time do
+        get api_v1_ballot_url(@election),
+          headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
+        terms = JSON.parse(response.body, symbolize_names: true)[:terms]
+        assert_not_nil terms if expected_presence
+        assert_nil terms unless expected_presence
+      end
+    end
+  end
+
+  test 'show should only include allowed terms attributes' do
+    election_with_term = ballots :election_president
+    travel_to election_with_term.voting_ends_at do
+      get api_v1_ballot_url(election_with_term),
+        # Can't use @authorized_headers due to travel_to
+        headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
+    end
+
+    terms = JSON.parse(response.body, symbolize_names: true)[:terms]
+    assert_not_empty terms
+    terms.each do |term|
+      assert_only_includes_allowed_attributes term,
+        Api::V1::BallotsController::ALLOWED_TERMS_ATTRIBUTES
     end
   end
 

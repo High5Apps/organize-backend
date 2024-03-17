@@ -5,6 +5,7 @@ class Api::V1::BallotsController < ApplicationController
     :my_vote,
     :nominations,
     :results,
+    :terms,
   ]
   ALLOWED_BALLOT_ATTRIBUTES = Ballot::Query::ALLOWED_ATTRIBUTES + [
     :max_candidate_ids_per_vote,
@@ -28,6 +29,10 @@ class Api::V1::BallotsController < ApplicationController
     :candidate_id,
     :rank,
     :vote_count,
+  ]
+  ALLOWED_TERMS_ATTRIBUTES = [
+    :accepted,
+    :user_id,
   ]
   MAX_CANDIDATES_PER_CREATE = 100.freeze
 
@@ -81,12 +86,16 @@ class Api::V1::BallotsController < ApplicationController
     candidates = ballot.candidates.left_outer_joins(:user)
       .select(candidate_attributes)
 
+    is_election = ballot.election?
+    voting_ended = Time.now >= ballot.voting_ends_at
+
     render json: {
       ballot: ballot.slice(ballot_attributes),
       candidates:,
       my_vote: authenticated_user.my_vote_candidate_ids(ballot),
-      nominations: (nominations(ballot) if ballot.election?),
-      results: (ballot.results unless Time.now < ballot.voting_ends_at),
+      nominations: (nominations(ballot) if is_election),
+      results: (ballot.results if voting_ended),
+      terms: (terms(ballot) if voting_ended && is_election)
   }.compact
   end
 
@@ -120,6 +129,10 @@ class Api::V1::BallotsController < ApplicationController
         nominee: nomination.nominee.slice(allowed_candidate_attributes),
       })
     end
+  end
+
+  def terms(ballot)
+    ballot.terms.select(ALLOWED_TERMS_ATTRIBUTES).as_json except: :id
   end
 
   def validate_election
