@@ -162,12 +162,8 @@ class BallotTest < ActiveSupport::TestCase
           voting_ends_at: start - Ballot::MIN_TERM_ACCEPTANCE_PERIOD,
         )
 
-        # TODO: Remove once this flakey test is fixed
-        assert_equal expect_valid, new_president_election.save
-        if expect_valid && !new_president_election.valid?
-          puts new_president_election.errors.full_messages.inspect
-          new_president_election.save!
-        end
+        assert new_president_election.save! if expect_valid
+        assert_not new_president_election.save unless expect_valid
       end
     end
   end
