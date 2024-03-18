@@ -19,3 +19,11 @@ three:
   org: one
   user: one
   created_at: <%= 2.seconds.after(Time.at 0).to_fs(:db) %>
+
+candidacy_announcement:
+  candidate: election_one_choice_one
+  category: :general
+  encrypted_title: { c: 5QCq1GmVwweSmeLMNEypVII=, n: glbd4i3Tl48DQCKx, t: RvylCugm3ZdKn3L7tdHm3Q== }
+  org: one
+  user: one
+  created_at: <%= 3.second.after(Time.at 0).to_fs(:db) %>

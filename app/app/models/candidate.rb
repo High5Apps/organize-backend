@@ -16,6 +16,8 @@ class Candidate < ApplicationRecord
   belongs_to :nomination, optional: true
   belongs_to :user, optional: true
 
+  has_one :post
+
   validates :ballot, presence: true
   validates :nomination, absence: true, unless: -> { ballot&.election? }
   validates :nomination, presence: true, if: -> { ballot&.election? }

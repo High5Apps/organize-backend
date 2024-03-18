@@ -1,6 +1,7 @@
 class Post::Query
   ALLOWED_ATTRIBUTES = {
     id: '',
+    candidate_id: '',
     category: '',
     encrypted_body: '',
     encrypted_title: '',

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_14_124903) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_18_123130) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -91,6 +91,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_14_124903) do
     t.uuid "org_id", null: false
     t.jsonb "encrypted_title", null: false
     t.jsonb "encrypted_body"
+    t.uuid "candidate_id"
+    t.index ["candidate_id"], name: "index_posts_on_candidate_id"
     t.index ["org_id", "created_at"], name: "index_posts_on_org_id_and_created_at"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
@@ -154,6 +156,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_14_124903) do
   add_foreign_key "nominations", "ballots"
   add_foreign_key "nominations", "users", column: "nominator_id"
   add_foreign_key "nominations", "users", column: "nominee_id"
+  add_foreign_key "posts", "candidates"
   add_foreign_key "posts", "users"
   add_foreign_key "terms", "ballots"
   add_foreign_key "terms", "users"

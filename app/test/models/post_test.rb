@@ -3,10 +3,12 @@ require "test_helper"
 class PostTest < ActiveSupport::TestCase
   setup do
     @post = posts(:one)
+    @candidacy_announcement = posts(:candidacy_announcement)
   end
 
   test 'should be valid' do
     assert @post.valid?
+    assert @candidacy_announcement.valid?
   end
 
   test 'org should be present' do
@@ -14,9 +16,32 @@ class PostTest < ActiveSupport::TestCase
     assert @post.invalid?
   end
 
+  test 'candidacy announcement should not be created once voting ends' do
+    post = @candidacy_announcement.dup
+    @candidacy_announcement.destroy!
+
+    travel_to post.candidate.ballot.voting_ends_at do
+      assert_not post.save
+    end
+
+    travel_to post.candidate.ballot.voting_ends_at - 1.second do
+      assert post.save
+    end
+  end
+
+  test 'candidacy announcement should only be created by candidate' do
+    @candidacy_announcement.user = users :three
+    assert @candidacy_announcement.invalid?
+  end
+
   test 'category should be present' do
     @post.category = nil
     assert @post.invalid?
+  end
+
+  test 'category should be general for candidacy announcements' do
+    @candidacy_announcement.category = :grievances
+    assert @candidacy_announcement.invalid?
   end
 
   test 'encrypted_title should be present' do

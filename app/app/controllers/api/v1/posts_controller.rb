@@ -1,6 +1,7 @@
 class Api::V1::PostsController < ApplicationController
   PERMITTED_PARAMS = [
     :body,
+    :candidate_id,
     :category,
     EncryptedMessage.permitted_params(:body),
     EncryptedMessage.permitted_params(:title),

@@ -144,6 +144,7 @@ class OfficeTest < ActiveSupport::TestCase
     election = org.ballots.election.first
     org.ballots.election.where.not(id: election.id).each do |election|
       election.votes.destroy_all
+      Post.where(candidate: election.candidates).destroy_all
       election.candidates.destroy_all
       election.nominations.destroy_all
       election.destroy!
