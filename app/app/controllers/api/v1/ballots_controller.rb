@@ -16,6 +16,7 @@ class Api::V1::BallotsController < ApplicationController
   ]
   ALLOWED_CANDIDATE_ATTRIBUTES = [:id]
   ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES = ALLOWED_CANDIDATE_ATTRIBUTES + [
+    :post_id,
     :user_id,
   ]
   ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES = \
@@ -101,11 +102,15 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def candidates
-    candidate_attributes = @ballot.election? ?
-      ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES :
-      ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES
-    @ballot.candidates.left_outer_joins(:user)
-      .select(candidate_attributes)
+    relation = @ballot.candidates
+    if @ballot.election?
+      relation.left_outer_joins(:post, :user)
+        .select(
+          ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES - [:post_id],
+          'posts.id AS post_id')
+    else
+      relation.select(ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES)
+    end
   end
 
   def create_ballot_params
