@@ -75,36 +75,38 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def show
-    ballot = @org.ballots.find_by(id: params[:id])
+    @ballot = @org.ballots.find_by(id: params[:id])
 
-    unless ballot
+    unless @ballot
       return render_error :not_found, ["No ballot found with id #{params[:id]}"]
     end
 
-    ballot_attributes = ballot.election? ?
-      ALLOWED_BALLOT_ELECTION_ATTRIBUTES :
-      ALLOWED_BALLOT_ATTRIBUTES
-
-    candidate_attributes = ballot.election? ?
-      ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES :
-      ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES
-    candidates = ballot.candidates.left_outer_joins(:user)
-      .select(candidate_attributes)
-
-    is_election = ballot.election?
-    voting_ended = Time.now >= ballot.voting_ends_at
-
     render json: {
-      ballot: ballot.slice(ballot_attributes),
+      ballot:,
       candidates:,
-      my_vote: authenticated_user.my_vote_candidate_ids(ballot),
-      nominations: (nominations(ballot) if is_election),
-      results: (ballot.results if voting_ended),
-      terms: (terms(ballot) if voting_ended && is_election)
+      my_vote:,
+      nominations:,
+      results:,
+      terms:,
   }.compact
   end
 
   private
+
+  def ballot
+    ballot_attributes = @ballot.election? ?
+      ALLOWED_BALLOT_ELECTION_ATTRIBUTES :
+      ALLOWED_BALLOT_ATTRIBUTES
+    @ballot.slice(ballot_attributes)
+  end
+
+  def candidates
+    candidate_attributes = @ballot.election? ?
+      ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES :
+      ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES
+    @ballot.candidates.left_outer_joins(:user)
+      .select(candidate_attributes)
+  end
 
   def create_ballot_params
     params.require(:ballot)
@@ -126,9 +128,15 @@ class Api::V1::BallotsController < ApplicationController
       .require(:candidates)
   end
 
-  def nominations(ballot)
+  def my_vote
+    authenticated_user.my_vote_candidate_ids(@ballot)
+  end
+
+  def nominations
+    return nil unless @ballot.election?
+
     allowed_user_attributes = ALLOWED_NOMINATION_USER_ATTRIBUTES
-    ballot.nominations.includes(:nominator, :nominee).map do |nomination|
+    @ballot.nominations.includes(:nominator, :nominee).map do |nomination|
       nomination.slice(ALLOWED_NOMINATION_ATTRIBUTES).merge({
         nominator: nomination.nominator.slice(allowed_user_attributes),
         nominee: nomination.nominee.slice(allowed_user_attributes),
@@ -136,8 +144,14 @@ class Api::V1::BallotsController < ApplicationController
     end
   end
 
-  def terms(ballot)
-    ballot.terms.select(ALLOWED_TERMS_ATTRIBUTES).as_json except: :id
+  def results
+    return nil unless @ballot.voting_ended?
+    @ballot.results
+  end
+
+  def terms
+    return nil unless @ballot.election? && @ballot.voting_ended?
+    @ballot.terms.select(ALLOWED_TERMS_ATTRIBUTES).as_json except: :id
   end
 
   def validate_election

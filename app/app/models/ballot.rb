@@ -127,6 +127,10 @@ class Ballot < ApplicationRecord
     reversed_results.reverse
   end
 
+  def voting_ended?
+    Time.now >= voting_ends_at
+  end
+
   def winners
     results.filter{ |result| result[:rank] < max_candidate_ids_per_vote }
   end
