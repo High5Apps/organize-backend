@@ -26,7 +26,7 @@ class Simulation
     founder.id = @founder_id
     @members.add founder
 
-    @ended_at = Time.now.at_midnight
+    @ended_at = Time.now
     days.times do
       day_start = @ended_at - (days - @day).days
       @started_at ||= day_start

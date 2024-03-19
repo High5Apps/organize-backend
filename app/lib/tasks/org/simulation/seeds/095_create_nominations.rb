@@ -13,8 +13,13 @@ elections.each do |election|
   nomination_count = nominators_and_nominees.count / 2
 
   nomination_count.times do
+    # nominations_end could be after the simulation ends, so need to clamp,
+    # because don't want to simulate user actions after the simulation ends
+    nomination_actions_cutoff = [nominations_end, $simulation.ended_at].min
+
+    nomination_created_at = \
+      rand (election.created_at)...nomination_actions_cutoff
     nominator_id, nominee_id = nominators_and_nominees.shift 2
-    nomination_created_at = rand (election.created_at)...nominations_end
     nomination = nil
     travel_to nomination_created_at do
       nomination = election.nominations.create!(nominator_id:, nominee_id:)
@@ -31,7 +36,8 @@ elections.each do |election|
       next
     end
 
-    accepted_or_declined_at = rand nomination_created_at...nominations_end
+    accepted_or_declined_at = \
+      rand nomination_created_at...nomination_actions_cutoff
     travel_to accepted_or_declined_at do
       nomination.update!(accepted:)
     end

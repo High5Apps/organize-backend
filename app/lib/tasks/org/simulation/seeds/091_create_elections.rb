@@ -52,7 +52,7 @@ offices.each do |office|
   term_starts_at = voting_ends_at + 1.day
   term_ends_at = term_starts_at + 1.year
   nominations_end_at = voting_ends_at - 1.day
-  created_at = nominations_end_at - 1.day
+  created_at = nominations_end_at - 2.days
 
   travel_to created_at do
     founder.ballots.create!({
