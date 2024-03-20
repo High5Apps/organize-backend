@@ -7,8 +7,8 @@ class Api::V1::PostsController < ApplicationController
     EncryptedMessage.permitted_params(:title),
   ]
 
-  before_action :authenticate_user, only: [:index, :create]
-  before_action :check_org_membership, only: [:index, :create]
+  before_action :authenticate_user, only: [:index, :create, :show]
+  before_action :check_org_membership, only: [:index, :create, :show]
 
   def create
     new_post = authenticated_user.posts.build(create_params.merge(org: @org))
@@ -23,6 +23,18 @@ class Api::V1::PostsController < ApplicationController
   def index
     posts = Post::Query.build query_params, initial_posts: @org.posts
     render json: { posts:, meta: pagination_dict(posts) }
+  end
+
+  def show
+    posts = Post::Query.build query_params,
+      initial_posts: @org.posts.where(id: params[:id])
+    post = posts.first
+
+    unless post
+      return render_error :not_found, ["No post found with id #{params[:id]}"]
+    end
+
+    render json: { post: }
   end
 
   private

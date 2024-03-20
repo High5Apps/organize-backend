@@ -14,7 +14,7 @@ Rails.application.routes.draw do
       resources :nominations, only: [:update]
       resources :offices, only: [:index]
       resources :orgs, only: [:create]
-      resources :posts, concerns: :upvotable, only: [:index, :create] do
+      resources :posts, concerns: :upvotable, only: [:index, :create, :show] do
         resources :comments,
           concerns: :upvotable,
           only: [:index, :create],
