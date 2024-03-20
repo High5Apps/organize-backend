@@ -131,7 +131,7 @@ class User < ApplicationRecord
   end
 
   def office_numbers
-    attributes['offices']
+    attributes['offices'].sort
   end
 
   private
