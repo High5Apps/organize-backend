@@ -1,9 +1,16 @@
 class Api::V1::NominationsController < ApplicationController
+  ALLOWED_UPDATE_ATTRIBUTES = [
+    :candidate,
+    :nomination,
+  ]
   PERMITTED_CREATE_PARAMS = [
     :nominee_id,
   ]
   PERMITTED_UPDATE_PARAMS = [
     :accepted
+  ]
+  ALLOWED_UPDATE_NOMINATION_ATTRIBUTES = PERMITTED_UPDATE_PARAMS + [
+    :id,
   ]
 
   before_action :authenticate_user, only: [:create, :update]
@@ -22,7 +29,8 @@ class Api::V1::NominationsController < ApplicationController
   def update
     if @nomination.update(update_params)
       render json: {
-        nomination: @nomination.slice(:id, *PERMITTED_UPDATE_PARAMS),
+        candidate: { id: @nomination.candidate&.id },
+        nomination: @nomination.slice(ALLOWED_UPDATE_NOMINATION_ATTRIBUTES),
       }
     else
       render_error :unprocessable_entity, @nomination.errors.full_messages

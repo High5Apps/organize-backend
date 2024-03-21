@@ -96,16 +96,44 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
         params:)
       assert_response :ok
     end
+  end
 
+  test 'update response should only include ALLOWED_UPDATE_ATTRIBUTES' do
+    params = update_params accepted: false
+    patch(api_v1_nomination_url(@nomination), headers: @update_headers, params:)
     json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_equal 1, json_response.keys.count
-    json_nomination = json_response[:nomination]
-    permitted_params = Api::V1::NominationsController::PERMITTED_UPDATE_PARAMS
-    assert_equal json_nomination.keys.count, 1 + permitted_params.count
-    assert_not_nil json_nomination[:id]
-    permitted_params.each do |param|
-      assert_includes json_nomination.keys, param
-    end
+    assert_equal Api::V1::NominationsController::ALLOWED_UPDATE_ATTRIBUTES,
+      json_response.keys
+  end
+
+  test 'update response nomination should only include ALLOWED_UPDATE_NOMINATION_ATTRIBUTES' do
+    params = update_params accepted: false
+    patch(api_v1_nomination_url(@nomination), headers: @update_headers, params:)
+    nomination = JSON.parse(response.body, symbolize_names: true)[:nomination]
+    assert_equal Api::V1::NominationsController::ALLOWED_UPDATE_NOMINATION_ATTRIBUTES,
+      nomination.keys
+  end
+
+  test 'update response nomination should be the same as the request' do
+    params = update_params accepted: false
+    patch(api_v1_nomination_url(@nomination), headers: @update_headers, params:)
+    nomination = JSON.parse(response.body, symbolize_names: true)[:nomination]
+    assert_equal @nomination.id, nomination[:id]
+  end
+
+  test 'update response candidate should only include id' do
+    params = update_params accepted: false
+    patch(api_v1_nomination_url(@nomination), headers: @update_headers, params:)
+    candidate = JSON.parse(response.body, symbolize_names: true)[:candidate]
+    assert_equal [:id], candidate.keys
+    assert_nil candidate[:id]
+  end
+
+  test 'update response candidate should be the newly created candidate' do
+    params = update_params accepted: true
+    patch(api_v1_nomination_url(@nomination), headers: @update_headers, params:)
+    candidate = JSON.parse(response.body, symbolize_names: true)[:candidate]
+    assert_equal @nomination.reload.candidate.id, candidate[:id]
   end
 
   test 'should create Candidate as a side effect of accpeting nomination' do
