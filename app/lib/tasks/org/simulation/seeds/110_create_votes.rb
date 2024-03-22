@@ -13,6 +13,8 @@ ballots.all.each do |ballot|
   candidate_ids = ballot.candidates.ids
   next if candidate_ids.blank?
 
+  next if ballot.election? && ballot.nominations_end_at > $simulation.ended_at
+
   max_candidate_ids_per_vote = ballot.max_candidate_ids_per_vote
   selection_map = {}
 
