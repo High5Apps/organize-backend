@@ -7,8 +7,10 @@ start_time = Time.now
 elections_with_results.each do |election|
   election.winners.each do |winner|
     candidate = Candidate.find winner[:candidate_id]
+    sentiment = rand
+    next unless sentiment > 0.05 # Neither accepted nor declined: 5%
+    accepted = sentiment > 0.1 # Accepted: 90%, declined: 5%
     ballot = candidate.ballot
-    accepted = rand < 0.9
     travel_to ballot.term_starts_at - 1.second do
       ballot.terms.create!({
         accepted: accepted,

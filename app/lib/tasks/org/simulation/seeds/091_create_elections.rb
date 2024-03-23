@@ -10,9 +10,9 @@ user_count = org.users.count
 users_per_steward = rand 15..25
 steward_count = (user_count / users_per_steward)
 
-# Must be in progress order. :results appears 3-times to increase its likelihood
+# Must be in progress order. :term appears twice to increase its likelihood
 states = [
-  :none, :nominations, :voting, :results, :results, :results,
+  :none, :nominations, :voting, :term_acceptance, :term, :term,
 ]
 state_map = {}
 offices.each do |office|
@@ -47,9 +47,12 @@ offices.each do |office|
   max_candidate_ids_per_vote = (office == :steward) ? steward_count : 1
 
   voting_ends_at = $simulation.ended_at + {
-    results: -1.day, nominations: 2.days, voting: 1.day,
+    term: -2.days,
+    term_acceptance: -1.day,
+    voting: 1.day,
+    nominations: 2.days,
   }[state]
-  term_starts_at = voting_ends_at + 1.day
+  term_starts_at = voting_ends_at + 2.days
   term_ends_at = term_starts_at + 1.year
   nominations_end_at = voting_ends_at - 1.day
   created_at = nominations_end_at - 2.days
