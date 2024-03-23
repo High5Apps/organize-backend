@@ -389,6 +389,13 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test 'show should format refreshed_at as iso8601' do
+    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    refreshed_at = json_response[:refreshed_at]
+    assert Time.iso8601(refreshed_at)
+  end
+
   private
 
   def assert_only_includes_allowed_attributes(

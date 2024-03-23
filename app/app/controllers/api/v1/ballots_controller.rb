@@ -4,6 +4,7 @@ class Api::V1::BallotsController < ApplicationController
     :candidates,
     :my_vote,
     :nominations,
+    :refreshed_at,
     :results,
     :terms,
   ]
@@ -87,6 +88,7 @@ class Api::V1::BallotsController < ApplicationController
       candidates:,
       my_vote:,
       nominations:,
+      refreshed_at: Time.now.utc,
       results:,
       terms:,
   }.compact
