@@ -1,5 +1,5 @@
 class Upvote < ApplicationRecord
-  scope :most_recent_created_at_or_before, ->(time) {
+  scope :created_at_or_before, ->(time) {
     where(created_at: ..time)
   }
 

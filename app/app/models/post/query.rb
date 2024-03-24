@@ -22,7 +22,7 @@ class Post::Query
     posts = initial_posts
       .created_at_or_before(created_at_or_before)
       .joins(:user)
-      .left_outer_joins_with_most_recent_upvotes_created_at_or_before(created_at_or_before)
+      .left_outer_joins_with_upvotes_created_at_or_before(created_at_or_before)
       .page(params[:page]).without_count
       .group(:id, :pseudonym)
       .select(*selections(params))
@@ -66,8 +66,8 @@ class Post::Query
   def self.selections(params)
     score = 'COALESCE(SUM(value), 0) AS score'
 
-    # Even though there is at most one most_recent_upvote per requester per
-    # post, SUM is used because an aggregate function is required
+    # Even though there is at most one upvote per requester per post, SUM is
+    # needed because an aggregate function is required
     my_vote = Post.sanitize_sql_array([
       "SUM(CASE WHEN upvotes.user_id = :requester_id THEN value ELSE 0 END) AS my_vote",
       requester_id: params[:requester_id]])
