@@ -53,3 +53,6 @@ gem 'kaminari', '~> 1'
 
 # Used for comment threading
 gem 'ancestry', '~> 4'
+
+# Used for text search
+gem 'pg_search', '~> 2.3'
