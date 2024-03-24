@@ -4,10 +4,13 @@ class UserTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
     @user_without_org = users(:two)
+    @enthusiastic_toucan = users(:six)
   end
 
   test 'should be valid' do
     assert @user.valid?
+    assert @user_without_org.valid?
+    assert @enthusiastic_toucan.valid?
   end
 
   test 'org should be optional' do
@@ -238,6 +241,34 @@ class UserTest < ActiveSupport::TestCase
       @user.org.users.with_service_stats(connection.created_at - 1.second)
     scanner = before_connection.find connection.scanner.id
     assert_equal -1, scanner.connection_count - connection_count
+  end
+
+  test 'search_by_pseudonym should match full name' do
+    assert_equal @enthusiastic_toucan,
+      User.search_by_pseudonym('Enthusiastic Toucan').first
+  end
+
+  test 'search_by_pseudonym should be case insensitive' do
+    assert_equal @enthusiastic_toucan,
+      User.search_by_pseudonym('enthusiastic toucan').first
+  end
+
+  test 'search_by_pseudonym should not require both first and last name' do
+    assert_equal @enthusiastic_toucan,
+      User.search_by_pseudonym('enthusiastic').first
+
+    assert_equal @enthusiastic_toucan,
+      User.search_by_pseudonym('toucan').first
+  end
+
+  test 'search_by_pseudonym should match prefix when long enough' do
+    assert_equal @enthusiastic_toucan,
+      User.search_by_pseudonym('enthusiast').first
+  end
+
+  test 'search_by_pseudonym should not require prefixes to match' do
+    assert_equal @enthusiastic_toucan,
+      User.search_by_pseudonym('nthusias ouca').first
   end
 
   private

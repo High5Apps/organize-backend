@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include PgSearch::Model
+
   scope :joined_at_or_before, ->(time) { where(joined_at: ..time) }
   scope :officers, -> {
     # Must be used with with_service_stats scope
@@ -59,6 +61,11 @@ class User < ApplicationRecord
         ),
       :users)
   }
+
+  pg_search_scope :search_by_pseudonym,
+    against: :pseudonym,
+    using: :trigram,
+    ranked_by: ":trigram"
 
   PUBLIC_KEY_LENGTH = 91
 
