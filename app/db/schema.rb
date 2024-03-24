@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_24_080202) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_24_082553) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -132,6 +132,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_24_080202) do
     t.datetime "joined_at"
     t.uuid "recruiter_id"
     t.index ["org_id"], name: "index_users_on_org_id"
+    t.index ["pseudonym"], name: "index_users_on_pseudonym", opclass: :gin_trgm_ops, using: :gin
     t.index ["recruiter_id"], name: "index_users_on_recruiter_id"
   end
 
