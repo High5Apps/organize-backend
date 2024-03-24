@@ -35,7 +35,7 @@ class User::Query
     filter_parameter = @params[:filter]
 
     unless PAGINATION_BYPASSING_FILTERS.include? filter_parameter
-      users = users.page(@params[:page])
+      users = users.page(@params[:page]).without_count
     end
 
     if filter_parameter == 'officer'

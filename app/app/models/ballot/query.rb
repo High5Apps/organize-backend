@@ -35,7 +35,7 @@ class Ballot::Query
 
     page_param = params[:page]
     if page_param
-      ballots = ballots.page(page_param)
+      ballots = ballots.page(page_param).without_count
     end
 
     # Default to sorting by active

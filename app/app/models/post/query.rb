@@ -23,7 +23,7 @@ class Post::Query
       .created_at_or_before(created_at_or_before)
       .joins(:user)
       .left_outer_joins_with_most_recent_upvotes_created_at_or_before(created_at_or_before)
-      .page(params[:page])
+      .page(params[:page]).without_count
       .group(:id, :pseudonym)
       .select(*selections(params))
 
