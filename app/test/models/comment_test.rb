@@ -184,6 +184,10 @@ class CommentTest < ActiveSupport::TestCase
   private
 
   def create_comments(older_time:, older_score:, newer_time:, newer_score:)
+    unless (older_score >= 0) && (newer_score >= 0)
+      raise 'create_comments expects older_score and newer_score to be positive'
+    end
+
     older_comment, newer_comment = nil
     post_creator = @post_without_comments.user
     encrypted_body = @comment.encrypted_body
@@ -193,8 +197,13 @@ class CommentTest < ActiveSupport::TestCase
         .create!(encrypted_body:, user: post_creator)
 
       travel 1.second
-      older_comment.upvotes.build(user: post_creator, value: older_score)
-        .save!(validate: false)
+
+      # Subtract 1 because the first upvote is auto-created when comment created
+      (older_score - 1).times do
+        upvoter = post_creator.dup
+        upvoter.save!
+        older_comment.upvotes.create!(user: upvoter, value: 1)
+      end
     end
 
     travel_to newer_time - 1.second do
@@ -202,8 +211,13 @@ class CommentTest < ActiveSupport::TestCase
         .create!(encrypted_body:, user: post_creator)
 
       travel 1.second
-      newer_comment.upvotes.build(user: post_creator, value: newer_score)
-        .save!(validate: false)
+
+      # Subtract 1 because the first upvote is auto-created when comment created
+      (newer_score - 1).times do
+        upvoter = post_creator.dup
+        upvoter.save!
+        newer_comment.upvotes.create!(user: upvoter, value: 1)
+      end
     end
 
     return older_comment, newer_comment

@@ -1,19 +1,6 @@
 class Upvote < ApplicationRecord
   scope :most_recent_created_at_or_before, ->(time) {
-    most_recent_upvote_for_each_user_on_each_upvotable_at_or_before_time = select(
-      '*',
-      %(
-        FIRST_VALUE(upvotes.id) OVER (
-          PARTITION BY upvotes.user_id, upvotes.post_id, upvotes.comment_id
-          ORDER BY upvotes.created_at DESC, upvotes.id DESC
-        ) AS first_id
-      ).gsub(/\s+/, ' ')
-    ).where(created_at: ..time)
-
-    from(
-      most_recent_upvote_for_each_user_on_each_upvotable_at_or_before_time,
-      :upvotes
-    ).where('upvotes.id = first_id')
+    where(created_at: ..time)
   }
 
   ERROR_EXACTLY_ONE_COMMENT_OR_POST = \
@@ -25,6 +12,8 @@ class Upvote < ApplicationRecord
   belongs_to :post, optional: true
   belongs_to :user
 
+  validates :comment, uniqueness: { scope: :user, allow_nil: true }
+  validates :post, uniqueness: { scope: :user, allow_nil: true }
   validates :user, presence: true
   validates :value,
     numericality: {

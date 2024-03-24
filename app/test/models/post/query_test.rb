@@ -79,13 +79,11 @@ class PostQueryTest < ActiveSupport::TestCase
 
     older_post = @post_without_upvotes.dup
     older_post.save!
-    older_post.upvotes.create!(user: post_creator, value: 1)
 
     travel 1.second
 
     newer_post = @post_without_upvotes.dup
     newer_post.save!
-    newer_post.upvotes.create!(user: post_creator, value: 1)
 
     travel 1.second
 
@@ -101,7 +99,6 @@ class PostQueryTest < ActiveSupport::TestCase
 
     older_post = @post_without_upvotes.dup
     older_post.save!
-    older_post.upvotes.create!(user: post_creator, value: 1)
 
     # If this test fails after raising the gravity parameter, you probably need
     # to decrease this value.
@@ -111,7 +108,7 @@ class PostQueryTest < ActiveSupport::TestCase
     newer_post.save!
 
     travel 1.second
-    newer_post.upvotes.create!(user: post_creator, value: 0)
+    newer_post.upvotes.destroy_all
 
     travel 1.second
 
@@ -127,7 +124,6 @@ class PostQueryTest < ActiveSupport::TestCase
 
     older_post = @post_without_upvotes.dup
     older_post.save!
-    older_post.upvotes.create!(user: post_creator, value: 1)
 
     # If this test fails after lowering the gravity parameter, you probably need
     # to increase this value.
@@ -137,7 +133,7 @@ class PostQueryTest < ActiveSupport::TestCase
     newer_post.save!
 
     travel 1.second
-    newer_post.upvotes.create!(user: post_creator, value: 0)
+    newer_post.upvotes.destroy_all
 
     travel 1.second
 
@@ -153,8 +149,7 @@ class PostQueryTest < ActiveSupport::TestCase
 
     older_post = @post_without_upvotes.dup
     older_post.save!
-    older_post.upvotes.build(user: post_creator, value: 50)
-      .save!(validate: false)
+    create_upvotes(older_post, score: 50)
 
     # If this test fails after raising the gravity parameter, you probably need
     # to decrease this value.
@@ -164,7 +159,7 @@ class PostQueryTest < ActiveSupport::TestCase
     newer_post.save!
 
     travel 1.second
-    newer_post.upvotes.create!(user: post_creator, value: 0)
+    newer_post.upvotes.destroy_all
 
     travel 1.second
 
@@ -180,8 +175,7 @@ class PostQueryTest < ActiveSupport::TestCase
 
     older_post = @post_without_upvotes.dup
     older_post.save!
-    older_post.upvotes.build(user: post_creator, value: 50)
-      .save!(validate: false)
+    create_upvotes(older_post, score: 50)
 
     # If this test fails after lowering the gravity parameter, you probably need
     # to increase this value.
@@ -191,7 +185,7 @@ class PostQueryTest < ActiveSupport::TestCase
     newer_post.save!
 
     travel 1.second
-    newer_post.upvotes.create!(user: post_creator, value: 0)
+    newer_post.upvotes.destroy_all
 
     travel 1.second
 
@@ -291,5 +285,17 @@ class PostQueryTest < ActiveSupport::TestCase
     vote = Post::Query.build({ requester_id: @user.id})
       .find(@post_without_upvotes.id).my_vote
     assert_equal 0, vote
+  end
+
+  private
+
+  def create_upvotes(post, score:)
+    raise "create_upvotes expects score to be positive" unless score >= 0
+
+    # Subtract 1 because the first upvote is auto-created when post is created
+    (score - 1).times do
+      upvoter = @post_without_upvotes.user.dup
+      post.upvotes.create!(user: upvoter, value: 1)
+    end
   end
 end

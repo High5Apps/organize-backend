@@ -45,16 +45,16 @@ class UpvoteTest < ActiveSupport::TestCase
     assert @post_upvote.valid?
   end
 
-  test 'should allow a user to create multiple up votes on a single post' do
+  test 'should not allow users to double upvote the same post' do
     assert_not_nil @post_upvote.post
-    assert_difference 'Upvote.count', 1 do
+    assert_no_difference 'Upvote.count' do
       @post_upvote.dup.save
     end
   end
 
-  test 'should allow users to create multiple up votes on a single comment' do
+  test 'should not allow users to double upvote the same comment' do
     assert_not_nil @comment_upvote.comment
-    assert_difference 'Upvote.count', 1 do
+    assert_no_difference 'Upvote.count' do
       @comment_upvote.dup.save
     end
   end
@@ -68,51 +68,5 @@ class UpvoteTest < ActiveSupport::TestCase
   test 'should not allow both post and comment to be present' do
     @post_upvote.comment = comments(:one)
     assert @post_upvote.invalid?
-  end
-
-  test 'most_recent_created_at_or_before should not include newer post upvotes' do
-    assert_not_equal 0, @post_upvote.value
-
-    time_now = Upvote.order(created_at: :desc).first.created_at
-    opposite_value = -1 * @post_upvote.value
-
-    assert_difference -> {
-      Upvote.where(post: @post_upvote.post).sum(:value)
-    }, opposite_value do
-      assert_no_difference -> {
-        Upvote.most_recent_created_at_or_before(time_now)
-          .where(post: @post_upvote.post)
-          .sum(:value)
-      } do
-        travel_to time_now + 1.second do
-          uv = @post_upvote.dup
-          uv.value = -1 * @post_upvote.value
-          uv.save!
-        end
-      end
-    end
-  end
-
-  test 'most_recent_created_at_or_before should not include newer comment upvotes' do
-    assert_not_equal 0, @comment_upvote.value
-
-    time_now = Upvote.order(created_at: :desc).first.created_at
-    opposite_value = -1 * @comment_upvote.value
-
-    assert_difference -> {
-      Upvote.where(comment: @comment_upvote.comment).sum(:value)
-    }, opposite_value do
-      assert_no_difference -> {
-        Upvote.most_recent_created_at_or_before(time_now)
-          .where(comment: @comment_upvote.comment)
-          .sum(:value)
-      } do
-        travel_to time_now + 1.second do
-          uv = @comment_upvote.dup
-          uv.value = -1 * @comment_upvote.value
-          uv.save!
-        end
-      end
-    end
   end
 end
