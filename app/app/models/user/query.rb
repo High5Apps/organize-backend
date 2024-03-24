@@ -42,6 +42,11 @@ class User::Query
       users = users.officers
     end
 
+    query_parameter = @params[:query]
+    if query_parameter
+      users = users.search_by_pseudonym query_parameter
+    end
+
     sort_parameter = @params[:sort]
     if sort_parameter == 'service'
       users = users.order_by_service(joined_at_or_before)

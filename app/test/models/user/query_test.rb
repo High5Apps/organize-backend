@@ -45,6 +45,12 @@ class UserQueryTest < ActiveSupport::TestCase
       user_ids.sort
   end
 
+  test 'should user query param to search by pseudonym' do
+    respectable_tortoise = users :three
+    top_match_id = User::Query.new({ query: 'spectable' }).relation.ids.first
+    assert_equal respectable_tortoise.id, top_match_id
+  end
+
   test 'officer filter should match officer scope' do
     expected_user_ids = User.with_service_stats.officers.ids
     assert_not_empty expected_user_ids
