@@ -4,7 +4,7 @@ class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @vote = votes(:one)
     @vote.destroy!
-    @params = { vote: @vote.as_json }
+    @params = create_params @vote.candidate_ids
 
     @user = @vote.user
     setup_test_key(@user)
@@ -22,6 +22,22 @@ class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
 
     json_response = JSON.parse(response.body, symbolize_names: true)
     assert_not_empty json_response.dig(:id)
+  end
+
+  test 'should update when attempting to double create' do
+    [
+      [[candidates(:one).id], 1],
+      [[candidates(:two).id], 0],
+    ].each do |candidate_ids, difference|
+      assert_difference 'Vote.count', difference do
+        post api_v1_ballot_votes_url(@vote),
+          headers: @authorized_headers,
+          params: create_params(candidate_ids)
+        vote_id = JSON.parse(response.body, symbolize_names: true)[:id]
+        assert_response :created
+        assert_equal candidate_ids, Vote.find(vote_id).candidate_ids
+      end
+    end
   end
 
   test 'should not create with invalid authorization' do
@@ -79,5 +95,11 @@ class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :not_found
+  end
+
+  private
+
+  def create_params candidate_ids
+    { vote: { candidate_ids: } }
   end
 end
