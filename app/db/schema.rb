@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_24_124923) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_25_092808) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -142,9 +142,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_24_124923) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "candidate_ids", null: false, array: true
-    t.index ["ballot_id"], name: "index_votes_on_ballot_id"
+    t.index ["ballot_id", "user_id"], name: "index_votes_on_ballot_id_and_user_id", unique: true
     t.index ["candidate_ids"], name: "index_votes_on_candidate_ids", using: :gin
-    t.index ["user_id"], name: "index_votes_on_user_id"
   end
 
   add_foreign_key "ballots", "users"

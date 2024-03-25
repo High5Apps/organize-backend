@@ -384,34 +384,6 @@ class BallotTest < ActiveSupport::TestCase
     end
   end
 
-  test "results should only include each voter's most recent vote" do
-    users = @ballot_without_votes.org.users
-    candidates = @ballot_without_votes.candidates
-    [
-      [
-        { user: users.first, candidate_ids: [candidates.first.id]},
-        { user: users.first, candidate_ids: [candidates.second.id]},
-      ],[
-        { user: users.first, candidate_ids: [candidates.second.id]},
-        { user: users.first, candidate_ids: [candidates.first.id]},
-      ]
-    ].each do |vote_info|
-      @ballot_without_votes.votes.destroy_all
-      assert_empty @ballot_without_votes.votes
-
-      create_votes @ballot_without_votes, vote_info
-
-      assert_equal 2, @ballot_without_votes.reload.votes.count
-      results = @ballot_without_votes.results
-      assert_equal 1, results.first[:vote_count]
-      assert_equal vote_info.last[:candidate_ids].first,
-        results.first[:candidate_id]
-      assert_equal 0, results.second[:vote_count]
-      assert_equal vote_info.first[:candidate_ids].first,
-        results.second[:candidate_id]
-    end
-  end
-
   test 'results should include info for all candidates, not just vote receivers' do
     # No votes
     @ballot_without_votes.votes.destroy_all

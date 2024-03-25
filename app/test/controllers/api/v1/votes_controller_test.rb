@@ -3,6 +3,7 @@ require "test_helper"
 class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @vote = votes(:one)
+    @vote.destroy!
     @params = { vote: @vote.as_json }
 
     @user = @vote.user
