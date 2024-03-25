@@ -1,21 +1,6 @@
 class Vote < ApplicationRecord
-  scope :most_recent, -> {
-    most_recent_vote_for_each_user_on_each_ballot = select(
-      '*',
-      %(
-        FIRST_VALUE(votes.id) OVER (
-          PARTITION BY votes.user_id, votes.ballot_id
-          ORDER BY votes.created_at DESC, votes.id DESC
-        ) AS first_id
-      ).gsub(/\s+/, ' ')
-    )
-
-    from(most_recent_vote_for_each_user_on_each_ballot, :votes)
-      .where('votes.id = first_id')
-  }
-
-  scope :most_recent_unnested, -> {
-    most_recent.select('*').joins(%Q(
+  scope :unnested, -> {
+    select('*').joins(%Q(
       JOIN (
         #{select('*, unnest(candidate_ids) as unnested_candidate_id').to_sql}
       ) AS unnested_votes

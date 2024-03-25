@@ -48,7 +48,7 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test "my_vote_candidate_ids should return user's most recently created vote's candidate_ids" do
+  test "my_vote_candidate_ids should return user's vote's candidate_ids" do
     ballot_with_vote = ballots(:one)
     my_vote_candidate_ids = @user.my_vote_candidate_ids(ballot_with_vote)
     assert_equal votes(:one).candidate_ids, my_vote_candidate_ids

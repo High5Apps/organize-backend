@@ -88,7 +88,7 @@ class Ballot < ApplicationRecord
 
   def results
     results = candidates
-      .left_outer_joins_with_most_recent_unnested_votes
+      .left_outer_joins_with_unnested_votes
       .group(:id)
       .order(count_unnested_candidate_id: :desc, id: :desc)
       # Note that it's important to count :unnested_candidate_id instead of :all

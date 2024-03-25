@@ -19,17 +19,6 @@ five:
   candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:two, :uuid) %>]
   user: three
 
-six:
-  ballot: one
-  created_at: <%= Time.now.to_fs(:db) %>
-  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:one, :uuid) %>]
-  user: four
-
-seven:
-  ballot: three
-  candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:five, :uuid) %>]
-  user: four
-
 election_president_vote:
   ballot: election_president
   candidate_ids: [<%= ActiveRecord::FixtureSet.identify(:election_president_winner, :uuid) %>]
