@@ -12,8 +12,6 @@ class Upvote < ApplicationRecord
   belongs_to :post, optional: true
   belongs_to :user
 
-  validates :comment, uniqueness: { scope: :user, allow_nil: true }
-  validates :post, uniqueness: { scope: :user, allow_nil: true }
   validates :user, presence: true
   validates :value,
     numericality: {

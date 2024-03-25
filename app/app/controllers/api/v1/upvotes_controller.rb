@@ -7,11 +7,15 @@ class Api::V1::UpvotesController < ApplicationController
   before_action :check_upvotable_belongs_to_org, only: [:create]
 
   def create
-    new_upvote = @upvotable.upvotes.build create_params
-    if new_upvote.save
+    upvote = @upvotable.upvotes.create_with(create_params)
+      .create_or_find_by(user_id: authenticated_user.id)
+
+    # update will no-op in the usual case where upvote didn't already exist
+    # update will hit the database when upvote already existed and value changed
+    if upvote.update(create_params)
       head :created
     else
-      render_error :unprocessable_entity, new_upvote.errors.full_messages
+      render_error :unprocessable_entity, upvote.errors.full_messages
     end
   end
 
@@ -37,10 +41,8 @@ class Api::V1::UpvotesController < ApplicationController
       render_error :not_found, ['Up-votable not found']
     end
   end
-  
+
   def create_params
-    params.require(:upvote)
-      .permit(PERMITTED_PARAMS)
-      .merge user_id: authenticated_user.id
+    params.require(:upvote).permit(PERMITTED_PARAMS)
   end
 end
