@@ -147,7 +147,7 @@ class BallotTest < ActiveSupport::TestCase
   # term.ends_at must be used instead of ballot.term_ends_at. Otherwise, the
   # test below will fail intermittently because Term.active_at checks the term,
   # not the ballot.
-  test 'term_starts_at should not be before the previous term ends' do
+  test 'term_starts_at should not be before the previous term ends for non-stewards' do
     president_election = ballots :election_president
     president_term = terms :three
     during_president_cooldown_period = \
@@ -170,6 +170,26 @@ class BallotTest < ActiveSupport::TestCase
 
         assert new_president_election.save! if expect_valid
         assert_not new_president_election.save unless expect_valid
+      end
+    end
+  end
+
+  test 'term_starts_at can be before term_ends_at for stewards' do
+    term = terms :three
+    filled_office = term.office
+    new_election = ballots(:election_one).dup
+    new_election.term_starts_at = term.starts_at
+    new_election.term_ends_at = term.starts_at + 1.year
+    new_election.voting_ends_at = term.starts_at - 1.day
+    new_election.nominations_end_at = new_election.voting_ends_at - 1.day
+
+    travel_to new_election.nominations_end_at - 1.day do
+      [[filled_office, false], ['steward', true]].each do |office, expect_valid|
+        term.update!(office:)
+        new_election.office = office
+
+        assert new_election.save! if expect_valid
+        assert_not new_election.save unless expect_valid
       end
     end
   end

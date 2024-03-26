@@ -80,7 +80,7 @@ class Ballot < ApplicationRecord
     if: :election?
 
   validate :office_open, on: :create, if: :election?
-  validate :term_starts_at_is_not_before_the_previous_term_ends,
+  validate :term_starts_at_is_not_before_the_previous_term_ends_for_non_stewards,
     on: :create,
     if: :election?
 
@@ -147,8 +147,9 @@ class Ballot < ApplicationRecord
     end
   end
 
-  def term_starts_at_is_not_before_the_previous_term_ends
+  def term_starts_at_is_not_before_the_previous_term_ends_for_non_stewards
     return unless term_starts_at && office
+    return if office === 'steward'
 
     if org.terms.where(office:).active_at(term_starts_at).exists?
       errors.add :term_starts_at, "can't be before the previous term ends"
