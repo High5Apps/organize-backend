@@ -142,12 +142,18 @@ class BallotTest < ActiveSupport::TestCase
     assert @election.valid?
   end
 
+  # Note that fixture term.starts_at may not equal fixture ballot.term_starts_at
+  # due to both calling 1.year.from_now at slightly different times. As such,
+  # term.ends_at must be used instead of ballot.term_ends_at. Otherwise, the
+  # test below will fail intermittently because Term.active_at checks the term,
+  # not the ballot.
   test 'term_starts_at should not be before the previous term ends' do
     president_election = ballots :election_president
+    president_term = terms :three
     during_president_cooldown_period = \
-      president_election.term_ends_at - Term::COOLDOWN_PERIOD + 1.second
+      president_term.ends_at - Term::COOLDOWN_PERIOD + 1.second
     travel_to during_president_cooldown_period do
-      acceptable_start = president_election.term_ends_at
+      acceptable_start = president_term.ends_at
       unacceptable_start = acceptable_start - 1.second
       [
         [unacceptable_start, false],
