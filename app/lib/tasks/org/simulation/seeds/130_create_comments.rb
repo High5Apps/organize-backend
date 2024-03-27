@@ -32,6 +32,9 @@ def hipster_ipsum_comment_body
     # Remove the final sentence to ensure no partial words
     p.delete_suffix! '.' # Remove the final period
     p = p[0..p.rindex('.')] # Remove the last sentence
+
+    p += " #{example_url}" if rand < PARAGRAPH_WITH_URL_FRACTION
+    p
   end
 
   paragraphs.join "\n\n"
