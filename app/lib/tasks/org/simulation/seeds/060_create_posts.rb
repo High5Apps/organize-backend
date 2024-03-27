@@ -11,6 +11,7 @@ CHARACTERS_IN_BODY_DISTRIBUTION = Rubystats::BetaDistribution.new(2, 20)
 MAX_CHARACTERS_IN_BODY = Post::MAX_BODY_LENGTH
 MIN_CHARACTERS_PER_PARAGRAPH = 20
 MAX_PARAGRAPH_COUNT = 10
+PARAGRAPH_WITH_URL_FRACTION = 0.05
 POSTS_WITHOUT_BODY_FRACTION = 0.5
 TITLE_CHARACTER_RANGE = 20..Post::MAX_TITLE_LENGTH
 
@@ -49,6 +50,11 @@ def hipster_ipsum_post_title
   title = split_title.join ' '
 end
 
+def example_url
+  protocol = ['', 'http://', 'https://'].sample
+  "#{protocol}example.com/#{rand(0...1e9).floor}"
+end
+
 def hipster_ipsum_post_body
   return if rand < POSTS_WITHOUT_BODY_FRACTION
 
@@ -65,6 +71,9 @@ def hipster_ipsum_post_body
     # Remove the final sentence to ensure no partial words
     p.delete_suffix! '.' # Remove the final period
     p = p[0..p.rindex('.')] # Remove the last sentence
+
+    p += " #{example_url}" if rand < PARAGRAPH_WITH_URL_FRACTION
+    p
   end
 
   paragraphs.join "\n\n"
