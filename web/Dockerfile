@@ -7,9 +7,10 @@ RUN apt update \
 WORKDIR /usr/src/app
 
 COPY api-proxy.conf /etc/nginx/api-proxy.conf
-COPY nginx.conf /etc/nginx/nginx.conf
 COPY docker-entrypoint.sh /usr/src/app/docker-entrypoint.sh
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx-auto-reloader.sh /usr/src/app/nginx-auto-reloader.sh
+COPY store.conf /etc/nginx/store.conf
 
 ENTRYPOINT [ "./docker-entrypoint.sh" ]
 CMD [ "nginx", "-g", "daemon off;" ]
