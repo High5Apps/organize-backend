@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_25_092808) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_03_072837) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -82,6 +82,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_25_092808) do
     t.datetime "updated_at", null: false
     t.jsonb "encrypted_name", null: false
     t.jsonb "encrypted_member_definition", null: false
+  end
+
+  create_table "permissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.jsonb "data", null: false
+    t.uuid "org_id", null: false
+    t.integer "scope", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["org_id", "scope"], name: "index_permissions_on_org_id_and_scope", unique: true
   end
 
   create_table "posts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -157,6 +166,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_25_092808) do
   add_foreign_key "nominations", "ballots"
   add_foreign_key "nominations", "users", column: "nominator_id"
   add_foreign_key "nominations", "users", column: "nominee_id"
+  add_foreign_key "permissions", "orgs"
   add_foreign_key "posts", "candidates"
   add_foreign_key "posts", "users"
   add_foreign_key "terms", "ballots"

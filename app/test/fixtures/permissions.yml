@@ -1,0 +1,4 @@
+one_edit_permissions:
+  data: { offices: [founder, president] }
+  org: :one
+  scope: :edit_permissions
