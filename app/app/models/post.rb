@@ -2,14 +2,6 @@ class Post < ApplicationRecord
   include Encryptable
 
   scope :created_at_or_before, ->(time) { where(created_at: ..time) }
-  scope :left_outer_joins_with_upvotes_created_at_or_before, ->(time) {
-    joins(%Q(
-      LEFT OUTER JOIN (
-        #{Upvote.created_at_or_before(time).to_sql}
-      ) AS upvotes
-        ON upvotes.post_id = posts.id
-    ).gsub(/\s+/, ' '))
-  }
 
   MAX_TITLE_LENGTH = 140
   MAX_BODY_LENGTH = 10000

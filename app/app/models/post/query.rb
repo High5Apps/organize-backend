@@ -22,7 +22,8 @@ class Post::Query
     posts = initial_posts
       .created_at_or_before(created_at_or_before)
       .joins(:user)
-      .left_outer_joins_with_upvotes_created_at_or_before(created_at_or_before)
+      .with(upvotes: Upvote.created_at_or_before(created_at_or_before))
+      .left_outer_joins(:upvotes)
       .page(params[:page]).without_count
       .group(:id, :pseudonym)
       .select(*selections(params))
