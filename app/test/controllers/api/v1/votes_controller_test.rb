@@ -19,9 +19,7 @@ class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :created
-
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_not_empty json_response.dig(:id)
+    assert_pattern { response.parsed_body => id: String, **nil }
   end
 
   test 'should update when attempting to double create' do
@@ -33,8 +31,8 @@ class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
         post api_v1_ballot_votes_url(@vote),
           headers: @authorized_headers,
           params: create_params(candidate_ids)
-        vote_id = JSON.parse(response.body, symbolize_names: true)[:id]
         assert_response :created
+        response.parsed_body => id: vote_id
         assert_equal candidate_ids, Vote.find(vote_id).candidate_ids
       end
     end

@@ -16,9 +16,8 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
       assert_response :created
     end
 
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_not_nil json_response.dig(:id)
-    assert Time.iso8601(json_response.dig(:created_at))
+    response.parsed_body => { id: String, created_at:, **nil }
+    assert Time.iso8601(created_at)
   end
 
   test 'should not create with invalid authorization' do
@@ -74,17 +73,16 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should include multiple posts' do
     get api_v1_posts_url, headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    posts = json_response.dig(:posts)
+    response.parsed_body => posts:
     assert_operator posts.count, :>, 1
   end
 
   test 'index should only include posts from requester Org' do
     get api_v1_posts_url, headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    post_jsons = json_response.dig(:posts)
-    post_ids = post_jsons.map {|p| p[:id]}
+    response.parsed_body => posts: post_jsons
+    post_ids = post_jsons.map {|p| p[:id] }
     posts = Post.find(post_ids)
+    assert_not_empty posts
     posts.each do |post|
       assert_equal post.org, @user.org
     end
@@ -92,8 +90,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should format created_at attributes as iso8601' do
     get api_v1_posts_url, headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    created_at = json_response.dig(:posts, 1, :created_at)
+    response.parsed_body => posts: [{ created_at: }, *]
     assert Time.iso8601(created_at)
   end
 
@@ -112,9 +109,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
   test 'should show with valid authorization' do
     get api_v1_post_url(@post), headers: @authorized_headers
     assert_response :ok
-
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_equal @post.id, json_response.dig(:post, :id)
+    assert_pattern { response.parsed_body => post: { id: String } }
   end
 
   test 'should not show with invalid authorization' do
@@ -127,9 +122,8 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show should only include ALLOWED_ATTRIBUTES' do
     get api_v1_post_url(@post), headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_equal 1, json_response.count
-    post = json_response[:post]
+    assert_pattern { response.parsed_body => { post:, **nil } }
+    response.parsed_body => post:
 
     attribute_allow_list = Post::Query::ALLOWED_ATTRIBUTES.keys
     assert_equal attribute_allow_list.count, post.keys.count

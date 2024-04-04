@@ -17,8 +17,7 @@ class Api::V1::TermsControllerTest < ActionDispatch::IntegrationTest
       assert_response :created
     end
 
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_not_nil json_response.dig(:id)
+    assert_pattern { response.parsed_body => id: String, **nil }
   end
 
   test 'should not create with invalid authorization' do

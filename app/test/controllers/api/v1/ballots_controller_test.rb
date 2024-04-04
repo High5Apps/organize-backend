@@ -38,8 +38,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :created
 
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_not_empty json_response.dig(:id)
+    assert_pattern { response.parsed_body => id: String, **nil }
   end
 
   test 'should not create with invalid authorization' do
@@ -174,8 +173,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should only include ballots from requester Org' do
     get api_v1_ballots_url, headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    ballot_jsons = json_response.dig(:ballots)
+    response.parsed_body => ballots: ballot_jsons
     ballot_ids = ballot_jsons.map {|b| b[:id]}
     assert_not_equal 0, ballot_ids.length
     ballots = Ballot.find(ballot_ids)
@@ -186,15 +184,13 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should format voting_ends_at attributes as iso8601' do
     get api_v1_ballots_url, headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    voting_ends_at = json_response.dig(:ballots, 0, :voting_ends_at)
+    response.parsed_body => ballots: [{ voting_ends_at: }, *]
     assert Time.iso8601(voting_ends_at)
   end
 
   test 'index should not include pagination metadata when page param is not included' do
     get api_v1_ballots_url, headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_nil json_response[:meta]
+    assert_not_includes response.parsed_body, :meta
   end
 
   test 'index should include pagination metadata when page param is included' do
@@ -218,8 +214,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show should only include allowed attributes' do
     get api_v1_ballot_url(@ballot), headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_only_includes_allowed_attributes json_response,
+    assert_only_includes_allowed_attributes response.parsed_body,
       Api::V1::BallotsController::ALLOWED_ATTRIBUTES,
       optional_attributes: [:nominations, :results, :terms]
   end
@@ -227,9 +222,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   test 'show should only include nominations for elections' do
     [[@election, true], [@ballot, false]].each do |ballot, expect_nominations|
       get api_v1_ballot_url(ballot), headers: @authorized_headers
-
-      nominations = JSON.parse(response.body, symbolize_names: true)
-        .dig(:nominations)
+      nominations = response.parsed_body[:nominations]
       assert_nil(nominations) unless expect_nominations
       assert_not_nil(nominations) if expect_nominations
     end
@@ -242,7 +235,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
     end
 
-    nominations = JSON.parse(response.body, symbolize_names: true)[:nominations]
+    response.parsed_body => nominations:
     assert_not_empty nominations
     nominations.each do |nomination|
       assert_only_includes_allowed_attributes nomination,
@@ -260,16 +253,14 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
       get api_v1_ballot_url(@ballot),
         # Can't use @authorized_headers due to travel_to
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
-      results = JSON.parse(response.body, symbolize_names: true)[:results]
-      assert_nil results
+      assert_not_includes response.parsed_body, :results
     end
 
     travel_to @ballot.voting_ends_at do
       get api_v1_ballot_url(@ballot),
         # Can't use @authorized_headers due to travel_to
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
-      results = JSON.parse(response.body, symbolize_names: true)[:results]
-      assert_not_empty results
+      assert_not_empty response.parsed_body[:results]
     end
   end
 
@@ -280,7 +271,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
     end
 
-    results = JSON.parse(response.body, symbolize_names: true)[:results]
+    response.parsed_body => results:
     assert_not_empty results
     results.each do |result|
       assert_only_includes_allowed_attributes result,
@@ -296,7 +287,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
       travel_to time do
         get api_v1_ballot_url(@election),
           headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
-        terms = JSON.parse(response.body, symbolize_names: true)[:terms]
+        terms = response.parsed_body[:terms]
         assert_not_nil terms if expected_presence
         assert_nil terms unless expected_presence
       end
@@ -311,7 +302,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
     end
 
-    terms = JSON.parse(response.body, symbolize_names: true)[:terms]
+    response.parsed_body => terms:
     assert_not_empty terms
     terms.each do |term|
       assert_only_includes_allowed_attributes term,
@@ -321,14 +312,14 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show should only include allowed ballot attributes for non-elections' do
     get api_v1_ballot_url(@ballot), headers: @authorized_headers
-    ballot = JSON.parse(response.body, symbolize_names: true)[:ballot]
+    response.parsed_body => ballot:
     assert_only_includes_allowed_attributes ballot,
       Api::V1::BallotsController::ALLOWED_BALLOT_ATTRIBUTES
   end
 
   test 'show should only include allowed ballot attributes for elections' do
     get api_v1_ballot_url(@election), headers: @authorized_headers
-    ballot = JSON.parse(response.body, symbolize_names: true)[:ballot]
+    response.parsed_body => ballot:
     assert_only_includes_allowed_attributes ballot,
       Api::V1::BallotsController::ALLOWED_BALLOT_ELECTION_ATTRIBUTES
   end
@@ -353,7 +344,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
       ],
     ].each do |ballot, attributes|
       get api_v1_ballot_url(ballot), headers: @authorized_headers
-      candidates = JSON.parse(response.body, symbolize_names: true)[:candidates]
+      response.parsed_body => candidates:
       candidates.each do |candidate|
         assert_only_includes_allowed_attributes candidate, attributes
       end
@@ -362,8 +353,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show should only include candidates for the requested ballot' do
     get api_v1_ballot_url(@ballot), headers: @authorized_headers
-    response_json = JSON.parse(response.body, symbolize_names: true)
-    candidate_jsons = response_json[:candidates]
+    response.parsed_body => candidates: candidate_jsons
     assert_not_equal 0, candidate_jsons.count
     assert_equal @ballot.candidates.ids.sort,
       candidate_jsons.map {|c| c[:id]}.sort
@@ -391,8 +381,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show should format refreshed_at as iso8601' do
     get api_v1_ballot_url(@ballot), headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    refreshed_at = json_response[:refreshed_at]
+    response.parsed_body => refreshed_at:
     assert Time.iso8601(refreshed_at)
   end
 
@@ -402,12 +391,12 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     model, allowed_attributes, optional_attributes: []
   )
     model.keys.each do |key|
-      assert allowed_attributes.include? key
+      assert_includes allowed_attributes, key.to_sym
     end
 
     required_attributes = allowed_attributes - optional_attributes
     required_attributes.each do |attribute|
-      assert model.key? attribute
+      assert_includes model, attribute
     end
   end
 end

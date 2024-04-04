@@ -27,9 +27,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
       end
 
       assert_response :created
-
-      json_response = JSON.parse(response.body, symbolize_names: true)
-      assert_not_nil json_response.dig(:id)
+      assert_pattern { response.parsed_body => id: String, **nil }
     end
   end
 
@@ -133,29 +131,25 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should only include allow-listed attributes' do
     get api_v1_post_comments_url(@post), headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    comment = json_response.dig(:comments, 0)
-    assert_only_includes_allowed_attributes comment
+    response.parsed_body => comments: [first_comment, *]
+    assert_only_includes_allowed_attributes first_comment
   end
 
   test 'index should format created_at attributes as iso8601' do
     get api_v1_post_comments_url(@post), headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    created_at = json_response.dig(:comments, 0, :created_at)
+    response.parsed_body => comments: [{ created_at: }, *]
     assert Time.iso8601(created_at)
   end
 
   test 'index should include multiple comments' do
     get api_v1_post_comments_url(@post), headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    comments = json_response.dig(:comments)
-    assert_operator posts.count, :>, 1
+    response.parsed_body => comments:
+    assert_operator comments.count, :>, 1
   end
 
   test 'index should only include comments for the given post' do
     get api_v1_post_comments_url(@post), headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    comment_jsons = json_response.dig(:comments)
+    response.parsed_body => comments: comment_jsons
     comment_ids = comment_jsons.map {|comment| comment[:id]}
     comments = Comment.find(comment_ids)
     comments.each do |comment|
@@ -171,8 +165,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_post_comments_url(post),
       headers: @authorized_headers,
       params: { created_at_or_before: }
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    comment_jsons = json_response.dig(:comments)
+    response.parsed_body => comments: comment_jsons
     comment_created_ats = comment_jsons.map { |comment| comment[:created_at] }
 
     assert_not_empty comment_created_ats
@@ -192,9 +185,8 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
 
     get api_v1_post_comments_url(post),
       headers: authorized_headers(user, Authenticatable::SCOPE_ALL)
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    parent_comment = json_response.dig(:comments)
-      .find { |c| c[:id] == comment_with_reply.id }
+    response.parsed_body => comments:
+    parent_comment = comments.find { |c| c[:id] == comment_with_reply.id }
     replies = parent_comment[:replies]
     assert_not_empty replies
 

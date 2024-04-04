@@ -30,6 +30,8 @@ class Api::V1::OfficesControllerTest < ActionDispatch::IntegrationTest
 
   test 'index response open should match availability_in' do
     get api_v1_offices_url, headers: @authorized_headers
+
+    # This doesn't use response.parsed_body because names need to be symbolized
     json_response = JSON.parse(response.body, symbolize_names: true)
     offices = json_response.dig(:offices)
     assert_equal Office.availability_in(@user.org), offices

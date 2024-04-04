@@ -19,8 +19,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
       assert_response :created
     end
 
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_not_nil json_response.dig(:id)
+    assert_pattern { response.parsed_body => id: String, **nil }
   end
 
   test 'should not create with invalid authorization' do
@@ -55,12 +54,19 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
       headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL)
     assert_response :ok
 
-    body = JSON.parse(response.body, symbolize_names: true)
-    assert_not_empty body.dig(:graph, :user_ids)
-    assert_not_empty body.dig(:graph, :connections)
-    assert_not_empty body.dig(:id)
-    assert_not_empty body.dig(:encrypted_name)
-    assert_not_empty body.dig(:encrypted_member_definition)
+    assert_pattern do
+      response.parsed_body => {
+        encrypted_name:,
+        encrypted_member_definition:,
+        graph: {
+          user_ids: [String, *],
+          connections: [[String, String], *],
+          **nil
+        },
+        id: String,
+        **nil
+      }
+    end
   end
 
   test 'should not show my_org without authorization' do

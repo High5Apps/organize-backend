@@ -20,8 +20,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
       assert_response :created
     end
 
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_not_nil json_response.dig(:id)
+    assert_pattern { response.parsed_body => id: String, **nil }
   end
 
   test 'should not create with invalid params' do
@@ -56,9 +55,8 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should only include users from requester Org' do
     get api_v1_users_url, headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    user_jsons = json_response.dig(:users)
-    user_ids = user_jsons.map { |u| u[:id] }
+    response.parsed_body => users:
+    user_ids = users.map { |u| u[:id] }
     assert_not_empty user_ids
     users = User.find(user_ids)
     users.each do |user|
@@ -75,9 +73,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     filter = User::Query::PAGINATION_BYPASSING_FILTERS.first
     get api_v1_users_url, headers: @authorized_headers, params: { filter: }
     assert_not @controller.view_assigns['query'].paginates?
-
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    assert_nil json_response.dig(:meta)
+    assert_not_includes response.parsed_body, :meta
   end
 
   test 'index should respect page param' do
@@ -104,7 +100,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
 
   test 'show should only include ALLOWED_ATTRIBUTES' do
     get api_v1_user_url(@user_in_org), headers: @authorized_headers
-    json_response = JSON.parse(response.body, symbolize_names: true)
+    json_response = response.parsed_body
 
     attribute_allow_list = Api::V1::UsersController::ALLOWED_ATTRIBUTES
     assert_equal attribute_allow_list.count, json_response.keys.count
