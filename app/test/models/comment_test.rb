@@ -92,35 +92,35 @@ class CommentTest < ActiveSupport::TestCase
     pseudonyms.each { |p| assert_not_empty p }
   end
 
-  test 'includes_score_from_upvotes_created_at_or_before should include score as the sum of upvotes and downvotes' do
+  test 'select_upvote_score should include score as the sum of upvotes and downvotes' do
     assert_not_empty @comment.upvotes
 
     expected_score = @comment.upvotes.sum(:value)
-    comment_with_score = Comment
-      .includes_score_from_upvotes_created_at_or_before(Time.now)
+    comment_with_score = Comment.with_upvotes_created_at_or_before(Time.now)
+      .select_upvote_score
       .find(@comment.id)
     assert_equal expected_score, comment_with_score.score
   end
 
-  test "includes_my_vote_from_upvotes_created_at_or_before should include my_vote as the requester's upvote value" do
+  test "select_my_upvote should include my_vote as the requester's upvote value" do
     user = @comment.upvotes.first.user
     expected_vote = user.upvotes
       .where(comment: @comment).first.value
     assert_not_equal 0, expected_vote
 
-    my_vote = Comment
-      .includes_my_vote_from_upvotes_created_at_or_before(Time.now, user.id)
+    my_vote = Comment.with_upvotes_created_at_or_before(Time.now)
+      .select_my_upvote(user.id)
       .find(@comment.id).my_vote
     assert_equal expected_vote, my_vote
   end
 
-  test 'includes_my_vote_from_upvotes_created_at_or_before should include my_vote as 0 when the user has not upvoted or downvoted' do
+  test 'select_my_upvote should include my_vote as 0 when the user has not upvoted or downvoted' do
     comment_without_upvotes = comments(:two)
     user = comment_without_upvotes.user
     assert_empty comment_without_upvotes.upvotes
 
-    my_vote = Comment
-      .includes_my_vote_from_upvotes_created_at_or_before(Time.now, user.id)
+    my_vote = Comment.with_upvotes_created_at_or_before(Time.now)
+      .select_my_upvote(user.id)
       .find(comment_without_upvotes.id).my_vote
     assert_equal 0, my_vote
   end
@@ -129,10 +129,14 @@ class CommentTest < ActiveSupport::TestCase
     assert_not_empty @post.comments
     assert_not_empty @post.comments.first.upvotes
 
+    now = Time.now
+    far_future = 1.year.from_now
     first_comment_ids = @post.comments
-      .order_by_hot_created_at_or_before(Time.now).pluck(:id)
+      .with_upvotes_created_at_or_before(now)
+      .order_by_hot_created_at_or_before(now).pluck(:id)
     second_comment_ids = @post.comments
-      .order_by_hot_created_at_or_before(1.year.from_now).pluck(:id)
+      .with_upvotes_created_at_or_before(far_future)
+      .order_by_hot_created_at_or_before(far_future).pluck(:id)
 
     assert_not_empty first_comment_ids
     assert_equal first_comment_ids, second_comment_ids
@@ -224,8 +228,10 @@ class CommentTest < ActiveSupport::TestCase
   end
 
   def assert_ordered(higher:, lower:)
+    now = Time.now
     comment_ids = @post_without_comments.comments
-      .order_by_hot_created_at_or_before(Time.now).pluck(:id)
+      .with_upvotes_created_at_or_before(now)
+      .order_by_hot_created_at_or_before(now).pluck(:id)
     assert_operator comment_ids.find_index(higher.id),
       :<, comment_ids.find_index(lower.id)
   end

@@ -47,8 +47,9 @@ class Api::V1::CommentsController < ApplicationController
     comments = @post.comments
       .created_at_or_before(created_at_or_before)
       .includes_pseudonym
-      .includes_score_from_upvotes_created_at_or_before(created_at_or_before)
-      .includes_my_vote_from_upvotes_created_at_or_before(created_at_or_before, my_id)
+      .with_upvotes_created_at_or_before(created_at_or_before)
+      .select_upvote_score
+      .select_my_upvote(my_id)
       .select(*MANUAL_SELECTIONS)
       .order_by_hot_created_at_or_before(created_at_or_before)
       .arrange_serializable do |parent, children|

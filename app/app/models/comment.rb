@@ -2,32 +2,29 @@ class Comment < ApplicationRecord
   include Encryptable
 
   scope :created_at_or_before, ->(time) { where(created_at: ..time) }
-  scope :includes_my_vote_from_upvotes_created_at_or_before, ->(time, my_id) {
+  scope :with_upvotes_created_at_or_before, ->(time) {
+    with(upvotes: Upvote.created_at_or_before(time))
+      .left_outer_joins(:upvotes)
+  }
+  scope :select_my_upvote, ->(my_id) {
+    # Must be used with_upvotes_created_at_or_before.
+
     # Even though there is at most one upvote per requester per comment, SUM is
     # needed because an aggregate function is required
-    left_outer_joins_with_upvotes_created_at_or_before(time)
-      .select(Comment.sanitize_sql_array([
-        "SUM(CASE WHEN upvotes.user_id = :my_id THEN value ELSE 0 END) AS my_vote",
-        my_id:]))
+    select(Comment.sanitize_sql_array([
+      "SUM(CASE WHEN upvotes.user_id = :my_id THEN value ELSE 0 END) AS my_vote",
+      my_id:]))
   }
   scope :includes_pseudonym, -> {
     select(:pseudonym).joins(:user).group(:id, :pseudonym)
   }
-  scope :includes_score_from_upvotes_created_at_or_before, ->(time) {
-    left_outer_joins_with_upvotes_created_at_or_before(time)
-      .select('COALESCE(SUM(value), 0) AS score')
-  }
-  scope :left_outer_joins_with_upvotes_created_at_or_before, ->(time) {
-    joins(%Q(
-      LEFT OUTER JOIN (
-        #{Upvote.created_at_or_before(time).to_sql}
-      ) AS upvotes
-        ON upvotes.comment_id = comments.id
-    ).gsub(/\s+/, ' '))
+  scope :select_upvote_score, -> {
+    # Must be used with_upvotes_created_at_or_before
+    select('COALESCE(SUM(value), 0) AS score')
   }
   scope :order_by_hot_created_at_or_before, ->(time) {
-    left_outer_joins_with_upvotes_created_at_or_before(time)
-      .order(Arel.sql(Comment.sanitize_sql_array([
+    # Must be used with_upvotes_created_at_or_before
+    order(Arel.sql(Comment.sanitize_sql_array([
         %(
           (1 + COALESCE(SUM(value), 0)) /
           (2 +
