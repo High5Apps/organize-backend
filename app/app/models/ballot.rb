@@ -29,8 +29,8 @@ class Ballot < ApplicationRecord
   MAX_QUESTION_LENGTH = 140
   MIN_TERM_ACCEPTANCE_PERIOD = 24.hours
 
-  enum category: [:yes_no, :multiple_choice, :election]
-  enum office: Office::TYPE_SYMBOLS
+  enum :category, [:yes_no, :multiple_choice, :election], validate: true
+  enum :office, Office::TYPE_SYMBOLS, validate: { allow_nil: true }
 
   belongs_to :user
 
@@ -41,9 +41,6 @@ class Ballot < ApplicationRecord
 
   has_one :org, through: :user
 
-  validates :category,
-    presence: true,
-    inclusion: { in: categories }
   validates :max_candidate_ids_per_vote,
     numericality: { allow_nil: true, greater_than: 0, only_integer: true }
   validates :max_candidate_ids_per_vote,
@@ -53,7 +50,7 @@ class Ballot < ApplicationRecord
     numericality: { allow_nil: true, equal_to: 1 },
     if: :election?,
     unless: -> { office == 'steward' }
-  validates :office, inclusion: { in: offices }, if: :election?
+  validates :office, presence: true, if: :election?
   validates :office, absence: true, unless: :election?
   validates :nominations_end_at,
     presence: true,

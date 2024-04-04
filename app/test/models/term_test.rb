@@ -50,8 +50,13 @@ class TermTest < ActiveSupport::TestCase
   end
 
   test 'office should be present' do
-    @founder_term.office = nil
-    assert @founder_term.invalid?
+    @non_founder_term.office = nil
+    assert @non_founder_term.invalid?
+  end
+
+  test 'office should be included in offices' do
+    @non_founder_term.office = :bad_office
+    assert @non_founder_term.invalid?
   end
 
   test 'user should be present' do

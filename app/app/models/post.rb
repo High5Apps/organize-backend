@@ -14,7 +14,7 @@ class Post < ApplicationRecord
   MAX_TITLE_LENGTH = 140
   MAX_BODY_LENGTH = 10000
 
-  enum category: [:general, :grievances, :demands]
+  enum :category, [:general, :grievances, :demands], validate: true
 
   belongs_to :candidate, optional: true
   belongs_to :org
@@ -24,9 +24,6 @@ class Post < ApplicationRecord
   has_many :upvotes
 
   validates :org, presence: true
-  validates :category,
-    presence: true,
-    inclusion: { in: categories }
   validates :user, presence: true
 
   validate :candidacy_announcement_category_is_general

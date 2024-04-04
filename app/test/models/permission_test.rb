@@ -25,9 +25,8 @@ class PermissionTest < ActiveSupport::TestCase
   end
 
   test 'scope should be included in scopes' do
-    assert_raises ArgumentError do
-      assert_not @permission.update scope: 'bad_scope'
-    end
+    @permission.scope = :bad_scope
+    assert @permission.invalid?
   end
 
   test 'should not allow multiple with the same scope in an Org' do

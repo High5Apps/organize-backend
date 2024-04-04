@@ -20,6 +20,11 @@ class BallotTest < ActiveSupport::TestCase
     assert @ballot.invalid?
   end
 
+  test 'category should be included in categories' do
+    @ballot.category = :bad_category
+    assert @ballot.invalid?
+  end
+
   test 'encrypted_question should be present' do
     @ballot.encrypted_question = nil
     assert @ballot.invalid?
@@ -86,6 +91,11 @@ class BallotTest < ActiveSupport::TestCase
 
   test 'office should be required for elections' do
     @election.office = nil
+    assert @election.invalid?
+  end
+
+  test 'office should be included in offices' do
+    @election.office = :bad_office
     assert @election.invalid?
   end
 

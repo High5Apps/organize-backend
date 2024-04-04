@@ -5,7 +5,7 @@ class Term < ApplicationRecord
 
   COOLDOWN_PERIOD = 2.months
 
-  enum office: Office::TYPE_SYMBOLS
+  enum :office, Office::TYPE_SYMBOLS, validate: true
 
   belongs_to :ballot, optional: true
   belongs_to :user
@@ -16,9 +16,6 @@ class Term < ApplicationRecord
   validates :ends_at,
     presence: true,
     comparison: { greater_than: :starts_at }
-  validates :office,
-    presence: true,
-    inclusion: { in: offices }
   validates :starts_at, presence: true
   validates :starts_at,
     after_created_at: true,
