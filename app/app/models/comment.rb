@@ -37,7 +37,7 @@ class Comment < ApplicationRecord
         ).gsub(/\s+/, ' '),
         cutoff_time: time,
         gravity: 0.975,
-        time_division: 1.hour])))
+        time_division: 1.hour.to_i])))
       .group(:id)
   }
 

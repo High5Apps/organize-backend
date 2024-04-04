@@ -80,18 +80,18 @@ class PostQueryTest < ActiveSupport::TestCase
     older_post = @post_without_upvotes.dup
     older_post.save!
 
-    travel 1.second
+    travel 1.second do
+      newer_post = @post_without_upvotes.dup
+      newer_post.save!
 
-    newer_post = @post_without_upvotes.dup
-    newer_post.save!
+      travel 1.second
 
-    travel 1.second
-
-    post_ids = Post::Query.build({
-      created_at_or_before: Time.now, sort: 'hot',
-    }).ids
-    assert_operator post_ids.find_index(newer_post.id),
-      :<, post_ids.find_index(older_post.id)
+      post_ids = Post::Query.build({
+        created_at_or_before: Time.now, sort: 'hot',
+      }).ids
+      assert_operator post_ids.find_index(newer_post.id),
+        :<, post_ids.find_index(older_post.id)
+    end
   end
 
   test 'hot order should prefer slightly older posts with higher scores' do
@@ -102,21 +102,21 @@ class PostQueryTest < ActiveSupport::TestCase
 
     # If this test fails after raising the gravity parameter, you probably need
     # to decrease this value.
-    travel 1.hour
+    travel 1.hour do
+      newer_post = @post_without_upvotes.dup
+      newer_post.save!
 
-    newer_post = @post_without_upvotes.dup
-    newer_post.save!
+      travel 1.second
+      newer_post.upvotes.destroy_all
 
-    travel 1.second
-    newer_post.upvotes.destroy_all
+      travel 1.second
 
-    travel 1.second
-
-    post_ids = Post::Query.build({
-      created_at_or_before: Time.now, sort: 'hot',
-    }).ids
-    assert_operator post_ids.find_index(older_post.id),
-      :<, post_ids.find_index(newer_post.id)
+      post_ids = Post::Query.build({
+        created_at_or_before: Time.now, sort: 'hot',
+      }).ids
+      assert_operator post_ids.find_index(older_post.id),
+        :<, post_ids.find_index(newer_post.id)
+    end
   end
 
   test 'hot order should prefer much newer posts with slightly lower scores' do
@@ -127,21 +127,21 @@ class PostQueryTest < ActiveSupport::TestCase
 
     # If this test fails after lowering the gravity parameter, you probably need
     # to increase this value.
-    travel 2.hours
+    travel 2.hours do
+      newer_post = @post_without_upvotes.dup
+      newer_post.save!
 
-    newer_post = @post_without_upvotes.dup
-    newer_post.save!
+      travel 1.second
+      newer_post.upvotes.destroy_all
 
-    travel 1.second
-    newer_post.upvotes.destroy_all
+      travel 1.second
 
-    travel 1.second
-
-    post_ids = Post::Query.build({
-      created_at_or_before: Time.now, sort: 'hot',
-    }).ids
-    assert_operator post_ids.find_index(newer_post.id),
-      :<, post_ids.find_index(older_post.id)
+      post_ids = Post::Query.build({
+        created_at_or_before: Time.now, sort: 'hot',
+      }).ids
+      assert_operator post_ids.find_index(newer_post.id),
+        :<, post_ids.find_index(older_post.id)
+    end
   end
 
   test 'hot order should prefer older posts with much higher scores' do
@@ -153,21 +153,21 @@ class PostQueryTest < ActiveSupport::TestCase
 
     # If this test fails after raising the gravity parameter, you probably need
     # to decrease this value.
-    travel 1.day
+    travel 1.day do
+      newer_post = @post_without_upvotes.dup
+      newer_post.save!
 
-    newer_post = @post_without_upvotes.dup
-    newer_post.save!
+      travel 1.second
+      newer_post.upvotes.destroy_all
 
-    travel 1.second
-    newer_post.upvotes.destroy_all
+      travel 1.second
 
-    travel 1.second
-
-    post_ids = Post::Query.build({
-      created_at_or_before: Time.now, sort: 'hot',
-    }).ids
-    assert_operator post_ids.find_index(older_post.id),
-      :<, post_ids.find_index(newer_post.id)
+      post_ids = Post::Query.build({
+        created_at_or_before: Time.now, sort: 'hot',
+      }).ids
+      assert_operator post_ids.find_index(older_post.id),
+        :<, post_ids.find_index(newer_post.id)
+    end
   end
 
   test 'hot order should prefer much newer posts with lower scores' do
@@ -179,21 +179,21 @@ class PostQueryTest < ActiveSupport::TestCase
 
     # If this test fails after lowering the gravity parameter, you probably need
     # to increase this value.
-    travel 2.days
+    travel 2.days do
+      newer_post = @post_without_upvotes.dup
+      newer_post.save!
 
-    newer_post = @post_without_upvotes.dup
-    newer_post.save!
+      travel 1.second
+      newer_post.upvotes.destroy_all
 
-    travel 1.second
-    newer_post.upvotes.destroy_all
+      travel 1.second
 
-    travel 1.second
-
-    post_ids = Post::Query.build({
-      created_at_or_before: Time.now, sort: 'hot',
-    }).ids
-    assert_operator post_ids.find_index(newer_post.id),
-      :<, post_ids.find_index(older_post.id)
+      post_ids = Post::Query.build({
+        created_at_or_before: Time.now, sort: 'hot',
+      }).ids
+      assert_operator post_ids.find_index(newer_post.id),
+        :<, post_ids.find_index(older_post.id)
+    end
   end
 
   test 'should only include allow-listed attributes' do

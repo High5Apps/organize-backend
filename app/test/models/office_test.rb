@@ -108,11 +108,12 @@ class OfficeTest < ActiveSupport::TestCase
       # Can't validate because the user didn't actually win an election
       term.save! validate: false
 
-      travel_to term.ends_at - Term::COOLDOWN_PERIOD
-      assert_availability_open_except_for ['founder']
-      travel -1.second
-      assert_availability_open_except_for ['founder', term.office]
-      term.destroy!
+      travel_to term.ends_at - Term::COOLDOWN_PERIOD do
+        assert_availability_open_except_for ['founder']
+        travel -1.second
+        assert_availability_open_except_for ['founder', term.office]
+        term.destroy!
+      end
     end
   end
 
@@ -124,10 +125,11 @@ class OfficeTest < ActiveSupport::TestCase
     # Can't validate because the user didn't actually win an election
     term.save! validate: false
 
-    travel_to term.ends_at - Term::COOLDOWN_PERIOD
-    assert_availability_open_except_for ['founder']
-    travel -1.second
-    assert_availability_open_except_for ['founder']
+    travel_to term.ends_at - Term::COOLDOWN_PERIOD do
+      assert_availability_open_except_for ['founder']
+      travel -1.second
+      assert_availability_open_except_for ['founder']
+    end
   end
 
   private

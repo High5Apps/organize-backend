@@ -31,10 +31,12 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not get user from expired token' do
-    expired_token = @user.create_auth_token FAKE_AUTH_TIMEOUT.from_now,
-      SCOPE_ALL
-    @authentication.request.headers[AUTHORIZATION] = bearer(expired_token)
-    travel (FAKE_AUTH_TIMEOUT) do
+    freeze_time do
+      expired_token = @user.create_auth_token FAKE_AUTH_TIMEOUT.from_now,
+        SCOPE_ALL
+      @authentication.request.headers[AUTHORIZATION] = bearer(expired_token)
+
+      travel FAKE_AUTH_TIMEOUT
       assert_nil @authentication.authenticated_user
     end
   end
@@ -48,43 +50,53 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
   end
 
   test 'should get user from correct, non-expired token' do
-    auth_token = @user.create_auth_token(FAKE_AUTH_TIMEOUT.from_now, SCOPE_ALL)
-    @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
-    travel (FAKE_AUTH_TIMEOUT - 1.second) do
+    freeze_time do
+      auth_token = @user.create_auth_token(FAKE_AUTH_TIMEOUT.from_now, SCOPE_ALL)
+      @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
+
+      travel FAKE_AUTH_TIMEOUT - 1.second
       assert_equal @user, @authentication.authenticated_user
     end
   end
 
   test 'should not get user from correct token without expiration' do
-    auth_token = @user.create_auth_token(nil, SCOPE_ALL)
-    @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
-    travel -10.seconds do
+    freeze_time do
+      auth_token = @user.create_auth_token(nil, SCOPE_ALL)
+      @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
+
+      travel -10.seconds
       assert_nil @authentication.authenticated_user
     end
   end
 
   test 'should not get user from correct token without Bearer prefix' do
-    auth_token = @user.create_auth_token(FAKE_AUTH_TIMEOUT.from_now, SCOPE_ALL)
-    @authentication.request.headers[AUTHORIZATION] = auth_token
-    travel (FAKE_AUTH_TIMEOUT - 1.second) do
+    freeze_time do
+      auth_token = @user.create_auth_token(FAKE_AUTH_TIMEOUT.from_now, SCOPE_ALL)
+      @authentication.request.headers[AUTHORIZATION] = auth_token
+
+      travel FAKE_AUTH_TIMEOUT - 1.second
       assert_nil @authentication.authenticated_user
     end
   end
 
   test 'should not get user from correct token without scope' do
-    auth_token = @user.create_auth_token(FAKE_AUTH_TIMEOUT.from_now, nil)
-    @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
-    travel (FAKE_AUTH_TIMEOUT - 1.second) do
+    freeze_time do
+      auth_token = @user.create_auth_token(FAKE_AUTH_TIMEOUT.from_now, nil)
+      @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
+
+      travel FAKE_AUTH_TIMEOUT - 1.second
       assert_nil @authentication.authenticated_user
     end
   end
 
   test 'should not get user from correct token with incorrect scope' do
-    auth_token = @user.create_auth_token(
-      FAKE_AUTH_TIMEOUT.from_now,
-      Authenticatable::SCOPE_CREATE_CONNECTIONS)
-    @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
-    travel (FAKE_AUTH_TIMEOUT - 1.second) do
+    freeze_time do
+      auth_token = @user.create_auth_token(
+        FAKE_AUTH_TIMEOUT.from_now,
+        Authenticatable::SCOPE_CREATE_CONNECTIONS)
+      @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
+
+      travel FAKE_AUTH_TIMEOUT - 1.second
       assert_nil  @authentication.authenticated_user
     end
   end

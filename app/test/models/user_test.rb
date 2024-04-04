@@ -134,11 +134,13 @@ class UserTest < ActiveSupport::TestCase
   test 'with_service_stats should not include offices inactive at time' do
     office = :trustee
     assert_empty @user.org.terms.where(office:)
-    travel_to 1.second.ago
+
     term = terms(:three).dup
     term.office = office
-    term.save!
-    travel_back
+    travel_to 1.second.ago do
+      term.save!
+    end
+
     office_index = Office::TYPE_SYMBOLS.index office
 
     at_term_start = @user.org.users.with_service_stats(term.starts_at)

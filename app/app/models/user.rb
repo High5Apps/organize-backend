@@ -20,7 +20,7 @@ class User < ApplicationRecord
           users.id DESC
       ).gsub(/\s+/, ' '),
       time: time,
-      time_division: 1.month])))
+      time_division: 1.month.to_i])))
   }
   scope :with_service_stats, ->(time = nil) {
     time ||= Time.now

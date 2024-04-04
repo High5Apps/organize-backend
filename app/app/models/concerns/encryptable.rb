@@ -10,7 +10,7 @@ module Encryptable
       validate validate_presence_method_name.to_sym if present
       validate validate_max_length_method_name.to_sym if max_length
 
-      serialize encrypted_attribute_name, EncryptedMessage
+      serialize encrypted_attribute_name, coder: EncryptedMessage
 
       define_method(validate_presence_method_name) do
         length = send(encrypted_attribute_name).decoded_ciphertext_length
