@@ -1,11 +1,10 @@
 class Vote < ApplicationRecord
-  scope :unnested, -> {
-    select('*').joins(%Q(
-      JOIN (
-        #{select('*, unnest(candidate_ids) as unnested_candidate_id').to_sql}
-      ) AS unnested_votes
-        ON unnested_votes.id = votes.id
-    ).gsub(/\s+/, ' '))
+  scope :unnested_candidate_ids, -> {
+    with(unnested_votes:
+      select('id as vote_id, unnest(candidate_ids) as candidate_id')
+    )
+      .joins(:unnested_votes)
+      .select(:candidate_id)
   }
 
   belongs_to :ballot

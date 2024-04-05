@@ -87,11 +87,11 @@ class Ballot < ApplicationRecord
     results = candidates
       .left_outer_joins_with_unnested_votes
       .group(:id)
-      .order(count_unnested_candidate_id: :desc, id: :desc)
-      # Note that it's important to count :unnested_candidate_id instead of :all
-      # or :candidate_id, because of the left join. Otherwise, every candidate
-      # would receive at least one vote.
-      .count(:unnested_candidate_id)
+      .order(count_candidate_id: :desc, id: :desc)
+      # Note that it's important to count :candidate_id instead of :all because
+      # of the left join. Otherwise, every candidate would receive at least one
+      # vote.
+      .count(:candidate_id)
       .map { |candidate_id, vote_count| { candidate_id:, vote_count: } }
 
     # Downrank considering ties. Lower rank is better. Zero is the best.

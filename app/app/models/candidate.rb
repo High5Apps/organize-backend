@@ -2,12 +2,8 @@ class Candidate < ApplicationRecord
   include Encryptable
 
   scope :left_outer_joins_with_unnested_votes, -> {
-    joins(%Q(
-      LEFT OUTER JOIN (
-        #{Vote.unnested.to_sql}
-      ) AS votes
-        ON votes.unnested_candidate_id = candidates.id
-    ).gsub(/\s+/, ' '))
+    with(votes: Vote.unnested_candidate_ids)
+      .left_outer_joins(:votes)
   }
 
   MAX_TITLE_LENGTH = 60
