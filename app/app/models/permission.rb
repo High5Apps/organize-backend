@@ -5,6 +5,8 @@ class Permission < ApplicationRecord
 
   belongs_to :org
 
-  validates :data, presence: true
+  serialize :data, coder: PermissionData
+
   validates :org, presence: true
+  validates_associated :data
 end

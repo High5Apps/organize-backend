@@ -14,6 +14,11 @@ class PermissionTest < ActiveSupport::TestCase
     assert @permission.invalid?
   end
 
+  test 'data should be valid' do
+    @permission.data = { offices: ['bad_office'] }
+    assert @permission.invalid?
+  end
+
   test 'org should be present' do
     @permission.org = nil
     assert @permission.invalid?
