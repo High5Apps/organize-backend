@@ -49,4 +49,10 @@ class PermissionTest < ActiveSupport::TestCase
     @permission.data = { offices: [unfilled_office] }
     assert @permission.invalid?
   end
+
+  test 'should not prevent president from editing permissions' do
+    assert @permission.edit_permissions?
+    @permission.data = { offices: ['founder'] }
+    assert @permission.invalid?
+  end
 end
