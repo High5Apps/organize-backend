@@ -24,7 +24,12 @@ class PermissionDataTest < ActiveSupport::TestCase
   end
 
   test 'offices should only include offices' do
-    @permission_data.offices = ['president', 'bad_office']
+    @permission_data.offices = ['bad_office']
+    assert @permission_data.invalid?
+  end
+
+  test 'offices should not contain duplicates' do
+    @permission_data.offices = ['founder', 'founder']
     assert @permission_data.invalid?
   end
 end

@@ -6,6 +6,7 @@ class PermissionData
   validates :offices, presence: true
 
   validate :offices_only_includes_offices
+  validate :no_duplicate_offices
 
   def attributes
     instance_values
@@ -25,10 +26,18 @@ class PermissionData
 
   private
 
+  def no_duplicate_offices
+    return unless offices
+
+    unless offices.uniq.length == offices.length
+      errors.add :offices, 'must not contain duplicates'
+    end
+  end
+
   def offices_only_includes_offices
     return unless offices
     unless offices.all? { |office| Office::TYPE_STRINGS.include? office }
-      errors.add(:offices, 'must only include offices')
+      errors.add :offices, 'must only include offices'
     end
   end
 end
