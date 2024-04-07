@@ -25,36 +25,28 @@ class User < ApplicationRecord
   scope :with_service_stats, ->(time = nil) {
     time ||= Time.now
     from(
-      joins("LEFT OUTER JOIN (#{
-        joins(:terms).group(:id).merge(Term.active_at time)
-          .select(
-            'users.id AS user_id',
-            'array_agg(terms.office) AS offices_inner',
-            'MIN(terms.office) AS min_office')
-          .to_sql
-      }) AS offices ON users.id = offices.user_id")
-        .joins("LEFT OUTER JOIN (#{
-          # Can't use scope merging here because both tables are Users.
-          # Attempting otherwise causes the scope to be applied to the users and
-          # not the recruits
-          joins(:recruits).where(recruits: { joined_at: ..time }).group(:id)
-            .select('users.id AS user_id, COUNT(*) AS recruit_count_inner')
-            .to_sql
-        }) AS recruit_counts ON users.id = recruit_counts.user_id")
-        .joins("LEFT OUTER JOIN (#{
-          joins(:scanned_connections).group(:id)
-            .merge(Connection.created_at_or_before time)
-            .select('users.id AS user_id, COUNT(*) AS scanned_count_inner')
-            .to_sql
-        }) AS scanned_counts ON users.id = scanned_counts.user_id")
-        .joins("LEFT OUTER JOIN (#{
-          joins(:shared_connections).group(:id)
-            .merge(Connection.created_at_or_before time)
-            .select('users.id AS user_id, COUNT(*) AS shared_count_inner')
-            .to_sql
-        }) AS shared_counts ON users.id = shared_counts.user_id")
+      with(offices: Term.active_at(time)
+        .group(:user_id)
         .select(
-          '*',
+          :user_id,
+          'array_agg(terms.office) AS offices_inner',
+          'MIN(terms.office) AS min_office')
+      ).left_outer_joins(:offices)
+      .with(recruit_counts: User.joined_at_or_before(time)
+        .group(:recruiter_id)
+        .select('recruiter_id AS user_id, COUNT(*) AS recruit_count_inner')
+      ).left_outer_joins(:recruit_counts)
+      .with(scanned_counts: Connection.created_at_or_before(time)
+        .group(:scanner_id)
+        .select('scanner_id AS user_id, COUNT(*) AS scanned_count_inner')
+      ).left_outer_joins(:scanned_counts)
+      .with(shared_counts: Connection.created_at_or_before(time)
+        .group(:sharer_id)
+        .select('sharer_id AS user_id, COUNT(*) AS shared_count_inner')
+      ).left_outer_joins(:shared_counts)
+        .select(
+          'users.*',
+          'min_office',
           'COALESCE(offices_inner, ARRAY[]::integer[]) AS offices',
           'COALESCE(recruit_count_inner, 0) AS recruit_count',
           'COALESCE(scanned_count_inner, 0) + COALESCE(shared_count_inner, 0) AS connection_count',
