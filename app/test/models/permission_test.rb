@@ -41,4 +41,12 @@ class PermissionTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'should not update if it would not allow anyone to do it' do
+    unfilled_office = 'secretary'
+    assert_not_includes @permission.org.terms.active_at(Time.now).map(&:office),
+      unfilled_office
+    @permission.data = { offices: [unfilled_office] }
+    assert @permission.invalid?
+  end
 end
