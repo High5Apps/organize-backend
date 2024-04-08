@@ -86,15 +86,9 @@ class PermissionTest < ActiveSupport::TestCase
     assert_not Permission.can? @founder, :bad_scope
   end
 
-  test 'can? should use the default param when no permission is found' do
-    assert_empty @founder.org.permissions
-    Office::TYPE_STRINGS.each do |office|
-      assert_equal (office == 'founder'),
-        Permission.can?(@founder, :edit_permissions, offices: [office])
-    end
-  end
+  test 'can? should use the default when no permission is found' do
+    assert_empty @pending_president.org.permissions.view_permissions
 
-  test 'can? should use the default-default when no permission is found and no default param is given' do
     term = @pending_president.terms.first
     travel_to term.starts_at do
       assert_not_empty @pending_president.terms.active_at(Time.now).president
@@ -103,7 +97,28 @@ class PermissionTest < ActiveSupport::TestCase
         term.office = office
         term.save! validate: false
 
-        expect_can = Permission::DEFAULT_DEFAULT_DATA[:offices].include? office
+        expect_can = Permission::Defaults[:view_permissions][:offices]
+          .include? office
+        assert_equal expect_can,
+          Permission.can?(@pending_president.reload, :view_permissions)
+      end
+    end
+  end
+
+  test 'can? should use the default-default when no permission is found and no default exists' do
+    @pending_president.org.permissions.destroy_all
+    assert_empty @pending_president.org.permissions
+
+    term = @pending_president.terms.first
+    travel_to term.starts_at do
+      assert_not_empty @pending_president.terms.active_at(Time.now).president
+
+      Office::TYPE_STRINGS.each do |office|
+        term.office = office
+        term.save! validate: false
+
+        expect_can = Permission::Defaults::DEFAULT_DEFAULT[:offices]
+          .include? office
         assert_equal expect_can,
           Permission.can?(@pending_president.reload, :edit_permissions)
       end

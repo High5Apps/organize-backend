@@ -1,16 +1,14 @@
 class Permission < ApplicationRecord
-  DEFAULT_DEFAULT_DATA = {
-    offices: ['founder', 'president'],
-  }.freeze
   SCOPE_SYMBOLS = [
     :edit_permissions,
+    :view_permissions,
   ].freeze
 
   enum :scope, SCOPE_SYMBOLS, validate: true
 
   belongs_to :org
 
-  serialize :data, coder: Permission::Data
+  serialize :data, coder: Data
 
   validates :org, presence: true
   validates_associated :data
@@ -18,11 +16,11 @@ class Permission < ApplicationRecord
   validate :president_can_edit_permissions
   validate :some_active_officer_has_permission, on: [:create, :update]
 
-  def self.can?(user, scope, default_data = DEFAULT_DEFAULT_DATA)
+  def self.can?(user, scope)
     return false unless user.org && SCOPE_SYMBOLS.include?(scope)
 
     permission = user.org.permissions.find_by scope:
-    data = permission&.data || Permission::Data.new(default_data)
+    data = permission&.data || Data.new(Defaults[scope])
 
     active_offices = user.terms.active_at(Time.now).pluck :office
     return (active_offices & data.offices).present?
