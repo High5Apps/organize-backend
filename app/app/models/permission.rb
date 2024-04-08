@@ -17,13 +17,18 @@ class Permission < ApplicationRecord
   validate :some_active_officer_has_permission, on: [:create, :update]
 
   def self.can?(user, scope)
-    return false unless user.org && SCOPE_SYMBOLS.include?(scope)
-
-    permission = user.org.permissions.find_by scope:
-    data = permission&.data || Data.new(Defaults[scope])
+    permission_data = who_can(scope, user.org)
+    return false unless permission_data
 
     active_offices = user.terms.active_at(Time.now).pluck :office
-    return (active_offices & data.offices).present?
+    return (active_offices & permission_data.offices).present?
+  end
+
+  def self.who_can(scope, org)
+    return nil unless org && SCOPE_SYMBOLS.include?(scope.to_sym)
+
+    permission = org.permissions.find_by(scope:)
+    permission&.data || Data.new(Defaults[scope])
   end
 
   private

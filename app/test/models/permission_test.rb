@@ -152,4 +152,33 @@ class PermissionTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'who_can should return nil when org is nil' do
+    nil_org = nil
+    assert_nil Permission.who_can :edit_permissions, nil_org
+  end
+
+  test 'who_can should return nil for unknown scopes' do
+    assert_nil Permission.who_can :bad_scope, orgs(:one)
+  end
+
+  test 'who_can should return the permission data when available' do
+    assert_equal @permission.data.attributes,
+      Permission.who_can(@permission.scope, @permission.org).attributes
+  end
+
+  test 'who_can should return the specific default when permission unavailable' do
+    assert_empty @pending_president.org.permissions.view_permissions
+    view_permissions_default = Permission::Defaults::DEFAULTS[:view_permissions]
+    assert_equal Permission::Data.new(view_permissions_default).attributes,
+      Permission.who_can(:view_permissions, @pending_president.org).attributes
+  end
+
+  test 'who_can should return the default-default when permission unavailable and no specific default' do
+    assert_empty @founder.org.permissions
+    assert_nil Permission::Defaults::DEFAULTS[:edit_permissions]
+    default_default = Permission::Defaults::DEFAULT_DEFAULT
+    assert_equal Permission::Data::new(default_default).attributes,
+      Permission.who_can(:edit_permissions, @founder.org).attributes
+  end
 end
