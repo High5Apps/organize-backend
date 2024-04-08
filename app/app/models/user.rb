@@ -101,6 +101,10 @@ class User < ApplicationRecord
   before_update :on_join_org,
     if: -> { will_save_change_to_org_id? from: nil }
 
+  def can?(scope)
+    Permission.can? self, scope
+  end
+
   def create_auth_token(expiration, scope)
     payload = JsonWebToken.payload(id, expiration, scope)
     JsonWebToken.encode(payload, private_key)

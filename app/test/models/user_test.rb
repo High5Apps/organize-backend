@@ -273,6 +273,12 @@ class UserTest < ActiveSupport::TestCase
       User.search_by_pseudonym('nthusias ouca').first
   end
 
+  test 'can? should match Permission.can' do
+    Permission::SCOPE_SYMBOLS.each do |scope|
+      assert_equal @user.can?(scope), Permission.can?(@user, scope)
+    end
+  end
+
   private
 
   def correct_connection_created_ats_to_match_user_joined_ats
