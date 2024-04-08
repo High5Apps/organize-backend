@@ -10,7 +10,7 @@ class Permission < ApplicationRecord
 
   belongs_to :org
 
-  serialize :data, coder: PermissionData
+  serialize :data, coder: Permission::Data
 
   validates :org, presence: true
   validates_associated :data
@@ -22,7 +22,7 @@ class Permission < ApplicationRecord
     return false unless user.org && SCOPE_SYMBOLS.include?(scope)
 
     permission = user.org.permissions.find_by scope:
-    data = permission&.data || PermissionData.new(default_data)
+    data = permission&.data || Permission::Data.new(default_data)
 
     active_offices = user.terms.active_at(Time.now).pluck :office
     return (active_offices & data.offices).present?

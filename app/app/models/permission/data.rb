@@ -1,4 +1,4 @@
-class PermissionData
+class Permission::Data
   include ActiveModel::API
 
   attr_accessor :offices
@@ -21,7 +21,7 @@ class PermissionData
   end
 
   def self.load(hash)
-    PermissionData.new(hash)
+    Permission::Data.new(hash)
   end
 
   private

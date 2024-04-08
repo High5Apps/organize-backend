@@ -10,7 +10,7 @@ class PermissionDataTest < ActiveSupport::TestCase
   end
 
   test 'should not include unexpected attributes' do
-    assert_raises { PermissionData.new bad_attribute: 'foo' }
+    assert_raises { Permission::Data.new bad_attribute: 'foo' }
   end
 
   test 'offices should be present' do
