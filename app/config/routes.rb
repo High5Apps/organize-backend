@@ -14,6 +14,11 @@ Rails.application.routes.draw do
       resources :nominations, only: [:update]
       resources :offices, only: [:index]
       resources :orgs, only: [:create]
+      resources :permissions, only: [] do
+        collection do
+          get ':scope', to: 'permissions#show_by_scope', as: 'show_by_scope'
+        end
+      end
       resources :posts, concerns: :upvotable, only: [:index, :create, :show] do
         resources :comments,
           concerns: :upvotable,
