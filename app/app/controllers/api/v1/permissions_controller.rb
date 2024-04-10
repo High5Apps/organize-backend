@@ -34,14 +34,6 @@ class Api::V1::PermissionsController < ApplicationController
     end
   end
 
-  def check_can_edit_permissions
-    render_unauthorized unless authenticated_user.can? :edit_permissions
-  end
-
-  def check_can_view_permissions
-    render_unauthorized unless authenticated_user.can? :view_permissions
-  end
-
   def create_params
     params.require(:permission).permit(PERMITTED_PARAMS)
   end

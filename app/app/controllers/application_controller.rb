@@ -40,4 +40,10 @@ class ApplicationController < ActionController::API
   rescue_from ActionController::ParameterMissing do |e|
     render_error :unprocessable_entity, [e.message]
   end
+
+  Permission::SCOPE_SYMBOLS.each do |scope|
+    define_method("check_can_#{scope.to_s}") do
+      render_unauthorized unless authenticated_user.can? scope
+    end
+  end
 end
