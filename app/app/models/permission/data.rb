@@ -1,7 +1,9 @@
 class Permission::Data
   include ActiveModel::API
 
-  attr_accessor :offices
+  KEYS = [:offices]
+
+  attr_accessor *KEYS
 
   validates :offices, presence: true
 
@@ -21,7 +23,8 @@ class Permission::Data
   end
 
   def self.load(hash)
-    Permission::Data.new(hash)
+    filtered_hash = hash&.slice *KEYS.map(&:to_s)
+    Permission::Data.new filtered_hash
   end
 
   private

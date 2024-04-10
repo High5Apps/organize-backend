@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       resources :permissions, only: [] do
         collection do
           get ':scope', to: 'permissions#show_by_scope', as: 'show_by_scope'
+          post ':scope', to: 'permissions#create_by_scope', as: 'create_by_scope'
         end
       end
       resources :posts, concerns: :upvotable, only: [:index, :create, :show] do
