@@ -3,8 +3,10 @@ class Api::V1::PermissionsController < ApplicationController
     offices: [],
   ]
 
-  before_action :authenticate_user, only: [:create_by_scope, :show_by_scope]
-  before_action :check_org_membership, only: [:create_by_scope, :show_by_scope]
+  before_action :authenticate_user,
+    only: [:create_by_scope, :show_by_scope, :index_my_permissions]
+  before_action :check_org_membership,
+    only: [:create_by_scope, :show_by_scope, :index_my_permissions]
   before_action :check_can_edit_permissions,
     only: [:create_by_scope, :show_by_scope]
   before_action :check_valid_scope, only: [:create_by_scope, :show_by_scope]
@@ -25,10 +27,23 @@ class Api::V1::PermissionsController < ApplicationController
     render json: { permission: @permission_data }
   end
 
+  def index_my_permissions
+    scopes = params[:scopes] || Permission::SCOPE_SYMBOLS
+    my_permissions = scopes.map do |scope|
+      {
+        scope:,
+        permitted: authenticated_user.can?(scope),
+      }
+    end
+
+    render json: { my_permissions: }
+  end
+
   private
 
   def check_valid_scope
-    @permission_data = Permission.who_can params[:scope], @org
+    @scope = params[:scope]
+    @permission_data = Permission.who_can @scope, @org
     unless @permission_data
       render_error :not_found, ['Permission not found']
     end

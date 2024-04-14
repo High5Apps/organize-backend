@@ -31,6 +31,7 @@ Rails.application.routes.draw do
       resources :users, only: [:index, :create, :show]
 
       get 'connection_preview', to: 'connections#preview'
+      get 'my_permissions', to: 'permissions#index_my_permissions', as: 'index_my_permissions'
       get 'org', to: 'orgs#my_org', as: 'my_org'
     end
   end
