@@ -86,25 +86,27 @@ class PermissionTest < ActiveSupport::TestCase
     assert_not Permission.can? @founder, :bad_scope
   end
 
-  # TODO: Uncomment once Permission::Defaults::DEFAULTS is non-empty
-  # test 'can? should use the default when no permission is found' do
-  #   assert_empty @pending_president.org.permissions.view_permissions
+  test 'can? should use the specific default when no permission is found' do
+    assert_empty @pending_president.org.permissions.create_elections
 
-  #   term = @pending_president.terms.first
-  #   travel_to term.starts_at do
-  #     assert_not_empty @pending_president.terms.active_at(Time.now).president
+    specific_default = Permission::Defaults[:create_elections]
+    assert_not_equal Permission::Data.new(specific_default).attributes,
+      Permission::Data.new(Permission::Defaults::DEFAULT_DEFAULT).attributes
 
-  #     Office::TYPE_STRINGS.each do |office|
-  #       term.office = office
-  #       term.save! validate: false
+    term = @pending_president.terms.first
+    travel_to term.starts_at do
+      assert_not_empty @pending_president.terms.active_at(Time.now).president
 
-  #       expect_can = Permission::Defaults[:view_permissions][:offices]
-  #         .include? office
-  #       assert_equal expect_can,
-  #         Permission.can?(@pending_president.reload, :view_permissions)
-  #     end
-  #   end
-  # end
+      Office::TYPE_STRINGS.each do |office|
+        term.office = office
+        term.save! validate: false
+
+        expect_can = specific_default[:offices].include? office
+        assert_equal expect_can,
+          Permission.can?(@pending_president.reload, :create_elections)
+      end
+    end
+  end
 
   test 'can? should use the default-default when no permission is found and no default exists' do
     @pending_president.org.permissions.destroy_all
@@ -168,13 +170,14 @@ class PermissionTest < ActiveSupport::TestCase
       Permission.who_can(@permission.scope, @permission.org).attributes
   end
 
-  # TODO: Uncomment once Permission::Defaults::DEFAULTS is non-empty
-  # test 'who_can should return the specific default when permission unavailable' do
-  #   assert_empty @pending_president.org.permissions.view_permissions
-  #   view_permissions_default = Permission::Defaults::DEFAULTS[:view_permissions]
-  #   assert_equal Permission::Data.new(view_permissions_default).attributes,
-  #     Permission.who_can(:view_permissions, @pending_president.org).attributes
-  # end
+  test 'who_can should return the specific default when permission unavailable' do
+    assert_empty @pending_president.org.permissions.create_elections
+    specific_default = Permission::Defaults::DEFAULTS[:create_elections]
+    assert_not_equal Permission::Data.new(specific_default).attributes,
+      Permission::Data.new(Permission::Defaults::DEFAULT_DEFAULT).attributes
+    assert_equal Permission::Data.new(specific_default).attributes,
+      Permission.who_can(:create_elections, @pending_president.org).attributes
+  end
 
   test 'who_can should return the default-default when permission unavailable and no specific default' do
     assert_empty @founder.org.permissions
