@@ -103,8 +103,8 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test 'should not show unless user can view permissions' do
-    assert_not @non_officer.can? :view_permissions
+  test 'should not show unless user can edit permissions' do
+    assert_not @non_officer.can? :edit_permissions
     get show_by_scope_api_v1_permissions_url(@permission.scope),
       headers: authorized_headers(@non_officer, Authenticatable::SCOPE_ALL)
     assert_response :unauthorized

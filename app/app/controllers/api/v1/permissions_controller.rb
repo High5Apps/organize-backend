@@ -5,8 +5,8 @@ class Api::V1::PermissionsController < ApplicationController
 
   before_action :authenticate_user, only: [:create_by_scope, :show_by_scope]
   before_action :check_org_membership, only: [:create_by_scope, :show_by_scope]
-  before_action :check_can_view_permissions, only: [:show_by_scope]
-  before_action :check_can_edit_permissions, only: [:create_by_scope]
+  before_action :check_can_edit_permissions,
+    only: [:create_by_scope, :show_by_scope]
   before_action :check_valid_scope, only: [:create_by_scope, :show_by_scope]
 
   def create_by_scope

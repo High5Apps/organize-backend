@@ -1,8 +1,12 @@
 module Permission::Defaults
   DEFAULTS = {
-    view_permissions: {
-      offices: Office::TYPE_STRINGS,
-    }
+    # TODO: Add a default for create_elections that includes secretary in
+    # addition to the usual founder and president
+    # create_elections: {
+    #   offices: ['founder', 'president', 'secretary'],
+    # },
+
+    # TODO: Uncomment relevant tests in PermissionTest
   }.freeze
 
   DEFAULT_DEFAULT = {

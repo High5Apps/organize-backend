@@ -1,7 +1,6 @@
 class Permission < ApplicationRecord
   SCOPE_SYMBOLS = [
     :edit_permissions,
-    :view_permissions,
   ].freeze
 
   enum :scope, SCOPE_SYMBOLS, validate: true
