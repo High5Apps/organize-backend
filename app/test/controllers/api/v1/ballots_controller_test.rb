@@ -24,6 +24,9 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:one)
     setup_test_key(@user)
     @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
+
+    @other_user = users(:three)
+    setup_test_key(@other_user)
   end
 
   test 'should create with valid params' do
@@ -81,6 +84,14 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
         headers: @authorized_headers
       assert_response expected_response
     end
+  end
+
+  test 'should not create election without permission' do
+    assert_not @other_user.can? :create_elections
+    post api_v1_ballots_url,
+      headers: authorized_headers(@other_user, Authenticatable::SCOPE_ALL),
+      params: @election_params
+    assert_response :unauthorized
   end
 
   test 'should not create yes no without exactly 2 candidates' do

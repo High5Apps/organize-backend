@@ -45,7 +45,8 @@ class Api::V1::BallotsController < ApplicationController
 
   before_action :authenticate_user, only: [:index, :create, :show]
   before_action :check_org_membership, only: [:index, :create, :show]
-  before_action :validate_election, only: [:create],
+  before_action :check_can_create_elections, :validate_election,
+    only: [:create],
     if: -> { will_create 'election' }
   before_action :validate_multiple_choice, only: [:create],
     if: -> {  will_create 'multiple_choice' }
