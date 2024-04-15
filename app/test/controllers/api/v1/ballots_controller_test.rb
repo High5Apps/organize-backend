@@ -83,6 +83,17 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'should not create yes no without exactly 2 candidates' do
+    4.times do |n|
+      params = @params.merge(candidates: [@ballot.candidates.first.as_json] * n)
+      post api_v1_ballots_url,
+        params:,
+        headers: @authorized_headers
+        assert_response :unprocessable_entity unless n == 2
+        assert_response :created if n == 2
+    end
+  end
+
   test 'should not create multiple choice with less than 2 candidates' do
     [nil, [], [@multi_choice_params[:candidates][0]]].each do |candidates|
       post api_v1_ballots_url,
