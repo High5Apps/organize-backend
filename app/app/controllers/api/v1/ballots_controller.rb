@@ -45,9 +45,12 @@ class Api::V1::BallotsController < ApplicationController
 
   before_action :authenticate_user, only: [:index, :create, :show]
   before_action :check_org_membership, only: [:index, :create, :show]
-  before_action :validate_election, only: [:create]
-  before_action :validate_multiple_choice, only: [:create]
-  before_action :validate_yes_no, only: [:create]
+  before_action :validate_election, only: [:create],
+    if: -> { will_create 'election' }
+  before_action :validate_multiple_choice, only: [:create],
+    if: -> {  will_create 'multiple_choice' }
+  before_action :validate_yes_no, only: [:create],
+    if: -> { will_create 'yes_no' }
 
   def create
     begin
@@ -135,6 +138,10 @@ class Api::V1::BallotsController < ApplicationController
       .require(:candidates)
   end
 
+  def will_create(category)
+    create_ballot_params[:category] == category
+  end
+
   def my_vote
     authenticated_user.my_vote_candidate_ids(@ballot)
   end
@@ -162,8 +169,6 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def validate_election
-    return unless create_ballot_params[:category] == 'election'
-
     unless create_candidates_params.count == 0
       return render_error :unprocessable_entity,
         ['Election candidates must be created via nominations']
@@ -171,8 +176,6 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def validate_multiple_choice
-    return unless create_ballot_params[:category] == 'multiple_choice'
-
     candidate_count = create_candidates_params.count
     unless candidate_count >= 2
       return render_error :unprocessable_entity,
@@ -193,8 +196,6 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def validate_yes_no
-    return unless create_ballot_params[:category] == 'yes_no'
-
     unless create_candidates_params.count == 2
       render_error :unprocessable_entity, ['Yes/No ballots must have 2 choices']
     end
