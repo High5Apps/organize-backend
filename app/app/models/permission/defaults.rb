@@ -3,6 +3,9 @@ module Permission::Defaults
     create_elections: {
       offices: ['founder', 'president', 'secretary'],
     },
+    edit_org: {
+      offices: ['founder', 'president', 'secretary'],
+    },
   }.freeze
 
   DEFAULT_DEFAULT = {

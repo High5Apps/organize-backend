@@ -14,7 +14,8 @@ class Permission < ApplicationRecord
   validates :org, presence: true
   validates_associated :data
 
-  validate :president_can_edit_permissions
+  validate :president_can_edit_permissions, if: -> { edit_permissions? }
+  validate :secretary_can_edit_org, if: -> { edit_org? }
   validate :some_active_officer_has_permission, on: [:create, :update]
 
   def self.can?(user, scope)
@@ -35,10 +36,18 @@ class Permission < ApplicationRecord
   private
 
   def president_can_edit_permissions
-    return unless edit_permissions? && data&.offices
+    return unless data&.offices
 
     unless data.offices.include? 'president'
       errors.add :base, 'President must be allowed to edit permissions'
+    end
+  end
+
+  def secretary_can_edit_org
+    return unless data&.offices
+
+    unless data.offices.include? 'secretary'
+      errors.add :base, 'Secretary must be allowed to edit Org info'
     end
   end
 

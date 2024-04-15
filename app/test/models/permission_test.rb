@@ -68,6 +68,13 @@ class PermissionTest < ActiveSupport::TestCase
     assert @permission.invalid?
   end
 
+  test 'should not prevent secretary from editing Org info' do
+    permission = @permission.dup
+    permission.scope = 'edit_org'
+    permission.data = { offices: ['founder'] }
+    assert permission.invalid?
+  end
+
   test 'can? should return false when user is not in an Org' do
     user_without_org = users :two
     assert_nil user_without_org.org
