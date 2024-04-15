@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       get 'connection_preview', to: 'connections#preview'
       get 'my_permissions', to: 'permissions#index_my_permissions', as: 'index_my_permissions'
       get 'org', to: 'orgs#my_org', as: 'my_org'
+      patch 'org', to: 'orgs#update_my_org', as: 'update_my_org'
     end
   end
 end

@@ -4,10 +4,12 @@ class Api::V1::OrgsController < ApplicationController
     EncryptedMessage.permitted_params(:member_definition),
   ]
 
-  before_action :authenticate_user, only: [:create, :my_org]
+  before_action :authenticate_user, only: [:create, :my_org, :update_my_org]
+  before_action :check_org_membership, :check_can_edit_org,
+    only: [:update_my_org]
 
   def create
-    new_org = authenticated_user.build_org(create_params)
+    new_org = authenticated_user.build_org(create_or_update_params)
     if new_org.save && authenticated_user.save
       render json: { id: new_org.id }, status: :created
     else
@@ -30,9 +32,17 @@ class Api::V1::OrgsController < ApplicationController
     }
   end
 
+  def update_my_org
+    if @org.update(create_or_update_params)
+      head :ok
+    else
+      render_error :unprocessable_entity, @org.errors.full_messages
+    end
+  end
+
   private
 
-  def create_params
+  def create_or_update_params
     params.require(:org).permit(PERMITTED_PARAMS)
   end
 end
