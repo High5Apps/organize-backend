@@ -71,15 +71,16 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create election with any candidates' do
-    post api_v1_ballots_url,
-      headers: @authorized_headers,
-      params: @election_params
-    assert_response :created
-
-    post api_v1_ballots_url,
-      headers: @authorized_headers,
-      params: @election_params.merge(candidates: @election.candidates.as_json)
-    assert_response :unprocessable_entity
+    bad_params = @election_params.merge(candidates: @election.candidates.as_json)
+    [
+      [bad_params, :unprocessable_entity],
+      [@election_params, :created],
+    ].each do |params, expected_response|
+      post api_v1_ballots_url,
+        params:,
+        headers: @authorized_headers
+      assert_response expected_response
+    end
   end
 
   test 'should not create multiple choice with less than 2 candidates' do
@@ -92,25 +93,29 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create multiple choice with more candidates than MAX_CANDIDATES_PER_CREATE' do
-    valid_params = @multi_choice_params
-    valid_params[:candidates] =
-      [@multi_choice_ballot.candidates.first.as_json] * MAX_CANDIDATES
-    post api_v1_ballots_url, headers: @authorized_headers, params: valid_params
-    assert_response :created
-
-    invalid_params = @multi_choice_params
+    invalid_params = @multi_choice_params.dup
     invalid_params[:candidates] =
       [@multi_choice_ballot.candidates.first.as_json] * (1 + MAX_CANDIDATES)
 
-    assert_no_difference 'Ballot.count' do
-      assert_no_difference 'Candidate.count' do
-        post api_v1_ballots_url,
-          headers: @authorized_headers,
-          params: invalid_params
-      end
-    end
+    valid_params = @multi_choice_params.dup
+    valid_params[:candidates] =
+      [@multi_choice_ballot.candidates.first.as_json] * MAX_CANDIDATES
 
-    assert_response :unprocessable_entity
+    [
+      [invalid_params, :unprocessable_entity, 0, 0],
+      [valid_params, :created, 1, MAX_CANDIDATES],
+    ].each do |params, expected_response, ballot_difference, candidate_difference|
+      @multi_choice_ballot.candidates.destroy_all
+      assert_difference 'Ballot.count', ballot_difference do
+        assert_difference 'Candidate.count', candidate_difference do
+          post api_v1_ballots_url,
+            params:,
+            headers: @authorized_headers
+        end
+      end
+
+      assert_response expected_response
+    end
   end
 
   test 'should not create multiple choice with fewer candidates than max selections' do
