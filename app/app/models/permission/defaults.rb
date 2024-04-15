@@ -6,7 +6,7 @@ module Permission::Defaults
     edit_org: {
       offices: ['founder', 'president', 'secretary'],
     },
-  }.freeze
+  }.with_indifferent_access.freeze
 
   DEFAULT_DEFAULT = {
     offices: ['founder', 'president'],
