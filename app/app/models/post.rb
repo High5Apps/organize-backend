@@ -13,6 +13,7 @@ class Post < ApplicationRecord
   belongs_to :user
 
   has_many :comments
+  has_many :flagged_items
   has_many :upvotes
 
   validates :org, presence: true

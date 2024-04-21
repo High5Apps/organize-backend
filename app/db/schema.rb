@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_03_072837) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_18_070916) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -63,6 +63,19 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_03_072837) do
     t.datetime "updated_at", null: false
     t.index ["scanner_id"], name: "index_connections_on_scanner_id"
     t.index ["sharer_id"], name: "index_connections_on_sharer_id"
+  end
+
+  create_table "flagged_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "ballot_id"
+    t.uuid "comment_id"
+    t.uuid "post_id"
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ballot_id", "user_id"], name: "index_flagged_items_on_ballot_id_and_user_id", unique: true
+    t.index ["comment_id", "user_id"], name: "index_flagged_items_on_comment_id_and_user_id", unique: true
+    t.index ["post_id", "user_id"], name: "index_flagged_items_on_post_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_flagged_items_on_user_id"
   end
 
   create_table "nominations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -163,6 +176,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_03_072837) do
   add_foreign_key "comments", "users"
   add_foreign_key "connections", "users", column: "scanner_id"
   add_foreign_key "connections", "users", column: "sharer_id"
+  add_foreign_key "flagged_items", "ballots"
+  add_foreign_key "flagged_items", "comments"
+  add_foreign_key "flagged_items", "posts"
+  add_foreign_key "flagged_items", "users"
   add_foreign_key "nominations", "ballots"
   add_foreign_key "nominations", "users", column: "nominator_id"
   add_foreign_key "nominations", "users", column: "nominee_id"

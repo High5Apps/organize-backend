@@ -35,6 +35,7 @@ class Ballot < ApplicationRecord
   belongs_to :user
 
   has_many :candidates
+  has_many :flagged_items
   has_many :nominations
   has_many :terms
   has_many :votes

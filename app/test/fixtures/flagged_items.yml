@@ -1,0 +1,11 @@
+one:
+  ballot: three
+  user: one
+
+two:
+  comment: two
+  user: three
+
+three:
+  post: three
+  user: four
