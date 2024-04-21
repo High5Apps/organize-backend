@@ -58,7 +58,7 @@ en:
             voting_ends_at:
               greater_than: 'must be after nominations end'
         flagged_item:
-          taken: 'has already been flagged by you'
+          taken: 'was already flagged by you earlier'
         nomination:
           attributes:
             nominee:
