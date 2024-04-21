@@ -11,6 +11,7 @@ class Org < ApplicationRecord
   has_many :ballots, through: :users
   has_many :comments, through: :posts
   has_many :terms, through: :users
+  has_many :upvotes, through: :users
 
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
   has_encrypted :member_definition,
