@@ -1,11 +1,15 @@
 Rails.application.routes.draw do
+  concern :flaggable do
+    resources :flagged_items, only: [:create]
+  end
+
   concern :upvotable do
     resources :upvotes, only: [:create]
   end
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
-      resources :ballots, only: [:index, :create, :show] do
+      resources :ballots, concerns: :flaggable, only: [:index, :create, :show] do
         resources :nominations, only: [:create]
         resources :terms, only: [:create]
         resources :votes, only: [:create]
@@ -20,9 +24,9 @@ Rails.application.routes.draw do
           post ':scope', to: 'permissions#create_by_scope', as: 'create_by_scope'
         end
       end
-      resources :posts, concerns: :upvotable, only: [:index, :create, :show] do
+      resources :posts, concerns: [:flaggable, :upvotable], only: [:index, :create, :show] do
         resources :comments,
-          concerns: :upvotable,
+          concerns: [:flaggable, :upvotable],
           only: [:index, :create],
           shallow: true do
             resources :comments, only: [:create]
