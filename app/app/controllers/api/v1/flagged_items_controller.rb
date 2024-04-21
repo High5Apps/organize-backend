@@ -40,6 +40,8 @@ class Api::V1::FlaggedItemsController < ApplicationController
   end
 
   def create_params
-    params.permit(PERMITTED_PARAMS).merge(user_id: authenticated_user.id)
+    params.slice(PERMITTED_PARAMS)
+      .permit(PERMITTED_PARAMS)
+      .merge(user_id: authenticated_user.id)
   end
 end
