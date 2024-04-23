@@ -34,8 +34,12 @@ class FlaggedItemTest < ActiveSupport::TestCase
 
   test 'should not allow users to double flag the same item' do
     flagged_items.each do |item|
-      duplicate = item.dup
-      assert_not duplicate.save
+      assert_no_difference 'FlaggedItem.count' do
+        assert_raises do
+          duplicate = item.dup
+          assert_not duplicate.save
+        end
+      end
     end
   end
 end

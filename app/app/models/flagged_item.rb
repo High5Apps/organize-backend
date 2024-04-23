@@ -4,8 +4,6 @@ class FlaggedItem < ApplicationRecord
   belongs_to :post, optional: true
   belongs_to :user
 
-  validates :ballot, :comment, :post,
-    uniqueness: { allow_nil: true, scope: :user }
   validates :user, presence: true
 
   validate :exactly_one_item

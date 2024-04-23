@@ -6,11 +6,14 @@ class Api::V1::FlaggedItemsController < ApplicationController
   before_action :check_flaggable_belongs_to_org, only: [:create]
 
   def create
-    new_flagged_item = @flaggable.flagged_items.build(create_params)
-    if new_flagged_item.save
+    flagged_item = @flaggable.flagged_items.create_with(create_params)
+      .create_or_find_by(user_id: authenticated_user.id)
+
+    # update will no-op in the usual case where flag didn't already exist
+    if flagged_item.update(create_params)
       head :created
     else
-      render_error :unprocessable_entity, new_flagged_item.errors.full_messages
+      render_error :unprocessable_entity, flagged_item.errors.full_messages
     end
   end
 

@@ -29,6 +29,17 @@ class Api::V1::FlaggedItemsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'should no-op when trying to double create' do
+    [1, 0].each do |expected_difference|
+      @flaggable_urls.each do |url|
+        assert_difference 'FlaggedItem.count', expected_difference do
+          post url, headers: @authorized_headers
+          assert_response :created
+        end
+      end
+    end
+  end
+
   test 'should not create with invalid authorization' do
     @flaggable_urls.each do |url|
       assert_no_difference 'FlaggedItem.count' do
