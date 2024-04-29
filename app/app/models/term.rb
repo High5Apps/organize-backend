@@ -3,7 +3,9 @@ class Term < ApplicationRecord
     where(accepted: true, starts_at: ..time).where.not(ends_at: ..time)
   }
 
-  COOLDOWN_PERIOD = 2.months
+  # Do not use 2.months for this because it creates test failures near the end
+  # of months that are not 30-days long
+  COOLDOWN_PERIOD = 60.days
 
   enum :office, Office::TYPE_SYMBOLS, validate: true
 
