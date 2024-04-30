@@ -118,6 +118,13 @@ ssh -i $SSH_KEY_PATH $new_host << EOF
   newgrp docker
 EOF
 
+echo
+echo 'Setup port forwarding on your router using the network info below.'
+echo 'You may also need to setup an IPv6 proxy (e.g. on Cloudflare).'
+echo 'Host network info:'
+ssh -i $SSH_KEY_PATH $new_host "sudo ifconfig eth0"
+read -p 'Press <enter> to continue'
+
 echo 'Deploying images...'
 parent_dir_path=$(dirname "$0")
 $parent_dir_path/deploy $new_host
