@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# USAGE
+#   deploy host
+# EXAMPLES
+#   deploy org
+
 set -eE
 trap cleanup ERR
 
