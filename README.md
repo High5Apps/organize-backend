@@ -37,7 +37,7 @@ To run organize-api on a Raspberry Pi, perform the following steps:
     - To optionally enable WiFi, add environment variables `SSID=<network> PSK=<password>`
     - To optionally use an insecure but easy-to-type password, use `INSECURE=true`
     ```sh
-    bin/flash ~/Downloads/2022-09-06-raspios-bullseye-arm64-lite.img
+    bin/flash ~/Downloads/2024-03-15-raspios-bookworm-arm64-lite.img
     ```
 4. Set up the physical Raspberry Pi
     1. Insert the SD card into the Raspberry Pi
