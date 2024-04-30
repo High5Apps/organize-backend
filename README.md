@@ -34,7 +34,6 @@ To run organize-api on a Raspberry Pi, perform the following steps:
     1. Open Disk Utility
     2. If the SD card isn’t FAT32 formatted, erase and reformat it to FAT32
 3. Flash the Raspbian image onto the SD card (and optionally enable WiFi)
-    - To optionally enable WiFi, add environment variables `SSID=<network> PSK=<password>`
     - To optionally use an insecure but easy-to-type password, use `INSECURE=true`
     ```sh
     bin/flash ~/Downloads/2024-03-15-raspios-bookworm-arm64-lite.img

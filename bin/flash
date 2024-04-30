@@ -4,11 +4,9 @@
 #   [Environment Variables] flash image_file
 # ENVIRONMENT VARIABLES
 #   INSECURE: Use true for easily typeable but insecure credentials pi:organize
-#   PSK: The WiFi password to use. Must be used alongside SSID
-#   SSID: The WiFi network name to connect to. Must be used alongside PSK
 # EXAMPLES
 #   flash ~/Downloads/2024-03-15-raspios-bookworm-arm64-lite.img
-#   INSECURE=true SSID=mynet PSK=pass flash ~/Downloads/2024-03-15-raspios-bookworm-arm64-lite.img
+#   INSECURE=true flash ~/Downloads/2024-03-15-raspios-bookworm-arm64-lite.img
 
 set -e
 
@@ -46,27 +44,6 @@ else
   # For info on how to create the encoded password, see
   # https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/
   echo 'pi:$6$V6vV23CeH3UXH6Hl$6yOGvttZwfUGtBZRiUIkYaNIRyLjLx9t2ZTfw3L.7ImcM0hVIuzhwNQLZSm8xKR3p7glZwvg1LKcPkk8uMbIN1' >$boot_path/userconf
-fi
-
-if ! [ -z "$SSID" ] && ! [ -z "$PSK" ]; then
-  # https://desertbot.io/blog/headless-raspberry-pi-4-ssh-wifi-setup-64-bit-mac-windows
-
-  echo 'Configuring WiFi...'
-  wpa_supplicant="
-    country=US
-    ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-    update_config=1
-
-    network={
-        ssid=\"$SSID\"
-        psk=\"$PSK\"
-        key_mgmt=WPA-PSK
-    }
-  "
-  echo "$wpa_supplicant" >$boot_path/wpa_supplicant.conf
-
-  echo 'Enabling WiFi...'
-  sed -i -e 's/$/ systemd.restore_state=0 rfkill.default_state=1/' $boot_path/cmdline.txt
 fi
 
 echo 'Ejecting...'
