@@ -3,6 +3,7 @@ class Permission < ApplicationRecord
     :edit_permissions,
     :create_elections,
     :edit_org,
+    :moderate,
   ].freeze
 
   enum :scope, SCOPE_SYMBOLS, validate: true

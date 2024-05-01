@@ -6,6 +6,9 @@ module Permission::Defaults
     edit_org: {
       offices: ['founder', 'president', 'secretary'],
     },
+    moderate: {
+      offices: Office::TYPE_STRINGS,
+    },
   }.with_indifferent_access.freeze
 
   DEFAULT_DEFAULT = {
