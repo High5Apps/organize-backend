@@ -42,4 +42,15 @@ class FlaggedItemTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'created_at_or_before should include flagged_items where created_at is not after time' do
+    [
+      [@item.created_at - 1.second, false],
+      [@item.created_at, true],
+      [@item.created_at + 1.second, true],
+    ].each do |query_time, expect_exists|
+      query = FlaggedItem.created_at_or_before(query_time)
+      assert_equal expect_exists, query.exists?(id: @item.id)
+    end
+  end
 end

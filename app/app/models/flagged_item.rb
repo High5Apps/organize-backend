@@ -1,4 +1,6 @@
 class FlaggedItem < ApplicationRecord
+  scope :created_at_or_before, ->(time) { where(created_at: ..time) }
+
   belongs_to :ballot, optional: true
   belongs_to :comment, optional: true
   belongs_to :post, optional: true
