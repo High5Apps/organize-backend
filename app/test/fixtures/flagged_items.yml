@@ -1,11 +1,24 @@
 one:
   ballot: three
   user: one
+  created_at: <%= 10.seconds.ago.to_fs(:db) %>
 
 two:
   comment: two
   user: three
+  created_at: <%= 9.seconds.ago.to_fs(:db) %>
 
 three:
   post: three
   user: four
+  created_at: <%= 8.seconds.ago.to_fs(:db) %>
+
+four:
+  ballot: two
+  user: six
+  created_at: <%= 7.seconds.ago.to_fs(:db) %>
+
+five:
+  ballot: two
+  user: five
+  created_at: <%= 6.seconds.ago.to_fs(:db) %>
