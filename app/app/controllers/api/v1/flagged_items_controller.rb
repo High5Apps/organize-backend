@@ -1,9 +1,10 @@
 class Api::V1::FlaggedItemsController < ApplicationController
   PERMITTED_PARAMS = ['ballot_id', 'comment_id', 'post_id']
 
-  before_action :authenticate_user, only: [:create]
-  before_action :check_org_membership, only: [:create]
+  before_action :authenticate_user, only: [:index, :create]
+  before_action :check_org_membership, only: [:index, :create]
   before_action :check_flaggable_belongs_to_org, only: [:create]
+  before_action :check_can_moderate, only: [:index]
 
   def create
     flagged_item = @flaggable.flagged_items.create_with(create_params)
@@ -15,6 +16,12 @@ class Api::V1::FlaggedItemsController < ApplicationController
     else
       render_error :unprocessable_entity, flagged_item.errors.full_messages
     end
+  end
+
+  def index
+    flagged_items = FlaggedItem::Query.build params,
+      initial_flagged_items: @org.flagged_items
+    render json: { flagged_items: }
   end
 
   private
