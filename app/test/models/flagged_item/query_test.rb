@@ -20,7 +20,7 @@ class FlaggedItemQueryTest < ActiveSupport::TestCase
         ballot_id: String | nil,
         comment_id: String | nil,
         flag_count: Integer,
-        id: nil, # This is an artifact of using Rails and non-trivial to remove
+        id: String,
         post_id: String | nil,
         pseudonym: String,
         title: {
