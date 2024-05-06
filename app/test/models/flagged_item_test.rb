@@ -43,6 +43,13 @@ class FlaggedItemTest < ActiveSupport::TestCase
     end
   end
 
+  test 'should not allow elections to be flagged' do
+    election = ballots :election_one
+    flagged_item = @item.dup
+    flagged_item.ballot = election
+    assert flagged_item.invalid?
+  end
+
   test 'created_at_or_before should include flagged_items where created_at is not after time' do
     [
       [@item.created_at - 1.second, false],

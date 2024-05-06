@@ -8,9 +8,18 @@ class FlaggedItem < ApplicationRecord
 
   validates :user, presence: true
 
+  validate :ballot_category_is_not_election
   validate :exactly_one_item
 
   private
+
+  def ballot_category_is_not_election
+    return unless ballot_id
+
+    if ballot.election?
+      errors.add :base, "Elections can't be flagged"
+    end
+  end
 
   def exactly_one_item
     item_count = item_ids.compact.count
