@@ -17,11 +17,9 @@ class FlaggedItemQueryTest < ActiveSupport::TestCase
     item = FlaggedItem::Query.build({}).first.as_json.with_indifferent_access
     assert_pattern do
       item => {
-        ballot_id: String | nil,
-        comment_id: String | nil,
+        category: 'ballot' | 'comment' | 'post',
         flag_count: Integer,
         id: String,
-        post_id: String | nil,
         pseudonym: String,
         title: {
           c: String,

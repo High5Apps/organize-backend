@@ -15,7 +15,8 @@ class FlaggedItem::Query
     ).from('groups AS flagged_items')
       .left_joins(ballot: :user, comment: :user, post: :user)
       .select(
-        :ballot_id, :comment_id, :post_id, :flag_count,
+        :flag_count,
+        "CASE WHEN ballots.id IS NOT NULL THEN 'ballot' WHEN comments.id IS NOT NULL THEN 'comment' WHEN posts.id IS NOT NULL THEN 'post' END AS category",
         'COALESCE(ballots.id, comments.id, posts.id) AS id',
         'COALESCE(users.id, users_comments.id, users_posts.id) AS user_id',
         'COALESCE(users.pseudonym, users_comments.pseudonym, users_posts.pseudonym) AS pseudonym',
