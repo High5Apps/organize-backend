@@ -143,4 +143,18 @@ class Api::V1::FlaggedItemsControllerTest < ActionDispatch::IntegrationTest
       assert_equal flagged_item_creator.org, @user.org
     end
   end
+
+  test 'index should include pagination metadata' do
+    get api_v1_flagged_items_url, headers: @authorized_headers
+    assert_contains_pagination_data
+  end
+
+  test 'index should respect page param' do
+    page = 99
+    get api_v1_flagged_items_url,
+      headers: @authorized_headers,
+      params: { page: }
+    pagination_data = assert_contains_pagination_data
+    assert_equal page, pagination_data[:current_page]
+  end
 end

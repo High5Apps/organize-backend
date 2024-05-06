@@ -21,7 +21,10 @@ class Api::V1::FlaggedItemsController < ApplicationController
   def index
     flagged_items = FlaggedItem::Query.build params,
       initial_flagged_items: @org.flagged_items
-    render json: { flagged_items: }
+    render json: {
+      flagged_items:,
+      meta: pagination_dict(flagged_items),
+    }
   end
 
   private

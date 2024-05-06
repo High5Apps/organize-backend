@@ -19,7 +19,7 @@ class FlaggedItem::Query
         'COALESCE(users.id, users_comments.id, users_posts.id) AS user_id',
         'COALESCE(users.pseudonym, users_comments.pseudonym, users_posts.pseudonym) AS pseudonym',
         'COALESCE(ballots.encrypted_question, comments.encrypted_body, posts.encrypted_title) AS title'
-      )
+      ).page(params[:page]).without_count
 
     # Default to sorting by top
     sort_parameter = params[:sort] || 'top'
