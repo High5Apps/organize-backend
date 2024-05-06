@@ -21,7 +21,7 @@ class FlaggedItemQueryTest < ActiveSupport::TestCase
         flag_count: Integer,
         id: String,
         pseudonym: String,
-        title: {
+        encrypted_title: {
           c: String,
           n: String,
           t: String,
