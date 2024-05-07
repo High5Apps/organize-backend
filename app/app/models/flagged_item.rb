@@ -10,6 +10,7 @@ class FlaggedItem < ApplicationRecord
 
   validate :ballot_category_is_not_election
   validate :exactly_one_item
+  validate :post_is_not_candidacy_announcement
 
   private
 
@@ -30,5 +31,13 @@ class FlaggedItem < ApplicationRecord
 
   def item_ids
     [ballot_id, comment_id, post_id]
+  end
+
+  def post_is_not_candidacy_announcement
+    return unless post_id
+
+    if post.candidate_id
+      errors.add :base, "Candidacy announcements can't be flagged"
+    end
   end
 end

@@ -50,6 +50,14 @@ class FlaggedItemTest < ActiveSupport::TestCase
     assert flagged_item.invalid?
   end
 
+  test 'should not allow candidacy announcements to be flagged' do
+    candidacy_announcement = posts :candidacy_announcement
+    flagged_item = @item.dup
+    flagged_item.ballot = nil
+    flagged_item.post = candidacy_announcement
+    assert flagged_item.invalid?
+  end
+
   test 'created_at_or_before should include flagged_items where created_at is not after time' do
     [
       [@item.created_at - 1.second, false],

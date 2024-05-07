@@ -3,7 +3,7 @@ FLAGGED_VOTES_FRACTION = 0.01
 
 def create_flagged_items(relation, item_name, flagged_fraction)
   expected_flag_count = (relation.count * flagged_fraction).round
-  print "\tCreating roughly #{expected_flag_count} FlaggedItems on #{item_name}... "
+  print "\tCreating roughly #{expected_flag_count} flags on #{item_name}... "
   start_time = Time.now
 
   values = []
@@ -28,9 +28,15 @@ def create_flagged_items(relation, item_name, flagged_fraction)
 end
 
 org = User.find($simulation.founder_id).org
-
 downvotes = org.upvotes.where(value: -1)
-create_flagged_items downvotes, 'Posts and Comments', FLAGGED_DOWNVOTES_FRACTION
+
+posts_without_candidacy_announcements = downvotes.joins(:post)
+  .where(post: { candidate_id: nil })
+create_flagged_items posts_without_candidacy_announcements,
+  'Posts', FLAGGED_DOWNVOTES_FRACTION
+
+comments = downvotes.joins(:comment)
+create_flagged_items comments, 'Comments', FLAGGED_DOWNVOTES_FRACTION
 
 non_election_votes = org.ballots.not_election.joins(:votes)
 create_flagged_items non_election_votes, 'Ballots', FLAGGED_VOTES_FRACTION
