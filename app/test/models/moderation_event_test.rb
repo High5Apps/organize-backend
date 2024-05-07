@@ -70,4 +70,17 @@ class ModerationEventTest < ActiveSupport::TestCase
       @event.item = upvotes :one
     end
   end
+
+  test 'non-user items should have previously be flagged at least once' do
+    @event.ballot.flagged_items.destroy_all
+    assert @event.invalid?
+  end
+
+  test 'user items should not need to be flagged' do
+    @event.ballot_id = nil
+    @event.user = users :seven
+    assert @event.valid?
+    assert_empty @event.user.flagged_items
+    assert @event.valid?
+  end
 end

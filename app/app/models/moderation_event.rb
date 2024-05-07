@@ -8,7 +8,9 @@ class ModerationEvent < ApplicationRecord
   belongs_to :user, optional: true
 
   validates :moderator, presence: true
+
   validate :exactly_one_item
+  validate :item_flagged, unless: -> { user_id }
 
   def item
     non_nil_items = item_ids.compact
@@ -51,6 +53,14 @@ class ModerationEvent < ApplicationRecord
   def exactly_one_item
     unless item
       errors.add :base, 'must have exactly one item'
+    end
+  end
+
+  def item_flagged
+    return unless item
+
+    unless item.flagged_items.any?
+      errors.add :base, "can't moderate an item that isn't flagged"
     end
   end
 
