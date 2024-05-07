@@ -2,7 +2,7 @@ require "test_helper"
 
 class FlaggedItemTest < ActiveSupport::TestCase
   setup do
-    @item = flagged_items :one
+    @flagged_item = flagged_items :one
   end
 
   test 'should be valid' do
@@ -10,8 +10,8 @@ class FlaggedItemTest < ActiveSupport::TestCase
   end
 
   test 'user should be present' do
-    @item.user = nil
-    assert @item.invalid?
+    @flagged_item.user = nil
+    assert @flagged_item.invalid?
   end
 
   test 'should have exactly one item' do
@@ -24,10 +24,10 @@ class FlaggedItemTest < ActiveSupport::TestCase
 
     (1 + items.count).times do |n|
       items.combination(n) do |combination|
-        id_names.each { |id_name| @item[id_name] = nil }
-        combination.each { |id_name, item| @item[id_name] = item }
-        assert @item.invalid? unless n == 1
-        assert @item.valid? if n == 1
+        id_names.each { |id_name| @flagged_item[id_name] = nil }
+        combination.each { |id_name, item| @flagged_item[id_name] = item }
+        assert @flagged_item.invalid? unless n == 1
+        assert @flagged_item.valid? if n == 1
       end
     end
   end
@@ -45,14 +45,14 @@ class FlaggedItemTest < ActiveSupport::TestCase
 
   test 'should not allow elections to be flagged' do
     election = ballots :election_one
-    flagged_item = @item.dup
+    flagged_item = @flagged_item.dup
     flagged_item.ballot = election
     assert flagged_item.invalid?
   end
 
   test 'should not allow candidacy announcements to be flagged' do
     candidacy_announcement = posts :candidacy_announcement
-    flagged_item = @item.dup
+    flagged_item = @flagged_item.dup
     flagged_item.ballot = nil
     flagged_item.post = candidacy_announcement
     assert flagged_item.invalid?
@@ -60,12 +60,12 @@ class FlaggedItemTest < ActiveSupport::TestCase
 
   test 'created_at_or_before should include flagged_items where created_at is not after time' do
     [
-      [@item.created_at - 1.second, false],
-      [@item.created_at, true],
-      [@item.created_at + 1.second, true],
+      [@flagged_item.created_at - 1.second, false],
+      [@flagged_item.created_at, true],
+      [@flagged_item.created_at + 1.second, true],
     ].each do |query_time, expect_exists|
       query = FlaggedItem.created_at_or_before(query_time)
-      assert_equal expect_exists, query.exists?(id: @item.id)
+      assert_equal expect_exists, query.exists?(id: @flagged_item.id)
     end
   end
 end
