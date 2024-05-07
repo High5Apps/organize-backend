@@ -87,6 +87,28 @@ class FlaggedItemTest < ActiveSupport::TestCase
     end
   end
 
+  test 'item should belong to user Org' do
+    item_in_another_org = ballots :two
+    assert_not_equal item_in_another_org.org, @flagged_item.user.org
+    @flagged_item.item = item_in_another_org
+    assert @flagged_item.invalid?
+  end
+
+  test 'item should exist' do
+    @id_names.each do |id_name|
+      @id_names.each { |id_name_inner| @flagged_item[id_name_inner] = nil }
+      @flagged_item[id_name] = 'bad-id'
+      assert @flagged_item.invalid?
+    end
+  end
+
+  test 'creator should belong to an Org' do
+    user_without_org = users :two
+    assert_nil user_without_org.org
+    @flagged_item.user = user_without_org
+    assert @flagged_item.invalid?
+  end
+
   test 'created_at_or_before should include flagged_items where created_at is not after time' do
     [
       [@flagged_item.created_at - 1.second, false],
