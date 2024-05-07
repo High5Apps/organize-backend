@@ -4,10 +4,9 @@ class Api::V1::VotesController < ApplicationController
   ]
 
   before_action :authenticate_user, only: [:create]
-  before_action :check_ballot_belongs_to_org, only: [:create]
 
   def create
-    vote = @ballot.votes.create_with(create_params)
+    vote = authenticated_user.votes.create_with(create_params)
       .find_or_create_by(user_id: authenticated_user.id)
 
     # update will no-op if vote was just created or candidate_ids was unchanged
@@ -21,6 +20,8 @@ class Api::V1::VotesController < ApplicationController
   private
 
   def create_params
-    params.require(:vote).permit(PERMITTED_PARAMS)
+    params.require(:vote)
+      .permit(PERMITTED_PARAMS)
+      .merge(ballot_id: params[:ballot_id])
   end
 end

@@ -54,8 +54,11 @@ class Vote < ApplicationRecord
   end
 
   def user_and_ballot_in_same_org
-    return if ballot.blank? || user.blank?
-    errors.add :ballot, 'not found' unless user.org.id == ballot.org.id
+    return unless ballot && user
+
+    unless user.org && (user.org == ballot.org)
+      errors.add :ballot, 'not found'
+    end
   end
 
   def validate_saved_after_nominations_end

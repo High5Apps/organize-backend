@@ -59,42 +59,6 @@ class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
-  test 'should not create if user is not in an org' do
-    @user.update!(org: nil)
-    assert_nil @user.reload.org
-
-    assert_no_difference 'Vote.count' do
-      post api_v1_ballot_votes_url(@vote),
-        headers: @authorized_headers,
-        params: @params
-    end
-
-    assert_response :not_found
-  end
-
-  test 'should not create on a nonexistent ballot' do
-    assert_no_difference 'Vote.count' do
-      post api_v1_ballot_votes_url('bad-ballot-id'),
-        headers: @authorized_headers,
-        params: @params
-    end
-
-    assert_response :not_found
-  end
-
-  test 'should not create if ballot belongs to another Org' do
-    ballot_in_another_org = ballots(:two)
-    assert_not_equal @user.org, ballot_in_another_org.org
-
-    assert_no_difference 'Vote.count' do
-      post api_v1_ballot_votes_url(ballot_in_another_org),
-        headers: @authorized_headers,
-        params: @params
-    end
-
-    assert_response :not_found
-  end
-
   private
 
   def create_params candidate_ids

@@ -16,6 +16,18 @@ class VoteTest < ActiveSupport::TestCase
     assert @vote.invalid?
   end
 
+  test 'ballot should exist' do
+    @vote.ballot_id = 'bad-id'
+    assert @vote.invalid?
+  end
+
+  test 'ballot should belong to user Org' do
+    ballot_in_another_org = ballots :two
+    assert_not_equal ballot_in_another_org.org, @vote.user.org
+    @vote.ballot = ballot_in_another_org
+    assert @vote.invalid?
+  end
+
   test 'candidate_ids should be present' do
     @vote.candidate_ids = nil
     assert @vote.invalid?
@@ -56,6 +68,13 @@ class VoteTest < ActiveSupport::TestCase
 
   test 'user should be present' do
     @vote.user = nil
+    assert @vote.invalid?
+  end
+
+  test 'user should be in an Org' do
+    user_without_org = users :two
+    assert_nil user_without_org.org
+    @vote.user = user_without_org
     assert @vote.invalid?
   end
 
