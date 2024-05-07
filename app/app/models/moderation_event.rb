@@ -10,12 +10,47 @@ class ModerationEvent < ApplicationRecord
   validates :moderator, presence: true
   validate :exactly_one_item
 
+  def item
+    non_nil_items = item_ids.compact
+    return nil unless non_nil_items.count == 1
+
+    case non_nil_items.first
+    when ballot_id
+      ballot
+    when comment_id
+      comment
+    when post_id
+      post
+    when user_id
+      user
+    end
+  end
+
+  def item=(updated_item)
+    self.ballot_id = nil
+    self.comment_id = nil
+    self.post_id = nil
+    self.user_id = nil
+
+    case updated_item.class.name
+    when 'Ballot'
+      self.ballot_id = updated_item.id
+    when 'Comment'
+      self.comment_id = updated_item.id
+    when 'Post'
+      self.post_id = updated_item.id
+    when 'User'
+      self.user_id = updated_item.id
+    else
+      raise 'unexpected item class'
+    end
+  end
+
   private
 
   def exactly_one_item
-    item_count = item_ids.compact.count
-    unless item_count == 1
-      errors.add :base, "must have exactly one item, not #{item_count}"
+    unless item
+      errors.add :base, 'must have exactly one item'
     end
   end
 

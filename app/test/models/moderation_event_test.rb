@@ -3,6 +3,9 @@ require "test_helper"
 class ModerationEventTest < ActiveSupport::TestCase
   setup do
     @event = moderation_events :one
+    @items = [ballots(:three), comments(:two), posts(:three), users(:seven)]
+    @item_ids = @items.map { |it| [it.class.name.foreign_key, it.id] }
+    @id_names = @item_ids.map(&:first)
   end
 
   test 'should be valid' do
@@ -25,21 +28,46 @@ class ModerationEventTest < ActiveSupport::TestCase
   end
 
   test 'should have exactly one item' do
-    items = [
-      ['ballot_id', ballots(:three).id],
-      ['comment_id', comments(:two).id],
-      ['post_id', posts(:three).id],
-      ['user_id', users(:seven).id],
-    ]
-    id_names = items.map(&:first)
-
-    (1 + items.count).times do |n|
-      items.combination(n) do |combination|
-        id_names.each { |id_name| @event[id_name] = nil }
+    (1 + @item_ids.count).times do |n|
+      @item_ids.combination(n) do |combination|
+        @id_names.each { |id_name| @event[id_name] = nil }
         combination.each { |id_name, item| @event[id_name] = item }
         assert @event.invalid? unless n == 1
         assert @event.valid? if n == 1
       end
+    end
+  end
+
+  test 'item should link to the associated item' do
+    @item_ids.each do |item|
+      @id_names.each { |id_name| @event[id_name] = nil }
+      id_name, id = item
+      @event[id_name] = id
+      assert_equal id, @event.item.id
+    end
+  end
+
+  test 'item should return nil when no item is set' do
+    @event.ballot = nil
+    assert_nil @event.item
+  end
+
+  test 'item should return nil when multiple items are set' do
+    @event.ballot = ballots :three
+    @event.comment = comments :two
+    assert_nil @event.item
+  end
+
+  test 'item= should set the appropriate *_id' do
+    @items.each do |item|
+      @event.item = item
+      assert_equal item, @event.item
+    end
+  end
+
+  test 'item= should raise for unknown classes' do
+    assert_raises do
+      @event.item = upvotes :one
     end
   end
 end
