@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_18_070916) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_07_062521) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -76,6 +76,22 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_18_070916) do
     t.index ["comment_id", "user_id"], name: "index_flagged_items_on_comment_id_and_user_id", unique: true
     t.index ["post_id", "user_id"], name: "index_flagged_items_on_post_id_and_user_id", unique: true
     t.index ["user_id"], name: "index_flagged_items_on_user_id"
+  end
+
+  create_table "moderation_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "action", null: false
+    t.uuid "ballot_id"
+    t.uuid "comment_id"
+    t.uuid "moderator_id", null: false
+    t.uuid "post_id"
+    t.uuid "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ballot_id"], name: "index_moderation_events_on_ballot_id"
+    t.index ["comment_id"], name: "index_moderation_events_on_comment_id"
+    t.index ["moderator_id"], name: "index_moderation_events_on_moderator_id"
+    t.index ["post_id"], name: "index_moderation_events_on_post_id"
+    t.index ["user_id"], name: "index_moderation_events_on_user_id"
   end
 
   create_table "nominations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -180,6 +196,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_18_070916) do
   add_foreign_key "flagged_items", "comments"
   add_foreign_key "flagged_items", "posts"
   add_foreign_key "flagged_items", "users"
+  add_foreign_key "moderation_events", "ballots"
+  add_foreign_key "moderation_events", "comments"
+  add_foreign_key "moderation_events", "posts"
+  add_foreign_key "moderation_events", "users"
+  add_foreign_key "moderation_events", "users", column: "moderator_id"
   add_foreign_key "nominations", "ballots"
   add_foreign_key "nominations", "users", column: "nominator_id"
   add_foreign_key "nominations", "users", column: "nominee_id"
