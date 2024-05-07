@@ -9,6 +9,7 @@ class ModerationEvent < ApplicationRecord
 
   validates :moderator, presence: true
 
+  validate :action_transitions, on: :create
   validate :exactly_one_item
   validate :item_flagged, unless: -> { user_id }
 
@@ -49,6 +50,27 @@ class ModerationEvent < ApplicationRecord
   end
 
   private
+
+  def action_transitions
+    return unless item
+
+    last_item_action = item.moderation_events.last&.action
+    allowed_actions = case last_item_action
+    when nil, 'undo_allow', 'undo_block'
+      ['allow', 'block']
+    when 'allow'
+      ['undo_allow']
+    when 'block'
+      ['undo_block']
+    else
+      []
+    end
+
+    unless allowed_actions.include? action
+      errors.add :action,
+        "can't be #{action.inspect} when then last action was #{last_item_action.inspect}. Another moderator probably moderated this item just now."
+    end
+  end
 
   def exactly_one_item
     unless item

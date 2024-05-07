@@ -22,6 +22,49 @@ class ModerationEventTest < ActiveSupport::TestCase
     assert @event.invalid?
   end
 
+  test 'first action should be allow or block' do
+    event = @event.dup
+    @event.destroy
+    assert_empty event.item.moderation_events
+
+    ModerationEvent.actions.keys.each do |action|
+      event.action = action
+      assert_equal ['allow', 'block'].include?(action), event.valid?
+    end
+  end
+
+  test 'action after allow should be undo_allow' do
+    @event.update action: :allow
+    event = @event.dup
+
+    ModerationEvent.actions.keys.each do |action|
+      event.action = action
+      assert_equal action == 'undo_allow', event.valid?
+    end
+  end
+
+  test 'action after block should be undo_block' do
+    @event.update action: :block
+    event = @event.dup
+
+    ModerationEvent.actions.keys.each do |action|
+      event.action = action
+      assert_equal action == 'undo_block', event.valid?
+    end
+  end
+
+  test 'action after allow_block or undo_block should be allow or block' do
+    [:undo_allow, :undo_block].each do |last_action|
+      @event.update action: last_action
+      event = @event.dup
+
+      ModerationEvent.actions.keys.each do |action|
+        event.action = action
+        assert_equal ['allow', 'block'].include?(action), event.valid?
+      end
+    end
+  end
+
   test 'moderator should be present' do
     @event.moderator = nil
     assert @event.invalid?
