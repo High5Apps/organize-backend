@@ -19,6 +19,12 @@ class OfficeTest < ActiveSupport::TestCase
     end
   end
 
+  test 'availability should throw if org is nil' do
+    assert_raises ActiveRecord::RecordNotFound do
+      Office.availability_in nil
+    end
+  end
+
   test 'availability should throw unless office param is a String' do
     assert_raises do
       Office.availability_in(@org, :founder)

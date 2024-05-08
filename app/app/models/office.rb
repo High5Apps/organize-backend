@@ -28,6 +28,8 @@ class Office
   end
 
   def self.availability_in org, office=nil
+    raise ActiveRecord::RecordNotFound unless org
+
     if office && !office.is_a?(String)
       raise 'office param must be a string'
     end
