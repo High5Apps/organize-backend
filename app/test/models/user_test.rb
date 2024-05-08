@@ -136,8 +136,12 @@ class UserTest < ActiveSupport::TestCase
     assert_empty @user.org.terms.where(office:)
 
     term = terms(:three).dup
+    term.save! # Needed because starts_at/ends_at is set from ballot on create
     term.office = office
-    travel_to 1.second.ago do
+    travel_to 2.seconds.ago do
+      term.created_at = Time.now
+      term.updated_at = Time.now
+      term.starts_at = 1.second.from_now
       term.save!
     end
 

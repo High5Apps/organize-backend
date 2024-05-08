@@ -43,45 +43,6 @@ class Api::V1::TermsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
-  test 'should not create if user is not in an org' do
-    params = destroy_template_term_for_create_params
-    @user.update!(org: nil)
-    assert_nil @user.reload.org
-
-    assert_no_difference 'Term.count' do
-      post(api_v1_ballot_terms_url(@term.ballot),
-        headers: @authorized_headers,
-        params:)
-    end
-
-    assert_response :not_found
-  end
-
-  test 'should not create on a nonexistent ballot' do
-    params = destroy_template_term_for_create_params
-    assert_no_difference 'Term.count' do
-      post(api_v1_ballot_terms_url('bad-ballot-id'),
-        headers: @authorized_headers,
-        params:)
-    end
-
-    assert_response :not_found
-  end
-
-  test 'should not create if ballot belongs to another Org' do
-    ballot_in_another_org = ballots(:two)
-    assert_not_equal @user.org, ballot_in_another_org.org
-
-    params = destroy_template_term_for_create_params
-    assert_no_difference 'Term.count' do
-      post(api_v1_ballot_terms_url(ballot_in_another_org),
-        headers: @authorized_headers,
-        params:)
-    end
-
-    assert_response :not_found
-  end
-
   private
 
   def destroy_template_term_for_create_params

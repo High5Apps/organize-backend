@@ -36,6 +36,18 @@ class TermTest < ActiveSupport::TestCase
     assert @non_founder_term.invalid?
   end
 
+  test 'ballot should exist for non-founders' do
+    @non_founder_term.ballot_id = 'bad-id'
+    assert @non_founder_term.invalid?
+  end
+
+  test 'ballot should belong to user Org for non-founders' do
+    ballot_in_another_org = ballots :two
+    assert_not_equal ballot_in_another_org.org, @non_founder_term.user.org
+    @non_founder_term.ballot = ballot_in_another_org
+    assert @non_founder_term.invalid?
+  end
+
   test 'ends_at should be present' do
     @founder_term.ends_at = nil
     assert @founder_term.invalid?
@@ -62,6 +74,13 @@ class TermTest < ActiveSupport::TestCase
   test 'user should be present' do
     @founder_term.user = nil
     assert_not @founder_term.valid?
+  end
+
+  test 'user should be in an Org for non-founders' do
+    user_without_org = users :two
+    assert_nil user_without_org.org
+    @non_founder_term.user = user_without_org
+    assert @non_founder_term.invalid?
   end
 
   test 'starts_at should be present' do
@@ -137,6 +156,9 @@ class TermTest < ActiveSupport::TestCase
       term = @non_founder_term.dup
 
       travel_to starts_at - 1.second do
+        # Needed because starts_at/ends_at is set from ballot on create
+        term.save!
+
         term.update!(ends_at:, starts_at:)
       end
 

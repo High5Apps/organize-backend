@@ -14,7 +14,7 @@ class Term < ApplicationRecord
 
   validates :accepted, inclusion: { in: [true, false] }
   validates :ballot, absence: true, if: :founder?
-  validates :ballot, presence: true, unless: :founder?
+  validates :ballot, presence: true, same_org: :user, unless: :founder?
   validates :ends_at,
     presence: true,
     comparison: { greater_than: :starts_at }
@@ -27,7 +27,17 @@ class Term < ApplicationRecord
   validate :user_is_first_member, if: :founder?
   validate :user_won_election, unless: :founder?
 
+  before_validation :set_ballot_info, on: :create, unless: :founder?
+
   private
+
+  def set_ballot_info
+    return unless ballot
+
+    self.ends_at = ballot.term_ends_at
+    self.office = ballot.office
+    self.starts_at = ballot.term_starts_at
+  end
 
   def user_is_first_member
     return unless user
