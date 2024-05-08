@@ -169,14 +169,6 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
-  test 'should not create if user is not in an Org' do
-    @user.update!(org: nil)
-    assert_nil @user.reload.org
-
-    post api_v1_ballots_url, headers: @authorized_headers, params: @params
-    assert_response :not_found
-  end
-
   test 'should index with valid authorization' do
     get api_v1_ballots_url, headers: @authorized_headers
     assert_response :ok

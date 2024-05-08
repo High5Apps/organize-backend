@@ -209,6 +209,13 @@ class BallotTest < ActiveSupport::TestCase
     assert @ballot.invalid?
   end
 
+  test 'user should be in an Org' do
+    user_without_org = users :two
+    assert_nil user_without_org.org
+    @ballot.user = user_without_org
+    assert @ballot.invalid?
+  end
+
   test 'voting_ends_at should be present' do
     @ballot.voting_ends_at = nil
     assert @ballot.invalid?

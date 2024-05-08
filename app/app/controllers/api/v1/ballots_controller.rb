@@ -44,7 +44,6 @@ class Api::V1::BallotsController < ApplicationController
   MAX_CANDIDATES_PER_CREATE = 100.freeze
 
   before_action :authenticate_user, only: [:index, :create, :show]
-  before_action :check_org_membership, only: [:create]
   before_action :check_can_create_elections, :validate_election,
     only: [:create],
     if: -> { will_create 'election' }

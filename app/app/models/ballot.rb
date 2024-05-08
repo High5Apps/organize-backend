@@ -59,7 +59,7 @@ class Ballot < ApplicationRecord
     after_created_at: true,
     if: :election?
   validates :nominations_end_at, absence: true, unless: :election?
-  validates :user, presence: true
+  validates :user, presence: true, in_org: true
   validates :term_ends_at,
     presence: true,
     comparison: { greater_than: :term_starts_at },
