@@ -10,7 +10,7 @@ class Vote < ApplicationRecord
   belongs_to :ballot
   belongs_to :user
 
-  validates :ballot, presence: true
+  validates :ballot, presence: true, same_org: :user
   validates :candidate_ids,
     length: { minimum: 0, allow_nil: false }
   validates :user, presence: true
@@ -18,7 +18,6 @@ class Vote < ApplicationRecord
   validate :candidates_are_a_subset_of_ballot_candidates
   validate :no_duplicates
   validate :not_overvoting
-  validate :user_and_ballot_in_same_org
 
   after_save :validate_saved_after_nominations_end
   after_save :validate_saved_before_voting_ends
@@ -50,14 +49,6 @@ class Vote < ApplicationRecord
     if candidate_ids.length > max
       errors.add :base,
         "must not contain more than #{max} #{'choice'.pluralize(max)}"
-    end
-  end
-
-  def user_and_ballot_in_same_org
-    return unless ballot && user
-
-    unless user.org && (user.org == ballot.org)
-      errors.add :ballot, 'not found'
     end
   end
 

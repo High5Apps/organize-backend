@@ -6,11 +6,15 @@ class FlaggedItem < ApplicationRecord
   belongs_to :post, optional: true
   belongs_to :user
 
-  validates :user, presence: true
+  validates :user,
+    presence: true,
+    same_org: {
+      as: ->(flagged_item) { flagged_item.item&.user },
+      name: 'Item',
+    }
 
   validate :ballot_category_is_not_election
   validate :exactly_one_item
-  validate :item_belongs_to_user_org
   validate :post_is_not_candidacy_announcement
 
   def item
@@ -57,14 +61,6 @@ class FlaggedItem < ApplicationRecord
   def exactly_one_item
     unless item
       errors.add :base, "must have exactly one item"
-    end
-  end
-
-  def item_belongs_to_user_org
-    return unless item && user
-
-    unless user.org && (item.user.org == user.org)
-      errors.add :base, "Item not found"
     end
   end
 
