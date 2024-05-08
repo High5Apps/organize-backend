@@ -27,10 +27,10 @@ class Api::V1::CommentsController < ApplicationController
   ].freeze
 
   before_action :authenticate_user, only: [:index, :create]
-  before_action :check_commentable_belongs_to_org, only: [:index, :create]
+  before_action :check_commentable_belongs_to_org, only: [:index]
 
   def create
-    new_comment = @commentable_relation.build(create_params)
+    new_comment = authenticated_user.comments.build(create_params)
     if new_comment.save
       render json: { id: new_comment.id }, status: :created
     else
@@ -90,10 +90,9 @@ class Api::V1::CommentsController < ApplicationController
   def create_params
     params.require(:comment)
       .permit(PERMITTED_PARAMS)
-      .merge(
-        # post_id is needed for replies, since the shallow route doesn't include
-        # the post_id
-        post_id: @post.id,
-        user_id: authenticated_user.id)
+      .merge({
+        comment_id: params[:comment_id],
+        post_id: params[:post_id]
+      })
   end
 end

@@ -16,6 +16,18 @@ class CommentTest < ActiveSupport::TestCase
     assert @comment.invalid?
   end
 
+  test 'post should exist' do
+    @comment.post_id = 'bad-id'
+    assert @comment.invalid?
+  end
+
+  test 'post should belong to user Org' do
+    post_in_another_org = posts :two
+    assert_not_equal post_in_another_org.org, @comment.user.org
+    @comment.post = post_in_another_org
+    assert @comment.invalid?
+  end
+
   test 'user should be present' do
     @comment.user = nil
     assert @comment.invalid?
@@ -23,6 +35,13 @@ class CommentTest < ActiveSupport::TestCase
 
   test 'encrypted_body should be present' do
     @comment.encrypted_body = nil
+    assert @comment.invalid?
+  end
+
+  test 'user should be in an Org' do
+    user_without_org = users :two
+    assert_nil user_without_org.org
+    @comment.user = user_without_org
     assert @comment.invalid?
   end
 

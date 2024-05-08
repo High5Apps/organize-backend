@@ -41,6 +41,8 @@ class Comment < ApplicationRecord
   MAX_BODY_LENGTH = 10000
   MAX_COMMENT_DEPTH = 8
 
+  attr_accessor :comment_id
+
   belongs_to :post
   belongs_to :user
 
@@ -48,7 +50,7 @@ class Comment < ApplicationRecord
   has_many :moderation_events
   has_many :upvotes
 
-  validates :post, presence: true
+  validates :post, presence: true, same_org: :user
   validates :user, presence: true
   validates :depth,
     numericality: {
@@ -57,6 +59,7 @@ class Comment < ApplicationRecord
       only_integer: true,
     }
 
+  before_validation :set_post_from_comment_id, on: :create, if: :comment_id
   after_create :create_upvote_for_user
 
   has_encrypted :body, present: true, max_length: MAX_BODY_LENGTH
@@ -67,5 +70,11 @@ class Comment < ApplicationRecord
 
   def create_upvote_for_user
     upvotes.create! user:, value: 1
+  end
+
+  def set_post_from_comment_id
+    comment = Comment.includes(:post).find_by id: comment_id
+    self.post = comment&.post
+    self.comment_id = nil
   end
 end
