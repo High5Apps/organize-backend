@@ -7,13 +7,6 @@ class ApplicationController < ActionController::API
     render_unauthorized unless authenticated_user
   end
 
-  def check_ballot_belongs_to_org
-    @ballot = authenticated_user&.org&.ballots&.find_by id: params[:ballot_id]
-    unless @ballot
-      render_error :not_found, ['Ballot not found']
-    end
-  end
-
   def check_org_membership
     @org = authenticated_user.org
     unless @org

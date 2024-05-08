@@ -14,11 +14,10 @@ class Api::V1::NominationsController < ApplicationController
   ]
 
   before_action :authenticate_user, only: [:create, :update]
-  before_action :check_ballot_belongs_to_org, only: [:create]
   before_action :check_received_nomination, only: [:update]
 
   def create
-    new_nomination = @ballot.nominations.build create_params
+    new_nomination = authenticated_user.created_nominations.build create_params
     if new_nomination.save
       render json: { id: new_nomination.id }, status: :created
     else
@@ -50,7 +49,7 @@ class Api::V1::NominationsController < ApplicationController
   def create_params
     params.require(:nomination)
       .permit(PERMITTED_CREATE_PARAMS)
-      .merge(nominator_id: authenticated_user.id)
+      .merge(ballot_id: params[:ballot_id])
   end
 
   def update_params

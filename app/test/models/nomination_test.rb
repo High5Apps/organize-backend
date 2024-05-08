@@ -28,8 +28,27 @@ class NominationTest < ActiveSupport::TestCase
     assert @nomination.invalid?
   end
 
+  test 'ballot should exist' do
+    @nomination.ballot_id = 'bad-id'
+    assert @nomination.invalid?
+  end
+
+  test 'ballot should belong to nominator Org' do
+    ballot_in_another_org = ballots :two
+    assert_not_equal ballot_in_another_org.org, @nomination.nominator.org
+    @nomination.ballot = ballot_in_another_org
+    assert @nomination.invalid?
+  end
+
   test 'nominator should be present' do
     @nomination.nominator = nil
+    assert @nomination.invalid?
+  end
+
+  test 'nominator should be in an Org' do
+    user_without_org = users :two
+    assert_nil user_without_org.org
+    @nomination.nominator = user_without_org
     assert @nomination.invalid?
   end
 

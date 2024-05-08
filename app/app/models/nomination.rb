@@ -5,7 +5,7 @@ class Nomination < ApplicationRecord
 
   has_one :candidate
 
-  validates :ballot, presence: true
+  validates :ballot, presence: true, same_org: :nominator
   validates :nominator, presence: true
   validates :nominee,
     presence: true,

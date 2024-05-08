@@ -48,45 +48,6 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
-  test 'should not create if user is not in an org' do
-    params = destroy_template_nomination_for_create_params
-    @nominator.update!(org: nil)
-    assert_nil @nominator.reload.org
-
-    assert_no_difference 'Nomination.count' do
-      post(api_v1_ballot_nominations_url(@nomination.ballot),
-        headers: @create_headers,
-        params:)
-    end
-
-    assert_response :not_found
-  end
-
-  test 'should not create on a nonexistent ballot' do
-    params = destroy_template_nomination_for_create_params
-    assert_no_difference 'Nomination.count' do
-      post(api_v1_ballot_nominations_url('bad-ballot-id'),
-        headers: @create_headers,
-        params:)
-    end
-
-    assert_response :not_found
-  end
-
-  test 'should not create if ballot belongs to another Org' do
-    ballot_in_another_org = ballots(:two)
-    assert_not_equal @nominator.org, ballot_in_another_org.org
-
-    params = destroy_template_nomination_for_create_params
-    assert_no_difference 'Nomination.count' do
-      post(api_v1_ballot_nominations_url(ballot_in_another_org),
-        headers: @create_headers,
-        params:)
-    end
-
-    assert_response :not_found
-  end
-
   test 'should update with valid params' do
     params = update_params accepted: false
     assert_changes -> { @nomination.reload.accepted }, from: nil, to: false do
