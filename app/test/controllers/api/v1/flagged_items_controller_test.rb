@@ -74,7 +74,7 @@ class Api::V1::FlaggedItemsControllerTest < ActionDispatch::IntegrationTest
     assert_nil @user.reload.org
 
     get api_v1_flagged_items_url, headers: @authorized_headers
-    assert_response :not_found
+    assert_response :unauthorized
   end
 
   test 'should not index without permission' do
