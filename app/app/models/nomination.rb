@@ -9,6 +9,7 @@ class Nomination < ApplicationRecord
   validates :nominator, presence: true
   validates :nominee,
     presence: true,
+    same_org: :nominator,
     uniqueness: { scope: :ballot }
 
   validate :ballot_is_election

@@ -57,6 +57,13 @@ class NominationTest < ActiveSupport::TestCase
     assert @nomination.invalid?
   end
 
+  test 'nominee should belong to nominator Org' do
+    user_in_another_org = users :five
+    assert_not_equal  user_in_another_org.org, @nomination.nominator.org
+    @nomination.nominee = user_in_another_org
+    assert @nomination.invalid?
+  end
+
   test 'should not be able to self-nominate' do
     @nomination.nominee = @nomination.nominator
     assert @nomination.invalid?
