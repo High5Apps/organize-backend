@@ -406,6 +406,19 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test 'should not show when user is not in an Org' do
+    user_without_org = users :two
+    assert_nil user_without_org.org
+
+    setup_test_key(user_without_org)
+    get api_v1_ballot_url(@ballot),
+      headers: authorized_headers(
+        user_without_org,
+        Authenticatable::SCOPE_ALL)
+
+    assert_response :not_found
+  end
+
   test 'show should format refreshed_at as iso8601' do
     get api_v1_ballot_url(@ballot), headers: @authorized_headers
     response.parsed_body => refreshed_at:

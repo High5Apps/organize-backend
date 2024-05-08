@@ -44,7 +44,7 @@ class Api::V1::BallotsController < ApplicationController
   MAX_CANDIDATES_PER_CREATE = 100.freeze
 
   before_action :authenticate_user, only: [:index, :create, :show]
-  before_action :check_org_membership, only: [:create, :show]
+  before_action :check_org_membership, only: [:create]
   before_action :check_can_create_elections, :validate_election,
     only: [:create],
     if: -> { will_create 'election' }
@@ -80,11 +80,7 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def show
-    @ballot = @org.ballots.find_by(id: params[:id])
-
-    unless @ballot
-      return render_error :not_found, ["No ballot found with id #{params[:id]}"]
-    end
+    @ballot = authenticated_user&.ballots.find params[:id]
 
     render json: {
       ballot:,

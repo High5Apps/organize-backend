@@ -34,6 +34,10 @@ class ApplicationController < ActionController::API
     render_error :unprocessable_entity, [e.message]
   end
 
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    render_error :not_found, ['Not found']
+  end
+
   Permission::SCOPE_SYMBOLS.each do |scope|
     define_method("check_can_#{scope.to_s}") do
       render_unauthorized unless authenticated_user.can? scope
