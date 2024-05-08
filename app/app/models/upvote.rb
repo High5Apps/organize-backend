@@ -13,6 +13,12 @@ class Upvote < ApplicationRecord
   belongs_to :user
 
   validates :user, presence: true
+  validates :user,
+    same_org: {
+      as: ->(upvote) { upvote.comment.user },
+      name: 'Comment',
+    }, if: :comment
+  validates :user, same_org: :post, if: :post
   validates :value,
     numericality: {
       greater_than_or_equal_to: -1,

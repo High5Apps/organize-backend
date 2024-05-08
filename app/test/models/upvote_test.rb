@@ -40,9 +40,33 @@ class UpvoteTest < ActiveSupport::TestCase
     assert @comment_upvote.valid?
   end
 
+  test 'post should exist if given' do
+    @post_upvote.post_id = 'bad-id'
+    assert @post_upvote.invalid?
+  end
+
+  test 'post should belong to user Org if given' do
+    post_in_another_org = posts :two
+    assert_not_equal post_in_another_org.org, @post_upvote.user.org
+    @post_upvote.post = post_in_another_org
+    assert @post_upvote.invalid?
+  end
+
   test 'comment should be optional' do
     @post_upvote.comment = nil
     assert @post_upvote.valid?
+  end
+
+  test 'comment should exist if given' do
+    @comment_upvote.comment_id = 'bad-id'
+    assert @comment_upvote.invalid?
+  end
+
+  test 'comment should belong to user Org if given' do
+    comment_in_another_org = comments :three
+    assert_not_equal comment_in_another_org.user.org, @comment_upvote.user.org
+    @comment_upvote.comment = comment_in_another_org
+    assert @comment_upvote.invalid?
   end
 
   test 'should not allow users to double upvote the same post' do
