@@ -9,8 +9,8 @@ class Ballot::Query
     :voting_ends_at,
   ]
 
-  def self.build(params={}, initial_ballots: nil)
-    initial_ballots ||= Ballot.all
+  def self.build(initial_ballots, params={})
+    return [] unless initial_ballots
 
     now = Time.now
 

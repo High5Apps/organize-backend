@@ -44,7 +44,7 @@ class Api::V1::BallotsController < ApplicationController
   MAX_CANDIDATES_PER_CREATE = 100.freeze
 
   before_action :authenticate_user, only: [:index, :create, :show]
-  before_action :check_org_membership, only: [:index, :create, :show]
+  before_action :check_org_membership, only: [:create, :show]
   before_action :check_can_create_elections, :validate_election,
     only: [:create],
     if: -> { will_create 'election' }
@@ -72,8 +72,7 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def index
-    ballots = Ballot::Query.build params,
-      initial_ballots: authenticated_user.org.ballots
+    ballots = Ballot::Query.build authenticated_user&.org&.ballots, params
     render json: {
       ballots:,
       meta: (pagination_dict(ballots) if params[:page]),
