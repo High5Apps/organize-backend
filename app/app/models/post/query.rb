@@ -12,8 +12,8 @@ class Post::Query
     my_vote: '',
   }
 
-  def self.build(params={}, initial_posts: nil)
-    initial_posts ||= Post.all
+  def self.build(initial_posts, params={})
+    return Post.none.page(params[:page]).without_count unless initial_posts
 
     created_at_or_before_param = \
       params[:created_at_or_before] || Upvote::FAR_FUTURE_TIME

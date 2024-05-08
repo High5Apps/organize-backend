@@ -8,7 +8,7 @@ class Api::V1::PostsController < ApplicationController
   ]
 
   before_action :authenticate_user, only: [:index, :create, :show]
-  before_action :check_org_membership, only: [:index, :create, :show]
+  before_action :check_org_membership, only: [:create, :show]
 
   def create
     new_post = authenticated_user.posts.build(create_params.merge(org: @org))
@@ -21,13 +21,12 @@ class Api::V1::PostsController < ApplicationController
   end
 
   def index
-    posts = Post::Query.build query_params, initial_posts: @org.posts
+    posts = Post::Query.build authenticated_user&.org&.posts, query_params
     render json: { posts:, meta: pagination_dict(posts) }
   end
 
   def show
-    posts = Post::Query.build query_params,
-      initial_posts: @org.posts.where(id: params[:id])
+    posts = Post::Query.build @org.posts.where(id: params[:id]), query_params
     post = posts.first
 
     unless post
