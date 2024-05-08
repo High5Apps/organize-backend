@@ -80,6 +80,14 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test 'index should be empty if user is not in an Org' do
+    @user.update!(org: nil)
+    assert_nil @user.reload.org
+
+    get api_v1_post_comments_url(@post), headers: @authorized_headers
+    assert_pattern { response.parsed_body => comments: [] }
+  end
+
   test 'index should only include allow-listed attributes' do
     get api_v1_post_comments_url(@post), headers: @authorized_headers
     response.parsed_body => comments: [first_comment, *]
