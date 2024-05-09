@@ -1,23 +1,34 @@
 class SameOrgValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
-    if options[:with].instance_of? Symbol
-      error_attribute = attribute
+    is_other_value_symbol = options[:with].instance_of?(Symbol) ||
+      options[:as].instance_of?(Symbol)
+    is_other_value_proc = options[:as].instance_of?(Proc)
+    has_message_info = options[:name].instance_of?(String) ||
+      options[:message].instance_of?(String)
 
-      other_attribute = options[:with]
+    if is_other_value_symbol
+      other_attribute = options[:with] || options[:as]
       other_value = record.send(other_attribute)
       other_org = (other_attribute == :org) ? other_value : other_value&.org
-    elsif options[:as].instance_of?(Proc) && options[:name].instance_of?(String)
-      error_attribute = :base
-
+    elsif is_other_value_proc && has_message_info
       other_value = options[:as].call(record)
       other_org = other_value&.org
     else
       raise 'unexpected options'
     end
 
-    message = options[:message] || 'not found'
-    if options[:as]
-      message = "#{options[:name]} #{message}"
+    if options[:message] || options[:name]
+      error_attribute = :base
+    else
+      error_attribute = attribute
+    end
+
+    if options[:message]
+      message = options[:message]
+    elsif options[:name]
+      message = "#{options[:name]} not found"
+    else
+      message = 'not found'
     end
 
     org = (attribute == :org) ? value : value&.org
