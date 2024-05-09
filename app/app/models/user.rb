@@ -98,6 +98,9 @@ class User < ApplicationRecord
   validates :public_key_bytes,
     presence: true,
     length: { is: PUBLIC_KEY_LENGTH }
+  validates :recruiter,
+    same_org: { as: ->(user) { user }, name: 'Recruiter' },
+    if: :recruiter
 
   before_validation :convert_public_key_to_binary, on: :create
   before_update :on_join_org,

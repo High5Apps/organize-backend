@@ -3,8 +3,11 @@ require "test_helper"
 class UserTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
+    @founder = @user
     @user_without_org = users(:two)
     @enthusiastic_toucan = users(:six)
+    @non_founder = users :three
+    @user_in_another_org = users(:five)
   end
 
   test 'should be valid' do
@@ -26,6 +29,20 @@ class UserTest < ActiveSupport::TestCase
   test 'public_key_bytes should have the correct length' do
     @user.public_key_bytes = Base64.decode64('deadbeef')
     assert_not @user.valid?
+  end
+
+  test 'recruiter should be optional' do
+    assert_not_nil @non_founder.recruiter
+    assert @non_founder.valid?
+
+    assert_nil @founder.recruiter
+    assert @founder.valid?
+  end
+
+  test 'recruiter should be in the same Org as User for non-founders' do
+    assert_not_equal @non_founder.org, @user_in_another_org.org
+    @non_founder.recruiter = @user_in_another_org
+    assert @non_founder.invalid?
   end
 
   test 'should set pseudonym when org_id is initially set' do
