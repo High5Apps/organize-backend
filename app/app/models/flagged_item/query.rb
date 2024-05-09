@@ -1,6 +1,6 @@
 class FlaggedItem::Query
   def self.build(initial_flagged_items, params={})
-    return [] unless initial_flagged_items
+    return FlaggedItem.none unless initial_flagged_items
 
     now = Time.now
 

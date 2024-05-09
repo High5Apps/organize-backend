@@ -10,7 +10,7 @@ class Ballot::Query
   ]
 
   def self.build(initial_ballots, params={})
-    return [] unless initial_ballots
+    return Ballot.none unless initial_ballots
 
     now = Time.now
 
