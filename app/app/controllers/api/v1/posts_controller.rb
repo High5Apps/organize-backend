@@ -8,10 +8,10 @@ class Api::V1::PostsController < ApplicationController
   ]
 
   before_action :authenticate_user, only: [:index, :create, :show]
-  before_action :check_org_membership, only: [:create, :show]
+  before_action :check_org_membership, only: [:show]
 
   def create
-    new_post = authenticated_user.posts.build(create_params.merge(org: @org))
+    new_post = authenticated_user.posts.build create_params
     if new_post.save
       render json: { id: new_post.id, created_at: new_post.created_at },
         status: :created
