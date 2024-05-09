@@ -73,4 +73,12 @@ class CandidateTest < ActiveSupport::TestCase
     @election_candidate.user = nil
     assert @election_candidate.invalid?
   end
+
+  test "user should be in Ballot creator's Org for elections" do
+    user_in_another_org = users :five
+    assert_not_equal  user_in_another_org.org,
+      @election_candidate.ballot.user.org
+    @election_candidate.user = user_in_another_org
+    assert @election_candidate.invalid?
+  end
 end
