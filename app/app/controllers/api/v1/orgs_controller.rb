@@ -5,8 +5,8 @@ class Api::V1::OrgsController < ApplicationController
   ]
 
   before_action :authenticate_user, only: [:create, :my_org, :update_my_org]
-  before_action :check_org_membership, :check_can_edit_org,
-    only: [:update_my_org]
+  before_action :check_org_membership, only: [:my_org, :update_my_org]
+  before_action :check_can_edit_org, only: [:update_my_org]
 
   def create
     new_org = authenticated_user.build_org(create_or_update_params)
@@ -18,17 +18,11 @@ class Api::V1::OrgsController < ApplicationController
   end
 
   def my_org
-    org = authenticated_user.org
-
-    unless org
-      return render_error :not_found, "You don't belong to an Org"
-    end
-
     render json: {
-      graph: org.graph,
-      id: org.id,
-      encrypted_name: org.encrypted_name,
-      encrypted_member_definition: org.encrypted_member_definition,
+      graph: @org.graph,
+      id: @org.id,
+      encrypted_name: @org.encrypted_name,
+      encrypted_member_definition: @org.encrypted_member_definition,
     }
   end
 
