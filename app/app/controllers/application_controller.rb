@@ -8,10 +8,7 @@ class ApplicationController < ActionController::API
   end
 
   def check_org_membership
-    @org = authenticated_user.org
-    unless @org
-      render_error :not_found, ['You must join an Org first']
-    end
+    @org = Org.find authenticated_user.org_id
   end
 
   def pagination_dict(collection)
