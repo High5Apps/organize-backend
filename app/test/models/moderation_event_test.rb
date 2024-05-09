@@ -90,6 +90,15 @@ class ModerationEventTest < ActiveSupport::TestCase
     end
   end
 
+  test 'item should belong to moderator Org' do
+    [
+      ballots(:two), comments(:three), posts(:two), users(:five),
+    ].each do |item_in_another_org|
+      @event.item = item_in_another_org
+      assert @event.invalid?
+    end
+  end
+
   test 'item should return nil when no item is set' do
     @event.ballot = nil
     assert_nil @event.item

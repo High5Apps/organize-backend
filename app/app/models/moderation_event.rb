@@ -8,6 +8,10 @@ class ModerationEvent < ApplicationRecord
   belongs_to :user, optional: true
 
   validates :moderator, presence: true
+  validates :moderator,
+    same_org: { as: ->(event) { event.item&.user }, name: 'Item' },
+    unless: :user_id
+  validates :user, same_org: :moderator, if: :user_id
 
   validate :action_transitions, on: :create
   validate :exactly_one_item
