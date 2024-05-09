@@ -7,11 +7,6 @@ class Api::V1::FlaggedItemsControllerTest < ActionDispatch::IntegrationTest
       api_v1_comment_flagged_items_url(comments :one),
       api_v1_post_flagged_items_url(posts :one),
     ]
-    @nonexistent_flaggable_urls = [
-      api_v1_ballot_flagged_items_url('bad-ballot-id'),
-      api_v1_comment_flagged_items_url('bad-comment-id'),
-      api_v1_post_flagged_items_url('bad-post-id'),
-    ]
 
     @user = users(:one)
     setup_test_key(@user)
