@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       end
       resources :connections,  only: [:create]
       resources :flagged_items, only: [:index]
+      resources :moderation_events, only: [:create]
       resources :nominations, only: [:update]
       resources :offices, only: [:index]
       resources :orgs, only: [:create]

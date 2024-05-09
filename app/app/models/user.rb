@@ -75,6 +75,9 @@ class User < ApplicationRecord
   has_many :created_nominations,
     foreign_key: 'nominator_id',
     class_name: 'Nomination'
+  has_many :created_moderation_events,
+    foreign_key: 'moderator_id',
+    class_name: 'ModerationEvent'
   has_many :flagged_items
   has_many :moderation_events
   has_many :posts
