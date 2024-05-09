@@ -9,9 +9,9 @@ class User::Query
   ]
   PAGINATION_BYPASSING_FILTERS = ['officer']
 
-  def initialize(params={}, initial_users: nil)
+  def initialize(initial_users, params={})
+    @initial_users = initial_users
     @params = params
-    @initial_users = initial_users || User.all
   end
 
   def paginates?
@@ -22,6 +22,30 @@ class User::Query
   def relation
     return @relation if @relation
 
+    users = unpaginated_relation
+    users = paginate(users) if paginate?
+
+    @relation = users
+    @relation
+  end
+
+  private
+
+  def filter_parameter
+    @params[:filter]
+  end
+
+  def paginate(users)
+    users.page(@params[:page]).without_count
+  end
+
+  def paginate?
+    !PAGINATION_BYPASSING_FILTERS.include? filter_parameter
+  end
+
+  def unpaginated_relation
+    return User.none unless @initial_users
+
     now = Time.now
 
     joined_at_or_before_param = @params[:joined_at_or_before] || now
@@ -31,12 +55,6 @@ class User::Query
       .joined_at_or_before(joined_at_or_before)
       .with_service_stats
       .select(ALLOWED_ATTRIBUTES)
-
-    filter_parameter = @params[:filter]
-
-    unless PAGINATION_BYPASSING_FILTERS.include? filter_parameter
-      users = users.page(@params[:page]).without_count
-    end
 
     if filter_parameter == 'officer'
       users = users.officers
@@ -54,7 +72,6 @@ class User::Query
       users = users.order_by_office(joined_at_or_before)
     end
 
-    @relation = users
-    @relation
+    users
   end
 end

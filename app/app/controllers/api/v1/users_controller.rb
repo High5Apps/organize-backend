@@ -12,7 +12,6 @@ class Api::V1::UsersController < ApplicationController
   ]
 
   before_action :authenticate_user, only: [:index, :show]
-  before_action :check_org_membership, only: [:index]
 
   def create
     new_user = User.new(create_params)
@@ -24,7 +23,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def index
-    @query = User::Query.new(params, initial_users: @org.users)
+    @query = User::Query.new(authenticated_user&.org&.users, params)
     users = @query.relation
     render json: {
       meta: (pagination_dict(users) if @query.paginates?),
