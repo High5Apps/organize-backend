@@ -8,7 +8,6 @@ class Api::V1::PostsController < ApplicationController
   ]
 
   before_action :authenticate_user, only: [:index, :create, :show]
-  before_action :check_org_membership, only: [:show]
 
   def create
     new_post = authenticated_user.posts.build create_params
@@ -26,13 +25,8 @@ class Api::V1::PostsController < ApplicationController
   end
 
   def show
-    posts = Post::Query.build @org.posts.where(id: params[:id]), query_params
-    post = posts.first
-
-    unless post
-      return render_error :not_found, ["No post found with id #{params[:id]}"]
-    end
-
+    initial_posts = authenticated_user.org&.posts
+    post = Post::Query.build(initial_posts, query_params).find params[:id]
     render json: { post: }
   end
 
