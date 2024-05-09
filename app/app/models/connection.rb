@@ -5,11 +5,12 @@ class Connection < ApplicationRecord
   ERROR_MESSAGE_DIFFERENT_ORGS = 'You must be in the same org'
   ERROR_MESSAGE_SELF_CONNECTION = "You can't connect to yourself"
 
-  belongs_to :sharer, class_name: 'User'
   belongs_to :scanner, class_name: 'User'
+  belongs_to :sharer, class_name: 'User'
 
-  validates :sharer, presence: true
   validates :scanner, presence: true
+  validates :sharer, presence: true
+
   validate :not_already_connected, on: :create
   validate :scanner_and_sharer_in_same_org?
   validate :sharer_and_scanner_not_equal
