@@ -17,7 +17,7 @@ class Api::V1::FlaggedItemsController < ApplicationController
   end
 
   def index
-    initial_flagged_items = authenticated_user&.org&.flagged_items
+    initial_flagged_items = authenticated_user.org&.flagged_items
     flagged_items = FlaggedItem::Query.build initial_flagged_items, params
     render json: {
       flagged_items:,

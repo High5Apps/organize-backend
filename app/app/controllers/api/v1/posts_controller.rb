@@ -21,7 +21,7 @@ class Api::V1::PostsController < ApplicationController
   end
 
   def index
-    posts = Post::Query.build authenticated_user&.org&.posts, query_params
+    posts = Post::Query.build authenticated_user.org&.posts, query_params
     render json: { posts:, meta: pagination_dict(posts) }
   end
 

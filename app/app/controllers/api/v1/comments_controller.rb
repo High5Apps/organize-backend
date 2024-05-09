@@ -44,7 +44,7 @@ class Api::V1::CommentsController < ApplicationController
   private
 
   def comments
-    post = authenticated_user&.org&.posts&.find params[:post_id]
+    post = authenticated_user.org&.posts&.find params[:post_id]
     return [] unless post
 
     created_at_or_before_param = \

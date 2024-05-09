@@ -71,7 +71,7 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def index
-    ballots = Ballot::Query.build authenticated_user&.org&.ballots, params
+    ballots = Ballot::Query.build authenticated_user.org&.ballots, params
     render json: {
       ballots:,
       meta: (pagination_dict(ballots) if params[:page]),
@@ -79,7 +79,7 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def show
-    @ballot = authenticated_user&.ballots.find params[:id]
+    @ballot = authenticated_user.ballots.find params[:id]
 
     render json: {
       ballot:,
