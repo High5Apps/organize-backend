@@ -8,11 +8,12 @@ class Connection < ApplicationRecord
   belongs_to :scanner, class_name: 'User'
   belongs_to :sharer, class_name: 'User'
 
-  validates :scanner, presence: true
+  validates :scanner,
+    presence: true,
+    same_org: { as: :sharer, message: ERROR_MESSAGE_DIFFERENT_ORGS }
   validates :sharer, presence: true
 
   validate :not_already_connected, on: :create
-  validate :scanner_and_sharer_in_same_org?
   validate :sharer_and_scanner_not_equal
 
   before_validation :set_scanner_info_from_sharer_info,
@@ -38,12 +39,6 @@ class Connection < ApplicationRecord
   def not_already_connected
     if scanner&.directly_connected_to? sharer
       errors.add(:base, ERROR_MESSAGE_ALREADY_CONNECTED)
-    end
-  end
-
-  def scanner_and_sharer_in_same_org?
-    unless scanner&.org&.id == sharer&.org&.id
-      errors.add(:base, ERROR_MESSAGE_DIFFERENT_ORGS)
     end
   end
 
