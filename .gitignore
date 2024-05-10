@@ -31,3 +31,6 @@
 
 # Ignore Mac Desktop Services Store files
 .DS_Store
+
+# Ignore JMeter logs
+/jmeter/jmeter.log
