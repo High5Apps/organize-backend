@@ -7,5 +7,5 @@
 
 parent_dir_path=$(dirname "$0")
 jmeter_dir_path=$parent_dir_path/../jmeter
-jmeter --testfile $jmeter_dir_path/create-user.jmx \
+jmeter --testfile $jmeter_dir_path/load-test.jmx \
   --jmeterlogfile $jmeter_dir_path/jmeter.log
