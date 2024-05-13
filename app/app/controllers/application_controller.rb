@@ -18,13 +18,17 @@ class ApplicationController < ActionController::API
     }
   end
 
+  def render_error(status, error_messages)
+    render json: { error_messages: }, status:
+  end
+
+  def render_not_found
+    render_error :not_found, ['Not found']
+  end
+
   def render_unauthorized
     error_message = "You aren't authorized to do that."
     render_error :unauthorized, [error_message]
-  end
-
-  def render_error(status, error_messages)
-    render json: { error_messages: }, status:
   end
 
   rescue_from ActionController::ParameterMissing do |e|

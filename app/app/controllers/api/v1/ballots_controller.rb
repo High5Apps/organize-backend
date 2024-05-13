@@ -79,7 +79,8 @@ class Api::V1::BallotsController < ApplicationController
   end
 
   def show
-    @ballot = authenticated_user.ballots.find params[:id]
+    @ballot = authenticated_user.org&.ballots&.find params[:id]
+    return render_not_found unless @ballot
 
     render json: {
       ballot:,
@@ -89,7 +90,7 @@ class Api::V1::BallotsController < ApplicationController
       refreshed_at: Time.now.utc,
       results:,
       terms:,
-  }.compact
+    }.compact
   end
 
   private

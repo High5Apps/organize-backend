@@ -4,7 +4,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   MAX_CANDIDATES = Api::V1::BallotsController::MAX_CANDIDATES_PER_CREATE
 
   setup do
-    @ballot = ballots(:one)
+    @ballot = ballots(:three)
     @params = {
       ballot: @ballot.as_json,
       candidates: @ballot.candidates.as_json,
