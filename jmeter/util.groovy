@@ -1,8 +1,11 @@
 import groovy.json.JsonBuilder
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.io.Encoders
+import io.jsonwebtoken.Jwts
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
@@ -30,4 +33,15 @@ def e2eEncrypt(String message, String symmetricKeyBase64) {
 
   def encryptedMessage = new EncryptedMessage(c: ciphertext, n: initializationVector, t: integrityCheck)
   return new JsonBuilder(encryptedMessage).toString()
+}
+
+def jwt(keyPair, String userId) {
+  if (!keyPair) { return "Warning: jwt expected keyPair" }
+
+  return Jwts.builder()
+    .setExpiration(Date.from(Instant.now().plus(1L, ChronoUnit.MINUTES)))
+    .claim("scp", "*")
+    .setSubject("${userId}")
+    .signWith(keyPair.private)
+    .compact()
 }
