@@ -5,8 +5,6 @@
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
-      <boolProp name="TestPlan.functional_mode">false</boolProp>
-      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
     </TestPlan>
     <hashTree>
       <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
@@ -44,7 +42,7 @@
         </collectionProp>
       </Arguments>
       <hashTree/>
-      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults">
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
         <stringProp name="HTTPSampler.domain">getorganize.app</stringProp>
         <stringProp name="HTTPSampler.port">443</stringProp>
         <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -98,7 +96,7 @@
       <hashTree>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create User" enabled="true"/>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/api/v1/users" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/users">
             <stringProp name="HTTPSampler.path">/api/v1/users</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -150,7 +148,7 @@ vars.put(&quot;publicKeyPem&quot;, publicKeyPem);</stringProp>
         </hashTree>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Org" enabled="true"/>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/api/v1/orgs" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/orgs">
             <stringProp name="HTTPSampler.path">/api/v1/orgs</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -208,7 +206,7 @@ props.put(&quot;groupSecretBase64&quot;, groupSecretBase64)</stringProp>
         </hashTree>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get User" enabled="true"/>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/api/v1/users/:id" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/users/:id">
             <stringProp name="HTTPSampler.path">/api/v1/users/${userId}</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -232,7 +230,7 @@ props.put(&quot;groupSecretBase64&quot;, groupSecretBase64)</stringProp>
         </hashTree>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Sharer JWTs" enabled="true"/>
         <hashTree>
-          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="sharerJwt1, sharerJwt2" enabled="true">
+          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="sharerJwt1, sharerJwt2">
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="parameters"></stringProp>
             <stringProp name="filename"></stringProp>
@@ -266,7 +264,7 @@ for (suffix in [1, 2]) {
           </hashTree>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -279,9 +277,9 @@ for (suffix in [1, 2]) {
       <hashTree>
         <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Join Org" enabled="true"/>
         <hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Connection Preview" enabled="true"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Connection Preview"/>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/api/v1/connection_preview" enabled="true">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/connection_preview">
               <stringProp name="HTTPSampler.path">/api/v1/connection_preview</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -349,7 +347,7 @@ for (suffix in [1, 2]) {
           <hashTree/>
           <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Connection" enabled="true"/>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/api/v1/connections" enabled="true">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/connections">
               <stringProp name="HTTPSampler.path">/api/v1/connections</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -390,9 +388,9 @@ for (suffix in [1, 2]) {
           </ModuleController>
           <hashTree/>
         </hashTree>
-        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Discuss"/>
+        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Discuss" enabled="true"/>
         <hashTree>
-          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="PostTabs">
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: Post Tab">
             <stringProp name="ForeachController.inputVal">postCategory</stringProp>
             <stringProp name="ForeachController.returnVal">postCategory</stringProp>
             <boolProp name="ForeachController.useSeparator">true</boolProp>
@@ -400,7 +398,7 @@ for (suffix in [1, 2]) {
           <hashTree>
             <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Posts"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/api/v1/posts">
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/posts">
                 <stringProp name="HTTPSampler.path">/api/v1/posts</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -469,11 +467,18 @@ vars.put(&apos;postSort&apos;, postSort)
                   <boolProp name="ISREGEX">false</boolProp>
                 </JSONPathAssertion>
                 <hashTree/>
+                <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="randomPostId">
+                  <stringProp name="JSONPostProcessor.referenceNames">randomPostId</stringProp>
+                  <stringProp name="JSONPostProcessor.jsonPathExprs">$.posts[*].id</stringProp>
+                  <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+                </JSONPostProcessor>
+                <hashTree/>
               </hashTree>
             </hashTree>
             <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Post"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/api/v1/posts">
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/posts">
                 <stringProp name="HTTPSampler.path">/api/v1/posts</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -515,160 +520,183 @@ if (postCategory == &apos;recent&apos;) {
                 <hashTree/>
               </hashTree>
             </hashTree>
+            <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Posts (module)">
+              <collectionProp name="ModuleController.node_path">
+                <stringProp name="764597751">Test Plan</stringProp>
+                <stringProp name="764597751">Test Plan</stringProp>
+                <stringProp name="-1948168983">Thread Group</stringProp>
+                <stringProp name="-958927936">Discuss</stringProp>
+                <stringProp name="822644339">For Each: Post Tab</stringProp>
+                <stringProp name="1314584137">Get Posts</stringProp>
+              </collectionProp>
+            </ModuleController>
+            <hashTree/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Reset Post Upvote"/>
+            <hashTree>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/posts/:id/upvotes">
+                <stringProp name="HTTPSampler.path">/api/v1/posts/${randomPostId}/upvotes</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <stringProp name="HTTPSampler.method">POST</stringProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                  <collectionProp name="Arguments.arguments">
+                    <elementProp name="" elementType="HTTPArgument">
+                      <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                      <stringProp name="Argument.value">{&quot;value&quot;:0}</stringProp>
+                      <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                  </collectionProp>
+                </elementProp>
+              </HTTPSamplerProxy>
+              <hashTree/>
+            </hashTree>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Upvote Post"/>
+            <hashTree>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/posts/:id/upvotes">
+                <stringProp name="HTTPSampler.path">/api/v1/posts/${randomPostId}/upvotes</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <stringProp name="HTTPSampler.method">POST</stringProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                  <collectionProp name="Arguments.arguments">
+                    <elementProp name="" elementType="HTTPArgument">
+                      <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                      <stringProp name="Argument.value">{&quot;value&quot;:1}</stringProp>
+                      <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                  </collectionProp>
+                </elementProp>
+              </HTTPSamplerProxy>
+              <hashTree/>
+            </hashTree>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Comments"/>
+            <hashTree>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/posts/:id/comments">
+                <stringProp name="HTTPSampler.path">/api/v1/posts/${randomPostId}/comments</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <stringProp name="HTTPSampler.method">GET</stringProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                  <collectionProp name="Arguments.arguments"/>
+                </elementProp>
+              </HTTPSamplerProxy>
+              <hashTree>
+                <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="$.comments exists">
+                  <stringProp name="JSON_PATH">$.comments</stringProp>
+                  <stringProp name="EXPECTED_VALUE"></stringProp>
+                  <boolProp name="JSONVALIDATION">false</boolProp>
+                  <boolProp name="EXPECT_NULL">false</boolProp>
+                  <boolProp name="INVERT">false</boolProp>
+                  <boolProp name="ISREGEX">false</boolProp>
+                </JSONPathAssertion>
+                <hashTree/>
+                <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="randomCommentId">
+                  <stringProp name="JSONPostProcessor.referenceNames">randomCommentId</stringProp>
+                  <stringProp name="JSONPostProcessor.jsonPathExprs">$.comments[*].id</stringProp>
+                  <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+                </JSONPostProcessor>
+                <hashTree/>
+              </hashTree>
+            </hashTree>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Comment"/>
+            <hashTree>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/posts/:id/comments">
+                <stringProp name="HTTPSampler.path">/api/v1/posts/${randomPostId}/comments</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <stringProp name="HTTPSampler.method">POST</stringProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                  <collectionProp name="Arguments.arguments">
+                    <elementProp name="" elementType="HTTPArgument">
+                      <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                      <stringProp name="Argument.value">{&quot;encrypted_body&quot;:${__groovy(e2eEncrypt(&apos;Body&apos;\, props.get(&apos;groupSecretBase64&apos;)))}}</stringProp>
+                      <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                  </collectionProp>
+                </elementProp>
+              </HTTPSamplerProxy>
+              <hashTree/>
+            </hashTree>
+            <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Comments (module)">
+              <collectionProp name="ModuleController.node_path">
+                <stringProp name="764597751">Test Plan</stringProp>
+                <stringProp name="764597751">Test Plan</stringProp>
+                <stringProp name="-1948168983">Thread Group</stringProp>
+                <stringProp name="-958927936">Discuss</stringProp>
+                <stringProp name="822644339">For Each: Post Tab</stringProp>
+                <stringProp name="-96024642">Get Comments</stringProp>
+              </collectionProp>
+            </ModuleController>
+            <hashTree/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Reset Comment Upvote"/>
+            <hashTree>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/comments/:id/upvotes">
+                <stringProp name="HTTPSampler.path">/api/v1/comments/${randomCommentId}/upvotes</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <stringProp name="HTTPSampler.method">POST</stringProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                  <collectionProp name="Arguments.arguments">
+                    <elementProp name="" elementType="HTTPArgument">
+                      <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                      <stringProp name="Argument.value">{&quot;value&quot;:0}</stringProp>
+                      <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                  </collectionProp>
+                </elementProp>
+              </HTTPSamplerProxy>
+              <hashTree/>
+            </hashTree>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Upvote Comment"/>
+            <hashTree>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/comments/:id/upvotes">
+                <stringProp name="HTTPSampler.path">/api/v1/comments/${randomCommentId}/upvotes</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <stringProp name="HTTPSampler.method">POST</stringProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                  <collectionProp name="Arguments.arguments">
+                    <elementProp name="" elementType="HTTPArgument">
+                      <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                      <stringProp name="Argument.value">{&quot;value&quot;:1}</stringProp>
+                      <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                  </collectionProp>
+                </elementProp>
+              </HTTPSamplerProxy>
+              <hashTree/>
+            </hashTree>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Reply to Comment"/>
+            <hashTree>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/comments/:id/comments">
+                <stringProp name="HTTPSampler.path">/api/v1/comments/${randomCommentId}/comments</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <stringProp name="HTTPSampler.method">POST</stringProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                  <collectionProp name="Arguments.arguments">
+                    <elementProp name="" elementType="HTTPArgument">
+                      <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                      <stringProp name="Argument.value">{&quot;encrypted_body&quot;:${__groovy(e2eEncrypt(&apos;Body&apos;\, props.get(&apos;groupSecretBase64&apos;)))}}</stringProp>
+                      <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                  </collectionProp>
+                </elementProp>
+              </HTTPSamplerProxy>
+              <hashTree/>
+            </hashTree>
           </hashTree>
         </hashTree>
         <RecordingController guiclass="RecordController" testclass="RecordingController" testname="Recording Controller" enabled="false"/>
         <hashTree>
-          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Get Comments" enabled="true">
-            <boolProp name="TransactionController.includeTimers">false</boolProp>
-          </TransactionController>
-          <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/api/v1/posts/48908b6c-dfdc-4436-a0d0-01b3fae61b00/comments-7" enabled="true">
-              <stringProp name="HTTPSampler.path">/api/v1/posts/48908b6c-dfdc-4436-a0d0-01b3fae61b00/comments</stringProp>
-              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-              <stringProp name="HTTPSampler.method">GET</stringProp>
-              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-                <collectionProp name="Arguments.arguments"/>
-              </elementProp>
-            </HTTPSamplerProxy>
-            <hashTree>
-              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-                <collectionProp name="HeaderManager.headers">
-                  <elementProp name="Authorization" elementType="Header">
-                    <stringProp name="Header.name">Authorization</stringProp>
-                    <stringProp name="Header.value">Bearer eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3MTU1NDA1MjIsInNjcCI6IioiLCJzdWIiOiI4ZDBmNjMwNC02MWUwLTRiZTItYTVlZC1iYmIxYjE0YjE1MmEifQ==.MCFt4jdHgDQgtBBGStq4hTfQ-XinwZQPPtTbDH1Nc3RIdzWSaIc0e9jfBQjfXOyXE6NmlhfY_kZu7makVBDFBw==</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept-Language" elementType="Header">
-                    <stringProp name="Header.name">Accept-Language</stringProp>
-                    <stringProp name="Header.value">en-US,en;q=0.9</stringProp>
-                  </elementProp>
-                  <elementProp name="Content-Type" elementType="Header">
-                    <stringProp name="Header.name">Content-Type</stringProp>
-                    <stringProp name="Header.value">application/json</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept-Encoding" elementType="Header">
-                    <stringProp name="Header.name">Accept-Encoding</stringProp>
-                    <stringProp name="Header.value">gzip, deflate, br</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept" elementType="Header">
-                    <stringProp name="Header.name">Accept</stringProp>
-                    <stringProp name="Header.value">application/json</stringProp>
-                  </elementProp>
-                  <elementProp name="User-Agent" elementType="Header">
-                    <stringProp name="Header.name">User-Agent</stringProp>
-                    <stringProp name="Header.value">Organize/1 CFNetwork/1494.0.7 Darwin/23.4.0</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </HeaderManager>
-              <hashTree/>
-            </hashTree>
-          </hashTree>
-          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Create Upvote" enabled="true">
-            <boolProp name="TransactionController.includeTimers">false</boolProp>
-          </TransactionController>
-          <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/api/v1/posts/48908b6c-dfdc-4436-a0d0-01b3fae61b00/upvotes-8" enabled="true">
-              <stringProp name="HTTPSampler.path">/api/v1/posts/48908b6c-dfdc-4436-a0d0-01b3fae61b00/upvotes</stringProp>
-              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-              <stringProp name="HTTPSampler.method">POST</stringProp>
-              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-                <collectionProp name="Arguments.arguments">
-                  <elementProp name="" elementType="HTTPArgument">
-                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">{&quot;value&quot;:-1}</stringProp>
-                    <stringProp name="Argument.metadata">=</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </elementProp>
-            </HTTPSamplerProxy>
-            <hashTree>
-              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-                <collectionProp name="HeaderManager.headers">
-                  <elementProp name="Authorization" elementType="Header">
-                    <stringProp name="Header.name">Authorization</stringProp>
-                    <stringProp name="Header.value">Bearer eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3MTU1NDA1MzEsInNjcCI6IioiLCJzdWIiOiI4ZDBmNjMwNC02MWUwLTRiZTItYTVlZC1iYmIxYjE0YjE1MmEifQ==.lv0hYttcZEG2FBhpgO7jfj5yBMSMQRkoFGwrZGbctvAg2NeuCVh6keFvvE3StWFlsbUpT3JDT90DYPk6zB2k7w==</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept-Language" elementType="Header">
-                    <stringProp name="Header.name">Accept-Language</stringProp>
-                    <stringProp name="Header.value">en-US,en;q=0.9</stringProp>
-                  </elementProp>
-                  <elementProp name="Content-Type" elementType="Header">
-                    <stringProp name="Header.name">Content-Type</stringProp>
-                    <stringProp name="Header.value">application/json</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept-Encoding" elementType="Header">
-                    <stringProp name="Header.name">Accept-Encoding</stringProp>
-                    <stringProp name="Header.value">gzip, deflate, br</stringProp>
-                  </elementProp>
-                  <elementProp name="User-Agent" elementType="Header">
-                    <stringProp name="Header.name">User-Agent</stringProp>
-                    <stringProp name="Header.value">Organize/1 CFNetwork/1494.0.7 Darwin/23.4.0</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept" elementType="Header">
-                    <stringProp name="Header.name">Accept</stringProp>
-                    <stringProp name="Header.value">application/json</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </HeaderManager>
-              <hashTree/>
-            </hashTree>
-          </hashTree>
-          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Create Comment" enabled="true">
-            <boolProp name="TransactionController.includeTimers">false</boolProp>
-          </TransactionController>
-          <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/api/v1/posts/48908b6c-dfdc-4436-a0d0-01b3fae61b00/comments-10" enabled="true">
-              <stringProp name="HTTPSampler.path">/api/v1/posts/48908b6c-dfdc-4436-a0d0-01b3fae61b00/comments</stringProp>
-              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-              <stringProp name="HTTPSampler.method">POST</stringProp>
-              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-                <collectionProp name="Arguments.arguments">
-                  <elementProp name="" elementType="HTTPArgument">
-                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">{&quot;encrypted_body&quot;:{&quot;c&quot;:&quot;WTgYZQ==&quot;,&quot;n&quot;:&quot;ljF17W33WvMSfvpY&quot;,&quot;t&quot;:&quot;LDmBHJ3x05Q6xjyINUzYuA==&quot;}}</stringProp>
-                    <stringProp name="Argument.metadata">=</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </elementProp>
-            </HTTPSamplerProxy>
-            <hashTree>
-              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-                <collectionProp name="HeaderManager.headers">
-                  <elementProp name="Authorization" elementType="Header">
-                    <stringProp name="Header.name">Authorization</stringProp>
-                    <stringProp name="Header.value">Bearer eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3MTU1NDA1NDcsInNjcCI6IioiLCJzdWIiOiI4ZDBmNjMwNC02MWUwLTRiZTItYTVlZC1iYmIxYjE0YjE1MmEifQ==.TaW2h67OE_heDdmq9Y2XmCD6nNyJUnwpndwLel8LvlGUZUuMovE-T5dwkOcMrc04x_gs5oY91slKnHJcH64NVg==</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept-Language" elementType="Header">
-                    <stringProp name="Header.name">Accept-Language</stringProp>
-                    <stringProp name="Header.value">en-US,en;q=0.9</stringProp>
-                  </elementProp>
-                  <elementProp name="Content-Type" elementType="Header">
-                    <stringProp name="Header.name">Content-Type</stringProp>
-                    <stringProp name="Header.value">application/json</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept-Encoding" elementType="Header">
-                    <stringProp name="Header.name">Accept-Encoding</stringProp>
-                    <stringProp name="Header.value">gzip, deflate, br</stringProp>
-                  </elementProp>
-                  <elementProp name="User-Agent" elementType="Header">
-                    <stringProp name="Header.name">User-Agent</stringProp>
-                    <stringProp name="Header.value">Organize/1 CFNetwork/1494.0.7 Darwin/23.4.0</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept" elementType="Header">
-                    <stringProp name="Header.name">Accept</stringProp>
-                    <stringProp name="Header.value">application/json</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </HeaderManager>
-              <hashTree/>
-            </hashTree>
-          </hashTree>
           <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Flag Post" enabled="true">
             <boolProp name="TransactionController.includeTimers">false</boolProp>
           </TransactionController>
@@ -709,58 +737,6 @@ if (postCategory == &apos;recent&apos;) {
                   <elementProp name="User-Agent" elementType="Header">
                     <stringProp name="Header.name">User-Agent</stringProp>
                     <stringProp name="Header.value">Organize/1 CFNetwork/1494.0.7 Darwin/23.4.0</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </HeaderManager>
-              <hashTree/>
-            </hashTree>
-          </hashTree>
-          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Create Reply" enabled="true">
-            <boolProp name="TransactionController.includeTimers">false</boolProp>
-          </TransactionController>
-          <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/api/v1/comments/19904b08-4afc-483d-9025-01882b57d36f/comments-12" enabled="true">
-              <stringProp name="HTTPSampler.path">/api/v1/comments/19904b08-4afc-483d-9025-01882b57d36f/comments</stringProp>
-              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-              <stringProp name="HTTPSampler.method">POST</stringProp>
-              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-                <collectionProp name="Arguments.arguments">
-                  <elementProp name="" elementType="HTTPArgument">
-                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">{&quot;encrypted_body&quot;:{&quot;c&quot;:&quot;Y1wVbmwP2ZbTQA==&quot;,&quot;n&quot;:&quot;YSXFHmUy+kefH5/M&quot;,&quot;t&quot;:&quot;vvU6EctrZr+HxHI81euC7A==&quot;}}</stringProp>
-                    <stringProp name="Argument.metadata">=</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </elementProp>
-            </HTTPSamplerProxy>
-            <hashTree>
-              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-                <collectionProp name="HeaderManager.headers">
-                  <elementProp name="Authorization" elementType="Header">
-                    <stringProp name="Header.name">Authorization</stringProp>
-                    <stringProp name="Header.value">Bearer eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3MTU1NDA1OTksInNjcCI6IioiLCJzdWIiOiI4ZDBmNjMwNC02MWUwLTRiZTItYTVlZC1iYmIxYjE0YjE1MmEifQ==.lDYHkWHTDO0I1fIrAAbyAcXr1JaCrcSTtCpy-A6794rVwhfY4KlC_TfLED83y3AJU9rmjoVRObsGw3WeJrxeNg==</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept-Language" elementType="Header">
-                    <stringProp name="Header.name">Accept-Language</stringProp>
-                    <stringProp name="Header.value">en-US,en;q=0.9</stringProp>
-                  </elementProp>
-                  <elementProp name="Content-Type" elementType="Header">
-                    <stringProp name="Header.name">Content-Type</stringProp>
-                    <stringProp name="Header.value">application/json</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept-Encoding" elementType="Header">
-                    <stringProp name="Header.name">Accept-Encoding</stringProp>
-                    <stringProp name="Header.value">gzip, deflate, br</stringProp>
-                  </elementProp>
-                  <elementProp name="User-Agent" elementType="Header">
-                    <stringProp name="Header.name">User-Agent</stringProp>
-                    <stringProp name="Header.value">Organize/1 CFNetwork/1494.0.7 Darwin/23.4.0</stringProp>
-                  </elementProp>
-                  <elementProp name="Accept" elementType="Header">
-                    <stringProp name="Header.name">Accept</stringProp>
-                    <stringProp name="Header.value">application/json</stringProp>
                   </elementProp>
                 </collectionProp>
               </HeaderManager>
