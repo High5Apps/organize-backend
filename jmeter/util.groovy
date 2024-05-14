@@ -45,3 +45,12 @@ def jwt(keyPair, String userId) {
     .signWith(keyPair.private)
     .compact()
 }
+
+def iso8601(int offsetSeconds) {
+  return new Date(new Date().toInstant().toEpochMilli() + offsetSeconds * 1000)
+    .toInstant().toString()
+}
+
+def iso8601() {
+  return iso8601(0)
+}
