@@ -1,24 +1,24 @@
 one:
-  ballot: three
+  flaggable: three (Ballot)
   user: one
   created_at: <%= 10.seconds.ago.to_fs(:db) %>
 
 two:
-  comment: two
+  flaggable: two (Comment)
   user: three
   created_at: <%= 9.seconds.ago.to_fs(:db) %>
 
 three:
-  post: three
+  flaggable: three (Post)
   user: four
   created_at: <%= 8.seconds.ago.to_fs(:db) %>
 
 four:
-  ballot: two
+  flaggable: two (Ballot)
   user: six
   created_at: <%= 7.seconds.ago.to_fs(:db) %>
 
 five:
-  ballot: two
+  flaggable: two (Ballot)
   user: five
   created_at: <%= 6.seconds.ago.to_fs(:db) %>

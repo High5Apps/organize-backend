@@ -1,5 +1,5 @@
 class Api::V1::FlaggedItemsController < ApplicationController
-  PERMITTED_PARAMS = ['ballot_id', 'comment_id', 'post_id']
+  PERMITTED_PARAMS = [:flaggable_id, :flaggable_type]
 
   before_action :authenticate_user, only: [:index, :create]
   before_action :check_can_moderate, only: [:index]
@@ -18,17 +18,17 @@ class Api::V1::FlaggedItemsController < ApplicationController
 
   def index
     initial_flagged_items = authenticated_user.org&.flagged_items
-    flagged_items = FlaggedItem::Query.build initial_flagged_items, params
+    flagged_items, relation = FlaggedItem::Query.build initial_flagged_items,
+      params
     render json: {
       flagged_items:,
-      meta: pagination_dict(flagged_items),
+      meta: pagination_dict(relation),
     }
   end
 
   private
 
   def create_params
-    params.slice(*PERMITTED_PARAMS)
-      .permit(PERMITTED_PARAMS)
+    params.require(:flagged_item).permit(PERMITTED_PARAMS)
   end
 end

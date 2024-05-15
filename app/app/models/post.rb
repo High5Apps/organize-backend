@@ -13,7 +13,7 @@ class Post < ApplicationRecord
   belongs_to :user
 
   has_many :comments
-  has_many :flagged_items
+  has_many :flagged_items, as: :flaggable
   has_many :moderation_events, as: :moderatable
   has_many :upvotes
 
@@ -29,6 +29,11 @@ class Post < ApplicationRecord
 
   has_encrypted :title, present: true, max_length: MAX_TITLE_LENGTH
   has_encrypted :body, max_length: MAX_BODY_LENGTH
+
+  # Required by flaggable
+  def encrypted_flaggable_title
+    encrypted_title
+  end
 
   private
 

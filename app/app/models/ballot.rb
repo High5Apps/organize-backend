@@ -35,7 +35,7 @@ class Ballot < ApplicationRecord
   belongs_to :user
 
   has_many :candidates
-  has_many :flagged_items
+  has_many :flagged_items, as: :flaggable
   has_many :moderation_events, as: :moderatable
   has_many :nominations
   has_many :terms
@@ -84,6 +84,11 @@ class Ballot < ApplicationRecord
     if: :election?
 
   has_encrypted :question, present: true, max_length: MAX_QUESTION_LENGTH
+
+  # Required by flaggable
+  def encrypted_flaggable_title
+    encrypted_question
+  end
 
   def results
     results = candidates

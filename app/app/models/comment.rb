@@ -46,7 +46,7 @@ class Comment < ApplicationRecord
   belongs_to :post
   belongs_to :user
 
-  has_many :flagged_items
+  has_many :flagged_items, as: :flaggable
   has_many :moderation_events, as: :moderatable
   has_many :upvotes
 
@@ -65,6 +65,11 @@ class Comment < ApplicationRecord
   has_encrypted :body, present: true, max_length: MAX_BODY_LENGTH
 
   has_ancestry cache_depth: true, depth_cache_column: :depth
+
+  # Required by flaggable
+  def encrypted_flaggable_title
+    encrypted_body
+  end
 
   private
 

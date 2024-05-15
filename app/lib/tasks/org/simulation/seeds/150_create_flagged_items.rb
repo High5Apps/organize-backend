@@ -3,7 +3,7 @@ FLAGGED_VOTES_FRACTION = 0.01
 
 def create_flagged_items(relation, item_name, flagged_fraction)
   expected_flag_count = (relation.count * flagged_fraction).round
-  print "\tCreating roughly #{expected_flag_count} flags on #{item_name}... "
+  print "\tCreating roughly #{expected_flag_count} flags on #{item_name.pluralize}... "
   start_time = Time.now
 
   values = []
@@ -13,9 +13,8 @@ def create_flagged_items(relation, item_name, flagged_fraction)
 
     created_at = item.created_at + 3.seconds
     values.push({
-      ballot_id: item[:ballot_id], # nil for non-ballots
-      comment_id: item[:comment_id], # nil for downvotes on posts
-      post_id: item[:post_id], # nil for downvotes on comments
+      flaggable_id: item[item_name.foreign_key] || item.id,
+      flaggable_type: item_name,
       user_id: item.user_id,
       created_at: created_at,
       updated_at: created_at,
@@ -33,10 +32,10 @@ downvotes = org.upvotes.where(value: -1)
 posts_without_candidacy_announcements = downvotes.joins(:post)
   .where(post: { candidate_id: nil })
 create_flagged_items posts_without_candidacy_announcements,
-  'Posts', FLAGGED_DOWNVOTES_FRACTION
+  'Post', FLAGGED_DOWNVOTES_FRACTION
 
 comments = downvotes.joins(:comment)
-create_flagged_items comments, 'Comments', FLAGGED_DOWNVOTES_FRACTION
+create_flagged_items comments, 'Comment', FLAGGED_DOWNVOTES_FRACTION
 
 non_election_votes = org.ballots.not_election.joins(:votes)
-create_flagged_items non_election_votes, 'Ballots', FLAGGED_VOTES_FRACTION
+create_flagged_items non_election_votes, 'Ballot', FLAGGED_VOTES_FRACTION

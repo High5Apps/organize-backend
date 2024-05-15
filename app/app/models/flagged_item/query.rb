@@ -7,28 +7,29 @@ class FlaggedItem::Query
     created_at_or_before_param = params[:created_at_or_before] || now
     created_at_or_before = Time.parse(created_at_or_before_param.to_s).utc
 
-    flagged_items = FlaggedItem.with(groups: initial_flagged_items
-    .created_at_or_before(created_at_or_before)
-      .select(:ballot_id, :comment_id, :post_id, 'COUNT(*) AS flag_count')
-      .group(:ballot_id, :comment_id, :post_id)
-      .having('COALESCE(ballot_id, comment_id, post_id) IS NOT NULL')
-    ).from('groups AS flagged_items')
-      .left_joins(ballot: :user, comment: :user, post: :user)
-      .select(
-        :flag_count,
-        "CASE WHEN ballots.id IS NOT NULL THEN 'ballot' WHEN comments.id IS NOT NULL THEN 'comment' WHEN posts.id IS NOT NULL THEN 'post' END AS category",
-        'COALESCE(ballots.id, comments.id, posts.id) AS id',
-        'COALESCE(users.id, users_comments.id, users_posts.id) AS user_id',
-        'COALESCE(users.pseudonym, users_comments.pseudonym, users_posts.pseudonym) AS pseudonym',
-        'COALESCE(ballots.encrypted_question, comments.encrypted_body, posts.encrypted_title) AS encrypted_title'
-      ).page(params[:page]).without_count
+    relation = initial_flagged_items
+      .created_at_or_before(created_at_or_before)
+      .select(:flaggable_id, :flaggable_type, 'COUNT(*) as flag_count')
+      .group(:flaggable_id, :flaggable_type)
+      .page(params[:page]).without_count
 
     # Default to sorting by top
     sort_parameter = params[:sort] || 'top'
     if sort_parameter == 'top'
-      flagged_items = flagged_items.order('flag_count DESC, user_id DESC')
+      relation = relation.order('flag_count DESC, flaggable_id DESC')
     end
 
-    flagged_items
+    flagged_items = relation.includes(flaggable: :user).map do |item|
+      {
+        category: item.flaggable_type,
+        encrypted_title: item.flaggable.encrypted_flaggable_title,
+        flag_count: item.flag_count,
+        id: item.flaggable_id,
+        pseudonym: item.flaggable.user.pseudonym,
+        user_id: item.flaggable.user.id,
+      }
+    end
+
+    return [flagged_items, relation]
   end
 end

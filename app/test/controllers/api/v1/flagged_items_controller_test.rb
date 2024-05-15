@@ -2,11 +2,8 @@ require "test_helper"
 
 class Api::V1::FlaggedItemsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @flaggable_urls = [
-      api_v1_ballot_flagged_items_url(ballots :one),
-      api_v1_comment_flagged_items_url(comments :one),
-      api_v1_post_flagged_items_url(posts :one),
-    ]
+    @flagged_item = flagged_items :one
+    @flaggables = [ballots(:one), comments(:one), posts(:one)]
 
     @user = users(:one)
     setup_test_key(@user)
@@ -17,9 +14,11 @@ class Api::V1::FlaggedItemsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should create with valid params' do
-    @flaggable_urls.each do |url|
+    @flaggables.each do |flaggable|
       assert_difference 'FlaggedItem.count', 1 do
-        post url, headers: @authorized_headers
+        post api_v1_flagged_items_url,
+          headers: @authorized_headers,
+          params: create_params(flaggable)
       end
 
       assert_response :created
@@ -29,9 +28,11 @@ class Api::V1::FlaggedItemsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should no-op when trying to double create' do
     [1, 0].each do |expected_difference|
-      @flaggable_urls.each do |url|
+      @flaggables.each do |flaggable|
         assert_difference 'FlaggedItem.count', expected_difference do
-          post url, headers: @authorized_headers
+          post api_v1_flagged_items_url,
+            headers: @authorized_headers,
+            params: create_params(flaggable)
           assert_response :created
         end
       end
@@ -39,12 +40,13 @@ class Api::V1::FlaggedItemsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create with invalid authorization' do
-    @flaggable_urls.each do |url|
+    @flaggables.each do |flaggable|
       assert_no_difference 'FlaggedItem.count' do
-        post url,
+        post api_v1_flagged_items_url,
           headers: authorized_headers(@user,
             Authenticatable::SCOPE_ALL,
-            expiration: 1.second.ago)
+            expiration: 1.second.ago),
+          params: create_params(flaggable)
       end
 
       assert_response :unauthorized
@@ -102,5 +104,12 @@ class Api::V1::FlaggedItemsControllerTest < ActionDispatch::IntegrationTest
       params: { page: }
     pagination_data = assert_contains_pagination_data
     assert_equal page, pagination_data[:current_page]
+  end
+
+  private
+
+  def create_params(flaggable)
+    @flagged_item.flaggable = flaggable
+    { flagged_item: @flagged_item.as_json }
   end
 end

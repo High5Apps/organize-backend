@@ -6,17 +6,19 @@ class FlaggedItemQueryTest < ActiveSupport::TestCase
   test 'should respect initial_posts' do
     org = @user.org
     assert_not_equal FlaggedItem.count, org.flagged_items.count
-    user_ids = FlaggedItem::Query.build(org.flagged_items).map {|f| f.user_id }
+    flagged_items, = FlaggedItem::Query.build org.flagged_items
+    user_ids = flagged_items.map {|f| f[:user_id] }
     users = User.find(user_ids)
     assert users.all? { |user| user.org == org }
   end
 
   test 'should only include expected attributes' do
-    item = FlaggedItem::Query.build(FlaggedItem.all).first
+    flagged_items, = FlaggedItem::Query.build FlaggedItem.all
+    item = flagged_items.first
       .as_json.with_indifferent_access
     assert_pattern do
       item => {
-        category: 'ballot' | 'comment' | 'post',
+        category: 'Ballot' | 'Comment' | 'Post',
         flag_count: Integer,
         id: String,
         pseudonym: String,
@@ -33,7 +35,7 @@ class FlaggedItemQueryTest < ActiveSupport::TestCase
 
   test 'should respect created_at_or_before param' do
     item = flagged_items :two
-    items = FlaggedItem::Query.build FlaggedItem.all,
+    items, = FlaggedItem::Query.build FlaggedItem.all,
       created_at_or_before: item.created_at
 
     # The flagged_item aggregates don't have an id or a created_at, so the
@@ -47,17 +49,18 @@ class FlaggedItemQueryTest < ActiveSupport::TestCase
   end
 
   test 'should order posts by top by default' do
-    flag_counts_and_user_ids = FlaggedItem::Query.build(FlaggedItem.all)
-      .map { |fi| [fi[:flag_count], fi[:user_id]] }
+    flagged_items, = FlaggedItem::Query.build FlaggedItem.all
+    flag_counts_and_user_ids = flagged_items
+      .map { |fi| [fi[:flag_count], fi[:flaggable_id]] }
 
     # Reverse is needed because sort is an ascending sort
     assert_equal flag_counts_and_user_ids.sort.reverse, flag_counts_and_user_ids
   end
 
   test 'top sort param should order ballots by highest flag count then user_id' do
-    flag_counts_and_user_ids = FlaggedItem::Query
-      .build(FlaggedItem.all, sort: 'top')
-      .map { |fi| [fi[:flag_count], fi[:user_id]] }
+    flagged_items, =FlaggedItem::Query.build FlaggedItem.all, sort: 'top'
+    flag_counts_and_user_ids = flagged_items
+      .map { |fi| [fi[:flag_count], fi[:flaggable_id]] }
 
     # Reverse is needed because sort is an ascending sort
     assert_equal flag_counts_and_user_ids.sort.reverse, flag_counts_and_user_ids
