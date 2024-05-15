@@ -1,5 +1,5 @@
 one:
   action: block
-  ballot: three
   created_at: <%= 9.seconds.ago.to_fs(:db) %>
-  moderator: one
+  moderatable: three (Ballot)
+  user: one

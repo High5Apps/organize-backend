@@ -47,7 +47,7 @@ class Comment < ApplicationRecord
   belongs_to :user
 
   has_many :flagged_items
-  has_many :moderation_events
+  has_many :moderation_events, as: :moderatable
   has_many :upvotes
 
   validates :post, presence: true, same_org: :user

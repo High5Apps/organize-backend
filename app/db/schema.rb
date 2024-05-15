@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_07_062521) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_15_065528) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -80,17 +80,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_07_062521) do
 
   create_table "moderation_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "action", null: false
-    t.uuid "ballot_id"
-    t.uuid "comment_id"
-    t.uuid "moderator_id", null: false
-    t.uuid "post_id"
-    t.uuid "user_id"
+    t.uuid "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["ballot_id"], name: "index_moderation_events_on_ballot_id"
-    t.index ["comment_id"], name: "index_moderation_events_on_comment_id"
-    t.index ["moderator_id"], name: "index_moderation_events_on_moderator_id"
-    t.index ["post_id"], name: "index_moderation_events_on_post_id"
+    t.string "moderatable_type", null: false
+    t.uuid "moderatable_id", null: false
+    t.index ["moderatable_type", "moderatable_id"], name: "index_moderation_events_on_moderatable"
     t.index ["user_id"], name: "index_moderation_events_on_user_id"
   end
 
@@ -196,11 +191,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_07_062521) do
   add_foreign_key "flagged_items", "comments"
   add_foreign_key "flagged_items", "posts"
   add_foreign_key "flagged_items", "users"
-  add_foreign_key "moderation_events", "ballots"
-  add_foreign_key "moderation_events", "comments"
-  add_foreign_key "moderation_events", "posts"
   add_foreign_key "moderation_events", "users"
-  add_foreign_key "moderation_events", "users", column: "moderator_id"
   add_foreign_key "nominations", "ballots"
   add_foreign_key "nominations", "users", column: "nominator_id"
   add_foreign_key "nominations", "users", column: "nominee_id"

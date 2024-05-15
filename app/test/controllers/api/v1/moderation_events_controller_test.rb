@@ -2,9 +2,10 @@ require "test_helper"
 
 class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @items = [ballots(:three), comments(:two), posts(:three), users(:seven)]
-    @item_ids = @items.map { |it| [it.class.name.foreign_key, it.id] }
-    @event = moderation_events:one
+    @moderatables = [
+      ballots(:three), comments(:two), posts(:three), users(:seven)
+    ]
+    @event = moderation_events :one
     @event_template = @event.dup
 
     @user = users(:one)
@@ -16,8 +17,8 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should create with valid params' do
-    @items.each do |item|
-      params = create_params(item)
+    @moderatables.each do |moderatable|
+      params = create_params(moderatable)
 
       assert_difference 'ModerationEvent.count', 1 do
         post api_v1_moderation_events_url, params:, headers: @authorized_headers
@@ -29,8 +30,8 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create with invalid authorization' do
-    @items.each do |item|
-      params = create_params(item)
+    @moderatables.each do |moderatable|
+      params = create_params(moderatable)
 
       assert_no_difference 'ModerationEvent.count' do
         post api_v1_moderation_events_url,
@@ -47,8 +48,8 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create without permission' do
     assert_not @other_user.can? :moderate
 
-    @items.each do |item|
-      params = create_params(item)
+    @moderatables.each do |moderatable|
+      params = create_params(moderatable)
 
       assert_no_difference 'ModerationEvent.count' do
         post api_v1_moderation_events_url,
@@ -62,9 +63,9 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
 
   private
 
-  def create_params(item)
+  def create_params(moderatable)
     @event.destroy! if @event
-    @event_template.item = item
+    @event_template.moderatable = moderatable
     { moderation_event: @event_template.as_json }
   end
 end

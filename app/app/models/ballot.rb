@@ -36,7 +36,7 @@ class Ballot < ApplicationRecord
 
   has_many :candidates
   has_many :flagged_items
-  has_many :moderation_events
+  has_many :moderation_events, as: :moderatable
   has_many :nominations
   has_many :terms
   has_many :votes

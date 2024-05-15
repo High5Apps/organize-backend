@@ -1,10 +1,8 @@
 class Api::V1::ModerationEventsController < ApplicationController
   PERMITTED_CREATE_PARAMS = [
     :action,
-    :ballot_id,
-    :comment_id,
-    :post_id,
-    :user_id,
+    :moderatable_id,
+    :moderatable_type,
   ]
 
   before_action :authenticate_user, only: [:create]

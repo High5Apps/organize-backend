@@ -14,7 +14,7 @@ class Post < ApplicationRecord
 
   has_many :comments
   has_many :flagged_items
-  has_many :moderation_events
+  has_many :moderation_events, as: :moderatable
   has_many :upvotes
 
   validates :org, presence: true, same_org: :user
