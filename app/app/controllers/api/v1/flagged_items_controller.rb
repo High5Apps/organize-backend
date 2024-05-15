@@ -18,11 +18,10 @@ class Api::V1::FlaggedItemsController < ApplicationController
 
   def index
     initial_flagged_items = authenticated_user.org&.flagged_items
-    flagged_items, relation = FlaggedItem::Query.build initial_flagged_items,
-      params
+    query = FlaggedItem::Query.new initial_flagged_items, params
     render json: {
-      flagged_items:,
-      meta: pagination_dict(relation),
+      flagged_items: query.flag_reports,
+      meta: pagination_dict(query.relation),
     }
   end
 
