@@ -85,7 +85,7 @@
         </collectionProp>
       </HeaderManager>
       <hashTree/>
-      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="setUp Thread Group">
+      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="setUp Thread Group" enabled="true">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -96,9 +96,9 @@
         </elementProp>
       </SetupThreadGroup>
       <hashTree>
-        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create User"/>
+        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create User" enabled="true"/>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/users">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/users" enabled="true">
             <stringProp name="HTTPSampler.path">/api/v1/users</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -266,7 +266,7 @@ for (suffix in [1, 2]) {
           </hashTree>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -392,15 +392,15 @@ for (suffix in [1, 2]) {
         </hashTree>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Discuss"/>
         <hashTree>
-          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: Post Tab">
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: Post Tab" enabled="true">
             <stringProp name="ForeachController.inputVal">postCategory</stringProp>
             <stringProp name="ForeachController.returnVal">postCategory</stringProp>
             <boolProp name="ForeachController.useSeparator">true</boolProp>
           </ForeachController>
           <hashTree>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Posts"/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Posts" enabled="true"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/posts">
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/posts" enabled="true">
                 <stringProp name="HTTPSampler.path">/api/v1/posts</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -478,9 +478,9 @@ vars.put(&apos;postSort&apos;, postSort)
                 <hashTree/>
               </hashTree>
             </hashTree>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Post"/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Post" enabled="true"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/posts">
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/posts" enabled="true">
                 <stringProp name="HTTPSampler.path">/api/v1/posts</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -522,7 +522,7 @@ if (postCategory == &apos;recent&apos;) {
                 <hashTree/>
               </hashTree>
             </hashTree>
-            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
               <stringProp name="ConstantTimer.delay">300</stringProp>
               <stringProp name="TestPlan.comments">This is needed in case JMeter host&apos;s time is slightly ahead of server&apos;s time</stringProp>
             </ConstantTimer>
@@ -580,7 +580,7 @@ if (postCategory == &apos;recent&apos;) {
             </hashTree>
             <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Comments" enabled="true"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/posts/:id/comments">
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/posts/:id/comments" enabled="true">
                 <stringProp name="HTTPSampler.path">/api/v1/posts/${randomPostId}/comments</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -629,7 +629,7 @@ if (postCategory == &apos;recent&apos;) {
               </HTTPSamplerProxy>
               <hashTree/>
             </hashTree>
-            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
               <stringProp name="ConstantTimer.delay">300</stringProp>
               <stringProp name="TestPlan.comments">This is needed in case JMeter host&apos;s time is slightly ahead of server&apos;s time</stringProp>
             </ConstantTimer>
@@ -747,16 +747,22 @@ if (postCategory == &apos;recent&apos;) {
               </HTTPSamplerProxy>
               <hashTree/>
             </hashTree>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Flag Post" enabled="true"/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Flag Post"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/posts/:id/flagged_items" enabled="true">
-                <stringProp name="HTTPSampler.path">/api/v1/posts/${randomPostId}/flagged_items</stringProp>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/flags">
+                <stringProp name="HTTPSampler.path">/api/v1/flags</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">POST</stringProp>
                 <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-                <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-                <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-                  <collectionProp name="Arguments.arguments"/>
+                <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                  <collectionProp name="Arguments.arguments">
+                    <elementProp name="" elementType="HTTPArgument">
+                      <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                      <stringProp name="Argument.value">{&quot;flag&quot;:{&quot;flaggable_id&quot;:&quot;${randomPostId}&quot;,&quot;flaggable_type&quot;:&quot;Post&quot;}}</stringProp>
+                      <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                  </collectionProp>
                 </elementProp>
               </HTTPSamplerProxy>
               <hashTree/>
@@ -816,14 +822,20 @@ if (postCategory == &apos;recent&apos;) {
             </hashTree>
             <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Flag Comment" enabled="true"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/comments/:id/flagged_items" enabled="true">
-                <stringProp name="HTTPSampler.path">/api/v1/comments/${randomCommentId}/flagged_items</stringProp>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/flags">
+                <stringProp name="HTTPSampler.path">/api/v1/flags</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">POST</stringProp>
                 <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-                <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-                <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-                  <collectionProp name="Arguments.arguments"/>
+                <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                  <collectionProp name="Arguments.arguments">
+                    <elementProp name="" elementType="HTTPArgument">
+                      <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                      <stringProp name="Argument.value">{&quot;flag&quot;:{&quot;flaggable_id&quot;:&quot;${randomCommentId}&quot;,&quot;flaggable_type&quot;:&quot;Comment&quot;}}</stringProp>
+                      <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                  </collectionProp>
                 </elementProp>
               </HTTPSamplerProxy>
               <hashTree/>
@@ -832,11 +844,11 @@ if (postCategory == &apos;recent&apos;) {
         </hashTree>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Vote"/>
         <hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Ballot Previews"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Ballot Previews" enabled="true"/>
           <hashTree>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Active Ballot Previews"/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Active Ballot Previews" enabled="true"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots (active)">
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots (active)" enabled="true">
                 <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -878,7 +890,7 @@ if (postCategory == &apos;recent&apos;) {
                 <boolProp name="ISREGEX">false</boolProp>
               </JSONPathAssertion>
               <hashTree/>
-              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="randomActiveBallotId">
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="randomActiveBallotId" enabled="true">
                 <stringProp name="JSONPostProcessor.referenceNames">randomActiveBallotId</stringProp>
                 <stringProp name="JSONPostProcessor.jsonPathExprs">$.ballots[*].id</stringProp>
                 <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
@@ -886,9 +898,9 @@ if (postCategory == &apos;recent&apos;) {
               </JSONPostProcessor>
               <hashTree/>
             </hashTree>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Completed Ballot Previews"/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Completed Ballot Previews" enabled="true"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots (completed)">
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots (completed)" enabled="true">
                 <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -968,9 +980,9 @@ if (postCategory == &apos;recent&apos;) {
             </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Yes/No Ballot (5s)"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Yes/No Ballot (5s)" enabled="true"/>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots" enabled="true">
               <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
               <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -989,12 +1001,12 @@ if (postCategory == &apos;recent&apos;) {
             </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
+          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
             <stringProp name="ConstantTimer.delay">300</stringProp>
             <stringProp name="TestPlan.comments">This is needed in case JMeter host&apos;s time is slightly ahead of server&apos;s time</stringProp>
           </ConstantTimer>
           <hashTree/>
-          <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Ballot Previews (module)">
+          <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Ballot Previews (module)" enabled="true">
             <collectionProp name="ModuleController.node_path">
               <stringProp name="764597751">Test Plan</stringProp>
               <stringProp name="764597751">Test Plan</stringProp>
@@ -1006,7 +1018,7 @@ if (postCategory == &apos;recent&apos;) {
           <hashTree/>
           <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Ballot" enabled="true"/>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots/:id (active)">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots/:id (active)" enabled="true">
               <stringProp name="HTTPSampler.path">/api/v1/ballots/${randomActiveBallotId}</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -1056,19 +1068,25 @@ if (postCategory == &apos;recent&apos;) {
           </hashTree>
           <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Flag Ballot"/>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots/:id/flagged_items">
-              <stringProp name="HTTPSampler.path">/api/v1/ballots/${randomActiveBallotId}/flagged_items</stringProp>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/flags">
+              <stringProp name="HTTPSampler.path">/api/v1/flags</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
               <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-                <collectionProp name="Arguments.arguments"/>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&quot;flag&quot;:{&quot;flaggable_id&quot;:&quot;${randomActiveBallotId}&quot;,&quot;flaggable_type&quot;:&quot;Ballot&quot;}}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
               </elementProp>
             </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Ballot Previews (module)">
+          <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Ballot Previews (module)" enabled="true">
             <collectionProp name="ModuleController.node_path">
               <stringProp name="764597751">Test Plan</stringProp>
               <stringProp name="764597751">Test Plan</stringProp>
@@ -1109,7 +1127,7 @@ if (postCategory == &apos;recent&apos;) {
               <stringProp name="ConstantTimer.delay">1000</stringProp>
             </ConstantTimer>
             <hashTree/>
-            <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Ballot Previews (module)">
+            <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Ballot Previews (module)" enabled="true">
               <collectionProp name="ModuleController.node_path">
                 <stringProp name="764597751">Test Plan</stringProp>
                 <stringProp name="764597751">Test Plan</stringProp>
