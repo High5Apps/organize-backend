@@ -1,4 +1,4 @@
-class FlaggedItem < ApplicationRecord
+class Flag < ApplicationRecord
   scope :created_at_or_before, ->(time) { where(created_at: ..time) }
 
   belongs_to :flaggable, polymorphic: true
@@ -7,7 +7,7 @@ class FlaggedItem < ApplicationRecord
   validates :user,
     presence: true,
     same_org: {
-      as: ->(flagged_item) { flagged_item.flaggable&.user },
+      as: ->(flag) { flag.flaggable&.user },
       name: 'Item',
     }
 

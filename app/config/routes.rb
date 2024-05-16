@@ -11,7 +11,7 @@ Rails.application.routes.draw do
         resources :votes, only: [:create]
       end
       resources :connections,  only: [:create]
-      resources :flagged_items, only: [:index, :create]
+      resources :flags, only: [:index, :create]
       resources :moderation_events, only: [:create]
       resources :nominations, only: [:update]
       resources :offices, only: [:index]

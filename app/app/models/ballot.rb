@@ -35,7 +35,7 @@ class Ballot < ApplicationRecord
   belongs_to :user
 
   has_many :candidates
-  has_many :flagged_items, as: :flaggable
+  has_many :flags, as: :flaggable
   has_many :moderation_events, as: :moderatable
   has_many :nominations
   has_many :terms

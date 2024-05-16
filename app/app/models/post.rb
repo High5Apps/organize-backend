@@ -13,7 +13,7 @@ class Post < ApplicationRecord
   belongs_to :user
 
   has_many :comments
-  has_many :flagged_items, as: :flaggable
+  has_many :flags, as: :flaggable
   has_many :moderation_events, as: :moderatable
   has_many :upvotes
 

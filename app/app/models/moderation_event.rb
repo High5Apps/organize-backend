@@ -39,7 +39,7 @@ class ModerationEvent < ApplicationRecord
   def moderatable_flagged
     return unless moderatable
 
-    unless moderatable.flagged_items.any?
+    unless moderatable.flags.any?
       errors.add :base, "can't moderate an item that isn't flagged"
     end
   end

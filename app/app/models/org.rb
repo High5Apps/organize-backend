@@ -10,7 +10,7 @@ class Org < ApplicationRecord
 
   has_many :ballots, through: :users
   has_many :comments, through: :posts
-  has_many :flagged_items, through: :users
+  has_many :flags, through: :users
   has_many :terms, through: :users
   has_many :upvotes, through: :users
 

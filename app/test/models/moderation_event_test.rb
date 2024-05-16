@@ -85,14 +85,14 @@ class ModerationEventTest < ActiveSupport::TestCase
   end
 
   test 'non-user moderatables should have previously been flagged at least once' do
-    @event.moderatable.flagged_items.destroy_all
+    @event.moderatable.flags.destroy_all
     assert @event.invalid?
   end
 
   test 'user moderatables should not need to be flagged' do
     @event.moderatable = users :seven
     assert @event.valid?
-    assert_empty @event.moderatable.flagged_items
+    assert_empty @event.moderatable.flags
     assert @event.valid?
   end
 end

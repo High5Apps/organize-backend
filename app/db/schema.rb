@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_15_080721) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_16_062817) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -65,14 +65,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_15_080721) do
     t.index ["sharer_id"], name: "index_connections_on_sharer_id"
   end
 
-  create_table "flagged_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "flags", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "flaggable_type", null: false
     t.uuid "flaggable_id", null: false
-    t.index ["flaggable_type", "flaggable_id", "user_id"], name: "idx_on_flaggable_type_flaggable_id_user_id_18f465a68e", unique: true
-    t.index ["user_id"], name: "index_flagged_items_on_user_id"
+    t.index ["flaggable_type", "flaggable_id", "user_id"], name: "index_flags_on_flaggable_type_and_flaggable_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_flags_on_user_id"
   end
 
   create_table "moderation_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -184,7 +184,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_15_080721) do
   add_foreign_key "comments", "users"
   add_foreign_key "connections", "users", column: "scanner_id"
   add_foreign_key "connections", "users", column: "sharer_id"
-  add_foreign_key "flagged_items", "users"
+  add_foreign_key "flags", "users"
   add_foreign_key "moderation_events", "users"
   add_foreign_key "nominations", "ballots"
   add_foreign_key "nominations", "users", column: "nominator_id"
