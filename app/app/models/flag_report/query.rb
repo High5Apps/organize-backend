@@ -1,4 +1,4 @@
-class Flag::Query
+class FlagReport::Query
   def initialize(initial_flags, params={})
     @initial_flags = initial_flags
     @params = params

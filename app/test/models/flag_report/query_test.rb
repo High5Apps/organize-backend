@@ -1,4 +1,4 @@
-class FlagQueryTest < ActiveSupport::TestCase
+class FlagReportQueryTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
   end
@@ -6,14 +6,14 @@ class FlagQueryTest < ActiveSupport::TestCase
   test 'should respect initial_posts' do
     org = @user.org
     assert_not_equal Flag.count, org.flags.count
-    query = Flag::Query.new org.flags
+    query = FlagReport::Query.new org.flags
     user_ids = query.flag_reports.map {|f| f[:user_id] }
     users = User.find(user_ids)
     assert users.all? { |user| user.org == org }
   end
 
   test 'should only include expected attributes' do
-    query = Flag::Query.new Flag.all
+    query = FlagReport::Query.new Flag.all
     flag_report = query.flag_reports.first
       .as_json.with_indifferent_access
     assert_pattern do
@@ -35,7 +35,7 @@ class FlagQueryTest < ActiveSupport::TestCase
 
   test 'should respect created_at_or_before param' do
     flag = flags :two
-    query = Flag::Query.new Flag.all,
+    query = FlagReport::Query.new Flag.all,
       created_at_or_before: flag.created_at
 
     # The flag aggregates don't have an id or a created_at, so the
@@ -49,7 +49,7 @@ class FlagQueryTest < ActiveSupport::TestCase
   end
 
   test 'should order posts by top by default' do
-    query = Flag::Query.new Flag.all
+    query = FlagReport::Query.new Flag.all
     flag_counts_and_user_ids = query.flag_reports
       .map { |fi| [fi[:flag_count], fi[:flaggable_id]] }
 
@@ -58,7 +58,7 @@ class FlagQueryTest < ActiveSupport::TestCase
   end
 
   test 'top sort param should order ballots by highest flag count then user_id' do
-    query = Flag::Query.new Flag.all, sort: 'top'
+    query = FlagReport::Query.new Flag.all, sort: 'top'
     flag_counts_and_user_ids = query.flag_reports
       .map { |fi| [fi[:flag_count], fi[:flaggable_id]] }
 
