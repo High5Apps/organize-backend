@@ -1,5 +1,6 @@
 class Comment < ApplicationRecord
   include Encryptable
+  include Flaggable
 
   scope :created_at_or_before, ->(time) { where(created_at: ..time) }
   scope :with_upvotes_created_at_or_before, ->(time) {
@@ -44,14 +45,10 @@ class Comment < ApplicationRecord
   attr_accessor :comment_id
 
   belongs_to :post
-  belongs_to :user
 
-  has_many :flags, as: :flaggable
-  has_many :moderation_events, as: :moderatable
   has_many :upvotes
 
   validates :post, presence: true, same_org: :user
-  validates :user, presence: true
   validates :depth,
     numericality: {
       greater_than_or_equal_to: 0,
@@ -63,13 +60,8 @@ class Comment < ApplicationRecord
   after_create :create_upvote_for_user
 
   has_encrypted :body, present: true, max_length: MAX_BODY_LENGTH
-
   has_ancestry cache_depth: true, depth_cache_column: :depth
-
-  # Required by flaggable
-  def encrypted_flaggable_title
-    encrypted_body
-  end
+  flaggable title: :encrypted_body
 
   private
 

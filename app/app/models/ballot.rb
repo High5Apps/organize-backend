@@ -1,5 +1,6 @@
 class Ballot < ApplicationRecord
   include Encryptable
+  include Flaggable
 
   scope :active_at, ->(time) { where.not(voting_ends_at: ..time) }
   scope :created_at_or_before, ->(time) { where(created_at: ..time) }
@@ -32,11 +33,7 @@ class Ballot < ApplicationRecord
   enum :category, [:yes_no, :multiple_choice, :election], validate: true
   enum :office, Office::TYPE_SYMBOLS, validate: { allow_nil: true }
 
-  belongs_to :user
-
   has_many :candidates
-  has_many :flags, as: :flaggable
-  has_many :moderation_events, as: :moderatable
   has_many :nominations
   has_many :terms
   has_many :votes
@@ -59,7 +56,7 @@ class Ballot < ApplicationRecord
     after_created_at: true,
     if: :election?
   validates :nominations_end_at, absence: true, unless: :election?
-  validates :user, presence: true, in_org: true
+  validates :user, in_org: true
   validates :term_ends_at,
     presence: true,
     comparison: { greater_than: :term_starts_at },
@@ -84,11 +81,7 @@ class Ballot < ApplicationRecord
     if: :election?
 
   has_encrypted :question, present: true, max_length: MAX_QUESTION_LENGTH
-
-  # Required by flaggable
-  def encrypted_flaggable_title
-    encrypted_question
-  end
+  flaggable title: :encrypted_question
 
   def results
     results = candidates

@@ -1,5 +1,6 @@
 class Post < ApplicationRecord
   include Encryptable
+  include Flaggable
 
   scope :created_at_or_before, ->(time) { where(created_at: ..time) }
 
@@ -10,15 +11,11 @@ class Post < ApplicationRecord
 
   belongs_to :candidate, optional: true
   belongs_to :org
-  belongs_to :user
 
   has_many :comments
-  has_many :flags, as: :flaggable
-  has_many :moderation_events, as: :moderatable
   has_many :upvotes
 
   validates :org, presence: true, same_org: :user
-  validates :user, presence: true
 
   validate :candidacy_announcement_category_is_general
   validate :candidacy_announcement_created_by_candidate
@@ -29,11 +26,7 @@ class Post < ApplicationRecord
 
   has_encrypted :title, present: true, max_length: MAX_TITLE_LENGTH
   has_encrypted :body, max_length: MAX_BODY_LENGTH
-
-  # Required by flaggable
-  def encrypted_flaggable_title
-    encrypted_title
-  end
+  flaggable title: :encrypted_title
 
   private
 
