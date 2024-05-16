@@ -38,13 +38,21 @@ class FlagReport::Query
       last_moderation_event = flaggable.last_moderation_event
       {
         category: flag.flaggable_type,
+        creator: {
+          id: creator.id,
+          pseudonym: creator.pseudonym,
+        },
         encrypted_title: flaggable.encrypted_flaggable_title,
         flag_count: flag.flag_count,
         id: flag.flaggable_id,
-        pseudonym: creator.pseudonym,
-        user_id: creator.id,
-        moderator_pseudonym: last_moderation_event&.user&.pseudonym,
-        moderated_at: last_moderation_event&.created_at,
+        moderation_event: last_moderation_event && {
+          action: last_moderation_event.action,
+          created_at: last_moderation_event.created_at,
+          moderator: {
+            id: last_moderation_event.user.id,
+            pseudonym: last_moderation_event.user.pseudonym,
+          },
+        }
       }
     end
   end
