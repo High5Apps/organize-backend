@@ -6,7 +6,7 @@ class Api::V1::FlagReportsController < ApplicationController
     initial_flags = authenticated_user.org&.flags
     query = FlagReport::Query.new initial_flags, params
     render json: {
-      flags: query.flag_reports,
+      flag_reports: query.flag_reports,
       meta: pagination_dict(query.relation),
     }
   end
