@@ -24,7 +24,7 @@ class ModerationEventTest < ActiveSupport::TestCase
 
   test 'first action should be allow or block' do
     event = @event.dup
-    @event.destroy
+    ModerationEvent.destroy_all
     assert_empty event.moderatable.moderation_events
 
     ModerationEvent.actions.keys.each do |action|

@@ -64,7 +64,7 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
   private
 
   def create_params(moderatable)
-    @event.destroy! if @event
+    ModerationEvent.destroy_all
     @event_template.moderatable = moderatable
     { moderation_event: @event_template.as_json }
   end

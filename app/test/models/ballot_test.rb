@@ -46,6 +46,13 @@ class BallotTest < ActiveSupport::TestCase
     assert @ballot.invalid?
   end
 
+  test 'last_moderation_event should return the most recent' do
+    moderated_ballot = ballots :three
+    assert_operator moderated_ballot.moderation_events.count, :>, 1
+    assert_equal ModerationEvent.where(moderatable: moderated_ballot).last,
+      moderated_ballot.last_moderation_event
+  end
+
   test 'max_candidate_ids_per_vote should be optional' do
     @multi_choice_ballot.max_candidate_ids_per_vote = nil
     assert @multi_choice_ballot.valid?

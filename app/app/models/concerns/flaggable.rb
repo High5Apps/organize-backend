@@ -7,6 +7,9 @@ module Flaggable
     has_many :flags, as: :flaggable
     has_many :moderation_events, as: :moderatable
 
+    has_one :last_moderation_event, -> { order(created_at: :desc) },
+      as: :moderatable, class_name: 'ModerationEvent'
+
     validates :user, presence: true
 
     def encrypted_flaggable_title

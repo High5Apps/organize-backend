@@ -1,5 +1,23 @@
-one:
-  action: block
+undone:
+  action: allow
   created_at: <%= 9.seconds.ago.to_fs(:db) %>
   moderatable: three (Ballot)
+  user: one
+
+zero:
+  action: undo_allow
+  created_at: <%= 8.seconds.ago.to_fs(:db) %>
+  moderatable: three (Ballot)
+  user: one
+
+one:
+  action: block
+  created_at: <%= 7.seconds.ago.to_fs(:db) %>
+  moderatable: three (Ballot)
+  user: one
+
+two:
+  action: allow
+  created_at: <%= 6.seconds.ago.to_fs(:db) %>
+  moderatable: two (Comment)
   user: one
