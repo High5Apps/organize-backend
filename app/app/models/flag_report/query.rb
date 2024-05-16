@@ -16,7 +16,7 @@ class FlagReport::Query
     created_at_or_before = Time.parse(created_at_or_before_param.to_s).utc
 
     flags = @initial_flags
-      .includes(flaggable: :user)
+      .includes(flaggable: [{ last_moderation_event: :user }, :user])
       .created_at_or_before(created_at_or_before)
       .select(:flaggable_id, :flaggable_type, 'COUNT(*) as flag_count')
       .group(:flaggable_id, :flaggable_type)
@@ -33,13 +33,18 @@ class FlagReport::Query
 
   def flag_reports
     relation.map do |flag|
+      flaggable = flag.flaggable
+      creator = flaggable.user
+      last_moderation_event = flaggable.last_moderation_event
       {
         category: flag.flaggable_type,
-        encrypted_title: flag.flaggable.encrypted_flaggable_title,
+        encrypted_title: flaggable.encrypted_flaggable_title,
         flag_count: flag.flag_count,
         id: flag.flaggable_id,
-        pseudonym: flag.flaggable.user.pseudonym,
-        user_id: flag.flaggable.user.id,
+        pseudonym: creator.pseudonym,
+        user_id: creator.id,
+        moderator_pseudonym: last_moderation_event&.user&.pseudonym,
+        moderated_at: last_moderation_event&.created_at,
       }
     end
   end

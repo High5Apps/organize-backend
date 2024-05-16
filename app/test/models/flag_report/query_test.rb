@@ -21,6 +21,8 @@ class FlagReportQueryTest < ActiveSupport::TestCase
         category: 'Ballot' | 'Comment' | 'Post',
         flag_count: Integer,
         id: String,
+        moderated_at: String | nil,
+        moderator_pseudonym: String | nil,
         pseudonym: String,
         encrypted_title: {
           c: String,
