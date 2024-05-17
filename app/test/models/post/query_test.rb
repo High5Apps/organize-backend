@@ -67,10 +67,10 @@ class PostQueryTest < ActiveSupport::TestCase
 
   test 'hot order should be stable over time when no new upvotes are created' do
     first_order = Post::Query.build(Post.all,
-      created_at_or_before: 1.year.from_now, sort: 'hot',
+      created_at_or_before: 1.year.from_now.iso8601(6), sort: 'hot',
     ).ids
     second_order = Post::Query.build(Post.all,
-      created_at_or_before: 2.years.from_now, sort: 'hot',
+      created_at_or_before: 2.years.from_now.iso8601(6), sort: 'hot',
     ).ids
     assert_not_empty first_order
     assert_equal first_order, second_order
@@ -89,7 +89,7 @@ class PostQueryTest < ActiveSupport::TestCase
       travel 1.second
 
       post_ids = Post::Query.build(Post.all,
-        created_at_or_before: Time.now, sort: 'hot',
+        created_at_or_before: Time.now.iso8601(6), sort: 'hot',
       ).ids
       assert_operator post_ids.find_index(newer_post.id),
         :<, post_ids.find_index(older_post.id)
@@ -114,7 +114,7 @@ class PostQueryTest < ActiveSupport::TestCase
       travel 1.second
 
       post_ids = Post::Query.build(Post.all,
-        created_at_or_before: Time.now, sort: 'hot',
+        created_at_or_before: Time.now.iso8601(6), sort: 'hot',
       ).ids
       assert_operator post_ids.find_index(older_post.id),
         :<, post_ids.find_index(newer_post.id)
@@ -139,7 +139,7 @@ class PostQueryTest < ActiveSupport::TestCase
       travel 1.second
 
       post_ids = Post::Query.build(Post.all,
-        created_at_or_before: Time.now, sort: 'hot',
+        created_at_or_before: Time.now.iso8601(6), sort: 'hot',
       ).ids
       assert_operator post_ids.find_index(newer_post.id),
         :<, post_ids.find_index(older_post.id)
@@ -165,7 +165,7 @@ class PostQueryTest < ActiveSupport::TestCase
       travel 1.second
 
       post_ids = Post::Query.build(Post.all,
-        created_at_or_before: Time.now, sort: 'hot',
+        created_at_or_before: Time.now.iso8601(6), sort: 'hot',
       ).ids
       assert_operator post_ids.find_index(older_post.id),
         :<, post_ids.find_index(newer_post.id)
@@ -191,7 +191,7 @@ class PostQueryTest < ActiveSupport::TestCase
       travel 1.second
 
       post_ids = Post::Query.build(Post.all,
-        created_at_or_before: Time.now, sort: 'hot',
+        created_at_or_before: Time.now.iso8601(6), sort: 'hot',
       ).ids
       assert_operator post_ids.find_index(newer_post.id),
         :<, post_ids.find_index(older_post.id)
@@ -213,7 +213,8 @@ class PostQueryTest < ActiveSupport::TestCase
 
   test 'should respect created_at_or_before param' do
     post = posts(:two)
-    posts = Post::Query.build Post.all, created_at_or_before: post.created_at
+    posts = Post::Query.build Post.all,
+      created_at_or_before: post.created_at.iso8601(6)
     assert_not_equal Post.all.to_a.count, posts.to_a.count
     assert_equal Post.created_at_or_before(post.created_at).sort, posts.sort
   end
@@ -221,7 +222,7 @@ class PostQueryTest < ActiveSupport::TestCase
   test 'created_at_or_before should apply to upvotes' do
     upvote = upvotes(:three)
     post = upvote.post
-    created_at_or_before = upvote.created_at - 1.second
+    created_at_or_before = (upvote.created_at - 1.second).iso8601(6)
 
     windowed_posts = Post::Query.build(Post.all, created_at_or_before:)
     windowed_score = windowed_posts.find(post.id).score

@@ -15,9 +15,10 @@ class Post::Query
   def self.build(initial_posts, params={})
     return Post.none.page(params[:page]).without_count unless initial_posts
 
-    created_at_or_before_param = \
-      params[:created_at_or_before] || Upvote::FAR_FUTURE_TIME
-    created_at_or_before = Time.parse(created_at_or_before_param.to_s).utc
+    now = Time.now
+
+    created_at_or_before_param = params[:created_at_or_before] || now.iso8601(6)
+    created_at_or_before = Time.iso8601(created_at_or_before_param.to_s).utc
 
     posts = initial_posts
       .created_at_or_before(created_at_or_before)

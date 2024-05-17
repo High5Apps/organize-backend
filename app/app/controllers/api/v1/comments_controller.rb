@@ -47,9 +47,10 @@ class Api::V1::CommentsController < ApplicationController
     post = authenticated_user.org&.posts&.find params[:post_id]
     return [] unless post
 
-    created_at_or_before_param = \
-      params[:created_at_or_before] || Upvote::FAR_FUTURE_TIME
-    created_at_or_before = Time.parse(created_at_or_before_param.to_s).utc
+    now = Time.now
+
+    created_at_or_before_param = params[:created_at_or_before] || now.iso8601(6)
+    created_at_or_before = Time.iso8601(created_at_or_before_param.to_s).utc
 
     my_id = authenticated_user.id
 

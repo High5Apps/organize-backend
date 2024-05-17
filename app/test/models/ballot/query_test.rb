@@ -27,7 +27,7 @@ class BallotQueryTest < ActiveSupport::TestCase
   test 'should respect created_at_or_before param' do
     ballot = ballots(:two)
     ballots = Ballot::Query.build Ballot.all,
-      created_at_or_before: ballot.created_at
+      created_at_or_before: ballot.created_at.iso8601(6)
     assert_not_equal Ballot.all.to_a.count, ballots.to_a.count
     assert_equal Ballot.created_at_or_before(ballot.created_at).sort,
       ballots.sort

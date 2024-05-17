@@ -47,7 +47,7 @@ class FlagReportQueryTest < ActiveSupport::TestCase
   test 'should respect created_at_or_before param' do
     flag = flags :two
     query = FlagReport::Query.new Flag.all,
-      created_at_or_before: flag.created_at
+      created_at_or_before: flag.created_at.iso8601(6)
 
     # The flag aggregates don't have an id or a created_at, so the
     # simplest way to verify is to check that the total flag count of the

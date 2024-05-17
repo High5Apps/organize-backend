@@ -14,8 +14,8 @@ class Ballot::Query
 
     now = Time.now
 
-    created_at_or_before_param = params[:created_at_or_before] || now
-    created_at_or_before = Time.parse(created_at_or_before_param.to_s).utc
+    created_at_or_before_param = params[:created_at_or_before] || now.iso8601(6)
+    created_at_or_before = Time.iso8601(created_at_or_before_param.to_s).utc
 
     ballots = initial_ballots
       .created_at_or_before(created_at_or_before)

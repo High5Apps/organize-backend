@@ -38,7 +38,7 @@ class UserQueryTest < ActiveSupport::TestCase
     last_user_joined_at = joined_users.order(joined_at: :desc).first.joined_at
     before_last_user_joined = last_user_joined_at - 1.second
     user_ids = User::Query.new(User.all,
-      joined_at_or_before: before_last_user_joined,
+      joined_at_or_before: before_last_user_joined.iso8601(6),
     ).relation.ids
     assert_not_equal user_ids.count, joined_users.count
     assert_equal User.joined_at_or_before(before_last_user_joined).ids.sort,
@@ -67,7 +67,7 @@ class UserQueryTest < ActiveSupport::TestCase
     now = Time.now
     expected_users = @org.users.with_service_stats(now).order_by_office(now)
     users = User::Query.new(@org.users,
-      joined_at_or_before: now,
+      joined_at_or_before: now.iso8601(6),
       sort: 'office',
     ).relation
     assert_equal expected_users.map(&:id), users.map(&:id)
@@ -77,7 +77,7 @@ class UserQueryTest < ActiveSupport::TestCase
     now = Time.now
     expected_users = @org.users.with_service_stats(now).order_by_service(now)
     users = User::Query.new(@org.users,
-      joined_at_or_before: now,
+      joined_at_or_before: now.iso8601(6),
       sort: 'service',
     ).relation
     assert_equal expected_users.map(&:id), users.map(&:id)
