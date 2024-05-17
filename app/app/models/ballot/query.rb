@@ -13,8 +13,9 @@ class Ballot::Query
     return Ballot.none unless initial_ballots
 
     now = Time.now
+    now_iso8601 = now.iso8601(6)
 
-    created_at_or_before_param = params[:created_at_or_before] || now.iso8601(6)
+    created_at_or_before_param = params[:created_at_or_before] || now_iso8601
     created_at_or_before = Time.iso8601(created_at_or_before_param.to_s).utc
 
     ballots = initial_ballots
@@ -22,14 +23,14 @@ class Ballot::Query
       .select(ALLOWED_ATTRIBUTES)
 
     active_at_param = params[:active_at]
-    if active_at_param
-      active_at = Time.parse(active_at_param.to_s).utc
+    active_at = Time.iso8601(active_at_param&.to_s || now_iso8601).utc
+    if active_at_param || params[:sort] == 'active'
       ballots = ballots.active_at(active_at)
     end
 
     inactive_at_param = params[:inactive_at]
-    if inactive_at_param
-      inactive_at = Time.parse(inactive_at_param.to_s).utc
+    if inactive_at_param || params[:sort] == 'inactive'
+      inactive_at = Time.iso8601(inactive_at_param&.to_s || now_iso8601).utc
       ballots = ballots.inactive_at(inactive_at)
     end
 
@@ -41,7 +42,7 @@ class Ballot::Query
     # Default to sorting by active
     sort_parameter = params[:sort] || 'active'
     if sort_parameter == 'active'
-      ballots = ballots.order_by_active(active_at || now)
+      ballots = ballots.order_by_active(active_at)
     elsif sort_parameter == 'inactive'
       ballots = ballots.order_by_inactive
     end

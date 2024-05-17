@@ -36,7 +36,7 @@ class BallotQueryTest < ActiveSupport::TestCase
   test 'should respect active_at param' do
     ballot = ballots(:two)
     ballots = Ballot::Query.build Ballot.all,
-      active_at: ballot.voting_ends_at
+      active_at: ballot.voting_ends_at.iso8601(6)
     assert_not_equal Ballot.all.to_a.count, ballots.to_a.count
     assert_equal Ballot.active_at(ballot.voting_ends_at).sort, ballots.sort
   end
@@ -44,7 +44,7 @@ class BallotQueryTest < ActiveSupport::TestCase
   test 'should respect inactive_at param' do
     ballot = ballots(:two)
     ballots = Ballot::Query.build Ballot.all,
-      inactive_at: ballot.voting_ends_at
+      inactive_at: ballot.voting_ends_at.iso8601(6)
     assert_not_equal Ballot.all.to_a.count, ballots.to_a.count
     assert_equal Ballot.inactive_at(ballot.voting_ends_at).sort, ballots.sort
   end
@@ -55,15 +55,18 @@ class BallotQueryTest < ActiveSupport::TestCase
     assert_equal Ballot.order_by_active(Time.now).pluck(:id), ballot_ids
   end
 
-  test 'active sort param should order ballots by active' do
+  test 'active sort param should order ballots by active with active_at defaulting to now' do
     ballot_ids = Ballot::Query.build(Ballot.all, sort: 'active').pluck :id
     assert_not_empty ballot_ids
-    assert_equal Ballot.order_by_active(Time.now).pluck(:id), ballot_ids
+    now = Time.now
+    assert_equal Ballot.active_at(now).order_by_active(now).pluck(:id),
+      ballot_ids
   end
 
-  test 'inactive sort param should order ballots by inactive' do
+  test 'inactive sort param should order ballots by inactive with inactive_at defaulting to now' do
     ballot_ids = Ballot::Query.build(Ballot.all, sort: 'inactive').pluck :id
     assert_not_empty ballot_ids
-    assert_equal Ballot.order_by_inactive.pluck(:id), ballot_ids
+    assert_equal Ballot.inactive_at(Time.now).order_by_inactive.pluck(:id),
+      ballot_ids
   end
 end
