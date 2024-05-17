@@ -7,7 +7,7 @@ class FlagReportQueryTest < ActiveSupport::TestCase
     org = @user.org
     assert_not_equal Flag.count, org.flags.count
     query = FlagReport::Query.new org.flags
-    user_ids = query.flag_reports.map {|f| f[:creator][:id] }
+    user_ids = query.flag_reports.map { |f| f[:flaggable][:creator][:id] }
     assert_not_empty user_ids
     users = User.find(user_ids)
     assert users.all? { |user| user.org == org }
@@ -18,18 +18,20 @@ class FlagReportQueryTest < ActiveSupport::TestCase
     flag_report = query.flag_reports.each do |flag_report|
       assert_pattern do
         flag_report.as_json.with_indifferent_access => {
-          category: 'Ballot' | 'Comment' | 'Post',
-          creator: {
+          flaggable: {
+            category: 'Ballot' | 'Comment' | 'Post',
+            creator: {
+              id: String,
+              pseudonym: String,
+            },
+            encrypted_title: {
+              c: String,
+              n: String,
+              t: String,
+            },
             id: String,
-            pseudonym: String,
-          },
-          encrypted_title: {
-            c: String,
-            n: String,
-            t: String,
           },
           flag_count: Integer,
-          id: String,
           moderation_event: nil | {
             action: String,
             created_at: String,

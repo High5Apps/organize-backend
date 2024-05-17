@@ -41,7 +41,9 @@ class Api::V1::FlagReportsControllerTest < ActionDispatch::IntegrationTest
   test 'index should only include flag reports from requester Org' do
     get api_v1_flag_reports_url, headers: @authorized_headers
     response.parsed_body => flag_reports: flag_report_jsons
-    flaggable_creator_ids = flag_report_jsons.map { |fr| fr[:creator][:id] }
+    flaggable_creator_ids = flag_report_jsons.map do |flag_report|
+      flag_report[:flaggable][:creator][:id]
+    end
     assert_not_empty flaggable_creator_ids
     flaggable_creators = User.find flaggable_creator_ids
     flaggable_creators.each do |flaggable_creator|
