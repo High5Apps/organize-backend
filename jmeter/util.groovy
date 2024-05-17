@@ -46,8 +46,8 @@ def jwt(keyPair, String userId) {
     .compact()
 }
 
-def iso8601(int offsetSeconds) {
-  return new Date(new Date().toInstant().toEpochMilli() + offsetSeconds * 1000)
+def iso8601(int offsetMilliseconds) {
+  return new Date(new Date().toInstant().toEpochMilli() + offsetMilliseconds)
     .toInstant().toString()
 }
 

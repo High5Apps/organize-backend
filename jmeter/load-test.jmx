@@ -44,7 +44,7 @@
         </collectionProp>
       </Arguments>
       <hashTree/>
-      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults (dev)" enabled="true">
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults (dev)">
         <stringProp name="HTTPSampler.domain">localhost</stringProp>
         <stringProp name="HTTPSampler.port">8080</stringProp>
         <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -851,13 +851,6 @@ if (postCategory == &apos;recent&apos;) {
                 <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
                 <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
                   <collectionProp name="Arguments.arguments">
-                    <elementProp name="active_at" elementType="HTTPArgument">
-                      <boolProp name="HTTPArgument.always_encode">true</boolProp>
-                      <stringProp name="Argument.name">active_at</stringProp>
-                      <stringProp name="Argument.value">${__groovy(iso8601())}</stringProp>
-                      <stringProp name="Argument.metadata">=</stringProp>
-                      <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                    </elementProp>
                     <elementProp name="sort" elementType="HTTPArgument">
                       <boolProp name="HTTPArgument.always_encode">false</boolProp>
                       <stringProp name="Argument.name">sort</stringProp>
@@ -869,7 +862,7 @@ if (postCategory == &apos;recent&apos;) {
                 </elementProp>
               </HTTPSamplerProxy>
               <hashTree/>
-              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="$.ballots exists" enabled="true">
+              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="$.ballots exists">
                 <stringProp name="JSON_PATH">$.ballots</stringProp>
                 <stringProp name="EXPECTED_VALUE"></stringProp>
                 <boolProp name="JSONVALIDATION">false</boolProp>
@@ -886,7 +879,7 @@ if (postCategory == &apos;recent&apos;) {
               </JSONPostProcessor>
               <hashTree/>
             </hashTree>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Completed Ballot Previews" enabled="true"/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Completed Ballot Previews"/>
             <hashTree>
               <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots (completed)">
                 <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
@@ -896,13 +889,6 @@ if (postCategory == &apos;recent&apos;) {
                 <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
                 <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
                   <collectionProp name="Arguments.arguments">
-                    <elementProp name="inactive_at" elementType="HTTPArgument">
-                      <boolProp name="HTTPArgument.always_encode">true</boolProp>
-                      <stringProp name="Argument.name">inactive_at</stringProp>
-                      <stringProp name="Argument.value">${__groovy(iso8601())}</stringProp>
-                      <stringProp name="Argument.metadata">=</stringProp>
-                      <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                    </elementProp>
                     <elementProp name="page" elementType="HTTPArgument">
                       <boolProp name="HTTPArgument.always_encode">false</boolProp>
                       <stringProp name="Argument.name">page</stringProp>
@@ -961,7 +947,7 @@ if (postCategory == &apos;recent&apos;) {
             </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Yes/No Ballot (5s)"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Yes/No Ballot (1d)"/>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots">
               <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
@@ -974,7 +960,7 @@ if (postCategory == &apos;recent&apos;) {
                 <collectionProp name="Arguments.arguments">
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">{&quot;ballot&quot;:{&quot;category&quot;:&quot;yes_no&quot;,&quot;encrypted_question&quot;:${__groovy(e2eEncrypt(&apos;Should we do this?&apos;\, props.get(&apos;groupSecretBase64&apos;)))},&quot;voting_ends_at&quot;:&quot;${__groovy(iso8601(5))}&quot;},&quot;candidates&quot;:[{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;Yes&apos;\, props.get(&apos;groupSecretBase64&apos;)))}},{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;No&apos;\, props.get(&apos;groupSecretBase64&apos;)))}}]}</stringProp>
+                    <stringProp name="Argument.value">{&quot;ballot&quot;:{&quot;category&quot;:&quot;yes_no&quot;,&quot;encrypted_question&quot;:${__groovy(e2eEncrypt(&apos;Should we do this?&apos;\, props.get(&apos;groupSecretBase64&apos;)))},&quot;voting_ends_at&quot;:&quot;${__groovy(iso8601(86400000))}&quot;},&quot;candidates&quot;:[{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;Yes&apos;\, props.get(&apos;groupSecretBase64&apos;)))}},{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;No&apos;\, props.get(&apos;groupSecretBase64&apos;)))}}]}</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -982,7 +968,7 @@ if (postCategory == &apos;recent&apos;) {
             </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Ballot Previews (module)" enabled="true">
+          <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Ballot Previews (module)">
             <collectionProp name="ModuleController.node_path">
               <stringProp name="764597751">Test Plan</stringProp>
               <stringProp name="764597751">Test Plan</stringProp>
@@ -1072,72 +1058,6 @@ if (postCategory == &apos;recent&apos;) {
             </collectionProp>
           </ModuleController>
           <hashTree/>
-          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If No Completed Ballot" enabled="true">
-            <stringProp name="IfController.condition">${__groovy(&quot;${randomCompletedBallotId}&quot;== &quot;NOT_FOUND&quot;)}</stringProp>
-            <boolProp name="IfController.evaluateAll">false</boolProp>
-            <boolProp name="IfController.useExpression">true</boolProp>
-          </IfController>
-          <hashTree>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Yes/No Ballot (1s)"/>
-            <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots">
-                <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
-                <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
-                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-                <stringProp name="HTTPSampler.method">POST</stringProp>
-                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-                <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-                <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-                  <collectionProp name="Arguments.arguments">
-                    <elementProp name="" elementType="HTTPArgument">
-                      <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                      <stringProp name="Argument.value">{&quot;ballot&quot;:{&quot;category&quot;:&quot;yes_no&quot;,&quot;encrypted_question&quot;:${__groovy(e2eEncrypt(&apos;Should we do this?&apos;\, props.get(&apos;groupSecretBase64&apos;)))},&quot;voting_ends_at&quot;:&quot;${__groovy(iso8601(1))}&quot;},&quot;candidates&quot;:[{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;Yes&apos;\, props.get(&apos;groupSecretBase64&apos;)))}},{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;No&apos;\, props.get(&apos;groupSecretBase64&apos;)))}}]}</stringProp>
-                      <stringProp name="Argument.metadata">=</stringProp>
-                    </elementProp>
-                  </collectionProp>
-                </elementProp>
-              </HTTPSamplerProxy>
-              <hashTree/>
-            </hashTree>
-            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
-              <stringProp name="ConstantTimer.delay">1000</stringProp>
-            </ConstantTimer>
-            <hashTree/>
-            <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Ballot Previews (module)" enabled="true">
-              <collectionProp name="ModuleController.node_path">
-                <stringProp name="764597751">Test Plan</stringProp>
-                <stringProp name="764597751">Test Plan</stringProp>
-                <stringProp name="-1948168983">Thread Group</stringProp>
-                <stringProp name="2672394">Vote</stringProp>
-                <stringProp name="1975750973">Get Ballot Previews</stringProp>
-              </collectionProp>
-            </ModuleController>
-            <hashTree/>
-          </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Ballot Result"/>
-          <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots/:id (result)" enabled="true">
-              <stringProp name="HTTPSampler.path">/api/v1/ballots/${randomCompletedBallotId}</stringProp>
-              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-              <stringProp name="HTTPSampler.method">GET</stringProp>
-              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-                <collectionProp name="Arguments.arguments"/>
-              </elementProp>
-            </HTTPSamplerProxy>
-            <hashTree>
-              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="$.results exists" enabled="true">
-                <stringProp name="JSON_PATH">$.results</stringProp>
-                <stringProp name="EXPECTED_VALUE"></stringProp>
-                <boolProp name="JSONVALIDATION">false</boolProp>
-                <boolProp name="EXPECT_NULL">false</boolProp>
-                <boolProp name="INVERT">false</boolProp>
-                <boolProp name="ISREGEX">false</boolProp>
-              </JSONPathAssertion>
-              <hashTree/>
-            </hashTree>
-          </hashTree>
         </hashTree>
         <RecordingController guiclass="RecordController" testclass="RecordingController" testname="Recording Controller" enabled="false"/>
         <hashTree>
