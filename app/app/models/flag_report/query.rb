@@ -5,17 +5,15 @@ class FlagReport::Query
   end
 
   def relation
-    return @relation if @relation
-
-    @relation = Flag.none unless @initial_flags
-    return @relation if @relation
+    return ApplicationRecord.none unless @initial_flags
 
     now = Time.now
 
-    created_at_or_before_param = @params[:created_at_or_before] || now.iso8601(6)
+    created_at_or_before_param = @params[:created_at_or_before] ||
+      now.iso8601(6)
     created_at_or_before = Time.iso8601(created_at_or_before_param.to_s).utc
 
-    flags = @initial_flags
+    @relation = @initial_flags
       .includes(flaggable: [{ last_moderation_event: :user }, :user])
       .created_at_or_before(created_at_or_before)
       .select(:flaggable_id, :flaggable_type, 'COUNT(*) as flag_count')
@@ -25,10 +23,10 @@ class FlagReport::Query
     # Default to sorting by top
     sort_parameter = @params[:sort] || 'top'
     if sort_parameter == 'top'
-      flags = flags.order('flag_count DESC, flaggable_id DESC')
+      @relation = @relation.order flag_count: :desc, flaggable_id: :desc
     end
 
-    @relation = flags
+    @relation
   end
 
   def flag_reports

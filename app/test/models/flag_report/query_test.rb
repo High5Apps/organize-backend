@@ -76,4 +76,16 @@ class FlagReportQueryTest < ActiveSupport::TestCase
     # Reverse is needed because sort is an ascending sort
     assert_equal flag_counts_and_user_ids.sort.reverse, flag_counts_and_user_ids
   end
+
+  test 'flag_count should be correct' do
+    query = FlagReport::Query.new Flag.all, sort: 'top'
+    flag_counts = Flag.group(:flaggable_id, :flaggable_type)
+      .count(:flaggable_id).values
+
+    assert_operator flag_counts.uniq.count, :>, 1
+    assert_operator flag_counts.max, :>, 1
+    assert_operator flag_counts.min, :>, 0
+
+    assert_equal flag_counts.max, query.flag_reports.first[:flag_count]
+  end
 end
