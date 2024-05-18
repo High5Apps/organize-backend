@@ -292,18 +292,18 @@ for (suffix in [1, 2]) {
         </hashTree>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Ballot Results" enabled="true"/>
         <hashTree>
-          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: yes_no, multiple_choice" enabled="true">
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: yes_no, multiple_choice">
             <stringProp name="ForeachController.inputVal">ballotCategory</stringProp>
             <stringProp name="ForeachController.returnVal">ballotCategory</stringProp>
             <boolProp name="ForeachController.useSeparator">true</boolProp>
           </ForeachController>
           <hashTree>
-            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="voteDurationMilliseconds" enabled="true">
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="voteDurationSeconds">
               <stringProp name="scriptLanguage">groovy</stringProp>
               <stringProp name="parameters"></stringProp>
               <stringProp name="filename"></stringProp>
               <stringProp name="cacheKey">true</stringProp>
-              <stringProp name="script">vars.putObject(&apos;voteDurationMilliseconds&apos;, 1000)</stringProp>
+              <stringProp name="script">vars.putObject(&apos;voteDurationSeconds&apos;, 1)</stringProp>
             </JSR223PreProcessor>
             <hashTree/>
             <SwitchController guiclass="SwitchControllerGui" testclass="SwitchController" testname="Switch Controller: Create Ballot" enabled="true">
@@ -312,7 +312,7 @@ for (suffix in [1, 2]) {
             <hashTree>
               <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="yes_no" enabled="true"/>
               <hashTree>
-                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots (yes_no)" enabled="true">
+                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots (yes_no)">
                   <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
                   <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
                   <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -323,7 +323,7 @@ for (suffix in [1, 2]) {
                     <collectionProp name="Arguments.arguments">
                       <elementProp name="" elementType="HTTPArgument">
                         <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                        <stringProp name="Argument.value">{&quot;ballot&quot;:{&quot;category&quot;:&quot;${ballotCategory}&quot;,&quot;encrypted_question&quot;:${__groovy(e2eEncrypt(&apos;Should we do this?&apos;\, props.get(&apos;groupSecretBase64&apos;)))},&quot;voting_ends_at&quot;:&quot;${__groovy(iso8601(vars.getObject(&apos;voteDurationMilliseconds&apos;)))}&quot;},&quot;candidates&quot;:[{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;Yes&apos;\, props.get(&apos;groupSecretBase64&apos;)))}},{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;No&apos;\, props.get(&apos;groupSecretBase64&apos;)))}}]}</stringProp>
+                        <stringProp name="Argument.value">{&quot;ballot&quot;:{&quot;category&quot;:&quot;${ballotCategory}&quot;,&quot;encrypted_question&quot;:${__groovy(e2eEncrypt(&apos;Should we do this?&apos;\, props.get(&apos;groupSecretBase64&apos;)))},&quot;voting_ends_at&quot;:&quot;${__groovy(iso8601(vars.getObject(&apos;voteDurationSeconds&apos;)))}&quot;},&quot;candidates&quot;:[{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;Yes&apos;\, props.get(&apos;groupSecretBase64&apos;)))}},{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;No&apos;\, props.get(&apos;groupSecretBase64&apos;)))}}]}</stringProp>
                         <stringProp name="Argument.metadata">=</stringProp>
                       </elementProp>
                     </collectionProp>
@@ -344,7 +344,7 @@ for (suffix in [1, 2]) {
                     <collectionProp name="Arguments.arguments">
                       <elementProp name="" elementType="HTTPArgument">
                         <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                        <stringProp name="Argument.value">{&quot;ballot&quot;:{&quot;category&quot;:&quot;${ballotCategory}&quot;,&quot;encrypted_question&quot;:${__groovy(e2eEncrypt(&apos;Which of these should we do?&apos;\, props.get(&apos;groupSecretBase64&apos;)))},&quot;max_candidate_ids_per_vote&quot;:2,&quot;voting_ends_at&quot;:&quot;${__groovy(iso8601(vars.getObject(&apos;voteDurationMilliseconds&apos;)))}&quot;},&quot;candidates&quot;:[{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;One&apos;\, props.get(&apos;groupSecretBase64&apos;)))}},{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;Two&apos;\, props.get(&apos;groupSecretBase64&apos;)))}},{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;Three&apos;\, props.get(&apos;groupSecretBase64&apos;)))}},{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;Four&apos;\, props.get(&apos;groupSecretBase64&apos;)))}}]}</stringProp>
+                        <stringProp name="Argument.value">{&quot;ballot&quot;:{&quot;category&quot;:&quot;${ballotCategory}&quot;,&quot;encrypted_question&quot;:${__groovy(e2eEncrypt(&apos;Which of these should we do?&apos;\, props.get(&apos;groupSecretBase64&apos;)))},&quot;max_candidate_ids_per_vote&quot;:2,&quot;voting_ends_at&quot;:&quot;${__groovy(iso8601(vars.getObject(&apos;voteDurationSeconds&apos;)))}&quot;},&quot;candidates&quot;:[{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;One&apos;\, props.get(&apos;groupSecretBase64&apos;)))}},{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;Two&apos;\, props.get(&apos;groupSecretBase64&apos;)))}},{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;Three&apos;\, props.get(&apos;groupSecretBase64&apos;)))}},{&quot;encrypted_title&quot;:${__groovy(e2eEncrypt(&apos;Four&apos;\, props.get(&apos;groupSecretBase64&apos;)))}}]}</stringProp>
                         <stringProp name="Argument.metadata">=</stringProp>
                       </elementProp>
                     </collectionProp>
@@ -470,7 +470,7 @@ for (suffix in [1, 2]) {
             </hashTree>
           </hashTree>
         </hashTree>
-        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Elections"/>
+        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Elections" enabled="true"/>
         <hashTree>
           <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Permissions: create_election" enabled="true"/>
           <hashTree>
@@ -494,9 +494,9 @@ for (suffix in [1, 2]) {
             </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Available Offices"/>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Available Offices" enabled="true"/>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/offices">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/offices" enabled="true">
               <stringProp name="HTTPSampler.path">/api/v1/offices</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -516,7 +516,7 @@ for (suffix in [1, 2]) {
                 <boolProp name="ISREGEX">false</boolProp>
               </JSONPathAssertion>
               <hashTree/>
-              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="availableOffices">
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="availableOffices" enabled="true">
                 <stringProp name="JSONPostProcessor.referenceNames">availableOffices</stringProp>
                 <stringProp name="JSONPostProcessor.jsonPathExprs">$.offices[?(@.open==true)].type</stringProp>
                 <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
@@ -525,15 +525,15 @@ for (suffix in [1, 2]) {
               <hashTree/>
             </hashTree>
           </hashTree>
-          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: Available Office">
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: Available Office" enabled="true">
             <stringProp name="ForeachController.inputVal">availableOffices</stringProp>
             <stringProp name="ForeachController.returnVal">availableOffice</stringProp>
             <boolProp name="ForeachController.useSeparator">true</boolProp>
           </ForeachController>
           <hashTree>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Election"/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Election" enabled="true"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots">
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots" enabled="true">
                 <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -543,7 +543,7 @@ for (suffix in [1, 2]) {
                   <collectionProp name="Arguments.arguments">
                     <elementProp name="" elementType="HTTPArgument">
                       <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                      <stringProp name="Argument.value">{&quot;ballot&quot;:{&quot;category&quot;:&quot;election&quot;,&quot;encrypted_question&quot;:${__groovy(e2eEncrypt(&apos;Who should we elect?&apos;\, props.get(&apos;groupSecretBase64&apos;)))},&quot;max_candidate_ids_per_vote&quot;:1,&quot;office&quot;:&quot;${availableOffice}&quot;,&quot;nominations_end_at&quot;:&quot;${__groovy(iso8601(7*24*60*60*1000))}&quot;,&quot;term_ends_at&quot;:&quot;${__groovy(iso8601(22*24*60*60*1000))}&quot;,&quot;term_starts_at&quot;:&quot;${__groovy(iso8601(21*24*60*60*1000))}&quot;,&quot;voting_ends_at&quot;:&quot;${__groovy(iso8601(14*24*60*60*1000))}&quot;},&quot;candidates&quot;:[]}</stringProp>
+                      <stringProp name="Argument.value">{&quot;ballot&quot;:{&quot;category&quot;:&quot;election&quot;,&quot;encrypted_question&quot;:${__groovy(e2eEncrypt(&apos;Who should we elect?&apos;\, props.get(&apos;groupSecretBase64&apos;)))},&quot;max_candidate_ids_per_vote&quot;:1,&quot;office&quot;:&quot;${availableOffice}&quot;,&quot;nominations_end_at&quot;:&quot;${__groovy(iso8601(7*24*60*60))}&quot;,&quot;term_ends_at&quot;:&quot;${__groovy(iso8601(22*24*60*60))}&quot;,&quot;term_starts_at&quot;:&quot;${__groovy(iso8601(21*24*60*60))}&quot;,&quot;voting_ends_at&quot;:&quot;${__groovy(iso8601(14*24*60*60))}&quot;},&quot;candidates&quot;:[]}</stringProp>
                       <stringProp name="Argument.metadata">=</stringProp>
                     </elementProp>
                   </collectionProp>
@@ -1124,12 +1124,12 @@ if (postCategory == &apos;recent&apos;) {
             <boolProp name="ForeachController.useSeparator">true</boolProp>
           </ForeachController>
           <hashTree>
-            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="voteDurationMilliseconds" enabled="true">
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="voteDurationSeconds" enabled="true">
               <stringProp name="scriptLanguage">groovy</stringProp>
               <stringProp name="parameters"></stringProp>
               <stringProp name="filename"></stringProp>
               <stringProp name="cacheKey">true</stringProp>
-              <stringProp name="script">vars.putObject(&apos;voteDurationMilliseconds&apos;, 86400000)</stringProp>
+              <stringProp name="script">vars.putObject(&apos;voteDurationSeconds&apos;, 86400)</stringProp>
             </JSR223PreProcessor>
             <hashTree/>
             <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="Get Ballot Previews (module)" enabled="true">
