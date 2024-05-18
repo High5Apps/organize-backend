@@ -7,7 +7,7 @@ class Api::V1::VotesController < ApplicationController
 
   def create
     vote = authenticated_user.votes.create_with(create_params)
-      .find_or_create_by(user_id: authenticated_user.id)
+      .find_or_create_by(ballot_id: params[:ballot_id])
 
     # update will no-op if vote was just created or candidate_ids was unchanged
     if vote.update(create_params)

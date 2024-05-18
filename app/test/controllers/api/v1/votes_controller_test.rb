@@ -2,7 +2,7 @@ require "test_helper"
 
 class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @vote = votes(:one)
+    @vote = votes(:five)
     @vote.destroy!
     @params = create_params @vote.candidate_ids
 
@@ -13,7 +13,7 @@ class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
 
   test 'should create with valid params' do
     assert_difference 'Vote.count', 1 do
-      post api_v1_ballot_votes_url(@vote),
+      post api_v1_ballot_votes_url(@vote.ballot),
         headers: @authorized_headers,
         params: @params
     end
@@ -24,11 +24,11 @@ class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
 
   test 'should update when attempting to double create' do
     [
-      [[candidates(:one).id], 1],
-      [[candidates(:two).id], 0],
+      [[@vote.ballot.candidates.first.id], 1],
+      [[@vote.ballot.candidates.second.id], 0],
     ].each do |candidate_ids, difference|
       assert_difference 'Vote.count', difference do
-        post api_v1_ballot_votes_url(@vote),
+        post api_v1_ballot_votes_url(@vote.ballot),
           headers: @authorized_headers,
           params: create_params(candidate_ids)
         assert_response :created
@@ -40,7 +40,7 @@ class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create with invalid authorization' do
     assert_no_difference 'Vote.count' do
-      post api_v1_ballot_votes_url(@vote),
+      post api_v1_ballot_votes_url(@vote.ballot),
         headers: authorized_headers(@user,
           Authenticatable::SCOPE_ALL,
           expiration: 1.second.ago),
@@ -51,7 +51,7 @@ class Api::V1::VotesControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create with invalid params' do
     assert_no_difference 'Vote.count' do
-      post api_v1_ballot_votes_url(@vote),
+      post api_v1_ballot_votes_url(@vote.ballot),
         headers: @authorized_headers,
         params: { vote: {} }
     end
