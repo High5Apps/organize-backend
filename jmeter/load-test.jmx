@@ -78,7 +78,7 @@
         <stringProp name="HTTPSampler.implementation"></stringProp>
       </ConfigTestElement>
       <hashTree/>
-      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
         <collectionProp name="HeaderManager.headers">
           <elementProp name="Authorization" elementType="Header">
             <stringProp name="Header.name">Authorization</stringProp>
@@ -288,7 +288,7 @@ for (suffix in [1, 2]) {
           </hashTree>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -414,7 +414,7 @@ for (suffix in [1, 2]) {
         </hashTree>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Discuss"/>
         <hashTree>
-          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: Post Tab">
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: Post Tab" enabled="true">
             <stringProp name="ForeachController.inputVal">postCategory</stringProp>
             <stringProp name="ForeachController.returnVal">postCategory</stringProp>
             <boolProp name="ForeachController.useSeparator">true</boolProp>
@@ -849,17 +849,21 @@ if (postCategory == &apos;recent&apos;) {
         </hashTree>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Vote"/>
         <hashTree>
-          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: yes_no">
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: yes_no" enabled="true">
             <stringProp name="ForeachController.inputVal">ballotCategory</stringProp>
             <stringProp name="ForeachController.returnVal">ballotCategory</stringProp>
             <boolProp name="ForeachController.useSeparator">true</boolProp>
           </ForeachController>
           <hashTree>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Ballot Previews"/>
+            <com.blazemeter.jmeter.controller.ParallelSampler guiclass="com.blazemeter.jmeter.controller.ParallelControllerGui" testclass="com.blazemeter.jmeter.controller.ParallelSampler" testname="Get Ballot Previews">
+              <intProp name="MAX_THREAD_NUMBER">6</intProp>
+              <boolProp name="PARENT_SAMPLE">true</boolProp>
+              <boolProp name="LIMIT_MAX_THREAD_NUMBER">false</boolProp>
+            </com.blazemeter.jmeter.controller.ParallelSampler>
             <hashTree>
               <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Active Ballot Previews"/>
               <hashTree>
-                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots (active)">
+                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots (active)" enabled="true">
                   <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
                   <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                   <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -878,7 +882,7 @@ if (postCategory == &apos;recent&apos;) {
                   </elementProp>
                 </HTTPSamplerProxy>
                 <hashTree/>
-                <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="$.ballots exists">
+                <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="$.ballots exists" enabled="true">
                   <stringProp name="JSON_PATH">$.ballots</stringProp>
                   <stringProp name="EXPECTED_VALUE"></stringProp>
                   <boolProp name="JSONVALIDATION">false</boolProp>
@@ -887,7 +891,7 @@ if (postCategory == &apos;recent&apos;) {
                   <boolProp name="ISREGEX">false</boolProp>
                 </JSONPathAssertion>
                 <hashTree/>
-                <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="randomActiveBallotId">
+                <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="randomActiveBallotId" enabled="true">
                   <stringProp name="JSONPostProcessor.referenceNames">randomActiveBallotId</stringProp>
                   <stringProp name="JSONPostProcessor.jsonPathExprs">$.ballots[?(@.category==&apos;${ballotCategory}&apos;)].id</stringProp>
                   <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
@@ -895,9 +899,9 @@ if (postCategory == &apos;recent&apos;) {
                 </JSONPostProcessor>
                 <hashTree/>
               </hashTree>
-              <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Completed Ballot Previews"/>
+              <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Completed Ballot Previews" enabled="true"/>
               <hashTree>
-                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots (completed)">
+                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots (completed)" enabled="true">
                   <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
                   <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                   <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -923,7 +927,7 @@ if (postCategory == &apos;recent&apos;) {
                   </elementProp>
                 </HTTPSamplerProxy>
                 <hashTree/>
-                <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="$.ballots exists">
+                <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="$.ballots exists" enabled="true">
                   <stringProp name="JSON_PATH">$.ballots</stringProp>
                   <stringProp name="EXPECTED_VALUE"></stringProp>
                   <boolProp name="JSONVALIDATION">false</boolProp>
@@ -932,7 +936,7 @@ if (postCategory == &apos;recent&apos;) {
                   <boolProp name="ISREGEX">false</boolProp>
                 </JSONPathAssertion>
                 <hashTree/>
-                <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="randomCompletedBallotId">
+                <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="randomCompletedBallotId" enabled="true">
                   <stringProp name="JSONPostProcessor.referenceNames">randomCompletedBallotId</stringProp>
                   <stringProp name="JSONPostProcessor.jsonPathExprs">$.ballots[?(@.category==&apos;${ballotCategory}&apos;)].id</stringProp>
                   <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
@@ -941,7 +945,7 @@ if (postCategory == &apos;recent&apos;) {
                 <hashTree/>
               </hashTree>
             </hashTree>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get My Permissions"/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get My Permissions" enabled="true"/>
             <hashTree>
               <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/my_permissions" enabled="true">
                 <stringProp name="HTTPSampler.path">/api/v1/my_permissions</stringProp>
@@ -963,13 +967,13 @@ if (postCategory == &apos;recent&apos;) {
               </HTTPSamplerProxy>
               <hashTree/>
             </hashTree>
-            <SwitchController guiclass="SwitchControllerGui" testclass="SwitchController" testname="Switch Controller: Create Ballot (1d)">
+            <SwitchController guiclass="SwitchControllerGui" testclass="SwitchController" testname="Switch Controller: Create Ballot (1d)" enabled="true">
               <stringProp name="SwitchController.value">${ballotCategory}</stringProp>
             </SwitchController>
             <hashTree>
-              <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="yes_no"/>
+              <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="yes_no" enabled="true"/>
               <hashTree>
-                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots (yes_no)">
+                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots (yes_no)" enabled="true">
                   <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
                   <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
                   <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -988,9 +992,9 @@ if (postCategory == &apos;recent&apos;) {
                 </HTTPSamplerProxy>
                 <hashTree/>
               </hashTree>
-              <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="multiple_choice"/>
+              <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="multiple_choice" enabled="true"/>
               <hashTree>
-                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots (multiple_choice)">
+                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots (multiple_choice)" enabled="true">
                   <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
                   <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
                   <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -1021,9 +1025,9 @@ if (postCategory == &apos;recent&apos;) {
               </collectionProp>
             </ModuleController>
             <hashTree/>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Ballot"/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Get Ballot" enabled="true"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots/:id (active)">
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/ballots/:id (active)" enabled="true">
                 <stringProp name="HTTPSampler.path">/api/v1/ballots/${randomActiveBallotId}</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -1043,7 +1047,7 @@ if (postCategory == &apos;recent&apos;) {
                 <boolProp name="ISREGEX">false</boolProp>
               </JSONPathAssertion>
               <hashTree/>
-              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="randomCandidateId">
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="randomCandidateId" enabled="true">
                 <stringProp name="JSONPostProcessor.referenceNames">randomCandidateId</stringProp>
                 <stringProp name="JSONPostProcessor.jsonPathExprs">$.candidates[*].id</stringProp>
                 <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
