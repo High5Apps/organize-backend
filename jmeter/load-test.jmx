@@ -292,13 +292,13 @@ for (suffix in [1, 2]) {
         </hashTree>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Ballot Results" enabled="true"/>
         <hashTree>
-          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: yes_no, multiple_choice">
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="For Each: yes_no, multiple_choice" enabled="true">
             <stringProp name="ForeachController.inputVal">ballotCategory</stringProp>
             <stringProp name="ForeachController.returnVal">ballotCategory</stringProp>
             <boolProp name="ForeachController.useSeparator">true</boolProp>
           </ForeachController>
           <hashTree>
-            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="voteDurationSeconds">
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="voteDurationSeconds" enabled="true">
               <stringProp name="scriptLanguage">groovy</stringProp>
               <stringProp name="parameters"></stringProp>
               <stringProp name="filename"></stringProp>
@@ -312,7 +312,7 @@ for (suffix in [1, 2]) {
             <hashTree>
               <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="yes_no" enabled="true"/>
               <hashTree>
-                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots (yes_no)">
+                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots (yes_no)" enabled="true">
                   <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
                   <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
                   <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -531,9 +531,9 @@ for (suffix in [1, 2]) {
             <boolProp name="ForeachController.useSeparator">true</boolProp>
           </ForeachController>
           <hashTree>
-            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Election" enabled="true"/>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Create Election"/>
             <hashTree>
-              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots" enabled="true">
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/ballots">
                 <stringProp name="HTTPSampler.path">/api/v1/ballots</stringProp>
                 <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
                 <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -543,7 +543,7 @@ for (suffix in [1, 2]) {
                   <collectionProp name="Arguments.arguments">
                     <elementProp name="" elementType="HTTPArgument">
                       <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                      <stringProp name="Argument.value">{&quot;ballot&quot;:{&quot;category&quot;:&quot;election&quot;,&quot;encrypted_question&quot;:${__groovy(e2eEncrypt(&apos;Who should we elect?&apos;\, props.get(&apos;groupSecretBase64&apos;)))},&quot;max_candidate_ids_per_vote&quot;:1,&quot;office&quot;:&quot;${availableOffice}&quot;,&quot;nominations_end_at&quot;:&quot;${__groovy(iso8601(7*24*60*60))}&quot;,&quot;term_ends_at&quot;:&quot;${__groovy(iso8601(22*24*60*60))}&quot;,&quot;term_starts_at&quot;:&quot;${__groovy(iso8601(21*24*60*60))}&quot;,&quot;voting_ends_at&quot;:&quot;${__groovy(iso8601(14*24*60*60))}&quot;},&quot;candidates&quot;:[]}</stringProp>
+                      <stringProp name="Argument.value">{&quot;ballot&quot;:{&quot;category&quot;:&quot;election&quot;,&quot;encrypted_question&quot;:${__groovy(e2eEncrypt(&apos;Who should we elect?&apos;\, props.get(&apos;groupSecretBase64&apos;)))},&quot;max_candidate_ids_per_vote&quot;:1,&quot;office&quot;:&quot;${availableOffice}&quot;,&quot;nominations_end_at&quot;:&quot;${__groovy(iso8601(7*24*60*60))}&quot;,&quot;term_ends_at&quot;:&quot;${__groovy(iso8601((21+365)*24*60*60))}&quot;,&quot;term_starts_at&quot;:&quot;${__groovy(iso8601(21*24*60*60))}&quot;,&quot;voting_ends_at&quot;:&quot;${__groovy(iso8601(14*24*60*60))}&quot;},&quot;candidates&quot;:[]}</stringProp>
                       <stringProp name="Argument.metadata">=</stringProp>
                     </elementProp>
                   </collectionProp>
@@ -554,7 +554,7 @@ for (suffix in [1, 2]) {
           </hashTree>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
