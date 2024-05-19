@@ -23,22 +23,28 @@ class FlagReportQueryTest < ActiveSupport::TestCase
             creator: {
               id: String,
               pseudonym: String,
+              **nil
             },
             encrypted_title: {
               c: String,
               n: String,
               t: String,
+              **nil
             },
             id: String,
+            **nil
           },
           flag_count: Integer,
           moderation_event: nil | {
             action: String,
             created_at: String,
+            id: String,
             moderator: {
               id: String,
               pseudonym: String,
+              **nil
             },
+            **nil
           },
           **nil
         }

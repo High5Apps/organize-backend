@@ -48,6 +48,7 @@ class FlagReport::Query
         moderation_event: last_moderation_event && {
           action: last_moderation_event.action,
           created_at: last_moderation_event.created_at,
+          id: last_moderation_event.id,
           moderator: {
             id: last_moderation_event.user.id,
             pseudonym: last_moderation_event.user.pseudonym,
