@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_16_062817) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_19_135457) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -28,6 +28,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_16_062817) do
     t.datetime "nominations_end_at"
     t.datetime "term_ends_at"
     t.datetime "term_starts_at"
+    t.boolean "blocked", default: false, null: false
     t.index ["user_id"], name: "index_ballots_on_user_id"
   end
 
@@ -51,6 +52,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_16_062817) do
     t.string "ancestry", null: false, collation: "C"
     t.integer "depth", default: 0, null: false
     t.jsonb "encrypted_body", null: false
+    t.boolean "blocked", default: false, null: false
     t.index ["ancestry"], name: "index_comments_on_ancestry"
     t.index ["post_id"], name: "index_comments_on_post_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
@@ -123,6 +125,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_16_062817) do
     t.jsonb "encrypted_title", null: false
     t.jsonb "encrypted_body"
     t.uuid "candidate_id"
+    t.boolean "blocked", default: false, null: false
     t.index ["candidate_id"], name: "index_posts_on_candidate_id"
     t.index ["org_id", "created_at"], name: "index_posts_on_org_id_and_created_at"
     t.index ["user_id"], name: "index_posts_on_user_id"
@@ -161,6 +164,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_16_062817) do
     t.string "pseudonym"
     t.datetime "joined_at"
     t.uuid "recruiter_id"
+    t.boolean "blocked", default: false, null: false
     t.index ["org_id"], name: "index_users_on_org_id"
     t.index ["pseudonym"], name: "index_users_on_pseudonym", opclass: :gin_trgm_ops, using: :gin
     t.index ["recruiter_id"], name: "index_users_on_recruiter_id"
