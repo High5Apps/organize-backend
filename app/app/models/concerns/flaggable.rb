@@ -1,14 +1,11 @@
 module Flaggable
   extend ActiveSupport::Concern
+  include Moderatable
 
   included do
     belongs_to :user
 
     has_many :flags, as: :flaggable
-    has_many :moderation_events, as: :moderatable
-
-    has_one :last_moderation_event, -> { order(created_at: :desc) },
-      as: :moderatable, class_name: 'ModerationEvent'
 
     validates :user, presence: true
 
