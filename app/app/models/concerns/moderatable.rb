@@ -2,6 +2,8 @@ module Moderatable
   extend ActiveSupport::Concern
 
   included do
+    scope :omit_blocked, -> { where(blocked: false) }
+
     has_many :moderation_events, as: :moderatable
 
     has_one :last_moderation_event, -> { order(created_at: :desc) },

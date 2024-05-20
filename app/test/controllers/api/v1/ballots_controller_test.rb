@@ -192,8 +192,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should only include ballots from requester Org' do
     get api_v1_ballots_url, headers: @authorized_headers
-    response.parsed_body => ballots: ballot_jsons
-    ballot_ids = ballot_jsons.map {|b| b[:id]}
+    ballot_ids = get_ballot_ids_from_response
     assert_not_equal 0, ballot_ids.length
     ballots = Ballot.find(ballot_ids)
     ballots.each do |ballot|
@@ -222,6 +221,27 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_ballots_url, headers: @authorized_headers, params: { page: }
     pagination_data = assert_contains_pagination_data
     assert_equal page, pagination_data[:current_page]
+  end
+
+  test 'index should not include blocked ballots' do
+    flagged_ballot = ballots :three
+    event = moderation_events(:one).dup
+    unblock_all
+
+    get api_v1_ballots_url, headers: @authorized_headers
+    ballot_ids = get_ballot_ids_from_response
+
+    all_ballot_ids = @user.org.ballots.ids
+    assert_equal all_ballot_ids.sort, ballot_ids.sort
+
+    [[:unblock, nil], [:block, flagged_ballot]].each do |action, blocked_ballot|
+      flagged_ballot.send action
+
+      get api_v1_ballots_url, headers: @authorized_headers
+      ballot_ids = get_ballot_ids_from_response
+
+      assert_equal (all_ballot_ids - [blocked_ballot&.id]).sort, ballot_ids.sort
+    end
   end
 
   test 'should show ballots from request Org with valid auth' do
@@ -430,5 +450,12 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     required_attributes.each do |attribute|
       assert_includes model, attribute
     end
+  end
+
+  private
+
+  def get_ballot_ids_from_response
+    response.parsed_body => ballots: ballot_jsons
+    ballot_jsons.map { |b| b[:id] }
   end
 end
