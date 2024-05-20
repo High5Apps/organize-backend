@@ -1,14 +1,14 @@
 class Api::V1::CommentsController < ApplicationController
   ALLOWED_ATTRIBUTES = [
-    :id,
-    :encrypted_body,
-    :user_id,
     :created_at,
-    :pseudonym,
-    :score,
+    :depth,
+    :encrypted_body,
+    :id,
     :my_vote,
+    :pseudonym,
     :replies,
-    :depth
+    :score,
+    :user_id,
   ].freeze
 
   INTERMEDIATE_ATTRIBUTES = [
