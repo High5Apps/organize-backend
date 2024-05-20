@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  include PgSearch::Model
+  include PgSearch::Model, Moderatable
 
   scope :joined_at_or_before, ->(time) { where(joined_at: ..time) }
   scope :officers, -> {
