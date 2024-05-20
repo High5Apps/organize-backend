@@ -13,6 +13,9 @@ class ModerationEvent < ApplicationRecord
   validate :action_transitions, on: :create
   validate :moderatable_flagged, unless: :moderatable_user?
 
+  after_save -> { moderatable.block }, if: :block?
+  after_save -> { moderatable.unblock }, unless: :block?
+
   private
 
   def action_transitions

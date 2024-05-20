@@ -3,7 +3,9 @@ require "test_helper"
 class ModerationEventTest < ActiveSupport::TestCase
   setup do
     @event = moderation_events :one
-    @items = [ballots(:three), comments(:two), posts(:three), users(:seven)]
+    @moderatables = [
+      ballots(:three), comments(:two), posts(:three), users(:seven),
+    ]
   end
 
   test 'should be valid' do
@@ -92,5 +94,42 @@ class ModerationEventTest < ActiveSupport::TestCase
     assert @event.valid?
     assert_empty @event.moderatable.flags
     assert @event.valid?
+  end
+
+  test 'should block moderatable if action is block' do
+    event = @event.dup
+    ModerationEvent.destroy_all
+
+    @moderatables.each do |moderatable|
+      event.action = :allow
+      event.save!
+
+      assert_changes -> { event.reload.moderatable.blocked }, from: false, to: true do
+        event.moderatable = moderatable
+        event.action = :block
+        event.save!
+      end
+    end
+  end
+
+  test 'should unblock moderatable unless action is block' do
+    unblocking_actions = ModerationEvent::actions.keys - ['block']
+
+    event = @event.dup
+    ModerationEvent.destroy_all
+
+    @moderatables.each do |moderatable|
+      event.moderatable = moderatable
+
+      unblocking_actions.each do |unblocking_action|
+        event.action = :block
+        event.save!
+
+        assert_changes -> { event.reload.moderatable.blocked }, from: true, to: false do
+          event.action = unblocking_action
+          event.save!
+        end
+      end
+    end
   end
 end
