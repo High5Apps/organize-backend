@@ -24,7 +24,7 @@ class ModerationEventTest < ActiveSupport::TestCase
 
   test 'first action should be allow or block' do
     event = @event.dup
-    ModerationEvent.destroy_all
+    unblock_all
     assert_empty event.moderatable.moderation_events
 
     ModerationEvent.actions.keys.each do |action|
@@ -98,13 +98,13 @@ class ModerationEventTest < ActiveSupport::TestCase
 
   test 'should block moderatable if action is block' do
     event = @event.dup
-    ModerationEvent.destroy_all
+    unblock_all
 
     @moderatables.each do |moderatable|
       event.action = :allow
       event.save!
 
-      assert_changes -> { event.reload.moderatable.blocked }, from: false, to: true do
+      assert_changes -> { moderatable.reload.blocked }, from: false, to: true do
         event.moderatable = moderatable
         event.action = :block
         event.save!
@@ -116,7 +116,7 @@ class ModerationEventTest < ActiveSupport::TestCase
     unblocking_actions = ModerationEvent::actions.keys - ['block']
 
     event = @event.dup
-    ModerationEvent.destroy_all
+    unblock_all
 
     @moderatables.each do |moderatable|
       event.moderatable = moderatable
@@ -125,7 +125,7 @@ class ModerationEventTest < ActiveSupport::TestCase
         event.action = :block
         event.save!
 
-        assert_changes -> { event.reload.moderatable.blocked }, from: true, to: false do
+        assert_changes -> { moderatable.blocked }, from: true, to: false do
           event.action = unblocking_action
           event.save!
         end

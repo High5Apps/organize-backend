@@ -41,4 +41,15 @@ class ActiveSupport::TestCase
 
     response.parsed_body[:meta]
   end
+
+  def unblock_all
+    moderatables = ModerationEvent.group(:moderatable_type)
+      .pluck(:moderatable_type)
+      .map(&:constantize)
+    moderatables.each do |moderatable|
+      moderatable.update_all blocked: false
+    end
+
+    ModerationEvent.destroy_all
+  end
 end
