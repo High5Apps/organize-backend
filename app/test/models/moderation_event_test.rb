@@ -4,8 +4,6 @@ class ModerationEventTest < ActiveSupport::TestCase
   setup do
     @event = moderation_events :one
     @items = [ballots(:three), comments(:two), posts(:three), users(:seven)]
-    @item_ids = @items.map { |it| [it.class.name.foreign_key, it.id] }
-    @id_names = @item_ids.map(&:first)
   end
 
   test 'should be valid' do
