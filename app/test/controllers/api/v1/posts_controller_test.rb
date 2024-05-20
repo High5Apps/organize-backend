@@ -69,8 +69,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should only include posts from requester Org' do
     get api_v1_posts_url, headers: @authorized_headers
-    response.parsed_body => posts: post_jsons
-    post_ids = post_jsons.map {|p| p[:id] }
+    post_ids = get_post_ids_from_response
     posts = Post.find(post_ids)
     assert_not_empty posts
     posts.each do |post|
@@ -94,6 +93,27 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_posts_url, headers: @authorized_headers, params: { page: }
     pagination_data = assert_contains_pagination_data
     assert_equal page, pagination_data[:current_page]
+  end
+
+  test 'index should not include blocked posts' do
+    flagged_post = posts :one
+    event = moderation_events(:one).dup
+    unblock_all
+
+    get api_v1_posts_url, headers: @authorized_headers
+    post_ids = get_post_ids_from_response
+
+    all_post_ids = @user.org.posts.ids
+    assert_equal all_post_ids.sort, post_ids.sort
+
+    [[:unblock, nil], [:block, flagged_post]].each do |action, blocked_post|
+      flagged_post.send action
+
+      get api_v1_posts_url, headers: @authorized_headers
+      post_ids = get_post_ids_from_response
+
+      assert_equal (all_post_ids - [blocked_post&.id]).sort, post_ids.sort
+    end
   end
 
   test 'should show with valid authorization' do
@@ -140,5 +160,12 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
   test 'should not show for non-existent posts' do
     get api_v1_post_url('bad-post-id'), headers: @authorized_headers
     assert_response :not_found
+  end
+
+  private
+
+  def get_post_ids_from_response
+    response.parsed_body => posts: post_jsons
+    post_jsons.map { |p| p[:id] }
   end
 end
