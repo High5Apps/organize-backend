@@ -15,6 +15,11 @@ class FlagTest < ActiveSupport::TestCase
     assert @flag.invalid?
   end
 
+  test 'flaggable_type should be in ALLOWED_TYPES' do
+    @flag.flaggable = upvotes :one
+    assert @flag.invalid?
+  end
+
   test 'user should be present' do
     @flag.user = nil
     assert @flag.invalid?

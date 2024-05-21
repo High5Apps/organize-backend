@@ -1,9 +1,12 @@
 class Flag < ApplicationRecord
   scope :created_at_or_before, ->(time) { where(created_at: ..time) }
 
+  ALLOWED_TYPES = ['Ballot', 'Comment', 'Post']
+
   belongs_to :flaggable, polymorphic: true
   belongs_to :user
 
+  validates :flaggable_type, inclusion: { in: ALLOWED_TYPES }
   validates :user,
     presence: true,
     same_org: {
