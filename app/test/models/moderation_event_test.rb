@@ -70,6 +70,11 @@ class ModerationEventTest < ActiveSupport::TestCase
     assert @event.invalid?
   end
 
+  test 'moderatable_type should be in ALLOWED_TYPES' do
+    @event.moderatable = upvotes :one
+    assert @event.invalid?
+  end
+
   test 'moderatable should belong to moderator Org' do
     [
       ballots(:two), comments(:three), posts(:two), users(:five),

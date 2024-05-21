@@ -1,9 +1,12 @@
 class ModerationEvent < ApplicationRecord
+  ALLOWED_TYPES = ['Ballot', 'Comment', 'Post', 'User']
+
   enum :action, [:allow, :block, :undo_allow, :undo_block], validate: true
 
   belongs_to :moderatable, polymorphic: true
   belongs_to :user
 
+  validates :moderatable_type, inclusion: { in: ALLOWED_TYPES }
   validates :user, presence: true
   validates :user,
     same_org: { as: ->(event) { event.moderatable&.user}, name: 'Item' },
@@ -42,7 +45,7 @@ class ModerationEvent < ApplicationRecord
   def moderatable_flagged
     return unless moderatable
 
-    unless moderatable.flags.any?
+    unless moderatable.respond_to?(:flags) && moderatable.flags.any?
       errors.add :base, "can't moderate an item that isn't flagged"
     end
   end
