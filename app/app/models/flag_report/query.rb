@@ -13,11 +13,44 @@ class FlagReport::Query
       now.iso8601(6)
     created_at_or_before = Time.iso8601(created_at_or_before_param.to_s).utc
 
-    @relation = @org.flags
-      .includes(flaggable: [{ last_moderation_event: :user }, :user])
+    recent_events = @org.moderation_events
+      .most_recent_created_at_or_before(created_at_or_before)
+      .joins(:user)
+      .select('users.pseudonym AS moderator_pseudonym')
+
+    flag_counts = @org.flags
       .created_at_or_before(created_at_or_before)
       .select(:flaggable_id, :flaggable_type, 'COUNT(*) as flag_count')
       .group(:flaggable_id, :flaggable_type)
+
+    @relation = @org.flags
+      .created_at_or_before(created_at_or_before)
+      .with(flag_counts:)
+      .joins(%(
+        LEFT JOIN flag_counts
+          ON flag_counts.flaggable_type = flags.flaggable_type
+            AND flag_counts.flaggable_id = flags.flaggable_id
+      ).gsub(/\s+/, ' '))
+      .with(recent_events:)
+      .joins(%(
+        LEFT JOIN recent_events
+          ON recent_events.moderatable_type = flags.flaggable_type
+            AND recent_events.moderatable_id = flags.flaggable_id
+      ).gsub(/\s+/, ' '))
+      .select(
+        # Flaggable info
+        :flaggable_type,
+        :flaggable_id,
+
+        :flag_count,
+
+        # Most recent moderation event info
+        :action,
+        'recent_events.created_at AS moderated_at',
+        'recent_events.id AS moderation_event_id',
+        'recent_events.user_id AS moderator_id',
+        :moderator_pseudonym,
+      )
       .page(@params[:page]).without_count
 
     # Default to sorting by top
@@ -26,32 +59,31 @@ class FlagReport::Query
       @relation = @relation.order flag_count: :desc, flaggable_id: :desc
     end
 
-    @relation
+    @relation = @relation.includes(flaggable: :user)
   end
 
   def flag_reports
-    relation.map do |flag|
-      flaggable = flag.flaggable
+    relation.map do |aggregate|
+      flaggable = aggregate.flaggable
       creator = flaggable.user
-      last_moderation_event = flaggable.last_moderation_event
       {
         flaggable: {
-          category: flag.flaggable_type,
+          category: aggregate.flaggable_type,
           creator: {
             id: creator.id,
             pseudonym: creator.pseudonym,
           },
           encrypted_title: flaggable.encrypted_flaggable_title,
-          id: flag.flaggable_id,
+          id: aggregate.flaggable_id,
         },
-        flag_count: flag.flag_count,
-        moderation_event: last_moderation_event && {
-          action: last_moderation_event.action,
-          created_at: last_moderation_event.created_at,
-          id: last_moderation_event.id,
+        flag_count: aggregate.flag_count,
+        moderation_event: aggregate.moderation_event_id && {
+          action: ModerationEvent.actions.key(aggregate.action),
+          created_at: aggregate.moderated_at,
+          id: aggregate.moderation_event_id,
           moderator: {
-            id: last_moderation_event.user.id,
-            pseudonym: last_moderation_event.user.pseudonym,
+            id: aggregate.moderator_id,
+            pseudonym: aggregate.moderator_pseudonym,
           },
         }
       }
