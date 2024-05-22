@@ -137,4 +137,39 @@ class ModerationEventTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'most_recent_created_at_or_before should contain one moderation_event per moderated moderatable' do
+    expected_count = ModerationEvent.group(:moderatable_type, :moderatable_id)
+      .count.keys.count
+    assert_equal expected_count,
+      ModerationEvent.most_recent_created_at_or_before(Time.now).to_a.count
+  end
+
+  test 'most_recent_created_at_or_before should not include superceded moderation_events' do
+    recent_event_ids = ModerationEvent
+      .most_recent_created_at_or_before(Time.now)
+      .to_a.map { |me| me[:id] }
+
+    earlier_events = [moderation_events(:undone),  moderation_events(:zero)]
+    later_event = moderation_events :one
+    earlier_events.each do |earlier_event|
+      assert_operator earlier_event.created_at, :<, later_event.created_at
+      assert_equal earlier_event.moderatable, later_event.moderatable
+
+      assert_not_includes recent_event_ids, earlier_event.id
+    end
+  end
+
+  test 'most_recent_created_at_or_before should not include moderation_events created after time' do
+    earlier_event = moderation_events :zero
+    later_event = moderation_events :one
+    assert_operator earlier_event.created_at, :<, later_event.created_at
+    assert_equal earlier_event.moderatable, later_event.moderatable
+
+    recent_event_ids = ModerationEvent
+      .most_recent_created_at_or_before(earlier_event.created_at)
+      .to_a.map { |me| me[:id] }
+    assert_not_includes recent_event_ids, later_event.id
+    assert_includes recent_event_ids, earlier_event.id
+  end
 end

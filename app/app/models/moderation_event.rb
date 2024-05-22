@@ -1,4 +1,19 @@
 class ModerationEvent < ApplicationRecord
+  scope :most_recent_created_at_or_before, ->(time) {
+    select(%(
+      DISTINCT ON (
+        moderation_events.moderatable_type,
+        moderation_events.moderatable_id
+      ) moderation_events.*
+    ).gsub(/\s+/, ' '))
+      .where(created_at: ..time)
+      .order(%(
+        moderation_events.moderatable_type,
+        moderation_events.moderatable_id,
+        moderation_events.created_at DESC
+      ).gsub(/\s+/, ' '))
+  }
+
   ALLOWED_TYPES = ['Ballot', 'Comment', 'Post', 'User']
 
   enum :action, [:allow, :block, :undo_allow, :undo_block], validate: true
