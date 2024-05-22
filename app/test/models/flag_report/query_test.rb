@@ -3,10 +3,10 @@ class FlagReportQueryTest < ActiveSupport::TestCase
     @user = users(:one)
   end
 
-  test 'should respect initial_posts' do
+  test 'should only include flaggables from the given org' do
     org = @user.org
     assert_not_equal Flag.count, org.flags.count
-    query = FlagReport::Query.new org.flags
+    query = FlagReport::Query.new org
     user_ids = query.flag_reports.map { |f| f[:flaggable][:creator][:id] }
     assert_not_empty user_ids
     users = User.find(user_ids)
@@ -14,7 +14,7 @@ class FlagReportQueryTest < ActiveSupport::TestCase
   end
 
   test 'should only include expected attributes' do
-    query = FlagReport::Query.new Flag.all
+    query = FlagReport::Query.new @user.org
     flag_report = query.flag_reports.each do |flag_report|
       assert_pattern do
         flag_report.as_json.with_indifferent_access => {
@@ -54,7 +54,7 @@ class FlagReportQueryTest < ActiveSupport::TestCase
 
   test 'should respect created_at_or_before param' do
     flag = flags :two
-    query = FlagReport::Query.new Flag.all,
+    query = FlagReport::Query.new @user.org,
       created_at_or_before: flag.created_at.iso8601(6)
 
     # The flag aggregates don't have an id or a created_at, so the
@@ -68,7 +68,7 @@ class FlagReportQueryTest < ActiveSupport::TestCase
   end
 
   test 'should order posts by top by default' do
-    query = FlagReport::Query.new Flag.all
+    query = FlagReport::Query.new @user.org
     flag_counts_and_user_ids = query.flag_reports
       .map { |fi| [fi[:flag_count], fi[:flaggable_id]] }
 
@@ -77,7 +77,7 @@ class FlagReportQueryTest < ActiveSupport::TestCase
   end
 
   test 'top sort param should order ballots by highest flag count then user_id' do
-    query = FlagReport::Query.new Flag.all, sort: 'top'
+    query = FlagReport::Query.new @user.org, sort: 'top'
     flag_counts_and_user_ids = query.flag_reports
       .map { |fi| [fi[:flag_count], fi[:flaggable_id]] }
 
@@ -86,8 +86,8 @@ class FlagReportQueryTest < ActiveSupport::TestCase
   end
 
   test 'flag_count should be correct' do
-    query = FlagReport::Query.new Flag.all, sort: 'top'
-    flag_counts = Flag.group(:flaggable_id, :flaggable_type)
+    query = FlagReport::Query.new @user.org, sort: 'top'
+    flag_counts = @user.org.flags.group(:flaggable_id, :flaggable_type)
       .count(:flaggable_id).values
 
     assert_operator flag_counts.uniq.count, :>, 1
