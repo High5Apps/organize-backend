@@ -21,3 +21,9 @@ two:
   created_at: <%= 6.seconds.ago.to_fs(:db) %>
   moderatable: two (Comment)
   user: one
+
+three:
+  action: undo_allow
+  created_at: <%= 5.seconds.ago.to_fs(:db) %>
+  moderatable: two (Comment)
+  user: one

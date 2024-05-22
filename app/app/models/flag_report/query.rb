@@ -1,4 +1,9 @@
 class FlagReport::Query
+  UNHANDLED_ACTIONS = ['undo_allow', 'undo_block'].freeze
+  UNHANDLED_ACTION_VALUES = UNHANDLED_ACTIONS
+    .map { |action| ModerationEvent.actions[action] }
+    .freeze
+
   def initialize(org, params={})
     @org = org
     @params = params
@@ -32,12 +37,39 @@ class FlagReport::Query
             AND flag_counts.flaggable_id = flags.flaggable_id
       ).gsub(/\s+/, ' '))
       .with(recent_events:)
-      .joins(%(
+
+    # When handled is true, INNER JOIN to only include flaggables with
+    # moderation events, then filter out unhandled moderation event actions, and
+    # order by most recent moderation event creation
+    if @params[:handled] == true
+      @relation = @relation.joins(%(
+        INNER JOIN recent_events
+          ON recent_events.moderatable_type = flags.flaggable_type
+            AND recent_events.moderatable_id = flags.flaggable_id
+      ).gsub(/\s+/, ' '))
+        .where.not(recent_events: { action: UNHANDLED_ACTION_VALUES })
+        .order('recent_events.created_at DESC, recent_events.id DESC')
+    else
+      # When handled is nil or false, LEFT JOIN to include all flaggables
+      # regardless of whether they have moderation events, and order by most
+      # flags
+      @relation = @relation.joins(%(
         LEFT JOIN recent_events
           ON recent_events.moderatable_type = flags.flaggable_type
             AND recent_events.moderatable_id = flags.flaggable_id
       ).gsub(/\s+/, ' '))
-      .select(
+        .order flag_count: :desc, flaggable_id: :desc
+
+      # When handled is false, only include flaggables without moderation events
+      # or flaggables with unhandled moderation event actions
+      if @params[:handled] == false
+        @relation = @relation.where(recent_events: { id: nil })
+          .or(
+            @relation.where(recent_events: { action: UNHANDLED_ACTION_VALUES }))
+      end
+    end
+
+    @relation = @relation.select(
         # Flaggable info
         :flaggable_type,
         :flaggable_id,
@@ -50,14 +82,8 @@ class FlagReport::Query
         'recent_events.id AS moderation_event_id',
         'recent_events.user_id AS moderator_id',
         :moderator_pseudonym,
-      )
+      ).distinct
       .page(@params[:page]).without_count
-
-    # Default to sorting by top
-    sort_parameter = @params[:sort] || 'top'
-    if sort_parameter == 'top'
-      @relation = @relation.order flag_count: :desc, flaggable_id: :desc
-    end
 
     @relation = @relation.includes(flaggable: :user)
   end
