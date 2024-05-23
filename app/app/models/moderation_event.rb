@@ -30,6 +30,7 @@ class ModerationEvent < ApplicationRecord
 
   validate :action_transitions, on: :create
   validate :moderatable_flagged, unless: :moderatable_user?
+  validate :not_blocking_officer, on: :create, if: :moderatable_user?
 
   after_save -> { moderatable.block }, if: :block?
   after_save -> { moderatable.unblock }, unless: :block?
@@ -67,5 +68,13 @@ class ModerationEvent < ApplicationRecord
 
   def moderatable_user?
     moderatable_type == 'User'
+  end
+
+  def not_blocking_officer
+    return unless moderatable
+
+    if moderatable.terms.active_at(Time.now).any?
+      errors.add :base, "Can't block officers"
+    end
   end
 end

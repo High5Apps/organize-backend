@@ -101,6 +101,15 @@ class ModerationEventTest < ActiveSupport::TestCase
     assert @event.valid?
   end
 
+  test 'should not block officers' do
+    founder = users :one
+    assert founder.terms.active_at(Time.now).any?
+
+    event = @event.dup
+    event.moderatable = founder
+    assert event.invalid?
+  end
+
   test 'should block moderatable if action is block' do
     event = @event.dup
     unblock_all
