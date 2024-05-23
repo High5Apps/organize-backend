@@ -18,6 +18,8 @@ class FlagReport::Query
       now.iso8601(6)
     created_at_or_before = Time.iso8601(created_at_or_before_param.to_s).utc
 
+    handled = ActiveModel::Type::Boolean.new.deserialize @params[:handled]
+
     recent_events = @org.moderation_events
       .most_recent_created_at_or_before(created_at_or_before)
       .joins(:user)
@@ -41,7 +43,7 @@ class FlagReport::Query
     # When handled is true, INNER JOIN to only include flaggables with
     # moderation events, then filter out unhandled moderation event actions, and
     # order by most recent moderation event creation
-    if @params[:handled] == true
+    if handled
       @relation = @relation.joins(%(
         INNER JOIN recent_events
           ON recent_events.moderatable_type = flags.flaggable_type
@@ -62,7 +64,7 @@ class FlagReport::Query
 
       # When handled is false, only include flaggables without moderation events
       # or flaggables with unhandled moderation event actions
-      if @params[:handled] == false
+      if handled == false
         @relation = @relation.where(recent_events: { id: nil })
           .or(
             @relation.where(recent_events: { action: UNHANDLED_ACTION_VALUES }))
