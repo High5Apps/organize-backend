@@ -46,6 +46,7 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create without permission' do
+    assert_not @other_user.can? :block_users
     assert_not @other_user.can? :moderate
 
     @moderatables.each do |moderatable|

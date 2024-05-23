@@ -6,7 +6,8 @@ class Api::V1::ModerationEventsController < ApplicationController
   ]
 
   before_action :authenticate_user, only: [:create]
-  before_action :check_can_moderate, only: [:create]
+  before_action :check_can_block_members, only: [:create], if: :moderating_user?
+  before_action :check_can_moderate, only: [:create], unless: :moderating_user?
 
   def create
     new_moderation_event = authenticated_user.created_moderation_events
@@ -23,5 +24,9 @@ class Api::V1::ModerationEventsController < ApplicationController
 
   def create_params
     params.require(:moderation_event).permit(PERMITTED_CREATE_PARAMS)
+  end
+
+  def moderating_user?
+    create_params[:moderatable_type] == 'User'
   end
 end
