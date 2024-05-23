@@ -55,8 +55,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should only include users from requester Org' do
     get api_v1_users_url, headers: @authorized_headers
-    response.parsed_body => users:
-    user_ids = users.map { |u| u[:id] }
+    user_ids = get_user_ids_from_response
     assert_not_empty user_ids
     users = User.find(user_ids)
     users.each do |user|
@@ -81,6 +80,27 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     get api_v1_users_url, headers: @authorized_headers, params: { page: }
     pagination_data = assert_contains_pagination_data
     assert_equal page, pagination_data[:current_page]
+  end
+
+  test 'index should not include blocked users' do
+    user = users :blocked
+    event = moderation_events(:four).dup
+    unblock_all
+
+    get api_v1_users_url, headers: @authorized_headers
+    user_ids = get_user_ids_from_response
+
+    all_user_ids = @user.org.users.ids
+    assert_equal all_user_ids.sort, user_ids.sort
+
+    [[:unblock, nil], [:block, user]].each do |action, blocked_user|
+      user.send action
+
+      get api_v1_users_url, headers: @authorized_headers
+      user_ids = get_user_ids_from_response
+
+      assert_equal (all_user_ids - [blocked_user&.id]).sort, user_ids.sort
+    end
   end
 
   test 'should not show with invalid authorization' do
@@ -114,5 +134,12 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_not_equal @user.org, @user_in_other_org.org
     get api_v1_user_url(@user_in_other_org), headers: @authorized_headers
     assert_response :not_found
+  end
+
+  private
+
+  def get_user_ids_from_response
+    response.parsed_body => users: user_jsons
+    user_jsons.map { |u| u[:id] }
   end
 end
