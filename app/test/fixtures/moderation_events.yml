@@ -27,3 +27,9 @@ three:
   created_at: <%= 5.seconds.ago.to_fs(:db) %>
   moderatable: two (Comment)
   user: one
+
+four:
+  action: block
+  created_at: <%= 4.seconds.ago.to_fs(:db) %>
+  moderatable: blocked (User)
+  user: one

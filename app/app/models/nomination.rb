@@ -11,6 +11,7 @@ class Nomination < ApplicationRecord
     presence: true,
     same_org: :nominator,
     uniqueness: { scope: :ballot }
+  validates :nominee, not_blocked: true, on: :create
 
   validate :ballot_is_election
   validate :not_self_nomination

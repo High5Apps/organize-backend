@@ -64,6 +64,11 @@ class NominationTest < ActiveSupport::TestCase
     assert @nomination.invalid?
   end
 
+  test 'nominee should not be blocked' do
+    @nomination.nominee = users :blocked
+    assert @nomination.invalid? :create
+  end
+
   test 'should not be able to self-nominate' do
     @nomination.nominee = @nomination.nominator
     assert @nomination.invalid?
