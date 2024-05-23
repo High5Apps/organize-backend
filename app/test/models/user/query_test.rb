@@ -82,4 +82,17 @@ class UserQueryTest < ActiveSupport::TestCase
     ).relation
     assert_equal expected_users.map(&:id), users.map(&:id)
   end
+
+  test 'low_service sort should be the opposite of service sort' do
+    now = Time.now
+    high_service = User::Query.new(@org.users,
+      joined_at_or_before: now.iso8601(6),
+      sort: 'service',
+    ).relation
+    low_service = User::Query.new(@org.users,
+      joined_at_or_before: now.iso8601(6),
+      sort: 'low_service',
+    ).relation
+    assert_equal high_service.map(&:id).reverse, low_service.map(&:id)
+  end
 end

@@ -68,6 +68,8 @@ class User::Query
     sort_parameter = @params[:sort]
     if sort_parameter == 'service'
       users = users.order_by_service(joined_at_or_before)
+    elsif sort_parameter == 'low_service'
+      users = users.order_by_service(joined_at_or_before).reverse_order
     elsif sort_parameter == 'office'
       users = users.order_by_office(joined_at_or_before)
     end
