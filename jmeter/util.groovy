@@ -35,6 +35,10 @@ def e2eEncrypt(String message, String symmetricKeyBase64) {
   return new JsonBuilder(encryptedMessage).toString()
 }
 
+def e2eEncrypt(int characterLength, String symmetricKeyBase64) {
+  return e2eEncrypt("a" * characterLength, symmetricKeyBase64)
+}
+
 def jwt(keyPair, String userId) {
   if (!keyPair) { return "Warning: jwt expected keyPair" }
 
