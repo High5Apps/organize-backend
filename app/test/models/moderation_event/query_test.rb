@@ -45,8 +45,10 @@ class ModerationEventQueryTest < ActiveSupport::TestCase
     assert_equal expected, event_created_ats
   end
 
-  test 'should order by most recently created regardless of active param' do
-    query = ModerationEvent::Query.build ModerationEvent.all, active: true
+  test 'should order by most recently created regardless of other params' do
+    query = ModerationEvent::Query.build ModerationEvent.all,
+      active: true,
+      actions: ['allow', 'block', 'undo_allow']
     event_created_ats = query.pluck :created_at
     assert_operator event_created_ats.count, :>, 1
     event_created_ats.each_cons(2) do |first, second|
