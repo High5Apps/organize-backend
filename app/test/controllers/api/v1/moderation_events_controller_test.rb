@@ -108,12 +108,21 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
           action: String,
           created_at: String,
           id: String,
-          moderatable_id: String,
-          moderatable_type: String,
-          moderatable_user_pseudonym: String,
-          user_id: String,
-          user_pseudonym: String,
-          **nil
+          moderatable: {
+            category: String,
+            creator: {
+              id: String,
+              pseudonym: String,
+              **nil
+            },
+            id: String,
+            **nil
+          },
+          moderator: {
+            id: String,
+            pseudonym: String,
+            **nil
+          },
         }
       end
     end

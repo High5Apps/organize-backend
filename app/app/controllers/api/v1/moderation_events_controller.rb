@@ -42,7 +42,23 @@ class Api::V1::ModerationEventsController < ApplicationController
   def moderation_events
     @query.includes(moderatable: :user).map do |me|
       user = me.moderatable_user? ? me.moderatable : me.moderatable.user
-      me.attributes.merge(moderatable_user_pseudonym: user.pseudonym)
+      {
+        action: me.action,
+        created_at: me.created_at,
+        id: me.id,
+        moderatable: {
+          category: me.moderatable_type,
+          creator: {
+            id: user.id,
+            pseudonym: user.pseudonym,
+          },
+          id: me.moderatable_id,
+        },
+        moderator: {
+          id: me.user_id,
+          pseudonym: me.user_pseudonym,
+        },
+      }
     end
   end
 end
