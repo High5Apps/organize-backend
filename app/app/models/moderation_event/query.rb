@@ -33,10 +33,6 @@ class ModerationEvent::Query
     active = ActiveModel::Type::Boolean.new.deserialize params[:active]
     if active == true
       moderation_events = moderation_events.most_recent_created_at_or_before now
-    else
-      # most_recent_created_at_or_before above already includes a special order
-      # statement which must not be called in combination with other order calls
-      moderation_events = moderation_events.order(created_at: :desc)
     end
 
     moderatable_type_param = params[:moderatable_type]
@@ -45,7 +41,9 @@ class ModerationEvent::Query
         .where(moderatable_type: moderatable_type_param)
     end
 
-    # This select must happen after the call to most_recent_created_at_or_before
-    moderation_events.select(ALLOWED_ATTRIBUTES)
+    # The select and order calls must happen after the call to
+    # most_recent_created_at_or_before so that they don't interfere with its
+    # DISTINCT ON operator, which Rails doesn't natively support
+    moderation_events.select(ALLOWED_ATTRIBUTES).order(created_at: :desc)
   end
 end

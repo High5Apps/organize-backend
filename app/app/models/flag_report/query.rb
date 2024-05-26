@@ -23,7 +23,7 @@ class FlagReport::Query
     recent_events = @org.moderation_events
       .most_recent_created_at_or_before(created_at_or_before)
       .joins(:user)
-      .select('users.pseudonym AS moderator_pseudonym')
+      .select('moderation_events.*', 'users.pseudonym AS moderator_pseudonym')
 
     flag_counts = @org.flags
       .created_at_or_before(created_at_or_before)

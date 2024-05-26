@@ -45,6 +45,15 @@ class ModerationEventQueryTest < ActiveSupport::TestCase
     assert_equal expected, event_created_ats
   end
 
+  test 'should order by most recently created regardless of active param' do
+    query = ModerationEvent::Query.build ModerationEvent.all, active: true
+    event_created_ats = query.pluck :created_at
+    assert_operator event_created_ats.count, :>, 1
+    event_created_ats.each_cons(2) do |first, second|
+      assert_operator first, :>, second
+    end
+  end
+
   test 'should filter by actions when param is present' do
     action_names = ModerationEvent.actions.keys
     action_names.count.times do |i|
@@ -66,6 +75,7 @@ class ModerationEventQueryTest < ActiveSupport::TestCase
     ids = ModerationEvent::Query.build(ModerationEvent.all, active: true)
       .map { |e| e.id }
     expected_ids = ModerationEvent.most_recent_created_at_or_before(Time.now)
+      .order(created_at: :desc)
       .map { |e| e.id }
     assert_equal expected_ids, ids
   end

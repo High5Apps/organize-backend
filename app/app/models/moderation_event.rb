@@ -2,18 +2,20 @@ class ModerationEvent < ApplicationRecord
   scope :created_at_or_before, ->(time) { where(created_at: ..time) }
 
   scope :most_recent_created_at_or_before, ->(time) {
-    select(%(
-      DISTINCT ON (
-        moderation_events.moderatable_type,
-        moderation_events.moderatable_id
-      ) moderation_events.*
-    ).gsub(/\s+/, ' '))
-      .created_at_or_before(time)
-      .order(%(
-        moderation_events.moderatable_type,
-        moderation_events.moderatable_id,
-        moderation_events.created_at DESC
+    from(
+      select(%(
+        DISTINCT ON (
+          moderation_events.moderatable_type,
+          moderation_events.moderatable_id
+        ) moderation_events.*
       ).gsub(/\s+/, ' '))
+        .created_at_or_before(time)
+        .order(%(
+          moderation_events.moderatable_type,
+          moderation_events.moderatable_id,
+          moderation_events.created_at DESC
+        ).gsub(/\s+/, ' ')),
+    :moderation_events)
   }
 
   ALLOWED_TYPES = ['Ballot', 'Comment', 'Post', 'User']
