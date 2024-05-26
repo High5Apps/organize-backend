@@ -33,3 +33,9 @@ four:
   created_at: <%= 4.seconds.ago.to_fs(:db) %>
   moderatable: blocked (User)
   user: one
+
+five:
+  action: allow
+  created_at: <%= 3.seconds.ago.to_fs(:db) %>
+  moderatable: two (Ballot)
+  user: five
