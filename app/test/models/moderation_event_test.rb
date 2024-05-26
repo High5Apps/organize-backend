@@ -181,4 +181,14 @@ class ModerationEventTest < ActiveSupport::TestCase
     assert_not_includes recent_event_ids, later_event.id
     assert_includes recent_event_ids, earlier_event.id
   end
+
+  test 'created_at_or_before should not include moderation_events created after time' do
+    event_created_at = moderation_events(:one).created_at
+    recent_events = ModerationEvent.created_at_or_before(event_created_at)
+    assert_not_equal ModerationEvent.count, recent_events.count
+    assert_not_empty recent_events
+    recent_events.each do |event|
+      assert_operator event.created_at, :<=, event_created_at
+    end
+  end
 end

@@ -1,4 +1,6 @@
 class ModerationEvent < ApplicationRecord
+  scope :created_at_or_before, ->(time) { where(created_at: ..time) }
+
   scope :most_recent_created_at_or_before, ->(time) {
     select(%(
       DISTINCT ON (
@@ -6,7 +8,7 @@ class ModerationEvent < ApplicationRecord
         moderation_events.moderatable_id
       ) moderation_events.*
     ).gsub(/\s+/, ' '))
-      .where(created_at: ..time)
+      .created_at_or_before(time)
       .order(%(
         moderation_events.moderatable_type,
         moderation_events.moderatable_id,
