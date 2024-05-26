@@ -44,4 +44,21 @@ class ModerationEventQueryTest < ActiveSupport::TestCase
     expected = ModerationEvent.order(created_at: :desc).pluck(:created_at)
     assert_equal expected, event_created_ats
   end
+
+  test 'should filter by actions when param is present' do
+    action_names = ModerationEvent.actions.keys
+    action_names.count.times do |i|
+      combinations = action_names.combination(1 + i)
+      combinations.each do |combination|
+        query = ModerationEvent::Query.build ModerationEvent.all,
+          actions: combination
+        assert_not_empty query
+        query.to_a.each do |moderation_event|
+          assert_includes combination, moderation_event.action
+          assert_not_includes (action_names - combination),
+            moderation_event.action
+        end
+      end
+    end
+  end
 end

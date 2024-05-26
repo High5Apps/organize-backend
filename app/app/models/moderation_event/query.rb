@@ -27,6 +27,11 @@ class ModerationEvent::Query
       .order(created_at: :desc)
       .page(params[:page]).without_count
 
+    actions_param = params[:actions]
+    if actions_param
+      moderation_events = moderation_events.where(action: actions_param)
+    end
+
     moderation_events
   end
 end
