@@ -32,6 +32,12 @@ class ModerationEvent::Query
       moderation_events = moderation_events.where(action: actions_param)
     end
 
+    moderatable_type_param = params[:moderatable_type]
+    if moderatable_type_param
+      moderation_events = moderation_events
+        .where(moderatable_type: moderatable_type_param)
+    end
+
     moderation_events
   end
 end

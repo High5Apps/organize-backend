@@ -61,4 +61,14 @@ class ModerationEventQueryTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'should filter by moderatable_type when param is present' do
+    ModerationEvent::ALLOWED_TYPES.each do |moderatable_type|
+      types = ModerationEvent::Query.build(ModerationEvent.all,
+        moderatable_type:
+      ).pluck(:moderatable_type).uniq
+      assert_equal 1, types.count
+      assert_equal moderatable_type, types.first
+    end
+  end
 end

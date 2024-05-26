@@ -19,7 +19,7 @@ four:
   created_at: <%= 7.seconds.ago.to_fs(:db) %>
 
 five:
-  flaggable: two (Ballot)
+  flaggable: two (Post)
   user: five
   created_at: <%= 6.seconds.ago.to_fs(:db) %>
 

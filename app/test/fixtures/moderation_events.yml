@@ -37,11 +37,11 @@ four:
 five:
   action: block
   created_at: <%= 3.seconds.ago.to_fs(:db) %>
-  moderatable: two (Ballot)
+  moderatable: two (Post)
   user: five
 
 six:
   action: undo_block
   created_at: <%= 2.seconds.ago.to_fs(:db) %>
-  moderatable: two (Ballot)
+  moderatable: two (Post)
   user: five
