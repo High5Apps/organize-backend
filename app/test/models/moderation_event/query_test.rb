@@ -62,6 +62,14 @@ class ModerationEventQueryTest < ActiveSupport::TestCase
     end
   end
 
+  test 'should filter by most_recent_created_at_or_before when active param is true' do
+    ids = ModerationEvent::Query.build(ModerationEvent.all, active: true)
+      .map { |e| e.id }
+    expected_ids = ModerationEvent.most_recent_created_at_or_before(Time.now)
+      .map { |e| e.id }
+    assert_equal expected_ids, ids
+  end
+
   test 'should filter by moderatable_type when param is present' do
     ModerationEvent::ALLOWED_TYPES.each do |moderatable_type|
       types = ModerationEvent::Query.build(ModerationEvent.all,
