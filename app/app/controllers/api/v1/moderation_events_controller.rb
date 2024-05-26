@@ -21,7 +21,12 @@ class Api::V1::ModerationEventsController < ApplicationController
   end
 
   def index
-    render json: { moderation_events: }
+    initial_moderation_events = authenticated_user.org&.moderation_events
+    @query = ModerationEvent::Query.build initial_moderation_events, params
+    render json: {
+      moderation_events:,
+      meta: pagination_dict(@query),
+    }
   end
 
   private
@@ -35,11 +40,9 @@ class Api::V1::ModerationEventsController < ApplicationController
   end
 
   def moderation_events
-    initial_moderation_events = authenticated_user.org&.moderation_events
-    events = ModerationEvent::Query.build(initial_moderation_events, params)
-      .includes(moderatable: :user).map do |me|
-        user = me.moderatable_user? ? me.moderatable : me.moderatable.user
-        me.attributes.merge(moderatable_user_pseudonym: user.pseudonym)
-      end
+    @query.includes(moderatable: :user).map do |me|
+      user = me.moderatable_user? ? me.moderatable : me.moderatable.user
+      me.attributes.merge(moderatable_user_pseudonym: user.pseudonym)
+    end
   end
 end

@@ -10,7 +10,9 @@ class ModerationEvent::Query
   ].freeze
 
   def self.build(initial_moderation_events, params={})
-    return ModerationEvent.none unless initial_moderation_events
+    unless initial_moderation_events
+      return ModerationEvent.none.page(params[:page]).without_count
+    end
 
     now = Time.now
     now_iso8601 = now.iso8601(6)
@@ -23,6 +25,7 @@ class ModerationEvent::Query
       .joins(:user)
       .select(ALLOWED_ATTRIBUTES)
       .order(created_at: :desc)
+      .page(params[:page]).without_count
 
     moderation_events
   end
