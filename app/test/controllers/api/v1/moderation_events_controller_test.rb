@@ -62,11 +62,73 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'should index with valid authorization' do
+    get api_v1_moderation_events_url, headers: @authorized_headers
+    assert_response :ok
+  end
+
+  test 'should not index with invalid authorization' do
+    get api_v1_moderation_events_url,
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
+    assert_response :unauthorized
+  end
+
+  test 'index should be empty if user is not in an Org' do
+    @user.update!(org: nil)
+    assert_nil @user.reload.org
+
+    get api_v1_moderation_events_url, headers: @authorized_headers
+    assert_pattern { response.parsed_body => moderation_events: [] }
+  end
+
+  test 'index should only include moderation events from requester Org' do
+    get api_v1_moderation_events_url, headers: @authorized_headers
+    moderation_event_ids = get_moderation_event_ids_from_response
+    assert_not_empty moderation_event_ids
+    moderation_events = ModerationEvent.find(moderation_event_ids)
+    moderation_events.each do |moderation_event|
+      assert_equal @user.org, moderation_event.user.org
+    end
+  end
+
+  test 'index should format created_at attributes as iso8601' do
+    get api_v1_moderation_events_url, headers: @authorized_headers
+    response.parsed_body => moderation_events: [{ created_at: }, *]
+    assert Time.iso8601(created_at)
+  end
+
+  test 'index should only include expected attributes' do
+    get api_v1_moderation_events_url, headers: @authorized_headers
+    response.parsed_body => moderation_events:
+    moderation_events.each do |moderation_event|
+      assert_pattern do
+        moderation_event.as_json.with_indifferent_access => {
+          action: String,
+          created_at: String,
+          id: String,
+          moderatable_id: String,
+          moderatable_type: String,
+          moderatable_user_pseudonym: String,
+          user_id: String,
+          user_pseudonym: String,
+          **nil
+        }
+      end
+    end
+  end
+
   private
 
   def create_params(moderatable)
     ModerationEvent.destroy_all
     @event_template.moderatable = moderatable
     { moderation_event: @event_template.as_json }
+  end
+
+  def get_moderation_event_ids_from_response
+    response.parsed_body => moderation_events: moderation_event_jsons
+    moderation_event_jsons.map { |me| me[:id] }
   end
 end

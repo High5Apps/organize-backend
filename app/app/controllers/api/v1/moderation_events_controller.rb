@@ -5,7 +5,7 @@ class Api::V1::ModerationEventsController < ApplicationController
     :moderatable_type,
   ]
 
-  before_action :authenticate_user, only: [:create]
+  before_action :authenticate_user, only: [:index, :create]
   before_action :check_can_block_members, only: [:create], if: :moderating_user?
   before_action :check_can_moderate, only: [:create], unless: :moderating_user?
 
@@ -20,6 +20,10 @@ class Api::V1::ModerationEventsController < ApplicationController
     end
   end
 
+  def index
+    render json: { moderation_events: }
+  end
+
   private
 
   def create_params
@@ -28,5 +32,14 @@ class Api::V1::ModerationEventsController < ApplicationController
 
   def moderating_user?
     create_params[:moderatable_type] == 'User'
+  end
+
+  def moderation_events
+    initial_moderation_events = authenticated_user.org&.moderation_events
+    events = ModerationEvent::Query.build(initial_moderation_events, params)
+      .includes(moderatable: :user).map do |me|
+        user = me.moderatable_user? ? me.moderatable : me.moderatable.user
+        me.attributes.merge(moderatable_user_pseudonym: user.pseudonym)
+      end
   end
 end

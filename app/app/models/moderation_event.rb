@@ -37,6 +37,10 @@ class ModerationEvent < ApplicationRecord
   after_save -> { moderatable.block }, if: :block?
   after_save -> { moderatable.unblock }, unless: :block?
 
+  def moderatable_user?
+    moderatable_type == 'User'
+  end
+
   private
 
   def action_transitions
@@ -66,10 +70,6 @@ class ModerationEvent < ApplicationRecord
     unless moderatable.respond_to?(:flags) && moderatable.flags.any?
       errors.add :base, "can't moderate an item that isn't flagged"
     end
-  end
-
-  def moderatable_user?
-    moderatable_type == 'User'
   end
 
   def not_blocking_officer

@@ -13,7 +13,7 @@ Rails.application.routes.draw do
       resources :connections,  only: [:create]
       resources :flags, only: [:create]
       resources :flag_reports, only: [:index]
-      resources :moderation_events, only: [:create]
+      resources :moderation_events, only: [:index, :create]
       resources :nominations, only: [:update]
       resources :offices, only: [:index]
       resources :orgs, only: [:create]
