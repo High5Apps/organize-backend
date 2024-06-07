@@ -28,11 +28,6 @@ class ModerationEvent::Query
         .where(moderatable_type: moderatable_type_param)
     end
 
-    actions_param = params[:actions]
-    if actions_param
-      moderation_events = moderation_events.where(action: actions_param)
-    end
-
     active = ActiveModel::Type::Boolean.new.deserialize params[:active]
     if active == true
       # The call to most_recent_created_at_or_before must happen before any
@@ -42,6 +37,11 @@ class ModerationEvent::Query
       # added to the most_recent_created_at_or_before subquery in addition to
       # the main query
       moderation_events = moderation_events.most_recent_created_at_or_before now
+    end
+
+    actions_param = params[:actions]
+    if actions_param
+      moderation_events = moderation_events.where(action: actions_param)
     end
 
     moderation_events
