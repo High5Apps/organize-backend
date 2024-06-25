@@ -25,7 +25,7 @@ flaggable_type_counts.keys.each do |flaggable_type|
   # Find a random ballot with the max flag count to block
   flaggable_id_to_block = ordered_by_flag_count.last.flaggable_id
 
-  # If the flaggable to block is the same the allowed one, must undo_allow first
+  # If the flaggable to block is the one allowed above, must undo_allow first
   if flaggable_id_to_block == flaggable_id_to_allow
     founder.created_moderation_events.create!({
       action: 'undo_allow',
