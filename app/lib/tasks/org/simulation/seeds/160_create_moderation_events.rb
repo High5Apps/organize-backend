@@ -2,7 +2,12 @@ founder = User.find($simulation.founder_id)
 org = founder.org
 
 flaggable_type_counts = org.flags.group(:flaggable_type).count
-moderation_event_count = 2 * flaggable_type_counts.keys.count
+flaggable_moderation_event_count = 2 * flaggable_type_counts.keys.count
+
+max_users_to_block = [org.users.count, 4].min
+blocked_user_count = rand 0..max_users_to_block
+
+moderation_event_count = flaggable_moderation_event_count + blocked_user_count
 
 print "\tCreating about #{moderation_event_count} ModerationEvents... "
 start_time = Time.now
@@ -39,6 +44,17 @@ flaggable_type_counts.keys.each do |flaggable_type|
     action: 'block',
     moderatable_id: flaggable_id_to_block,
     moderatable_type: flaggable_type,
+  })
+end
+
+# Pick a few random users to block
+org.users.ids.sample(blocked_user_count).each do |user_id|
+  # Attempt to block each user. Note this could fail if the user is an officer
+  # or other protected member.
+  founder.created_moderation_events.create({
+    action: 'block',
+    moderatable_id: user_id,
+    moderatable_type: 'User',
   })
 end
 
