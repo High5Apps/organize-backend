@@ -148,6 +148,19 @@ class TermTest < ActiveSupport::TestCase
     end
   end
 
+  test 'impending_at should only include accepted terms that start in the future' do
+    starts_ats = [1.second.from_now, 2.seconds.from_now, 3.seconds.from_now]
+    ends_ats = [4.seconds.from_now] * starts_ats.count
+    t1, t2, t3 = create_terms_with(ends_ats:, starts_ats:)
+    query = Term.impending_at(t2.starts_at)
+    assert_not query.exists?(id: t1)
+    assert_not query.exists?(id: t2)
+    assert query.exists?(id: t3)
+
+    t3.update! accepted: false
+    assert_not query.exists?(id: t3)
+  end
+
   private
 
   def create_terms_with(ends_ats:, starts_ats:)

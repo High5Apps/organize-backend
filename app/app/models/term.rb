@@ -1,6 +1,10 @@
 class Term < ApplicationRecord
+  scope :accepted, -> { where(accepted: true) }
   scope :active_at, ->(time) {
-    where(accepted: true, starts_at: ..time).where.not(ends_at: ..time)
+    accepted.where(starts_at: ..time).where.not(ends_at: ..time)
+  }
+  scope :impending_at, ->(time) {
+    accepted.where.not(starts_at: ..time)
   }
 
   # Do not use 2.months for this because it creates test failures near the end
