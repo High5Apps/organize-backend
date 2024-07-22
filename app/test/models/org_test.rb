@@ -49,6 +49,12 @@ class OrgTest < ActiveSupport::TestCase
     assert @org.invalid?
   end
 
+  test 'graph should include blocked_user_ids' do
+    expected_ids = @org.users.blocked.ids
+    assert_not_empty expected_ids
+    assert_equal expected_ids.sort, @org.graph[:blocked_user_ids].sort
+  end
+
   test 'graph should include user_ids' do
     assert_equal @org.users.ids.sort, @org.graph[:user_ids].sort
   end

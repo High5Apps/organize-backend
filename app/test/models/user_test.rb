@@ -65,6 +65,12 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  test 'blocked should only include blocked users' do
+    blocked_users = User.blocked
+    assert_not_empty blocked_users
+    assert_not blocked_users.exists?(blocked: false)
+  end
+
   test "my_vote_candidate_ids should return user's vote's candidate_ids" do
     ballot_with_vote = ballots(:one)
     my_vote_candidate_ids = @user.my_vote_candidate_ids(ballot_with_vote)

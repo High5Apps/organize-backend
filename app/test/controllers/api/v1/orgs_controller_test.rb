@@ -63,8 +63,9 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
         encrypted_name:,
         encrypted_member_definition:,
         graph: {
-          user_ids: [String, *],
+          blocked_user_ids: [String, *],
           connections: [[String, String], *],
+          user_ids: [String, *],
           **nil
         },
         id: String,

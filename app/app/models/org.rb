@@ -26,7 +26,9 @@ class Org < ApplicationRecord
       Connection.where(sharer_id: user_ids)
     ).pluck :sharer_id, :scanner_id
 
-    { connections:, user_ids: }
+    blocked_user_ids = users.blocked.ids
+
+    { blocked_user_ids:, connections:, user_ids: }
   end
 
   def next_pseudonym

@@ -2,6 +2,7 @@ module Moderatable
   extend ActiveSupport::Concern
 
   included do
+    scope :blocked, -> { where(blocked: true) }
     scope :omit_blocked, -> { where(blocked: false) }
 
     has_many :moderation_events, as: :moderatable
