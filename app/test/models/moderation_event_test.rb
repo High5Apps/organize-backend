@@ -110,6 +110,15 @@ class ModerationEventTest < ActiveSupport::TestCase
     assert event.invalid?
   end
 
+  test 'should not block impending officers' do
+    impending_president = users :four
+    assert impending_president.terms.impending_at(Time.now).any?
+
+    event = @event.dup
+    event.moderatable = impending_president
+    assert event.invalid?
+  end
+
   test 'should block moderatable if action is block' do
     event = @event.dup
     unblock_all

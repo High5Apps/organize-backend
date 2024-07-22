@@ -34,6 +34,7 @@ class ModerationEvent < ApplicationRecord
 
   validate :action_transitions, on: :create
   validate :moderatable_flagged, unless: :moderatable_user?
+  validate :not_blocking_impending_officer, on: :create, if: :moderatable_user?
   validate :not_blocking_officer, on: :create, if: :moderatable_user?
 
   after_save -> { moderatable.block }, if: :block?
@@ -71,6 +72,14 @@ class ModerationEvent < ApplicationRecord
 
     unless moderatable.respond_to?(:flags) && moderatable.flags.any?
       errors.add :base, "can't moderate an item that isn't flagged"
+    end
+  end
+
+  def not_blocking_impending_officer
+    return unless moderatable
+
+    if moderatable.terms.impending_at(Time.now).any?
+      errors.add :base, "Can't block impending officers"
     end
   end
 
