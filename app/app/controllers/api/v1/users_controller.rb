@@ -1,5 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   ALLOWED_ATTRIBUTES = [
+    :blocked,
     :connection_count,
     :id,
     :joined_at,
