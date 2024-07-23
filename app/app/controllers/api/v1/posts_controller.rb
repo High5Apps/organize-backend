@@ -7,8 +7,6 @@ class Api::V1::PostsController < ApplicationController
     EncryptedMessage.permitted_params(:title),
   ]
 
-  before_action :authenticate_user, only: [:index, :create, :show]
-
   def create
     new_post = authenticated_user.posts.build create_params
     if new_post.save

@@ -3,8 +3,6 @@ class Api::V1::VotesController < ApplicationController
     candidate_ids: [],
   ]
 
-  before_action :authenticate_user, only: [:create]
-
   def create
     vote = authenticated_user.votes.create_with(create_params)
       .find_or_create_by(ballot_id: params[:ballot_id])

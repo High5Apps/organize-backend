@@ -1,6 +1,6 @@
 class Api::V1::ConnectionsController < ApplicationController
-  before_action :authenticate_user, only: [:create]
   before_action :authenticate_sharer, only: [:create, :preview]
+  skip_before_action :authenticate_user, only: :preview
 
   def create
     new_connection = authenticated_user.scanned_connections.build(

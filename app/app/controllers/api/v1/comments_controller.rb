@@ -27,8 +27,6 @@ class Api::V1::CommentsController < ApplicationController
     EncryptedMessage.permitted_params(:body),
   ].freeze
 
-  before_action :authenticate_user, only: [:index, :create]
-
   def create
     new_comment = authenticated_user.comments.build(create_params)
     if new_comment.save

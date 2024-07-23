@@ -5,7 +5,6 @@ class Api::V1::ModerationEventsController < ApplicationController
     :moderatable_type,
   ]
 
-  before_action :authenticate_user, only: [:index, :create]
   before_action :check_can_block_members, only: [:create], if: :moderating_user?
   before_action :check_can_moderate, only: [:create], unless: :moderating_user?
 

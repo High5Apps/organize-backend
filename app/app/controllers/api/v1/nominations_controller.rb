@@ -13,7 +13,6 @@ class Api::V1::NominationsController < ApplicationController
     :id,
   ]
 
-  before_action :authenticate_user, only: [:create, :update]
   before_action :check_received_nomination, only: [:update]
 
   def create

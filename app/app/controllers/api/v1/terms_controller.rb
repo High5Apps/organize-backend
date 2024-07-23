@@ -1,6 +1,4 @@
 class Api::V1::TermsController < ApplicationController
-  before_action :authenticate_user, only: [:create]
-
   def create
     new_term = authenticated_user.terms.build create_params
     if new_term.save

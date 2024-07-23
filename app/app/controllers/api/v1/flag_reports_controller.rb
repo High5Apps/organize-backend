@@ -1,5 +1,4 @@
 class Api::V1::FlagReportsController < ApplicationController
-  before_action :authenticate_user, only: [:index]
   before_action :check_can_moderate, only: [:index]
 
   def index

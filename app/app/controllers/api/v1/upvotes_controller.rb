@@ -3,8 +3,6 @@ class Api::V1::UpvotesController < ApplicationController
     :value,
   ]
 
-  before_action :authenticate_user, only: [:create]
-
   def create
     comment_id = params[:comment_id]
     post_id = params[:post_id]

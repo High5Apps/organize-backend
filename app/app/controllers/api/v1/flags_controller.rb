@@ -1,8 +1,6 @@
 class Api::V1::FlagsController < ApplicationController
   PERMITTED_PARAMS = [:flaggable_id, :flaggable_type]
 
-  before_action :authenticate_user, only: [:create]
-
   def create
     flag = authenticated_user.flags.create_with(create_params)
       .create_or_find_by(create_params)

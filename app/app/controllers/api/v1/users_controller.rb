@@ -12,7 +12,7 @@ class Api::V1::UsersController < ApplicationController
     :public_key_bytes,
   ]
 
-  before_action :authenticate_user, only: [:index, :show]
+  skip_before_action :authenticate_user, only: :create
 
   def create
     new_user = User.new(create_params)

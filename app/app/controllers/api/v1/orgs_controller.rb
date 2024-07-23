@@ -4,7 +4,6 @@ class Api::V1::OrgsController < ApplicationController
     EncryptedMessage.permitted_params(:member_definition),
   ]
 
-  before_action :authenticate_user, only: [:create, :my_org, :update_my_org]
   before_action :check_org_membership, only: [:my_org, :update_my_org]
   before_action :check_can_edit_org, only: [:update_my_org]
 
