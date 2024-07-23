@@ -65,6 +65,17 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'should not get blocked user' do
+    @user.block
+
+    auth_token = @user.create_auth_token(FAKE_AUTH_TIMEOUT.from_now, SCOPE_ALL)
+    @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
+
+    assert_raises Authenticatable::BlockedUserError do
+      @authentication.authenticated_user
+    end
+  end
+
   test 'should not get user from correct token without expiration' do
     freeze_time do
       auth_token = @user.create_auth_token(nil, SCOPE_ALL)

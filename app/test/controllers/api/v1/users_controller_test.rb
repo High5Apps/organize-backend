@@ -136,6 +136,16 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  # This is the only test covering the BlockedUserError handling in
+  # ApplicationController#authenticate_user. Do not remove this test without
+  # first adding a similar test to another controller.
+  test 'should not show if requester is blocked' do
+    @user.block
+    get api_v1_user_url(@user_in_org), headers: @authorized_headers
+    assert_response :forbidden
+    response.parsed_body => error_messages: [/blocked/]
+  end
+
   private
 
   def get_user_ids_from_response
