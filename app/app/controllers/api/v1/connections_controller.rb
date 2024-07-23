@@ -45,9 +45,14 @@ class Api::V1::ConnectionsController < ApplicationController
   private
 
   def authenticate_sharer
-    @authenticated_sharer = authenticate(
-      scope: Authenticatable::SCOPE_CREATE_CONNECTIONS,
-      header: Authenticatable::HEADER_SHARER_AUTHORIZATION)
-    render_unauthorized unless @authenticated_sharer
+    begin
+      @authenticated_sharer = authenticate(
+        scope: Authenticatable::SCOPE_CREATE_CONNECTIONS,
+        header: Authenticatable::HEADER_SHARER_AUTHORIZATION)
+    rescue Authenticatable::AuthorizationError
+      render_unauthorized
+    rescue
+      render_unauthenticated
+    end
   end
 end

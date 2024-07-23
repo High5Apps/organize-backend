@@ -158,6 +158,6 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     patch(api_v1_update_my_org_url,
       headers: authorized_headers(user, Authenticatable::SCOPE_ALL),
       params: @update_params)
-    assert_response :unauthorized
+    assert_response :forbidden
   end
 end

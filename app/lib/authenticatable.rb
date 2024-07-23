@@ -4,6 +4,9 @@ module Authenticatable
   SCOPE_CREATE_CONNECTIONS = 'create:connections'.freeze
   SCOPE_ALL = '*'.freeze
 
+  class AuthenticationError < StandardError; end
+  class AuthorizationError < StandardError; end
+
   def authenticated_user
     return @authenticated_user if @authenticated_user
 
@@ -14,16 +17,16 @@ module Authenticatable
     jwt = auth_token(header)
     user_id = unauthenticated_user_id(jwt)
     user = User.find_by_id(user_id)
-    return nil unless user;
+    raise AuthenticationError unless user
 
     begin
       valid_jwt = JsonWebToken.decode(jwt, user.public_key)
-    rescue JWT::DecodeError => error
+    rescue => error
       logger.error error
-      return nil
+      raise AuthenticationError
     end
 
-    return nil unless authorize(valid_jwt, scope)
+    raise AuthorizationError unless authorize(valid_jwt, scope)
 
     user
   end

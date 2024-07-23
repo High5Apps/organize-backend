@@ -27,7 +27,9 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
 
   test 'should not get user from empty token' do
     @authentication.request.headers[AUTHORIZATION] = nil
-    assert_nil @authentication.authenticated_user
+    assert_raises Authenticatable::AuthenticationError do
+      @authentication.authenticated_user
+    end
   end
 
   test 'should not get user from expired token' do
@@ -37,7 +39,9 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
       @authentication.request.headers[AUTHORIZATION] = bearer(expired_token)
 
       travel FAKE_AUTH_TIMEOUT
-      assert_nil @authentication.authenticated_user
+      assert_raises Authenticatable::AuthenticationError do
+        @authentication.authenticated_user
+      end
     end
   end
 
@@ -46,7 +50,9 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
       FAKE_AUTH_TIMEOUT.from_now, SCOPE_ALL
     ) + 'bad'
     @authentication.request.headers[AUTHORIZATION] = bearer(bad_token)
-    assert_nil @authentication.authenticated_user
+    assert_raises Authenticatable::AuthenticationError do
+      @authentication.authenticated_user
+    end
   end
 
   test 'should get user from correct, non-expired token' do
@@ -65,7 +71,9 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
       @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
 
       travel -10.seconds
-      assert_nil @authentication.authenticated_user
+      assert_raises Authenticatable::AuthenticationError do
+        @authentication.authenticated_user
+      end
     end
   end
 
@@ -75,7 +83,9 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
       @authentication.request.headers[AUTHORIZATION] = auth_token
 
       travel FAKE_AUTH_TIMEOUT - 1.second
-      assert_nil @authentication.authenticated_user
+      assert_raises Authenticatable::AuthenticationError do
+        @authentication.authenticated_user
+      end
     end
   end
 
@@ -85,7 +95,9 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
       @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
 
       travel FAKE_AUTH_TIMEOUT - 1.second
-      assert_nil @authentication.authenticated_user
+      assert_raises Authenticatable::AuthenticationError do
+        @authentication.authenticated_user
+      end
     end
   end
 
@@ -97,7 +109,9 @@ class AuthenticatableTest < ActionDispatch::IntegrationTest
       @authentication.request.headers[AUTHORIZATION] = bearer(auth_token)
 
       travel FAKE_AUTH_TIMEOUT - 1.second
-      assert_nil  @authentication.authenticated_user
+      assert_raises Authenticatable::AuthorizationError do
+        @authentication.authenticated_user
+      end
     end
   end
 

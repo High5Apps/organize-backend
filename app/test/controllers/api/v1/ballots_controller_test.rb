@@ -91,7 +91,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     post api_v1_ballots_url,
       headers: authorized_headers(@other_user, Authenticatable::SCOPE_ALL),
       params: @election_params
-    assert_response :unauthorized
+    assert_response :forbidden
   end
 
   test 'should not create yes no without exactly 2 candidates' do

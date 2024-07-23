@@ -28,14 +28,14 @@ class Api::V1::FlagReportsControllerTest < ActionDispatch::IntegrationTest
     assert_nil @user.reload.org
 
     get api_v1_flag_reports_url, headers: @authorized_headers
-    assert_response :unauthorized
+    assert_response :forbidden
   end
 
   test 'should not index without permission' do
     assert_not @other_user.can? :moderate
     get api_v1_flag_reports_url,
       headers: authorized_headers(@other_user, Authenticatable::SCOPE_ALL)
-    assert_response :unauthorized
+    assert_response :forbidden
   end
 
   test 'index should only include flag reports from requester Org' do

@@ -6,7 +6,13 @@ class ApplicationController < ActionController::API
   private
 
   def authenticate_user
-    render_unauthorized unless authenticated_user
+    begin
+      authenticated_user
+    rescue Authenticatable::AuthorizationError
+      render_unauthorized
+    rescue
+      render_unauthenticated
+    end
   end
 
   def check_org_membership
@@ -28,9 +34,18 @@ class ApplicationController < ActionController::API
     render_error :not_found, ['Not found']
   end
 
-  def render_unauthorized
-    error_message = "You aren't authorized to do that."
+  # For the difference between unauthorized and forbidden, see:
+  # https://stackoverflow.com/a/6937030/2421313
+  def render_unauthenticated
+    error_message = "Invalid auth token."
     render_error :unauthorized, [error_message]
+  end
+
+  # For the difference between unauthorized and forbidden, see:
+  # https://stackoverflow.com/a/6937030/2421313
+  def render_unauthorized
+    error_message = "You aren't allowed to do that."
+    render_error :forbidden, [error_message]
   end
 
   rescue_from ActionController::ParameterMissing do |e|

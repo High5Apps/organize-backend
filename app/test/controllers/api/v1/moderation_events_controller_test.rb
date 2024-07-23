@@ -57,7 +57,7 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
           params:,
           headers: authorized_headers(@other_user, Authenticatable::SCOPE_ALL)
 
-        assert_response :unauthorized
+        assert_response :forbidden
       end
     end
   end

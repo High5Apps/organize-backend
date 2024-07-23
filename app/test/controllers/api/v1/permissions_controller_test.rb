@@ -79,7 +79,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
     post create_by_scope_api_v1_permissions_url(@permission.scope),
       headers: authorized_headers(@non_officer, Authenticatable::SCOPE_ALL),
       params: create_params
-    assert_response :unauthorized
+    assert_response :forbidden
   end
 
   test 'should not create for non-existent scopes' do
@@ -110,7 +110,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
     assert_not @non_officer.can? :edit_permissions
     get show_by_scope_api_v1_permissions_url(@permission.scope),
       headers: authorized_headers(@non_officer, Authenticatable::SCOPE_ALL)
-    assert_response :unauthorized
+    assert_response :forbidden
   end
 
   test 'should not show if user is not in an Org' do
