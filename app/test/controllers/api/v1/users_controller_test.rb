@@ -118,11 +118,28 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
   end
 
-  test 'show should only include ALLOWED_ATTRIBUTES' do
+  test 'show should only include ALLOWED_ATTRIBUTES for unblocked users' do
+    assert_not @user_in_org.blocked?
+    assert_not_includes User::Query::ALLOWED_ATTRIBUTES, :blocked
+
     get api_v1_user_url(@user_in_org), headers: @authorized_headers
     json_response = response.parsed_body
 
-    attribute_allow_list = Api::V1::UsersController::ALLOWED_ATTRIBUTES
+    attribute_allow_list = User::Query::ALLOWED_ATTRIBUTES
+    assert_equal attribute_allow_list.count, json_response.keys.count
+    attribute_allow_list.each do |attribute|
+      assert json_response.key? attribute
+      assert_not_nil json_response[attribute]
+    end
+  end
+
+  test 'show should include blocked attribute for blocked users' do
+    @user_in_org.block
+
+    get api_v1_user_url(@user_in_org), headers: @authorized_headers
+    json_response = response.parsed_body
+
+    attribute_allow_list = User::Query::ALLOWED_ATTRIBUTES + [:blocked]
     assert_equal attribute_allow_list.count, json_response.keys.count
     attribute_allow_list.each do |attribute|
       assert json_response.key? attribute
@@ -144,6 +161,18 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     get api_v1_user_url(@user_in_org), headers: @authorized_headers
     assert_response :forbidden
     response.parsed_body => error_messages: [/blocked/]
+  end
+
+  test 'show should include the same attributes as index for unblocked users' do
+    assert_not @user.blocked?
+
+    get api_v1_users_url, headers: @authorized_headers
+    response.parsed_body => users:
+    index_user = users.filter { |u| u[:id] === @user.id }.first
+
+    get api_v1_user_url(@user), headers: @authorized_headers
+    show_user = response.parsed_body
+    assert_equal index_user, show_user
   end
 
   private

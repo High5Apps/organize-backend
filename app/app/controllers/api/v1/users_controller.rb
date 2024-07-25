@@ -1,13 +1,4 @@
 class Api::V1::UsersController < ApplicationController
-  ALLOWED_ATTRIBUTES = [
-    :blocked,
-    :connection_count,
-    :id,
-    :joined_at,
-    :offices,
-    :pseudonym,
-    :recruit_count,
-  ]
   PERMITTED_PARAMS = [
     :public_key_bytes,
   ]
@@ -41,7 +32,8 @@ class Api::V1::UsersController < ApplicationController
       return render_error :not_found, ["No user found with id #{params[:id]}"]
     end
 
-    render json: user.slice(ALLOWED_ATTRIBUTES)
+    allowed = User::Query::ALLOWED_ATTRIBUTES + [*(:blocked if user.blocked?)]
+    render json: user.slice(allowed)
   end
 
   private
