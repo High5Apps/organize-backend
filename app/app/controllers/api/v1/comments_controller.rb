@@ -40,6 +40,22 @@ class Api::V1::CommentsController < ApplicationController
     render json: { comments: }
   end
 
+  def thread
+    @comment = authenticated_user.org&.comments&.find params[:id]
+    return render_not_found unless @comment
+
+    thread = @comment.path
+      .includes_pseudonym
+      .with_upvotes_created_at_or_before(Time.now.utc)
+      .select_upvote_score
+      .select_my_upvote(authenticated_user.id)
+      .select(*MANUAL_SELECTIONS)
+      .arrange_serializable(&serializer)
+      .first
+
+    render json: { thread: }
+  end
+
   private
 
   def comments
@@ -61,13 +77,7 @@ class Api::V1::CommentsController < ApplicationController
       .select_my_upvote(my_id)
       .select(*MANUAL_SELECTIONS)
       .order_by_hot_created_at_or_before(created_at_or_before)
-      .arrange_serializable do |parent, children|
-        {
-          **parent.attributes
-            .filter { |k| ALLOWED_ATTRIBUTES.include? k.to_sym },
-          replies: children,
-        }
-      end
+      .arrange_serializable(&serializer)
   end
 
   def create_params
@@ -77,5 +87,15 @@ class Api::V1::CommentsController < ApplicationController
         comment_id: params[:comment_id],
         post_id: params[:post_id]
       })
+  end
+
+  def serializer
+    ->(parent, children) {
+      {
+        **parent.attributes
+          .filter { |k| ALLOWED_ATTRIBUTES.include? k.to_sym },
+        replies: children,
+      }
+    }
   end
 end

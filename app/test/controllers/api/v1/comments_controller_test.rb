@@ -14,6 +14,12 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:one)
     setup_test_key(@user)
     @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
+
+    @comment_with_thread = comments(:four)
+    @thread_user = users(:six)
+    setup_test_key(@thread_user)
+    @thread_authorized_headers = authorized_headers @thread_user,
+      Authenticatable::SCOPE_ALL
   end
 
   test 'should create with valid params' do
@@ -151,6 +157,72 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
 
     reply = replies.find { |r| r[:id] == first_reply_id }
     assert_only_includes_allowed_attributes reply
+  end
+
+  test 'should get thread with valid authorization' do
+    get thread_api_v1_comment_url(@comment_with_thread),
+      headers: @thread_authorized_headers
+    assert_response :ok
+  end
+
+  test 'should not get thread with invalid authorization' do
+    get thread_api_v1_comment_url(@comment_with_thread),
+      headers: authorized_headers(@thread_user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
+    assert_response :unauthorized
+  end
+
+  test 'should not get thread on a nonexistent comment' do
+    get thread_api_v1_comment_url('bad-comment-id'),
+      headers: @authorized_headers
+    assert_response :not_found
+  end
+
+  test 'should not get thread if comment belongs to another Org' do
+    user_in_another_org = @user
+    assert_not_equal user_in_another_org, @comment_with_thread.post.org
+
+    get thread_api_v1_comment_url(@comment_with_thread),
+      headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
+    assert_response :not_found
+  end
+
+  test 'should not get thread when user is not in an Org' do
+    @thread_user.org = nil
+    @thread_user.save validate: false
+    assert_nil @thread_user.reload.org
+
+    get thread_api_v1_comment_url(@comment_with_thread),
+      headers: @thread_authorized_headers
+    assert_response :not_found
+  end
+
+  test 'thread should only include allow-listed attributes' do
+    get thread_api_v1_comment_url(@comment_with_thread),
+      headers: @thread_authorized_headers
+    response.parsed_body => thread:
+    assert_only_includes_allowed_attributes thread
+  end
+
+  test 'thread should format created_at attributes as iso8601' do
+    get thread_api_v1_comment_url(@comment_with_thread),
+      headers: @thread_authorized_headers
+    response.parsed_body => thread: { created_at: }
+    assert Time.iso8601(created_at)
+  end
+
+  test 'thread should only return comments from the ancestry path' do
+    get thread_api_v1_comment_url(@comment_with_thread),
+      headers: @thread_authorized_headers
+    response.parsed_body => thread:
+
+    assert_nil @comment_with_thread.parent.parent
+    assert_equal @comment_with_thread.parent.id, thread[:id]
+    assert_equal 1, thread[:replies].count
+    assert_equal @comment_with_thread.id, thread[:replies].first[:id]
+    assert_empty @comment_with_thread.children
+    assert_empty thread[:replies].first[:replies]
   end
 
   private

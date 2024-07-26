@@ -11,6 +11,11 @@ Rails.application.routes.draw do
         resources :votes, only: [:create]
       end
       resources :connections,  only: [:create]
+      resources :comments, only: [] do
+        member do
+          get 'thread'
+        end
+      end
       resources :flags, only: [:create]
       resources :flag_reports, only: [:index]
       resources :moderation_events, only: [:index, :create]
