@@ -6,6 +6,7 @@ class Api::V1::CommentsController < ApplicationController
     :encrypted_body,
     :id,
     :my_vote,
+    :post_id,
     :pseudonym,
     :replies,
     :score,
