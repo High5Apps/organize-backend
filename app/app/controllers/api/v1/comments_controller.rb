@@ -85,7 +85,7 @@ class Api::V1::CommentsController < ApplicationController
     params.require(:comment)
       .permit(PERMITTED_PARAMS)
       .merge({
-        comment_id: params[:comment_id],
+        parent_id: params[:comment_id],
         post_id: params[:post_id]
       })
   end

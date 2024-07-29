@@ -3,13 +3,13 @@ require "test_helper"
 class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @post = posts(:one)
-    comment = comments(:one)
+    @comment = comments(:one)
     @commentable_urls = [
       api_v1_post_comments_url(@post),
-      api_v1_comment_comments_url(comment),
+      api_v1_comment_comments_url(@comment),
     ]
     @post_without_comments = posts(:three)
-    @params = { comment: comment.attributes.as_json.with_indifferent_access }
+    @params = { comment: @comment.attributes.as_json.with_indifferent_access }
 
     @user = users(:one)
     setup_test_key(@user)
@@ -57,6 +57,14 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :unprocessable_entity
     end
+  end
+
+  test 'create reply should set parent comment' do
+    post api_v1_comment_comments_url(@comment),
+      headers: @authorized_headers, params: @params
+    response.parsed_body => { id: new_comment_id }
+    new_comment = Comment.find new_comment_id
+    assert_equal @comment, new_comment.parent
   end
 
   test 'should index with valid authorization' do

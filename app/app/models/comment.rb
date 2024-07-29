@@ -42,8 +42,6 @@ class Comment < ApplicationRecord
   MAX_BODY_LENGTH = 10000
   MAX_COMMENT_DEPTH = 8
 
-  attr_accessor :comment_id
-
   belongs_to :post
 
   has_many :upvotes
@@ -56,7 +54,7 @@ class Comment < ApplicationRecord
       only_integer: true,
     }
 
-  before_validation :set_post_from_comment_id, on: :create, if: :comment_id
+  before_validation :set_post_from_parent_id, on: :create, if: :parent_id
   after_create :create_upvote_for_user
 
   has_encrypted :body, present: true, max_length: MAX_BODY_LENGTH
@@ -69,9 +67,8 @@ class Comment < ApplicationRecord
     upvotes.create! user:, value: 1
   end
 
-  def set_post_from_comment_id
-    comment = Comment.includes(:post).find_by id: comment_id
+  def set_post_from_parent_id
+    comment = Comment.includes(:post).find_by id: parent_id
     self.post = comment&.post
-    self.comment_id = nil
   end
 end
