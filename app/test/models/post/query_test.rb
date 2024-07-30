@@ -101,15 +101,13 @@ class PostQueryTest < ActiveSupport::TestCase
 
     older_post = @post_without_upvotes.dup
     older_post.save!
+    create_upvotes(older_post, score: 2)
 
     # If this test fails after raising the gravity parameter, you probably need
     # to decrease this value.
     travel 1.hour do
       newer_post = @post_without_upvotes.dup
       newer_post.save!
-
-      travel 1.second
-      newer_post.upvotes.destroy_all
 
       travel 1.second
 
@@ -126,15 +124,13 @@ class PostQueryTest < ActiveSupport::TestCase
 
     older_post = @post_without_upvotes.dup
     older_post.save!
+    create_upvotes(older_post, score: 2)
 
     # If this test fails after lowering the gravity parameter, you probably need
     # to increase this value.
     travel 2.hours do
       newer_post = @post_without_upvotes.dup
       newer_post.save!
-
-      travel 1.second
-      newer_post.upvotes.destroy_all
 
       travel 1.second
 
@@ -151,16 +147,13 @@ class PostQueryTest < ActiveSupport::TestCase
 
     older_post = @post_without_upvotes.dup
     older_post.save!
-    create_upvotes(older_post, score: 50)
+    create_upvotes(older_post, score: 24)
 
     # If this test fails after raising the gravity parameter, you probably need
     # to decrease this value.
-    travel 1.day do
+    travel 24.hours do
       newer_post = @post_without_upvotes.dup
       newer_post.save!
-
-      travel 1.second
-      newer_post.upvotes.destroy_all
 
       travel 1.second
 
@@ -177,16 +170,13 @@ class PostQueryTest < ActiveSupport::TestCase
 
     older_post = @post_without_upvotes.dup
     older_post.save!
-    create_upvotes(older_post, score: 50)
+    create_upvotes(older_post, score: 24)
 
     # If this test fails after lowering the gravity parameter, you probably need
     # to increase this value.
-    travel 2.days do
+    travel 48.hours do
       newer_post = @post_without_upvotes.dup
       newer_post.save!
-
-      travel 1.second
-      newer_post.upvotes.destroy_all
 
       travel 1.second
 

@@ -56,7 +56,7 @@ class Post::Query
           )^:gravity DESC, posts.id DESC
         ).gsub(/\s+/, ' '),
         cutoff_time: created_at_or_before,
-        gravity: 1.5,
+        gravity: 0.975,
         time_division: 1.hour.to_i])))
     end
 
