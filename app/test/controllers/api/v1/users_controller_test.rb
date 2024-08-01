@@ -163,6 +163,14 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     response.parsed_body => error_messages: [/blocked/]
   end
 
+  test 'should not show if user is not in an Org' do
+    @user.update! org: nil
+    assert_nil @user.reload.org
+
+    get api_v1_user_url(@user), headers: @authorized_headers
+    assert_response :not_found
+  end
+
   test 'show should include the same attributes as index for unblocked users' do
     assert_not @user.blocked?
 

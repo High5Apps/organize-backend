@@ -25,8 +25,8 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
-    user = authenticated_user.org.users.with_service_stats
-      .find_by(id: params[:id])
+    user = authenticated_user.org&.users&.with_service_stats
+      &.find_by(id: params[:id])
 
     unless user
       return render_error :not_found, ["No user found with id #{params[:id]}"]
