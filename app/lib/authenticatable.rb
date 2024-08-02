@@ -7,6 +7,7 @@ module Authenticatable
   class AuthenticationError < StandardError; end
   class AuthorizationError < StandardError; end
   class BlockedUserError < AuthorizationError; end
+  class LeftOrgError < AuthorizationError; end
 
   def authenticated_user
     return @authenticated_user if @authenticated_user
@@ -28,8 +29,8 @@ module Authenticatable
     end
 
     raise AuthorizationError unless authorize(valid_jwt, scope)
-
     raise BlockedUserError if user.blocked?
+    raise LeftOrgError if user.left_org_at
 
     user
   end

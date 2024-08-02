@@ -11,6 +11,8 @@ class ApplicationController < ActionController::API
     rescue Authenticatable::BlockedUserError
       error_message = "You can't do that because you were blocked by your Org's moderators. If you think this was a mistake, please contact your Org's moderators to request that they unblock you. You can't use the app until you're unblocked."
       render_error :forbidden, [error_message]
+      rescue Authenticatable::LeftOrgError
+        render_error :forbidden, ["You can't do that because you left the Org"]
     rescue Authenticatable::AuthorizationError
       render_unauthorized
     rescue

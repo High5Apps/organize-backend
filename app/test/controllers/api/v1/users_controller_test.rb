@@ -163,6 +163,16 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     response.parsed_body => error_messages: [/blocked/]
   end
 
+  # This is the only test covering the LeftOrgError handling in
+  # ApplicationController#authenticate_user. Do not remove this test without
+  # first adding a similar test to another controller.
+  test 'should not show if requester left the Org' do
+    @user.leave_org
+    get api_v1_user_url(@user_in_org), headers: @authorized_headers
+    assert_response :forbidden
+    response.parsed_body => error_messages: [/left/]
+  end
+
   test 'should not show if user is not in an Org' do
     @user.update! org: nil
     assert_nil @user.reload.org
