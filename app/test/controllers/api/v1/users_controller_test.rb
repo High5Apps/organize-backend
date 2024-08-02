@@ -183,6 +183,27 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal index_user, show_user
   end
 
+  test 'should leave_org with valid auth' do
+    post api_v1_leave_org_url, headers: @authorized_headers
+    assert_response :ok
+  end
+
+  test 'should not leave_org with invalid auth' do
+    post api_v1_leave_org_url,
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
+    assert_response :unauthorized
+  end
+
+  test 'should not leave_org if user is not in an Org' do
+    @user.update! org: nil
+    assert_nil @user.reload.org
+
+    post api_v1_leave_org_url, headers: @authorized_headers
+    assert_response :unprocessable_entity
+  end
+
   private
 
   def get_user_ids_from_response

@@ -36,6 +36,16 @@ class Api::V1::UsersController < ApplicationController
     render json: user.slice(allowed)
   end
 
+  def leave_org
+    begin
+      authenticated_user.leave_org
+    rescue ActiveRecord::RecordInvalid => invalid
+      render_error :unprocessable_entity, invalid.record.errors.full_messages
+    else
+      head :ok
+    end
+  end
+
   private
 
   def create_params

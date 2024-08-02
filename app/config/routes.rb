@@ -42,6 +42,7 @@ Rails.application.routes.draw do
       get 'my_permissions', to: 'permissions#index_my_permissions', as: 'index_my_permissions'
       get 'org', to: 'orgs#my_org', as: 'my_org'
       patch 'org', to: 'orgs#update_my_org', as: 'update_my_org'
+      post 'leave_org', to: 'users#leave_org'
     end
   end
 end
