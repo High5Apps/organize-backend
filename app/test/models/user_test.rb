@@ -363,6 +363,21 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  test 'leave_org should not be allowed when user is not in an Org' do
+    @user.update! org: nil
+    assert_raises(ActiveRecord::RecordInvalid) { @user.leave_org }
+  end
+
+  test 'leave_org should rollback changes to comments and posts if anything goes wrong' do
+    @user.update! org: nil
+    assert_no_changes -> { @user.posts.first.reload.as_json } do
+      assert_no_changes -> { @user.comments.first.reload.as_json } do
+        @user.leave_org
+        rescue
+      end
+    end
+  end
+
   private
 
   def correct_connection_created_ats_to_match_user_joined_ats
