@@ -76,6 +76,11 @@ class PostTest < ActiveSupport::TestCase
     assert @post.valid?
   end
 
+  test 'encrypted_body should be nil when not present' do
+    @post.update! encrypted_body: nil
+    assert_nil @post.encrypted_body_before_type_cast
+  end
+
   test 'encrypted_body should be no longer than MAX_BODY_LENGTH' do
     @post.encrypted_body.ciphertext = \
       Base64.strict_encode64('a' * Post::MAX_BODY_LENGTH)

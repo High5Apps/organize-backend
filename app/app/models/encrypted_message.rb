@@ -31,6 +31,8 @@ class EncryptedMessage
   end
 
   def self.dump(value)
+    return nil if value.blank?
+
     if value.respond_to? :attributes
       value.attributes
     else

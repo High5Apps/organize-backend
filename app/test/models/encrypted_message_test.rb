@@ -33,4 +33,8 @@ class EncryptedMessageTest < ActiveSupport::TestCase
     @encrypted_message.auth_tag = 'abc'
     assert @encrypted_message.invalid?
   end
+
+  test 'dump should store nil values as nil' do
+    assert_nil EncryptedMessage.dump(nil)
+  end
 end
