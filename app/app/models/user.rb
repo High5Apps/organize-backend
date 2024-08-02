@@ -59,6 +59,8 @@ class User < ApplicationRecord
     using: :trigram,
     ranked_by: ":trigram"
 
+  CORRUPTED_AUTH_TAG_VALUE = Base64.strict_encode64('0' * EncryptedMessage::BYTE_LENGTH_AUTH_TAG).freeze
+  CORRUPTED_CIPHERTEXT_VALUE = Base64.strict_encode64('0').freeze
   PUBLIC_KEY_LENGTH = 91
 
   attr_writer :private_key
@@ -128,6 +130,31 @@ class User < ApplicationRecord
 
   def connection_to(user_id)
     Connection.between(id, user_id)
+  end
+
+  def leave_org
+    return unless left_org_at.nil?
+
+    transaction do
+      [Comment, Post].each do |model|
+        # Note that c and t must both be corrupted, instead of just c, because
+        # otherwise messages that were literally '0' would still be decryptable.
+        # Also note that no special handling of null is needed because
+        # null || { any JSON } is still null.
+        query_components = model.encrypted_attributes.map do |attribute|
+          %(
+            #{attribute} = #{attribute} || '{
+              "c": "#{CORRUPTED_CIPHERTEXT_VALUE}",
+              "t": "#{CORRUPTED_AUTH_TAG_VALUE}"
+            }'
+          ).squish
+        end
+        query = query_components.join(', ')
+        model.where(user_id: id).update_all query
+      end
+
+      update! left_org_at: Time.now
+    end
   end
 
   def my_vote_candidate_ids(ballot)

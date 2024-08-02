@@ -306,6 +306,63 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  test 'leave_org should corrupt the ciphertext and auth_tag of non-nil comments and posts' do
+    associations = [@user.comments, @user.posts]
+
+    [
+      ->(expected, actual) { assert_not_equal expected, actual },
+      ->(expected, actual) { assert_equal expected, actual },
+    ].each do |assertion|
+      associations.each do |association|
+        assert_not_empty association.reload
+        association.each do |record|
+          record.encrypted_attributes.each do |encrypted_attribute|
+            encrypted_message = record[encrypted_attribute]
+            next if encrypted_message.blank?
+
+            assertion.call User::CORRUPTED_AUTH_TAG_VALUE, encrypted_message.t
+            assertion.call User::CORRUPTED_CIPHERTEXT_VALUE, encrypted_message.c
+          end
+        end
+      end
+
+      @user.leave_org
+    end
+  end
+
+  test 'leave_org should not change nil encrypted_messages' do
+    post_without_body = posts :three
+    lam = -> { post_without_body.reload.encrypted_body_before_type_cast }
+    assert_no_changes lam, from: nil do
+      post_without_body.user.leave_org
+    end
+  end
+
+  test 'leave_org should not change the nonce' do
+    post = posts :one
+    assert_not_nil post.encrypted_title.nonce
+    assert_no_changes -> { post.reload.encrypted_title.nonce } do
+      post.user.leave_org
+    end
+  end
+
+  test 'leave_org should set left_org_at to the current time' do
+    freeze_time do
+      assert_changes -> { @user.reload.left_org_at }, from: nil, to: Time.now do
+        @user.leave_org
+      end
+    end
+  end
+
+  test 'leave_org should no-op on successive runs' do
+    @user.leave_org
+
+    assert_no_changes -> { @user.reload.left_org_at } do
+      travel 1.second
+      @user.leave_org
+    end
+  end
+
   private
 
   def correct_connection_created_ats_to_match_user_joined_ats
