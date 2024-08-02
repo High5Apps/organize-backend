@@ -38,6 +38,10 @@ class CommentTest < ActiveSupport::TestCase
     assert @comment.invalid?
   end
 
+  test 'encrypted_attributes should include expected attributes' do
+    assert_equal ['encrypted_body'], Comment.encrypted_attributes
+  end
+
   test 'user should be in an Org' do
     user_without_org = users :two
     assert_nil user_without_org.org

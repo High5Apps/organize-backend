@@ -80,6 +80,11 @@ class PostTest < ActiveSupport::TestCase
     assert @post.invalid?
   end
 
+  test 'encrypted_attributes should include expected attributes' do
+    assert_equal ['encrypted_body', 'encrypted_title'],
+      Post.encrypted_attributes.sort
+  end
+
   test 'encrypted_body should be optional' do
     @post.encrypted_body = nil
     assert @post.valid?
