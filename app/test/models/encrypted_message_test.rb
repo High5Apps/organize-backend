@@ -37,4 +37,16 @@ class EncryptedMessageTest < ActiveSupport::TestCase
   test 'dump should store nil values as nil' do
     assert_nil EncryptedMessage.dump(nil)
   end
+
+  test 'dump should return a hash with c, n, and t when present' do
+    h = { 'c' => 'foo', 'n' => 'bar', 't' => 'baz' }
+    assert_equal h, EncryptedMessage.dump(EncryptedMessage.load(h))
+    assert_equal h, EncryptedMessage.dump(EncryptedMessage.new(h))
+  end
+
+  test 'load should only allow expected attributes' do
+    assert_raises ActiveModel::UnknownAttributeError do
+      EncryptedMessage.new unexpected_attribute: 'foo'
+    end
+  end
 end
