@@ -65,6 +65,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
         graph: {
           blocked_user_ids: [String, *],
           connections: [[String, String], *],
+          left_org_user_ids: [String, *],
           user_ids: [String, *],
           **nil
         },

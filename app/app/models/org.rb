@@ -27,8 +27,9 @@ class Org < ApplicationRecord
     ).pluck :sharer_id, :scanner_id
 
     blocked_user_ids = users.blocked.ids
+    left_org_user_ids = users.left_org.ids
 
-    { blocked_user_ids:, connections:, user_ids: }
+    { blocked_user_ids:, connections:, left_org_user_ids:, user_ids: }
   end
 
   def next_pseudonym
