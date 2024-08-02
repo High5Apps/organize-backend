@@ -7,7 +7,10 @@ module Encryptable
       validate_max_length_method_name = "validate_#{attribute}_max_length"
 
       validate validate_max_length_method_name.to_sym if max_length
+
       validates_presence_of encrypted_attribute_name if present
+      validates_associated encrypted_attribute_name,
+        unless: -> { send(encrypted_attribute_name).blank? }
 
       serialize encrypted_attribute_name, coder: EncryptedMessage
 

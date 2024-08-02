@@ -71,6 +71,15 @@ class PostTest < ActiveSupport::TestCase
     assert @post.invalid?
   end
 
+  # Note that this is the only test of this functionality from the Encryptable
+  # module. Do not remove this test without first testing it on another
+  # Encryptable.
+  test 'invalid encrypted_title should cause post to be invalid' do
+    @post.encrypted_title.auth_tag = 'bad'
+    assert @post.encrypted_title.invalid?
+    assert @post.invalid?
+  end
+
   test 'encrypted_body should be optional' do
     @post.encrypted_body = nil
     assert @post.valid?

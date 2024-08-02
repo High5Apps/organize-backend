@@ -35,7 +35,8 @@ class EncryptedMessage
   end
 
   def self.load(hash)
-    EncryptedMessage.new(hash)
+    filtered_hash = hash&.slice *KEYS.map(&:to_s)
+    EncryptedMessage.new filtered_hash
   end
 
   def self.permitted_params(attribute)
