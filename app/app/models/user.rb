@@ -2,6 +2,7 @@ class User < ApplicationRecord
   include PgSearch::Model, Moderatable
 
   scope :joined_at_or_before, ->(time) { where(joined_at: ..time) }
+  scope :left_org, -> { where.not(left_org_at: nil) }
   scope :officers, -> {
     # Must be used with with_service_stats scope
     where.not(min_office: nil)

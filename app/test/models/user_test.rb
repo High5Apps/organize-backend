@@ -71,6 +71,13 @@ class UserTest < ActiveSupport::TestCase
     assert_not blocked_users.exists?(blocked: false)
   end
 
+  test 'left_org should only include users who left their Orgs' do
+    @user.leave_org
+    users_who_left_their_orgs = User.left_org
+    assert_not_empty users_who_left_their_orgs
+    assert_not users_who_left_their_orgs.exists?(left_org_at: nil)
+  end
+
   test "my_vote_candidate_ids should return user's vote's candidate_ids" do
     ballot_with_vote = ballots(:one)
     my_vote_candidate_ids = @user.my_vote_candidate_ids(ballot_with_vote)
