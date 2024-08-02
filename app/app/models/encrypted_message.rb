@@ -1,5 +1,5 @@
 class EncryptedMessage
-  include ActiveModel::Model
+  include ActiveModel::API
 
   BYTE_LENGTH_AUTH_TAG = 16
   BYTE_LENGTH_NONCE = 12

@@ -15,11 +15,7 @@ class Permission::Data
   end
 
   def self.dump(value)
-    if value.respond_to? :attributes
-      value.attributes
-    else
-      value.to_h
-    end
+    value.blank? ? nil : value.as_json
   end
 
   def self.load(hash)
