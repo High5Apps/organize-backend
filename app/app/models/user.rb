@@ -155,6 +155,8 @@ class User < ApplicationRecord
         model.where(user_id: id).update_all query
       end
 
+      terms.active_at(Time.now).update_all accepted: false
+
       update! left_org_at: Time.now
     end
   end

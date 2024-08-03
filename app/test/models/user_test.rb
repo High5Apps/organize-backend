@@ -353,6 +353,14 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  test 'leave_org should deactivate any active terms' do
+    freeze_time do
+      assert_not_empty @user.terms.active_at(Time.now)
+      @user.leave_org
+      assert_empty @user.terms.active_at(Time.now)
+    end
+  end
+
   test 'leave_org should set left_org_at to the current time' do
     freeze_time do
       assert_changes -> { @user.reload.left_org_at }, from: nil, to: Time.now do
