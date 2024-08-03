@@ -79,9 +79,11 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     connection = Connection.find(id)
     assert_equal connection.created_at, connection.updated_at
 
+    travel 1.second
+
     post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
     response.parsed_body => id:
-    assert connection.reload.created_at < connection.updated_at
+    assert_operator connection.reload.created_at, :<, connection.updated_at
   end
 
   test "should preview" do
