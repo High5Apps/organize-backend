@@ -50,7 +50,7 @@ class Term < ApplicationRecord
       errors.add :user, 'must be a member of an Org'
     end
 
-    unless user == user.org.users.order(:created_at).first
+    unless user == user.org.users.order(:joined_at).first
       errors.add :user, "must be the Org's first member to be the founder"
     end
   end

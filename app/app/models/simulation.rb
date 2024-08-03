@@ -76,6 +76,7 @@ class Simulation
   end
 
   def run_day_connections(day_start)
+    second_offset = 0
     @members.to_a.each do |member|
       unasked_close_links = member.unasked_closely_linked_employee_set
       next if unasked_close_links.count == 0
@@ -94,8 +95,10 @@ class Simulation
         puts ' '*2 + "Asking Employee #{to_ask.index} to #{action}... #{result}"
 
         next unless accepted
+
+        second_offset += 1
         @members.add to_ask
-        @connections.push [member, to_ask, day_start]
+        @connections.push [member, to_ask, day_start + second_offset.seconds]
       end
     end
 
