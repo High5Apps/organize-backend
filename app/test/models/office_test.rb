@@ -46,7 +46,7 @@ class OfficeTest < ActiveSupport::TestCase
     travel_to election.nominations_end_at - 1.second do
       (Office::TYPE_STRINGS - ['founder']).each do |office|
         election.update!(office:)
-        assert_availability_open_except_for([office], org:)
+        assert_availability_open_except_for(['founder', office], org:)
       end
     end
   end
@@ -59,7 +59,7 @@ class OfficeTest < ActiveSupport::TestCase
     travel_to election.voting_ends_at - 1.second do
       (Office::TYPE_STRINGS - ['founder']).each do |office|
         election.update!(office:)
-        assert_availability_open_except_for([office], org:)
+        assert_availability_open_except_for(['founder', office], org:)
       end
     end
   end
@@ -73,7 +73,7 @@ class OfficeTest < ActiveSupport::TestCase
     travel_to election.voting_ends_at - 1.second do
       (Office::TYPE_STRINGS - ['founder']).each do |office|
         election.update!(office:)
-        assert_availability_open_except_for([], org:)
+        assert_availability_open_except_for(['founder'], org:)
       end
     end
   end
@@ -85,9 +85,9 @@ class OfficeTest < ActiveSupport::TestCase
     travel_to election.voting_ends_at + 1.second do
       assert_not_empty election.winners
 
-      Office::TYPE_STRINGS.each do |office|
+      (Office::TYPE_STRINGS - ['founder']).each do |office|
         election.update!(office:)
-        assert_availability_open_except_for([office], org:)
+        assert_availability_open_except_for(['founder', office], org:)
       end
     end
   end
@@ -99,9 +99,9 @@ class OfficeTest < ActiveSupport::TestCase
     travel_to election.voting_ends_at + 1.second do
       assert_empty election.winners
 
-      Office::TYPE_STRINGS.each do |office|
+      (Office::TYPE_STRINGS - ['founder']).each do |office|
         election.update!(office:)
-        assert_availability_open_except_for([], org:)
+        assert_availability_open_except_for(['founder'], org:)
       end
     end
   end
@@ -138,13 +138,21 @@ class OfficeTest < ActiveSupport::TestCase
     end
   end
 
+  test 'availability for founder should be false even if the founder leaves the Org' do
+    founder_term = terms :one
+    assert founder_term.founder?
+    founder = founder_term.user
+    founder.leave_org
+    assert_not Office.availability_in(founder.org, 'founder')[:open]
+  end
+
   private
 
   def assert_availability_open_except_for offices, org: nil
     org ||= @org
-    assert_equal offices.sort,
-      Office.availability_in(org)
-        .filter { |o| !o[:open] }.map { |o| o[:type] }.sort
+    actual = Office.availability_in(org)
+      .filter { |o| !o[:open] }.map { |o| o[:type] }.sort
+    assert_equal actual, offices.sort
   end
 
   def destroy_all_elections_but_one org

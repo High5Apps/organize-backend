@@ -59,7 +59,7 @@ class Office
 
     office_types = Office::TYPE_STRINGS
     open_offices = office_types - in_nominations - active_with_candidates -
-      awaiting_acceptance - filled_and_before_cooldown
+      awaiting_acceptance - filled_and_before_cooldown - ['founder']
 
     offices = office_types.map do |type|
       open = open_offices.include?(type)
