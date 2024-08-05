@@ -37,7 +37,7 @@ class FlagReport::Query
         LEFT JOIN flag_counts
           ON flag_counts.flaggable_type = flags.flaggable_type
             AND flag_counts.flaggable_id = flags.flaggable_id
-      ).gsub(/\s+/, ' '))
+      ).squish)
       .with(recent_events:)
 
     # When handled is true, INNER JOIN to only include flaggables with
@@ -48,7 +48,7 @@ class FlagReport::Query
         INNER JOIN recent_events
           ON recent_events.moderatable_type = flags.flaggable_type
             AND recent_events.moderatable_id = flags.flaggable_id
-      ).gsub(/\s+/, ' '))
+      ).squish)
         .where.not(recent_events: { action: UNHANDLED_ACTION_VALUES })
         .order('recent_events.created_at DESC, recent_events.id DESC')
     else
@@ -59,7 +59,7 @@ class FlagReport::Query
         LEFT JOIN recent_events
           ON recent_events.moderatable_type = flags.flaggable_type
             AND recent_events.moderatable_id = flags.flaggable_id
-      ).gsub(/\s+/, ' '))
+      ).squish)
         .order flag_count: :desc, flaggable_id: :desc
 
       # When handled is false, only include flaggables without moderation events

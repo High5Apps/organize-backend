@@ -8,13 +8,13 @@ class ModerationEvent < ApplicationRecord
           moderation_events.moderatable_type,
           moderation_events.moderatable_id
         ) moderation_events.*
-      ).gsub(/\s+/, ' '))
+      ).squish)
         .created_at_or_before(time)
         .order(%(
           moderation_events.moderatable_type,
           moderation_events.moderatable_id,
           moderation_events.created_at DESC
-        ).gsub(/\s+/, ' ')),
+        ).squish),
     :moderation_events)
   }
 

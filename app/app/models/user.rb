@@ -19,7 +19,7 @@ class User < ApplicationRecord
           + users.connection_count
           + (3 * users.recruit_count) DESC,
           users.id DESC
-      ).gsub(/\s+/, ' '),
+      ).squish,
       time: time,
       time_division: 1.month.to_i])))
   }

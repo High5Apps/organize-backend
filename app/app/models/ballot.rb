@@ -22,7 +22,7 @@ class Ballot < ApplicationRecord
           ELSE ballots.voting_ends_at
         END ASC,
         ballots.id ASC
-      ).gsub(/\s+/, ' '),
+      ).squish,
       time:])))
   }
   scope :order_by_inactive, -> { order(voting_ends_at: :desc, id: :desc) }

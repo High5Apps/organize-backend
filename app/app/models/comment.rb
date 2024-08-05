@@ -32,7 +32,7 @@ class Comment < ApplicationRecord
             (EXTRACT(EPOCH FROM (:cutoff_time - comments.created_at)) /
             :time_division)
           )^:gravity DESC, comments.id DESC
-        ).gsub(/\s+/, ' '),
+        ).squish,
         cutoff_time: time,
         gravity: 0.975,
         time_division: 1.hour.to_i])))

@@ -54,7 +54,7 @@ class Post::Query
             (EXTRACT(EPOCH FROM (:cutoff_time - posts.created_at)) /
             :time_division)
           )^:gravity DESC, posts.id DESC
-        ).gsub(/\s+/, ' '),
+        ).squish,
         cutoff_time: created_at_or_before,
         gravity: 0.975,
         time_division: 1.hour.to_i])))
