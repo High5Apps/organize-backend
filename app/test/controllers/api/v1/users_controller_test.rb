@@ -147,6 +147,20 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'show should include left_org_at attribute for users who left the Org' do
+    @user_in_org.leave_org
+
+    get api_v1_user_url(@user_in_org), headers: @authorized_headers
+    json_response = response.parsed_body
+
+    attribute_allow_list = User::Query::ALLOWED_ATTRIBUTES + [:left_org_at]
+    assert_equal attribute_allow_list.count, json_response.keys.count
+    attribute_allow_list.each do |attribute|
+      assert json_response.key? attribute
+      assert_not_nil json_response[attribute]
+    end
+  end
+
   test 'should not show users in other Orgs' do
     assert_not_equal @user.org, @user_in_other_org.org
     get api_v1_user_url(@user_in_other_org), headers: @authorized_headers

@@ -32,7 +32,10 @@ class Api::V1::UsersController < ApplicationController
       return render_error :not_found, ["No user found with id #{params[:id]}"]
     end
 
-    allowed = User::Query::ALLOWED_ATTRIBUTES + [*(:blocked if user.blocked?)]
+    allowed = User::Query::ALLOWED_ATTRIBUTES + [
+      *(:blocked if user.blocked?),
+      *(:left_org_at if user.left_org_at?),
+    ]
     render json: user.slice(allowed)
   end
 
