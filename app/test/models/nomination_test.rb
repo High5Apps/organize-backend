@@ -69,6 +69,11 @@ class NominationTest < ActiveSupport::TestCase
     assert @nomination.invalid? :create
   end
 
+  test 'nominee should not have left the Org' do
+    @nomination.nominee = users :left_org
+    assert @nomination.invalid? :create
+  end
+
   test 'should not be able to self-nominate' do
     @nomination.nominee = @nomination.nominator
     assert @nomination.invalid?
