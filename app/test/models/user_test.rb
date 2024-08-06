@@ -72,10 +72,15 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'left_org should only include users who left their Orgs' do
-    @user.leave_org
     users_who_left_their_orgs = User.left_org
     assert_not_empty users_who_left_their_orgs
     assert_not users_who_left_their_orgs.exists?(left_org_at: nil)
+  end
+
+  test 'omit_left_org should not include users who left their Orgs' do
+    non_leavers = User.omit_left_org
+    assert_not_equal User.count, non_leavers.count
+    assert_not non_leavers.where.not(left_org_at: nil).exists?
   end
 
   test "my_vote_candidate_ids should return user's vote's candidate_ids" do

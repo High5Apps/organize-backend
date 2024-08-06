@@ -7,6 +7,7 @@ class User < ApplicationRecord
     # Must be used with with_service_stats scope
     where.not(min_office: nil)
   }
+  scope :omit_left_org, -> { where(left_org_at: nil) }
   scope :order_by_office, ->(time) {
     # Must be used with with_service_stats scope
     order(:min_office, 'users.id')
