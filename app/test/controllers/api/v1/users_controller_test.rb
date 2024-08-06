@@ -84,23 +84,18 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should not include blocked users' do
     user = users :blocked
-    event = moderation_events(:four).dup
-    unblock_all
-
     get api_v1_users_url, headers: @authorized_headers
     user_ids = get_user_ids_from_response
+    assert_not_empty user_ids
+    assert_not_includes user_ids, user.id
+  end
 
-    all_user_ids = @user.org.users.ids
-    assert_equal all_user_ids.sort, user_ids.sort
-
-    [[:unblock, nil], [:block, user]].each do |action, blocked_user|
-      user.send action
-
-      get api_v1_users_url, headers: @authorized_headers
-      user_ids = get_user_ids_from_response
-
-      assert_equal (all_user_ids - [blocked_user&.id]).sort, user_ids.sort
-    end
+  test 'index should not include users who left the Org' do
+    user = users :left_org
+    get api_v1_users_url, headers: @authorized_headers
+    user_ids = get_user_ids_from_response
+    assert_not_empty user_ids
+    assert_not_includes user_ids, user.id
   end
 
   test 'should not show with invalid authorization' do

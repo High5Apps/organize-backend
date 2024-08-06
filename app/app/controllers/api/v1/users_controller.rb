@@ -15,7 +15,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def index
-    initial_users = authenticated_user.org&.users&.omit_blocked
+    initial_users = authenticated_user.org&.users&.omit_blocked&.omit_left_org
     @query = User::Query.new(initial_users, params)
     users = @query.relation
     render json: {
