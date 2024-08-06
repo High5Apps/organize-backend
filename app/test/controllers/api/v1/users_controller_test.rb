@@ -114,8 +114,8 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show should only include ALLOWED_ATTRIBUTES for unblocked users' do
-    assert_not @user_in_org.blocked?
-    assert_not_includes User::Query::ALLOWED_ATTRIBUTES, :blocked
+    assert_not @user_in_org.blocked_at?
+    assert_not_includes User::Query::ALLOWED_ATTRIBUTES, :blocked_at
 
     get api_v1_user_url(@user_in_org), headers: @authorized_headers
     json_response = response.parsed_body
@@ -128,13 +128,13 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'show should include blocked attribute for blocked users' do
+  test 'show should include blocked_at attribute for blocked users' do
     @user_in_org.block
 
     get api_v1_user_url(@user_in_org), headers: @authorized_headers
     json_response = response.parsed_body
 
-    attribute_allow_list = User::Query::ALLOWED_ATTRIBUTES + [:blocked]
+    attribute_allow_list = User::Query::ALLOWED_ATTRIBUTES + [:blocked_at]
     assert_equal attribute_allow_list.count, json_response.keys.count
     attribute_allow_list.each do |attribute|
       assert json_response.key? attribute
@@ -191,7 +191,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show should include the same attributes as index for unblocked users' do
-    assert_not @user.blocked?
+    assert_not @user.blocked_at?
 
     get api_v1_users_url, headers: @authorized_headers
     response.parsed_body => users:

@@ -47,7 +47,7 @@ class ActiveSupport::TestCase
       .pluck(:moderatable_type)
       .map(&:constantize)
     moderatables.each do |moderatable|
-      moderatable.update_all blocked: false
+      moderatable.update_all blocked_at: nil
     end
 
     ModerationEvent.destroy_all

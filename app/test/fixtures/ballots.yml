@@ -13,7 +13,7 @@ two:
   voting_ends_at: <%= 8.days.from_now.to_fs(:db) %>
 
 three:
-  blocked: true
+  blocked_at: <%= Time.now.to_fs(:db) %>
   category: yes_no
   created_at: <%= 3.seconds.ago.to_fs(:db) %>
   encrypted_question: { c: 5MhTS8qx, n: /vzKrziCov8SuZDD, t: qefHd8VWSDospergwVKSSw== }

@@ -29,8 +29,8 @@ module Authenticatable
     end
 
     raise AuthorizationError unless authorize(valid_jwt, scope)
-    raise BlockedUserError if user.blocked?
-    raise LeftOrgError if user.left_org_at
+    raise BlockedUserError if user.blocked_at?
+    raise LeftOrgError if user.left_org_at?
 
     user
   end

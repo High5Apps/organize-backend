@@ -2,8 +2,8 @@ module Moderatable
   extend ActiveSupport::Concern
 
   included do
-    scope :blocked, -> { where(blocked: true) }
-    scope :omit_blocked, -> { where(blocked: false) }
+    scope :blocked, -> { where.not(blocked_at: nil) }
+    scope :omit_blocked, -> { where(blocked_at: nil) }
 
     has_many :moderation_events, as: :moderatable
 
@@ -12,10 +12,10 @@ module Moderatable
   end
 
   def block
-    update! blocked: true
+    update! blocked_at: Time.now.utc
   end
 
   def unblock
-    update! blocked: false
+    update! blocked_at: nil
   end
 end

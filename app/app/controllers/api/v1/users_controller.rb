@@ -33,7 +33,7 @@ class Api::V1::UsersController < ApplicationController
     end
 
     allowed = User::Query::ALLOWED_ATTRIBUTES + [
-      *(:blocked if user.blocked?),
+      *(:blocked_at if user.blocked_at?),
       *(:left_org_at if user.left_org_at?),
     ]
     render json: user.slice(allowed)

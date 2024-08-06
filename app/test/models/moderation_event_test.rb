@@ -123,14 +123,16 @@ class ModerationEventTest < ActiveSupport::TestCase
     event = @event.dup
     unblock_all
 
-    @moderatables.each do |moderatable|
-      event.action = :allow
-      event.save!
-
-      assert_changes -> { moderatable.reload.blocked }, from: false, to: true do
-        event.moderatable = moderatable
-        event.action = :block
+    freeze_time do
+      @moderatables.each do |moderatable|
+        event.action = :allow
         event.save!
+
+        assert_changes -> { moderatable.reload.blocked_at }, from: nil, to: Time.now do
+          event.moderatable = moderatable
+          event.action = :block
+          event.save!
+        end
       end
     end
   end
@@ -148,7 +150,7 @@ class ModerationEventTest < ActiveSupport::TestCase
         event.action = :block
         event.save!
 
-        assert_changes -> { moderatable.blocked }, from: true, to: false do
+        assert_changes -> { moderatable.blocked_at }, to: nil do
           event.action = unblocking_action
           event.save!
         end

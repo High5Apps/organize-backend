@@ -68,7 +68,7 @@ class UserTest < ActiveSupport::TestCase
   test 'blocked should only include blocked users' do
     blocked_users = User.blocked
     assert_not_empty blocked_users
-    assert_not blocked_users.exists?(blocked: false)
+    assert_not blocked_users.where(blocked_at: nil).exists?
   end
 
   test 'left_org should only include users who left their Orgs' do
