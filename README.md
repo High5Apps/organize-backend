@@ -41,6 +41,18 @@ Run the rails tests with the command below. For more options, see [The Rails Tes
 drails test
 ```
 
+A subset of tests can be run with the `-n /regex/` flag, which will match against the underscored test name. For example:
+```sh
+# Run model and controller tests relating to ballots
+drails t -n /Ballot/
+
+# Run User model tests
+drails t -n /UserTest/
+
+# Run a single test by name
+drails t -n /OrgTest#test_graph_should_include_blocked_user_ids/
+```
+
 ## Deploying
 ```sh
 bin/deploy org
