@@ -56,3 +56,8 @@ gem 'ancestry', '~> 4'
 
 # Used for text search
 gem 'pg_search', '~> 2.3'
+
+# Used for type checking
+gem 'sorbet', :group => :development
+gem 'sorbet-runtime'
+gem 'tapioca', require: false, :group => [:development, :test]
