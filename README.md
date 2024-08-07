@@ -13,6 +13,27 @@
     # If you don't want to add aliases at all, remove the --alias-file option
     bin/dev-setup --alias-file ~/.zshrc
     ```
+    If you choose not to install aliases, you'll need to fully type out the following commands wherever they appear later on:
+    ```sh
+    # Instead of dc
+    docker compose -f compose.yaml -f compose.override.dev.yaml
+
+    # Instead of drails
+    docker compose -f compose.yaml -f compose.override.dev.yaml exec app rails
+    ```
+3. Download and install the following software, if you don't have it already:
+    - [Docker Desktop](https://docs.docker.com/desktop/install/mac-install/)
+    - [VS Code](https://code.visualstudio.com/Download)
+4. Start Docker Desktop, navigate to the repository root in your terminal, then start the development server with:
+    ```sh
+    dc up
+    ```
+5. Launch VS Code by opening a new terminal tab in the repository root with `code .`. If you just installed VS Code, you'll need to follow these instructions on [launching from command line](https://code.visualstudio.com/docs/editor/command-line#_launching-from-command-line) first.
+
+### Ruby IntelliSence and Syntax Highlighting
+VS Code [IntelliSense](https://code.visualstudio.com/docs/editor/intellisense) provides code completion and other helpful hints to improve developer experience, but it must be set up before it will work.
+1. Follow these instructions to [attach to a Docker container](https://code.visualstudio.com/docs/devcontainers/attach-container#_attach-to-a-docker-container)
+2. In the VS Code extensions tab, search for and install `shopify.ruby-extensions-pack` 
 
 ## Testing
 Run the rails tests with the command below. For more options, see [The Rails Test Runner](https://guides.rubyonrails.org/testing.html#the-rails-test-runner).
