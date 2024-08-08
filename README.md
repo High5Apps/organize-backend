@@ -58,6 +58,20 @@ drails t -n /OrgTest#test_graph_should_include_blocked_user_ids/
 bin/deploy org
 ```
 
+## Rails Tasks
+
+Rails includes many build-in tasks for administering the application service. List them all with `drails -T`. Commonly used custom tasks are detailed below:
+
+### `org:simulation` or `org:sim`
+
+This task randomly simulates an Org at the 10-day mark to simplify development. It's normally used as follows:
+1. Use your development client to create a new Org
+2. Run `drails org:sim` on your development machine
+3. Share your Org's group secret from the development client's development settings menu into the task's input
+    - If you're using a simulator or emulator on your development machine, just copy and paste the group secret into the task's input.
+    - If you're using a physical development device external to your development machine, share the group secret using a secure meassaging service. For example you could share it from an Android phone to a Mac using the [Signal app](https://signal.org/) "Note to Self" feature, then opening the Signal desktop client on your Mac, then copy/pasting it into the task's input.
+4. Refresh your development client to see the simulated Org
+
 ## Physical server setup
 To run organize-api on a Raspberry Pi, perform the following steps:
 
