@@ -14,9 +14,8 @@ class Simulation
     puts "Initialized company in #{(finish - start).round 3} s"
   end
 
-  def run(founder_id:, group_key_base64:, days: 10)
+  def run(founder_id:, days: 10)
     @founder_id = founder_id
-    @group_key_base64 = group_key_base64
     @day = 0
     @connections = []
     @posts = []
@@ -42,25 +41,6 @@ class Simulation
       size: @company.size,
       user_ids: @members.map(&:id),
     }
-  end
-
-  def encrypt(message)
-    return nil if message.nil?
-
-    unless @cipher
-      group_key = Base64.decode64 @group_key_base64
-      @cipher = ActiveRecord::Encryption::Cipher::Aes256Gcm.new group_key
-    end
-
-    em = @cipher.encrypt message
-    encrypted_message = EncryptedMessage.new
-
-    # Using strict_encode64 because regular encode64 adds unwanted new lines
-    encrypted_message.ciphertext = Base64.strict_encode64(em.payload)
-    encrypted_message.nonce = Base64.strict_encode64(em.headers.iv)
-    encrypted_message.auth_tag = Base64.strict_encode64(em.headers.auth_tag)
-
-    encrypted_message.attributes
   end
 
   private

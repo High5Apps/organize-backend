@@ -54,9 +54,9 @@ namespace :org do
     group_key_base64 = STDIN.getpass('[<group_key_base64>]: ').chomp
 
     simulation = Simulation.new
-    simulation.run(founder_id: user.id, group_key_base64:)
+    simulation.run founder_id: user.id
 
-    seed = Seed.new simulation
+    seed = Seed.new simulation, group_key_base64
     seed.create_random_seeds
   end
 

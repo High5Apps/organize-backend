@@ -60,8 +60,9 @@ class Seed
 
   VOTER_TURNOUT_DISTRIBUTION = Rubystats::NormalDistribution.new(0.7, 0.1)
 
-  def initialize(simulation)
+  def initialize(simulation, group_key_base64)
     @simulation = simulation
+    @group_key_base64 = group_key_base64
     @founder = User.find @simulation.founder_id
     @org = @founder.org
   end
@@ -126,6 +127,25 @@ class Seed
     companies_string.split(',').sample
   end
 
+  def encrypt(message)
+    return nil if message.nil?
+
+    unless @cipher
+      group_key = Base64.decode64 @group_key_base64
+      @cipher = ActiveRecord::Encryption::Cipher::Aes256Gcm.new group_key
+    end
+
+    em = @cipher.encrypt message
+    encrypted_message = EncryptedMessage.new
+
+    # Using strict_encode64 because regular encode64 adds unwanted new lines
+    encrypted_message.ciphertext = Base64.strict_encode64(em.payload)
+    encrypted_message.nonce = Base64.strict_encode64(em.headers.iv)
+    encrypted_message.auth_tag = Base64.strict_encode64(em.headers.auth_tag)
+
+    encrypted_message.attributes
+  end
+
   def update_org
     benchmark "Updated Org" do
       random_local_number = rand 1000..9999
@@ -134,8 +154,8 @@ class Seed
       travel_to @simulation.started_at do
         attributes = {
           created_at: @simulation.started_at,
-          encrypted_name: @simulation.encrypt("Local #{random_local_number}"),
-          encrypted_member_definition: @simulation.encrypt("An employee of #{random_company_name} at store ##{random_store_number}"),
+          encrypted_name: encrypt("Local #{random_local_number}"),
+          encrypted_member_definition: encrypt("An employee of #{random_company_name} at store ##{random_store_number}"),
         }
         @org.update! attributes
         @founder.reload
@@ -221,8 +241,8 @@ class Seed
 
         travel_to created_at do
           User.find(user_id).posts.create! category: random_category.to_s,
-            encrypted_title: @simulation.encrypt(hipster_ipsum_post_title),
-            encrypted_body: @simulation.encrypt(hipster_ipsum_post_body),
+            encrypted_title: encrypt(hipster_ipsum_post_title),
+            encrypted_body: encrypt(hipster_ipsum_post_body),
             org: @org
         end
       end
@@ -252,7 +272,7 @@ class Seed
       Faker::Time.between from: created_at, to: @simulation.ended_at
     end
 
-    encrypted_question = @simulation.encrypt hipster_ipsum_ballot_question(
+    encrypted_question = encrypt hipster_ipsum_ballot_question(
       QUESTION_PREFIXES[category], QUESTION_SUFFIX)
 
     # Pick a random member who had joined by that time to be the creator
@@ -335,8 +355,7 @@ class Seed
         next if state == :none
 
         office_title = office.to_s.titleize
-        encrypted_question = \
-          @simulation.encrypt("Who should we elect #{office_title}?")
+        encrypted_question = encrypt("Who should we elect #{office_title}?")
 
         max_candidate_ids_per_vote = (office == :steward) ? steward_count : 1
 
@@ -432,8 +451,8 @@ class Seed
     benchmark "Created about #{approximate_candidate_count} candidates" do
       yes_no_ballots.all.each do |ballot|
         travel_to ballot.created_at do
-          ballot.candidates.create! encrypted_title: @simulation.encrypt('Yes')
-          ballot.candidates.create! encrypted_title: @simulation.encrypt('No')
+          ballot.candidates.create! encrypted_title: encrypt('Yes')
+          ballot.candidates.create! encrypted_title: encrypt('No')
         end
       end
 
@@ -444,7 +463,7 @@ class Seed
 
           candidate_count.times do
             title = hipster_ipsum_candidate_title
-            ballot.candidates.create! encrypted_title: @simulation.encrypt(title)
+            ballot.candidates.create! encrypted_title: encrypt(title)
             ballot.update(max_candidate_ids_per_vote: selection_count)
           end
         end
@@ -471,8 +490,8 @@ class Seed
           created_at = candidate.created_at + 1.minute
           travel_to created_at do
             candidate.create_post! category: :general,
-              encrypted_title: @simulation.encrypt(title),
-              encrypted_body: @simulation.encrypt(hipster_ipsum_post_body),
+              encrypted_title: encrypt(title),
+              encrypted_body: encrypt(hipster_ipsum_post_body),
               org: @org,
               user: candidate.user
           end
@@ -636,7 +655,7 @@ class Seed
 
           travel_to comment_time do
             comment = post.comments.create!(user: commenter,
-              encrypted_body: @simulation.encrypt(hipster_ipsum_comment_body),
+              encrypted_body: encrypt(hipster_ipsum_comment_body),
               parent:)
             potential_parent_comments.push(comment)
           end
