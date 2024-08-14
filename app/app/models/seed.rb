@@ -816,12 +816,13 @@ class Seed
 
   def update_users
     benchmark "Updated users" do
-      # Pick up to 2 users with comments or posts to leave the Org
+      # Pick up to 2 unblocked non-founder users with comments or posts to leave
+      # the Org
+      unblocked_non_founders = @org.users.omit_blocked.where.not id: @founder.id
       users_to_leave_org = [
-        @org.users.omit_blocked.where.associated(:posts).to_a.sample,
-        @org.users.omit_blocked.where.associated(:comments).to_a.sample,
+        unblocked_non_founders.where.associated(:posts).to_a.sample,
+        unblocked_non_founders.where.associated(:comments).to_a.sample,
       ].compact
-
       users_to_leave_org.each { |user| user.leave_org }
     end
   end
