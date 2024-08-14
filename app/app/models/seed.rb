@@ -67,58 +67,58 @@ class Seed
   end
 
   def create_random_seeds
-    puts "Creating seeds..."
-    start_time = Time.now
-
-    create_users
-    update_org
-    create_connections
-    create_posts
-    create_ballots
-    create_elections
-    create_nominations
-    create_candidates
-    create_candidacy_announcements
-    create_votes
-    create_terms
-    create_comments
-    create_post_upvotes
-    create_comment_upvotes
-    create_post_flags
-    create_comment_flags
-    create_ballot_flags
-    create_moderation_events
-    update_users
-
-    puts "Created seeds. Completed in #{(Time.now - start_time).round 3} s"
+    benchmark 'Created random seeds' do
+      create_users
+      update_org
+      create_connections
+      create_posts
+      create_ballots
+      create_elections
+      create_nominations
+      create_candidates
+      create_candidacy_announcements
+      create_votes
+      create_terms
+      create_comments
+      create_post_upvotes
+      create_comment_upvotes
+      create_post_flags
+      create_comment_flags
+      create_ballot_flags
+      create_moderation_events
+      update_users
+    end
   end
 
   private
 
+  def benchmark(message, &block)
+    elapsed_time_ms = Benchmark.ms(&block)
+    puts "#{message} (#{elapsed_time_ms.round}ms)"
+  end
+
   def create_users
     user_ids = @simulation.to_seed_data[:user_ids]
 
-    print "\tCreating #{user_ids.count} users... "
-    start_time = Time.now
+    benchmark "Created #{user_ids.count} users" do
+      travel_to @simulation.started_at do
+        user_ids.each do |user_id|
+          if user_id == @founder.id
+            # Update founder timestamps to align with simulation timestamps.
+            # Otherwise the founder would have a shorter tenure than other
+            # members.
+            @founder.update! created_at: @simulation.started_at,
+              joined_at: @simulation.started_at
 
-    travel_to @simulation.started_at do
-      user_ids.each do |user_id|
-        if user_id == @founder.id
-          # Update founder timestamps to align with simulation timestamps.
-          # Otherwise the founder would have a shorter tenure than other members.
-          @founder.update! created_at: @simulation.started_at,
-            joined_at: @simulation.started_at
+            # Don't attempt to recreate the pre-existing founder
+            next
+          end
 
-          # Don't attempt to recreate the pre-existing founder
-          next
+          key_pair = OpenSSL::PKey::EC.generate "prime256v1"
+          User.create! id: user_id, public_key_bytes: key_pair.public_to_der
         end
-
-        key_pair = OpenSSL::PKey::EC.generate "prime256v1"
-        User.create! id: user_id, public_key_bytes: key_pair.public_to_der
       end
     end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def random_company_name
@@ -127,38 +127,32 @@ class Seed
   end
 
   def update_org
-    print "\tUpdating Org... "
-    start_time = Time.now
+    benchmark "Updated Org" do
+      random_local_number = rand 1000..9999
+      random_store_number = rand 100..999
 
-    random_local_number = rand 1000..9999
-    random_store_number = rand 100..999
-
-    travel_to @simulation.started_at do
-      attributes = {
-        created_at: @simulation.started_at,
-        encrypted_name: @simulation.encrypt("Local #{random_local_number}"),
-        encrypted_member_definition: @simulation.encrypt("An employee of #{random_company_name} at store ##{random_store_number}"),
-      }
-      @org.update! attributes
-      @founder.reload
+      travel_to @simulation.started_at do
+        attributes = {
+          created_at: @simulation.started_at,
+          encrypted_name: @simulation.encrypt("Local #{random_local_number}"),
+          encrypted_member_definition: @simulation.encrypt("An employee of #{random_company_name} at store ##{random_store_number}"),
+        }
+        @org.update! attributes
+        @founder.reload
+      end
     end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def create_connections
     connection_data = @simulation.to_seed_data[:connections]
 
-    print "\tCreating #{connection_data.count} connections... "
-    start_time = Time.now
-
-    connection_data.each do |sharer_id, scanner_id, timestamp|
-      travel_to timestamp do
-        Connection.create sharer_id:, scanner_id:
+    benchmark "Created #{connection_data.count} connections" do
+      connection_data.each do |sharer_id, scanner_id, timestamp|
+        travel_to timestamp do
+          Connection.create sharer_id:, scanner_id:
+        end
       end
     end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def random_time_during_day(timestamp)
@@ -221,21 +215,18 @@ class Seed
   def create_posts
     post_data = @simulation.to_seed_data[:posts]
 
-    print "\tCreating #{post_data.count} posts... "
-    start_time = Time.now
+    benchmark "Created #{post_data.count} posts" do
+      post_data.each do |user_id, day_start|
+        created_at = random_time_during_day day_start
 
-    post_data.each do |user_id, day_start|
-      created_at = random_time_during_day day_start
-
-      travel_to created_at do
-        User.find(user_id).posts.create! category: random_category.to_s,
-          encrypted_title: @simulation.encrypt(hipster_ipsum_post_title),
-          encrypted_body: @simulation.encrypt(hipster_ipsum_post_body),
-          org: @org
+        travel_to created_at do
+          User.find(user_id).posts.create! category: random_category.to_s,
+            encrypted_title: @simulation.encrypt(hipster_ipsum_post_title),
+            encrypted_body: @simulation.encrypt(hipster_ipsum_post_body),
+            org: @org
+        end
       end
     end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def hipster_ipsum_ballot_question(prefix, suffix)
@@ -284,150 +275,145 @@ class Seed
       active_multiple_choice_ballot_count,
     ].sum
 
-    print "\tCreating #{ballot_count} ballots... "
-    start_time = Time.now
+    benchmark "Created #{ballot_count} ballots" do
+      inactive_yes_no_ballot_count.times do
+        create_fake_ballot category: :yes_no, isActive: false
+      end
 
-    inactive_yes_no_ballot_count.times do
-      create_fake_ballot category: :yes_no, isActive: false
+      active_yes_no_ballot_count.times do
+        create_fake_ballot category: :yes_no, isActive: true
+      end
+
+      inactive_multiple_choice_ballot_count.times do
+        create_fake_ballot category: :multiple_choice, isActive: false
+      end
+
+      active_multiple_choice_ballot_count.times do
+        create_fake_ballot category: :multiple_choice, isActive: true
+      end
     end
-
-    active_yes_no_ballot_count.times do
-      create_fake_ballot category: :yes_no, isActive: true
-    end
-
-    inactive_multiple_choice_ballot_count.times do
-      create_fake_ballot category: :multiple_choice, isActive: false
-    end
-
-    active_multiple_choice_ballot_count.times do
-      create_fake_ballot category: :multiple_choice, isActive: true
-    end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def create_elections
     should_create_elections = rand < 0.9
     offices = should_create_elections ? Office::TYPE_SYMBOLS : []
 
-    print "\tCreating about #{should_create_elections ? 4 : 0} elections... "
-    start_time = Time.now
+    benchmark "Created about #{should_create_elections ? 4 : 0} elections" do
+      user_count = @org.users.count
+      users_per_steward = rand 15..25
+      steward_count = (user_count / users_per_steward)
 
-    user_count = @org.users.count
-    users_per_steward = rand 15..25
-    steward_count = (user_count / users_per_steward)
+      # Must be in progress order. :term appears twice to increase its
+      # likelihood
+      states = [
+        :none, :nominations, :voting, :term_acceptance, :term, :term,
+      ]
+      state_map = {}
+      offices.each do |office|
+        # This relies on Office::TYPE_SYMBOLS being in rank order
+        state = case office
+        when :founder
+          # Already automatically created during first Org creation
+          :none
+        when :president, :treasurer
+          states.sample
+        when :vice_president, :secretary
+          # Don't allow VP or secretary state to be ahead of president state
+          president_state_index = states.rindex(state_map[:president])
+          states[..president_state_index].sample
+        when :steward
+          (steward_count == 0) ? :none : states.sample
+        when :trustee
+          # Don't allow trustee state to be ahead of treasurer state
+          treasurer_state_index = states.rindex(state_map[:treasurer])
+          states[..treasurer_state_index].sample
+        else
+          raise "Unhandled office: #{office}"
+        end
 
-    # Must be in progress order. :term appears twice to increase its likelihood
-    states = [
-      :none, :nominations, :voting, :term_acceptance, :term, :term,
-    ]
-    state_map = {}
-    offices.each do |office|
-      # This relies on Office::TYPE_SYMBOLS being in rank order
-      state = case office
-      when :founder
-        # Already automatically created during first Org creation
-        :none
-      when :president, :treasurer
-        states.sample
-      when :vice_president, :secretary
-        # Don't allow VP or secretary state to be ahead of president state
-        president_state_index = states.rindex(state_map[:president])
-        states[..president_state_index].sample
-      when :steward
-        (steward_count == 0) ? :none : states.sample
-      when :trustee
-        # Don't allow trustee state to be ahead of treasurer state
-        treasurer_state_index = states.rindex(state_map[:treasurer])
-        states[..treasurer_state_index].sample
-      else
-        raise "Unhandled office: #{office}"
-      end
+        state_map[office] = state
+        next if state == :none
 
-      state_map[office] = state
-      next if state == :none
+        office_title = office.to_s.titleize
+        encrypted_question = \
+          @simulation.encrypt("Who should we elect #{office_title}?")
 
-      office_title = office.to_s.titleize
-      encrypted_question = \
-        @simulation.encrypt("Who should we elect #{office_title}?")
+        max_candidate_ids_per_vote = (office == :steward) ? steward_count : 1
 
-      max_candidate_ids_per_vote = (office == :steward) ? steward_count : 1
+        voting_ends_at = @simulation.ended_at + {
+          term: -2.days,
+          term_acceptance: -1.day,
+          voting: 1.day,
+          nominations: 2.days,
+        }[state]
+        term_starts_at = voting_ends_at + 2.days
+        term_ends_at = term_starts_at + 1.year
+        nominations_end_at = voting_ends_at - 1.day
+        created_at = nominations_end_at - 2.days
 
-      voting_ends_at = @simulation.ended_at + {
-        term: -2.days,
-        term_acceptance: -1.day,
-        voting: 1.day,
-        nominations: 2.days,
-      }[state]
-      term_starts_at = voting_ends_at + 2.days
-      term_ends_at = term_starts_at + 1.year
-      nominations_end_at = voting_ends_at - 1.day
-      created_at = nominations_end_at - 2.days
-
-      travel_to created_at do
-        @founder.ballots.create!({
-          category: 'election',
-          encrypted_question:,
-          max_candidate_ids_per_vote:,
-          nominations_end_at:,
-          office:,
-          term_ends_at:,
-          term_starts_at:,
-          voting_ends_at:,
-        })
+        travel_to created_at do
+          @founder.ballots.create!({
+            category: 'election',
+            encrypted_question:,
+            max_candidate_ids_per_vote:,
+            nominations_end_at:,
+            office:,
+            term_ends_at:,
+            term_starts_at:,
+            voting_ends_at:,
+          })
+        end
       end
     end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def create_nominations
     users = @org.users
     elections = @org.ballots.election
 
-    print "\tCreating about #{5 * elections.count} nominations... "
-    start_time = Time.now
+    benchmark "Created about #{5 * elections.count} nominations" do
+      elections.each do |election|
+        nominations_end = election.nominations_end_at
+        joined_users = users.joined_at_or_before(nominations_end)
+        max_nomination_count = rand 1..10
+        nominators_and_nominees = joined_users.ids.sample 2 * max_nomination_count
+        nomination_count = nominators_and_nominees.count / 2
 
-    elections.each do |election|
-      nominations_end = election.nominations_end_at
-      joined_users = users.joined_at_or_before(nominations_end)
-      max_nomination_count = rand 1..10
-      nominators_and_nominees = joined_users.ids.sample 2 * max_nomination_count
-      nomination_count = nominators_and_nominees.count / 2
+        nomination_count.times do
+          # nominations_end could be after the simulation ends, so need to
+          # clamp, because don't want to simulate user actions after the
+          # simulation ends
+          nomination_actions_cutoff = \
+            [nominations_end, @simulation.ended_at].min
 
-      nomination_count.times do
-        # nominations_end could be after the simulation ends, so need to clamp,
-        # because don't want to simulate user actions after the simulation ends
-        nomination_actions_cutoff = [nominations_end, @simulation.ended_at].min
+          nomination_created_at = \
+            rand (election.created_at)...nomination_actions_cutoff
+          nominator_id, nominee_id = nominators_and_nominees.shift 2
+          nomination = nil
+          travel_to nomination_created_at do
+            nomination = election.nominations
+              .create!(nominator_id:, nominee_id:)
+          end
 
-        nomination_created_at = \
-          rand (election.created_at)...nomination_actions_cutoff
-        nominator_id, nominee_id = nominators_and_nominees.shift 2
-        nomination = nil
-        travel_to nomination_created_at do
-          nomination = election.nominations.create!(nominator_id:, nominee_id:)
-        end
+          if rand < 0.6
+            # Accept the nomination 60% of the time
+            accepted = true
+          elsif rand < 0.5
+            # Decline the nomination 20% of the time
+            accepted = false
+          else
+            # Ignore 20% of the time
+            next
+          end
 
-        if rand < 0.6
-          # Accept the nomination 60% of the time
-          accepted = true
-        elsif rand < 0.5
-          # Decline the nomination 20% of the time
-          accepted = false
-        else
-          # Ignore 20% of the time
-          next
-        end
-
-        accepted_or_declined_at = \
-          rand nomination_created_at...nomination_actions_cutoff
-        travel_to accepted_or_declined_at do
-          nomination.update!(accepted:)
+          accepted_or_declined_at = \
+            rand nomination_created_at...nomination_actions_cutoff
+          travel_to accepted_or_declined_at do
+            nomination.update!(accepted:)
+          end
         end
       end
     end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def hipster_ipsum_candidate_title
@@ -438,173 +424,161 @@ class Seed
 
   def create_candidates
     ballots = @org.ballots
-
     yes_no_ballots = ballots.yes_no
     multiple_choice_ballots = ballots.multiple_choice
-
     approximate_candidate_count = \
       2 * yes_no_ballots.count + 6 * multiple_choice_ballots.count
 
-    print "\tCreating about #{approximate_candidate_count} candidates... "
-    start_time = Time.now
-
-    yes_no_ballots.all.each do |ballot|
-      travel_to ballot.created_at do
-        ballot.candidates.create! encrypted_title: @simulation.encrypt('Yes')
-        ballot.candidates.create! encrypted_title: @simulation.encrypt('No')
+    benchmark "Created about #{approximate_candidate_count} candidates" do
+      yes_no_ballots.all.each do |ballot|
+        travel_to ballot.created_at do
+          ballot.candidates.create! encrypted_title: @simulation.encrypt('Yes')
+          ballot.candidates.create! encrypted_title: @simulation.encrypt('No')
+        end
       end
-    end
 
-    multiple_choice_ballots.all.each do |ballot|
-      travel_to ballot.created_at do
-        candidate_count = rand 2..10
-        selection_count = rand 1..candidate_count
+      multiple_choice_ballots.all.each do |ballot|
+        travel_to ballot.created_at do
+          candidate_count = rand 2..10
+          selection_count = rand 1..candidate_count
 
-        candidate_count.times do
-          title = hipster_ipsum_candidate_title
-          ballot.candidates.create! encrypted_title: @simulation.encrypt(title)
-          ballot.update(max_candidate_ids_per_vote: selection_count)
+          candidate_count.times do
+            title = hipster_ipsum_candidate_title
+            ballot.candidates.create! encrypted_title: @simulation.encrypt(title)
+            ballot.update(max_candidate_ids_per_vote: selection_count)
+          end
         end
       end
     end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def create_candidacy_announcements
     election_candidate_count = @org.ballots.election.joins(:candidates).count
-
     expected_post_count = \
       (CANDIDACY_ANNOUNCEMENT_FRACTION * election_candidate_count).round
-    print "\tCreating about #{expected_post_count} candidacy announcements... "
-    start_time = Time.now
 
-    elections = @org.ballots.election.includes(candidates: [:user])
-    elections.each do |election|
-      office_title = election.office.titleize
+    benchmark "Created about #{expected_post_count} candidacy announcements" do
+      elections = @org.ballots.election.includes(candidates: [:user])
+      elections.each do |election|
+        office_title = election.office.titleize
 
-      election.candidates.each do |candidate|
-        next unless rand < CANDIDACY_ANNOUNCEMENT_FRACTION
+        election.candidates.each do |candidate|
+          next unless rand < CANDIDACY_ANNOUNCEMENT_FRACTION
 
-        pseudonym = candidate.user.pseudonym
-        title = "#{pseudonym} is running for #{office_title}"
+          pseudonym = candidate.user.pseudonym
+          title = "#{pseudonym} is running for #{office_title}"
 
-        created_at = candidate.created_at + 1.minute
-        travel_to created_at do
-          candidate.create_post! category: :general,
-            encrypted_title: @simulation.encrypt(title),
-            encrypted_body: @simulation.encrypt(hipster_ipsum_post_body),
-            org: @org,
-            user: candidate.user
+          created_at = candidate.created_at + 1.minute
+          travel_to created_at do
+            candidate.create_post! category: :general,
+              encrypted_title: @simulation.encrypt(title),
+              encrypted_body: @simulation.encrypt(hipster_ipsum_post_body),
+              org: @org,
+              user: candidate.user
+          end
         end
       end
     end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def create_votes
     users = @org.users
     ballots = @org.ballots
 
-    print "\tCreating votes on #{ballots.count} ballots... "
-    start_time = Time.now
+    benchmark "Created votes on #{ballots.count} ballots" do
+      values = []
 
-    values = []
+      ballots.all.each do |ballot|
+        candidate_ids = ballot.candidates.ids
+        next if candidate_ids.blank?
 
-    ballots.all.each do |ballot|
-      candidate_ids = ballot.candidates.ids
-      next if candidate_ids.blank?
+        next if ballot.election? &&
+          (ballot.nominations_end_at > @simulation.ended_at)
 
-      next if ballot.election? && ballot.nominations_end_at > @simulation.ended_at
+        max_candidate_ids_per_vote = ballot.max_candidate_ids_per_vote
+        selection_map = {}
 
-      max_candidate_ids_per_vote = ballot.max_candidate_ids_per_vote
-      selection_map = {}
+        potential_voter_ids = users.joined_at_or_before(ballot.created_at).ids
+        voter_turnout_fraction = VOTER_TURNOUT_DISTRIBUTION.rng.clamp(0, 1)
+        voter_turnout_count = \
+          (potential_voter_ids.count * voter_turnout_fraction).floor
+        voter_ids = potential_voter_ids.sample(voter_turnout_count)
+        current_voter_ids = voter_ids
 
-      potential_voter_ids = users.joined_at_or_before(ballot.created_at).ids
-      voter_turnout_fraction = VOTER_TURNOUT_DISTRIBUTION.rng.clamp(0, 1)
-      voter_turnout_count = (potential_voter_ids.count * voter_turnout_fraction)
-        .floor
-      voter_ids = potential_voter_ids.sample(voter_turnout_count)
-      current_voter_ids = voter_ids
+        max_candidate_ids_per_vote.times do
+          # Randomly place (n-1) dividers to split the spectrum into n sections
+          # -------|----|---|-
+          position_distribution = Rubystats::UniformDistribution.new 0,
+            current_voter_ids.count
+          spectrum_dividers = (1...candidate_ids.count)
+            .map { position_distribution.rng.floor }
+            .sort
+          candidate_vote_counts = \
+            [0, *spectrum_dividers, current_voter_ids.count]
+              .each_cons(2)
+              .map { |a, b| b - a }
 
-      max_candidate_ids_per_vote.times do
-        # Randomly place (n-1) dividers to split up the spectrum into n sections
-        # -------|----|---|-
-        position_distribution = Rubystats::UniformDistribution.new 0,
-          current_voter_ids.count
-        spectrum_dividers = (1...candidate_ids.count)
-          .map { position_distribution.rng.floor }
-          .sort
-        candidate_vote_counts = [0, *spectrum_dividers, current_voter_ids.count]
-          .each_cons(2)
-          .map { |a, b| b - a }
+          current_candidate_index = 0
+          current_candidate_vote_count = 0
+          current_voter_ids.each_with_index do |voter_id, i|
+            unless current_candidate_vote_count < candidate_vote_counts[current_candidate_index]
+              current_candidate_vote_count = 0
+              current_candidate_index += 1
+            end
 
-        current_candidate_index = 0
-        current_candidate_vote_count = 0
-        current_voter_ids.each_with_index do |voter_id, i|
-          unless current_candidate_vote_count < candidate_vote_counts[current_candidate_index]
-            current_candidate_vote_count = 0
-            current_candidate_index += 1
+            unless selection_map.key? voter_id
+              selection_map[voter_id] = []
+            end
+
+            selection_map[voter_id].push candidate_ids[current_candidate_index]
+            current_candidate_vote_count += 1
           end
 
-          unless selection_map.key? voter_id
-            selection_map[voter_id] = []
-          end
-
-          selection_map[voter_id].push candidate_ids[current_candidate_index]
-          current_candidate_vote_count += 1
+          # When multiple votes are allowed, 90% of the previous voters create
+          # another vote
+          next_round_voter_count = (0.9 * current_voter_ids.count).floor
+          current_voter_ids = current_voter_ids.sample(next_round_voter_count)
         end
 
-        # When multiple votes are allowed, 90% of the previous voters create another
-        # vote
-        next_round_voter_count = (0.9 * current_voter_ids.count).floor
-        current_voter_ids = current_voter_ids.sample(next_round_voter_count)
+        selection_map.each do |voter_id, selected_candidate_ids|
+          values.push({
+            ballot_id: ballot.id,
+            candidate_ids: selected_candidate_ids.uniq,
+            created_at: ballot.created_at + 1.second,
+            updated_at: ballot.created_at + 1.second,
+            user_id: voter_id,
+          })
+        end
       end
 
-      selection_map.each do |voter_id, selected_candidate_ids|
-        values.push({
-          ballot_id: ballot.id,
-          candidate_ids: selected_candidate_ids.uniq,
-          created_at: ballot.created_at + 1.second,
-          updated_at: ballot.created_at + 1.second,
-          user_id: voter_id,
-        })
-      end
+      Vote.insert_all values unless values.empty?
     end
-
-    Vote.insert_all values unless values.empty?
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def create_terms
     elections_with_results = \
       @org.ballots.election.inactive_at @simulation.ended_at
 
-    print "\tCreating about #{elections_with_results.count} terms... "
-    start_time = Time.now
-
-    elections_with_results.each do |election|
-      election.winners.each do |winner|
-        candidate = Candidate.find winner[:candidate_id]
-        sentiment = rand
-        next unless sentiment > 0.05 # Neither accepted nor declined: 5%
-        accepted = sentiment > 0.1 # Accepted: 90%, declined: 5%
-        ballot = candidate.ballot
-        travel_to ballot.term_starts_at - 1.second do
-          ballot.terms.create!({
-            accepted: accepted,
-            ends_at: ballot.term_ends_at,
-            office: ballot.office,
-            starts_at: ballot.term_starts_at,
-            user: candidate.user,
-          })
+    benchmark "Created about #{elections_with_results.count} terms" do
+      elections_with_results.each do |election|
+        election.winners.each do |winner|
+          candidate = Candidate.find winner[:candidate_id]
+          sentiment = rand
+          next unless sentiment > 0.05 # Neither accepted nor declined: 5%
+          accepted = sentiment > 0.1 # Accepted: 90%, declined: 5%
+          ballot = candidate.ballot
+          travel_to ballot.term_starts_at - 1.second do
+            ballot.terms.create!({
+              accepted: accepted,
+              ends_at: ballot.term_ends_at,
+              office: ballot.office,
+              starts_at: ballot.term_starts_at,
+              user: candidate.user,
+            })
+          end
         end
       end
     end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def hipster_ipsum_comment_body
@@ -633,44 +607,42 @@ class Seed
     users = @org.users
     posts = @org.posts
     comment_count_estimate = posts.count * COMMENTS_PER_POST_APPROXIMATION
-    print "\tCreating roughly #{comment_count_estimate.round} comments... "
-    start_time = Time.now
 
-    posts.order(:created_at).each do |post|
-      comment_count = COMMENTS_ON_POST_DISTRIBUTION.call
-      next unless comment_count > 0
+    benchmark "Created roughly #{comment_count_estimate.round} comments" do
+      posts.order(:created_at).each do |post|
+        comment_count = COMMENTS_ON_POST_DISTRIBUTION.call
+        next unless comment_count > 0
 
-      available_timespan = @simulation.ended_at - post.created_at
-      max_average_time_between_comments = available_timespan / comment_count
-      current_time = post.created_at
+        available_timespan = @simulation.ended_at - post.created_at
+        max_average_time_between_comments = available_timespan / comment_count
+        current_time = post.created_at
 
-      potential_parent_comments = []
+        potential_parent_comments = []
 
-      comment_count.times do
-        # Pick a random amount of time to have elappsed since the last comment
-        time_delta = max_average_time_between_comments *
-          ELAPSED_TIME_BETWEEN_COMMENTS_DISTRIBUTION.rng
-        comment_time = current_time + time_delta
+        comment_count.times do
+          # Pick a random amount of time to have elappsed since the last comment
+          time_delta = max_average_time_between_comments *
+            ELAPSED_TIME_BETWEEN_COMMENTS_DISTRIBUTION.rng
+          comment_time = current_time + time_delta
 
-        # Pick a random member who had joined by that time to be the commenter
-        commenter = users.joined_at_or_before(comment_time).sample
-        next unless commenter
+          # Pick a random member who had joined by that time to be the commenter
+          commenter = users.joined_at_or_before(comment_time).sample
+          next unless commenter
 
-        if rand < 0.8 && !potential_parent_comments.empty?
-          parent = potential_parent_comments.sample
-          next if parent.depth + 1 >= Comment::MAX_COMMENT_DEPTH
-        end
+          if rand < 0.8 && !potential_parent_comments.empty?
+            parent = potential_parent_comments.sample
+            next if parent.depth + 1 >= Comment::MAX_COMMENT_DEPTH
+          end
 
-        travel_to comment_time do
-          comment = post.comments.create!(user: commenter,
-            encrypted_body: @simulation.encrypt(hipster_ipsum_comment_body),
-            parent:)
-          potential_parent_comments.push(comment)
+          travel_to comment_time do
+            comment = post.comments.create!(user: commenter,
+              encrypted_body: @simulation.encrypt(hipster_ipsum_comment_body),
+              parent:)
+            potential_parent_comments.push(comment)
+          end
         end
       end
     end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def create_upvotes(parent_relation, user_ids)
@@ -684,27 +656,24 @@ class Seed
     parent_model = parent_relation.klass
     type = parent_model.to_s.downcase
 
-    print "\tCreating roughly #{expected_upvote_count} #{type} upvotes and #{expected_downvote_count} #{type} downvotes... "
-    start_time = Time.now
+    benchmark "Created roughly #{expected_upvote_count} #{type} upvotes and #{expected_downvote_count} #{type} downvotes" do
+      columns = [
+        :value, :user_id, ActiveSupport::Inflector.foreign_key(parent_model),
+      ]
+      values = []
 
-    columns = [
-      :value, :user_id, ActiveSupport::Inflector.foreign_key(parent_model),
-    ]
-    values = []
+      parent_relation.all.each do |pm|
+        upvotes = (user_count * UPVOTES_DISTRIBUTION.rng).round
+        downvotes = ((user_count - upvotes) * DOWNVOTES_DISTRIBUTION.rng).round
+        shuffled_user_ids = user_ids.shuffle
+        upvoter_ids = shuffled_user_ids[0, upvotes]
+        values += upvoter_ids.map { |id| columns.zip([1, id, pm.id]).to_h }
+        downvoter_ids = shuffled_user_ids[upvotes, downvotes]
+        values += downvoter_ids.map { |id| columns.zip([-1, id, pm.id]).to_h }
+      end
 
-    parent_relation.all.each do |pm|
-      upvotes = (user_count * UPVOTES_DISTRIBUTION.rng).round
-      downvotes = ((user_count - upvotes) * DOWNVOTES_DISTRIBUTION.rng).round
-      shuffled_user_ids = user_ids.shuffle
-      upvoter_ids = shuffled_user_ids[0, upvotes]
-      values += upvoter_ids.map { |id| columns.zip([1, id, pm.id]).to_h }
-      downvoter_ids = shuffled_user_ids[upvotes, downvotes]
-      values += downvoter_ids.map { |id| columns.zip([-1, id, pm.id]).to_h }
+      Upvote.insert_all values unless values.empty?
     end
-
-    Upvote.insert_all values unless values.empty?
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def create_post_upvotes
@@ -719,31 +688,30 @@ class Seed
 
   def create_flags(relation, flaggable_name, flagged_fraction)
     expected_flag_count = (relation.count * flagged_fraction).round
-    print "\tCreating roughly #{expected_flag_count} flags on #{flaggable_name.pluralize}... "
-    start_time = Time.now
 
-    values = []
+    benchmark "Created roughly #{expected_flag_count} flags on #{flaggable_name.pluralize}" do
+      values = []
 
-    relation.find_each do |flaggable|
-      next unless rand < flagged_fraction
+      relation.find_each do |flaggable|
+        next unless rand < flagged_fraction
 
-      created_at = flaggable.created_at + 3.seconds
+        created_at = flaggable.created_at + 3.seconds
 
-      # Pick a random member who had joined by that time to be the flag_creator
-      flag_creator = @org.users.joined_at_or_before(created_at).sample
+        # Pick a random member who had joined by that time to be the
+        # flag_creator
+        flag_creator = @org.users.joined_at_or_before(created_at).sample
 
-      values.push({
-        flaggable_id: flaggable[flaggable_name.foreign_key] || flaggable.id,
-        flaggable_type: flaggable_name,
-        user_id: flag_creator.id,
-        created_at: created_at,
-        updated_at: created_at,
-      })
+        values.push({
+          flaggable_id: flaggable[flaggable_name.foreign_key] || flaggable.id,
+          flaggable_type: flaggable_name,
+          user_id: flag_creator.id,
+          created_at: created_at,
+          updated_at: created_at,
+        })
+      end
+
+      Flag.insert_all values unless values.empty?
     end
-
-    Flag.insert_all values unless values.empty?
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def create_post_flags
@@ -774,67 +742,68 @@ class Seed
     max_users_to_block = [@org.users.count, 4].min
     blocked_user_count = rand 0..max_users_to_block
 
-    moderation_event_count = flaggable_moderation_event_count + blocked_user_count
+    moderation_event_count = flaggable_moderation_event_count +
+      blocked_user_count
 
-    print "\tCreating about #{moderation_event_count} ModerationEvents... "
-    start_time = Time.now
+    benchmark "Created about #{moderation_event_count} ModerationEvents" do
+      flaggable_type_counts.keys.each do |flaggable_type|
+        ordered_by_flag_count = @org.flags
+          .where(flaggable_type: flaggable_type)
+          .group(:flaggable_id)
+          .select(:flaggable_id, 'COUNT(*) AS flag_count')
+          .order(:flag_count, :flaggable_id)
 
-    flaggable_type_counts.keys.each do |flaggable_type|
-      ordered_by_flag_count = @org.flags
-        .where(flaggable_type: flaggable_type)
-        .group(:flaggable_id)
-        .select(:flaggable_id, 'COUNT(*) AS flag_count')
-        .order(:flag_count, :flaggable_id)
-
-      # Find a ballot with the min flag count and allow it
-      flaggable_id_to_allow = ordered_by_flag_count.first.flaggable_id
-      @founder.created_moderation_events.create!({
-        action: 'allow',
-        moderatable_id: flaggable_id_to_allow,
-        moderatable_type: flaggable_type,
-      })
-
-      # Find a random ballot with the max flag count to block
-      flaggable_id_to_block = ordered_by_flag_count.last.flaggable_id
-
-      # If the flaggable to block is the one allowed above, must undo_allow first
-      if flaggable_id_to_block == flaggable_id_to_allow
+        # Find a ballot with the min flag count and allow it
+        flaggable_id_to_allow = ordered_by_flag_count.first.flaggable_id
         @founder.created_moderation_events.create!({
-          action: 'undo_allow',
+          action: 'allow',
+          moderatable_id: flaggable_id_to_allow,
+          moderatable_type: flaggable_type,
+        })
+
+        # Find a random ballot with the max flag count to block
+        flaggable_id_to_block = ordered_by_flag_count.last.flaggable_id
+
+        # If the flaggable to block is the one allowed above, must undo_allow
+        # first
+        if flaggable_id_to_block == flaggable_id_to_allow
+          @founder.created_moderation_events.create!({
+            action: 'undo_allow',
+            moderatable_id: flaggable_id_to_block,
+            moderatable_type: flaggable_type,
+          })
+        end
+
+        # Block the flaggable
+        @founder.created_moderation_events.create!({
+          action: 'block',
           moderatable_id: flaggable_id_to_block,
           moderatable_type: flaggable_type,
         })
       end
 
-      # Block the flaggable
-      @founder.created_moderation_events.create!({
-        action: 'block',
-        moderatable_id: flaggable_id_to_block,
-        moderatable_type: flaggable_type,
-      })
+      # Pick a few random users to block
+      @org.users.ids.sample(blocked_user_count).each do |user_id|
+        # Attempt to block each user. Note this could fail if the user is an
+        # officer or other protected member.
+        @founder.created_moderation_events.create({
+          action: 'block',
+          moderatable_id: user_id,
+          moderatable_type: 'User',
+        })
+      end
     end
-
-    # Pick a few random users to block
-    @org.users.ids.sample(blocked_user_count).each do |user_id|
-      # Attempt to block each user. Note this could fail if the user is an officer
-      # or other protected member.
-      @founder.created_moderation_events.create({
-        action: 'block',
-        moderatable_id: user_id,
-        moderatable_type: 'User',
-      })
-    end
-
-    puts "Completed in #{(Time.now - start_time).round 3} s"
   end
 
   def update_users
-    # Pick up to 2 users with comments or posts to leave the Org
-    users_to_leave_org = [
-      @org.users.omit_blocked.where.associated(:posts).to_a.sample,
-      @org.users.omit_blocked.where.associated(:comments).to_a.sample,
-    ].compact
+    benchmark "Updated users" do
+      # Pick up to 2 users with comments or posts to leave the Org
+      users_to_leave_org = [
+        @org.users.omit_blocked.where.associated(:posts).to_a.sample,
+        @org.users.omit_blocked.where.associated(:comments).to_a.sample,
+      ].compact
 
-    users_to_leave_org.each { |user| user.leave_org }
+      users_to_leave_org.each { |user| user.leave_org }
+    end
   end
 end
