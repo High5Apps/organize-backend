@@ -1,11 +1,11 @@
 require 'active_support/testing/time_helpers'
 
-include ActionView::Helpers::DateHelper
-include ActiveSupport::Testing::TimeHelpers
-
 namespace :org do
   desc 'Simulate a fake org for any user'
   task :simulation => :environment do
+    include ActionView::Helpers::DateHelper
+    include ActiveSupport::Testing::TimeHelpers
+
     puts
     puts 'WARNING: USE THIS COMMAND CAREFULLY!'
     puts 'It has the power to add fake users, officers, comments, posts, etc. '
