@@ -1,4 +1,12 @@
 class Seed
+  # The Pareto distribution below is unbounded and can sometimes be more than
+  # 1000. This cap helps to guard against those rare and unrealistic scenarios.
+  BALLOT_DISTRIBUTION_MAX = 30
+
+  BALLOTS_DISTRIBUTION = -> { [(1/rand).round, BALLOT_DISTRIBUTION_MAX].min }
+
+  CANDIDACY_ANNOUNCEMENT_FRACTION = 0.8
+
   # These should add to 1.0
   CATEGORY_FRACTIONS = {
     general: 0.6,
@@ -9,57 +17,48 @@ class Seed
   # https://www.wolframalpha.com/input?i=beta+distribution+%282%2C+20%29
   CHARACTERS_IN_BODY_DISTRIBUTION = Rubystats::BetaDistribution.new(2, 20)
 
-  MAX_CHARACTERS_IN_BODY = Post::MAX_BODY_LENGTH
-  MIN_CHARACTERS_PER_PARAGRAPH = 20
-  MAX_PARAGRAPH_COUNT = 10
-  PARAGRAPH_WITH_URL_FRACTION = 0.05
-  POSTS_WITHOUT_BODY_FRACTION = 0.5
-  TITLE_CHARACTER_RANGE = 20..Post::MAX_TITLE_LENGTH
+  # https://www.wolframalpha.com/input?i=beta+distribution+%282%2C+50%29
+  CHARACTERS_IN_COMMENT_DISTRIBUTION = Rubystats::BetaDistribution.new(2, 50)
+
+  CHARACTERS_PER_PARAGRAPH_MIN = 20
+
+  # This isn't statistically or mathematically correct, but it seems pretty close
+  COMMENTS_PER_POST_APPROXIMATION = 2.5
 
   # The Pareto distribution below is unbounded and can sometimes be more than
   # 1000. This cap helps to guard against those rare and unrealistic scenarios.
-  BALLOT_DISTRIBUTION_MAX = 30
-
-  BALLOTS_DISTRIBUTION = -> { [(1/rand).round, BALLOT_DISTRIBUTION_MAX].min }
-
-  QUESTION_PREFIXES = {
-    multiple_choice: 'Which of these should we ',
-    yes_no: 'Should we ',
-  }
-  QUESTION_SUFFIX = '?'
-
-  ANNOUNCE_FRACTION = 0.8
-
-  VOTER_TURNOUT_DISTRIBUTION = Rubystats::NormalDistribution.new(0.7, 0.1)
-
-  # The Pareto distribution below is unbounded and can sometimes be more than
-  # 1000. This cap helps to guard against those rare and unrealistic scenarios.
-  MAX_COMMENTS_PER_POST = 100
+  COMMENTS_PER_POST_MAX = 100
 
   # 1.161 is the required alpha for the 80/20 Pareto distribution. With it, 20%
   # of posts will receive 80% of comments. 1.161 approximately equals log4_5. See
   # https://en.wikipedia.org/wiki/Pareto_distribution#Relation_to_the_%22Pareto_principle%22
   COMMENTS_ON_POST_DISTRIBUTION = -> {
-    [(1 / (rand**(1 / 1.161)) - 1).round, MAX_COMMENTS_PER_POST].min
+    [(1 / (rand**(1 / 1.161)) - 1).round, COMMENTS_PER_POST_MAX].min
   }
-
-  # This isn't statistically or mathematically correct, but it seems pretty close
-  APPROXIMATE_COMMENTS_PER_POST = 2.5
-
-  # https://www.wolframalpha.com/input?i=beta+distribution+%282%2C+50%29
-  CHARACTERS_IN_COMMENT_DISTRIBUTION = Rubystats::BetaDistribution.new(2, 50)
-
-  # https://www.wolframalpha.com/input?i=beta+distribution+%281%2C+2%29
-  ELAPSED_TIME_DISTRIBUTION = Rubystats::BetaDistribution.new(1, 2)
-
-  # https://www.wolframalpha.com/input?i=beta+distribution+%282%2C+19%29
-  UPVOTES_DISTRIBUTION = Rubystats::BetaDistribution.new(2, 19)
 
   # https://www.wolframalpha.com/input?i=beta+distribution+%281%2C+20%29
   DOWNVOTES_DISTRIBUTION = Rubystats::BetaDistribution.new(1, 20)
 
+  # https://www.wolframalpha.com/input?i=beta+distribution+%281%2C+2%29
+  ELAPSED_TIME_BETWEEN_COMMENTS_DISTRIBUTION = \
+    Rubystats::BetaDistribution.new(1, 2)
+
   FLAGGED_DOWNVOTES_FRACTION = 0.03
   FLAGGED_VOTES_FRACTION = 0.01
+  PARAGRAPH_COUNT_MAX = 10
+  PARAGRAPH_WITH_URL_FRACTION = 0.05
+  POSTS_WITHOUT_BODY_FRACTION = 0.5
+  QUESTION_PREFIXES = {
+    multiple_choice: 'Which of these should we ',
+    yes_no: 'Should we ',
+  }
+  QUESTION_SUFFIX = '?'
+  TITLE_CHARACTER_RANGE = 20..Post::MAX_TITLE_LENGTH
+
+  # https://www.wolframalpha.com/input?i=beta+distribution+%282%2C+19%29
+  UPVOTES_DISTRIBUTION = Rubystats::BetaDistribution.new(2, 19)
+
+  VOTER_TURNOUT_DISTRIBUTION = Rubystats::NormalDistribution.new(0.7, 0.1)
 
   def initialize(simulation)
     @simulation = simulation
@@ -200,13 +199,13 @@ class Seed
     return if rand < POSTS_WITHOUT_BODY_FRACTION
 
     approximate_body_length = \
-      MAX_CHARACTERS_IN_BODY * CHARACTERS_IN_BODY_DISTRIBUTION.rng
-    paragraph_count = rand 1..MAX_PARAGRAPH_COUNT
+      Post::MAX_BODY_LENGTH * CHARACTERS_IN_BODY_DISTRIBUTION.rng
+    paragraph_count = rand 1..PARAGRAPH_COUNT_MAX
     max_characters_per_paragraph = approximate_body_length / paragraph_count
 
     paragraphs = (0...paragraph_count).map do
       characters = \
-        [MIN_CHARACTERS_PER_PARAGRAPH, max_characters_per_paragraph].max
+        [CHARACTERS_PER_PARAGRAPH_MIN, max_characters_per_paragraph].max
       p = Faker::Hipster.paragraph_by_chars(characters:)
 
       # Remove the final sentence to ensure no partial words
@@ -484,7 +483,8 @@ class Seed
     org = User.find(@simulation.founder_id).org
     election_candidate_count = org.ballots.election.joins(:candidates).count
 
-    expected_post_count = (ANNOUNCE_FRACTION * election_candidate_count).round
+    expected_post_count = \
+      (CANDIDACY_ANNOUNCEMENT_FRACTION * election_candidate_count).round
     print "\tCreating about #{expected_post_count} candidacy announcements... "
     start_time = Time.now
 
@@ -493,7 +493,7 @@ class Seed
       office_title = election.office.titleize
 
       election.candidates.each do |candidate|
-        next unless rand < ANNOUNCE_FRACTION
+        next unless rand < CANDIDACY_ANNOUNCEMENT_FRACTION
 
         pseudonym = candidate.user.pseudonym
         title = "#{pseudonym} is running for #{office_title}"
@@ -619,13 +619,13 @@ class Seed
 
   def hipster_ipsum_comment_body
     approximate_body_length = \
-      MAX_CHARACTERS_IN_BODY * CHARACTERS_IN_COMMENT_DISTRIBUTION.rng
+      Comment::MAX_BODY_LENGTH * CHARACTERS_IN_COMMENT_DISTRIBUTION.rng
     paragraph_count = rand 1..3
     max_characters_per_paragraph = approximate_body_length / paragraph_count
 
     paragraphs = (0...paragraph_count).map do
       characters = \
-        [MIN_CHARACTERS_PER_PARAGRAPH, max_characters_per_paragraph].max
+        [CHARACTERS_PER_PARAGRAPH_MIN, max_characters_per_paragraph].max
       p = Faker::Hipster.paragraph_by_chars(characters:)
 
       # Remove the final sentence to ensure no partial words
@@ -643,7 +643,7 @@ class Seed
     org = User.find(@simulation.founder_id).org
     users = org.users
     posts = org.posts
-    comment_count_estimate = posts.count * APPROXIMATE_COMMENTS_PER_POST
+    comment_count_estimate = posts.count * COMMENTS_PER_POST_APPROXIMATION
     print "\tCreating roughly #{comment_count_estimate.round} comments... "
     start_time = Time.now
 
@@ -659,8 +659,8 @@ class Seed
 
       comment_count.times do
         # Pick a random amount of time to have elappsed since the last comment
-        time_delta = \
-          max_average_time_between_comments * ELAPSED_TIME_DISTRIBUTION.rng
+        time_delta = max_average_time_between_comments *
+          ELAPSED_TIME_BETWEEN_COMMENTS_DISTRIBUTION.rng
         comment_time = current_time + time_delta
 
         # Pick a random member who had joined by that time to be the commenter
