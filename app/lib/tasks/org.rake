@@ -53,21 +53,11 @@ namespace :org do
     puts '3. Under the "Developer" section, tap "Share Group Key"'.indent(2)
     group_key_base64 = STDIN.getpass('[<group_key_base64>]: ').chomp
 
-    puts "Creating seeds..."
-    start_time = Time.now
+    simulation = Simulation.new
+    simulation.run(founder_id: user.id, group_key_base64:)
 
-    $simulation = Simulation.new
-    $simulation.run(founder_id: user.id, group_key_base64:)
-
-    # The unusual code below is a holdover from when these seeds used to be
-    # created using rails db:seeds task. It basically runs all seed scripts in
-    # that directory in lexicographical order. For more info, see:
-    # https://guides.rubyonrails.org/active_record_migrations.html#migrations-and-seed-data
-    Dir[
-      File.join Rails.root, 'lib', 'tasks', 'org', 'simulation', 'seeds', '*.rb'
-    ].sort.each { |seed| load seed }
-
-    puts "Created seeds. Completed in #{(Time.now - start_time).round 3} s"
+    seed = Seed.new simulation
+    seed.create_random_seeds
   end
 
   # Alias rake org:sim to rake org:simulation
