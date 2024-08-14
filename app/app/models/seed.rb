@@ -91,6 +91,12 @@ class Seed
     end
   end
 
+  def create_screenshot_seeds
+    create_users
+    update_org
+    create_connections
+  end
+
   private
 
   def benchmark(message, &block)

@@ -1,11 +1,7 @@
 require 'active_support/testing/time_helpers'
 
 namespace :org do
-  desc 'Simulate a fake org for any user'
-  task :simulation => :environment do
-    include ActionView::Helpers::DateHelper
-    include ActiveSupport::Testing::TimeHelpers
-
+  def get_founder_id_and_group_key_from_user_input
     puts
     puts 'WARNING: USE THIS COMMAND CAREFULLY!'
     puts 'It has the power to add fake users, officers, comments, posts, etc. '
@@ -53,8 +49,18 @@ namespace :org do
     puts '3. Under the "Developer" section, tap "Share Group Key"'.indent(2)
     group_key_base64 = STDIN.getpass('[<group_key_base64>]: ').chomp
 
+    [user.id, group_key_base64]
+  end
+
+  desc 'Simulate a fake org for any user'
+  task :simulation => :environment do
+    include ActionView::Helpers::DateHelper
+    include ActiveSupport::Testing::TimeHelpers
+
+    founder_id, group_key_base64 = get_founder_id_and_group_key_from_user_input
+
     simulation = Simulation.new
-    simulation.run founder_id: user.id
+    simulation.run(founder_id:)
 
     seed = Seed.new simulation, group_key_base64
     seed.create_random_seeds
@@ -62,4 +68,18 @@ namespace :org do
 
   # Alias rake org:sim to rake org:simulation
   task :sim => 'org:simulation'
+
+  desc 'Simulate a fake org to use in marketing screenshots'
+  task :screenshots => :environment do
+    include ActionView::Helpers::DateHelper
+    include ActiveSupport::Testing::TimeHelpers
+
+    founder_id, group_key_base64 = get_founder_id_and_group_key_from_user_input
+
+    simulation = Simulation.new
+    simulation.run(founder_id:)
+
+    seed = Seed.new simulation, group_key_base64
+    seed.create_screenshot_seeds
+  end
 end
