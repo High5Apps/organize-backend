@@ -62,6 +62,8 @@ class Seed
 
   def initialize(simulation)
     @simulation = simulation
+    @founder = User.find @simulation.founder_id
+    @org = @founder.org
   end
 
   def create_random_seeds
@@ -101,11 +103,10 @@ class Seed
 
     travel_to @simulation.started_at do
       user_ids.each do |user_id|
-        if user_id == @simulation.founder_id
+        if user_id == @founder.id
           # Update founder timestamps to align with simulation timestamps.
           # Otherwise the founder would have a shorter tenure than other members.
-          founder = User.find(user_id)
-          founder.update! created_at: @simulation.started_at,
+          @founder.update! created_at: @simulation.started_at,
             joined_at: @simulation.started_at
 
           # Don't attempt to recreate the pre-existing founder
@@ -129,8 +130,6 @@ class Seed
     print "\tUpdating Org... "
     start_time = Time.now
 
-    founder = User.find(@simulation.founder_id)
-
     random_local_number = rand 1000..9999
     random_store_number = rand 100..999
 
@@ -140,8 +139,8 @@ class Seed
         encrypted_name: @simulation.encrypt("Local #{random_local_number}"),
         encrypted_member_definition: @simulation.encrypt("An employee of #{random_company_name} at store ##{random_store_number}"),
       }
-      founder.org.update! attributes
-      founder.save!
+      @org.update! attributes
+      @founder.reload
     end
 
     puts "Completed in #{(Time.now - start_time).round 3} s"
@@ -225,8 +224,6 @@ class Seed
     print "\tCreating #{post_data.count} posts... "
     start_time = Time.now
 
-    org = User.find(@simulation.founder_id).org
-
     post_data.each do |user_id, day_start|
       created_at = random_time_during_day day_start
 
@@ -234,7 +231,7 @@ class Seed
         User.find(user_id).posts.create! category: random_category.to_s,
           encrypted_title: @simulation.encrypt(hipster_ipsum_post_title),
           encrypted_body: @simulation.encrypt(hipster_ipsum_post_body),
-          org:
+          org: @org
       end
     end
 
@@ -253,7 +250,7 @@ class Seed
     "#{prefix}#{question}#{suffix}"
   end
 
-  def create_fake_ballot(org, category:, isActive:)
+  def create_fake_ballot(category:, isActive:)
     created_at = Faker::Time.between from: @simulation.started_at,
       to: @simulation.ended_at
 
@@ -268,7 +265,7 @@ class Seed
       QUESTION_PREFIXES[category], QUESTION_SUFFIX)
 
     # Pick a random member who had joined by that time to be the creator
-    creator = org.users.joined_at_or_before(created_at).sample
+    creator = @org.users.joined_at_or_before(created_at).sample
 
     travel_to created_at do
       creator.ballots.create! category:, encrypted_question:, voting_ends_at:
@@ -290,22 +287,20 @@ class Seed
     print "\tCreating #{ballot_count} ballots... "
     start_time = Time.now
 
-    org = User.find(@simulation.founder_id).org
-
     inactive_yes_no_ballot_count.times do
-      create_fake_ballot org, category: :yes_no, isActive: false
+      create_fake_ballot category: :yes_no, isActive: false
     end
 
     active_yes_no_ballot_count.times do
-      create_fake_ballot org, category: :yes_no, isActive: true
+      create_fake_ballot category: :yes_no, isActive: true
     end
 
     inactive_multiple_choice_ballot_count.times do
-      create_fake_ballot org, category: :multiple_choice, isActive: false
+      create_fake_ballot category: :multiple_choice, isActive: false
     end
 
     active_multiple_choice_ballot_count.times do
-      create_fake_ballot org, category: :multiple_choice, isActive: true
+      create_fake_ballot category: :multiple_choice, isActive: true
     end
 
     puts "Completed in #{(Time.now - start_time).round 3} s"
@@ -318,9 +313,7 @@ class Seed
     print "\tCreating about #{should_create_elections ? 4 : 0} elections... "
     start_time = Time.now
 
-    founder = User.find(@simulation.founder_id)
-    org = founder.org
-    user_count = org.users.count
+    user_count = @org.users.count
     users_per_steward = rand 15..25
     steward_count = (user_count / users_per_steward)
 
@@ -372,7 +365,7 @@ class Seed
       created_at = nominations_end_at - 2.days
 
       travel_to created_at do
-        founder.ballots.create!({
+        @founder.ballots.create!({
           category: 'election',
           encrypted_question:,
           max_candidate_ids_per_vote:,
@@ -389,9 +382,8 @@ class Seed
   end
 
   def create_nominations
-    org = User.find(@simulation.founder_id).org
-    users = org.users
-    elections = org.ballots.election
+    users = @org.users
+    elections = @org.ballots.election
 
     print "\tCreating about #{5 * elections.count} nominations... "
     start_time = Time.now
@@ -445,7 +437,7 @@ class Seed
   end
 
   def create_candidates
-    ballots = User.find(@simulation.founder_id).org.ballots
+    ballots = @org.ballots
 
     yes_no_ballots = ballots.yes_no
     multiple_choice_ballots = ballots.multiple_choice
@@ -480,15 +472,14 @@ class Seed
   end
 
   def create_candidacy_announcements
-    org = User.find(@simulation.founder_id).org
-    election_candidate_count = org.ballots.election.joins(:candidates).count
+    election_candidate_count = @org.ballots.election.joins(:candidates).count
 
     expected_post_count = \
       (CANDIDACY_ANNOUNCEMENT_FRACTION * election_candidate_count).round
     print "\tCreating about #{expected_post_count} candidacy announcements... "
     start_time = Time.now
 
-    elections = org.ballots.election.includes(candidates: [:user])
+    elections = @org.ballots.election.includes(candidates: [:user])
     elections.each do |election|
       office_title = election.office.titleize
 
@@ -503,7 +494,7 @@ class Seed
           candidate.create_post! category: :general,
             encrypted_title: @simulation.encrypt(title),
             encrypted_body: @simulation.encrypt(hipster_ipsum_post_body),
-            org:,
+            org: @org,
             user: candidate.user
         end
       end
@@ -513,9 +504,8 @@ class Seed
   end
 
   def create_votes
-    org = User.find(@simulation.founder_id).org
-    users = org.users
-    ballots = org.ballots
+    users = @org.users
+    ballots = @org.ballots
 
     print "\tCreating votes on #{ballots.count} ballots... "
     start_time = Time.now
@@ -589,8 +579,8 @@ class Seed
   end
 
   def create_terms
-    org = User.find(@simulation.founder_id).org
-    elections_with_results = org.ballots.election.inactive_at @simulation.ended_at
+    elections_with_results = \
+      @org.ballots.election.inactive_at @simulation.ended_at
 
     print "\tCreating about #{elections_with_results.count} terms... "
     start_time = Time.now
@@ -640,9 +630,8 @@ class Seed
   end
 
   def create_comments
-    org = User.find(@simulation.founder_id).org
-    users = org.users
-    posts = org.posts
+    users = @org.users
+    posts = @org.posts
     comment_count_estimate = posts.count * COMMENTS_PER_POST_APPROXIMATION
     print "\tCreating roughly #{comment_count_estimate.round} comments... "
     start_time = Time.now
@@ -719,20 +708,16 @@ class Seed
   end
 
   def create_post_upvotes
-    org = User.find(@simulation.founder_id).org
-    user_ids = org.users.ids
-
-    create_upvotes org.posts, user_ids
+    user_ids = @org.users.ids
+    create_upvotes @org.posts, user_ids
   end
 
   def create_comment_upvotes
-    org = User.find(@simulation.founder_id).org
-    user_ids = org.users.ids
-
-    create_upvotes Comment.where(post_id: org.posts), user_ids
+    user_ids = @org.users.ids
+    create_upvotes Comment.where(post_id: @org.posts), user_ids
   end
 
-  def create_flags(relation, flaggable_name, flagged_fraction, org)
+  def create_flags(relation, flaggable_name, flagged_fraction)
     expected_flag_count = (relation.count * flagged_fraction).round
     print "\tCreating roughly #{expected_flag_count} flags on #{flaggable_name.pluralize}... "
     start_time = Time.now
@@ -745,7 +730,7 @@ class Seed
       created_at = flaggable.created_at + 3.seconds
 
       # Pick a random member who had joined by that time to be the flag_creator
-      flag_creator = org.users.joined_at_or_before(created_at).sample
+      flag_creator = @org.users.joined_at_or_before(created_at).sample
 
       values.push({
         flaggable_id: flaggable[flaggable_name.foreign_key] || flaggable.id,
@@ -762,38 +747,31 @@ class Seed
   end
 
   def create_post_flags
-    org = User.find(@simulation.founder_id).org
-    downvotes = org.upvotes.where(value: -1)
+    downvotes = @org.upvotes.where(value: -1)
 
     posts_without_candidacy_announcements = downvotes.joins(:post)
       .where(post: { candidate_id: nil })
     create_flags posts_without_candidacy_announcements,
-      'Post', FLAGGED_DOWNVOTES_FRACTION, org
+      'Post', FLAGGED_DOWNVOTES_FRACTION
   end
 
   def create_comment_flags
-    org = User.find(@simulation.founder_id).org
-    downvotes = org.upvotes.where(value: -1)
+    downvotes = @org.upvotes.where(value: -1)
 
     comments = downvotes.joins(:comment)
-    create_flags comments, 'Comment', FLAGGED_DOWNVOTES_FRACTION, org
+    create_flags comments, 'Comment', FLAGGED_DOWNVOTES_FRACTION
   end
 
   def create_ballot_flags
-    org = User.find(@simulation.founder_id).org
-
-    non_election_votes = org.ballots.not_election.joins(:votes)
-    create_flags non_election_votes, 'Ballot', FLAGGED_VOTES_FRACTION, org
+    non_election_votes = @org.ballots.not_election.joins(:votes)
+    create_flags non_election_votes, 'Ballot', FLAGGED_VOTES_FRACTION
   end
 
   def create_moderation_events
-    founder = User.find(@simulation.founder_id)
-    org = founder.org
-
-    flaggable_type_counts = org.flags.group(:flaggable_type).count
+    flaggable_type_counts = @org.flags.group(:flaggable_type).count
     flaggable_moderation_event_count = 2 * flaggable_type_counts.keys.count
 
-    max_users_to_block = [org.users.count, 4].min
+    max_users_to_block = [@org.users.count, 4].min
     blocked_user_count = rand 0..max_users_to_block
 
     moderation_event_count = flaggable_moderation_event_count + blocked_user_count
@@ -802,7 +780,7 @@ class Seed
     start_time = Time.now
 
     flaggable_type_counts.keys.each do |flaggable_type|
-      ordered_by_flag_count = org.flags
+      ordered_by_flag_count = @org.flags
         .where(flaggable_type: flaggable_type)
         .group(:flaggable_id)
         .select(:flaggable_id, 'COUNT(*) AS flag_count')
@@ -810,7 +788,7 @@ class Seed
 
       # Find a ballot with the min flag count and allow it
       flaggable_id_to_allow = ordered_by_flag_count.first.flaggable_id
-      founder.created_moderation_events.create!({
+      @founder.created_moderation_events.create!({
         action: 'allow',
         moderatable_id: flaggable_id_to_allow,
         moderatable_type: flaggable_type,
@@ -821,7 +799,7 @@ class Seed
 
       # If the flaggable to block is the one allowed above, must undo_allow first
       if flaggable_id_to_block == flaggable_id_to_allow
-        founder.created_moderation_events.create!({
+        @founder.created_moderation_events.create!({
           action: 'undo_allow',
           moderatable_id: flaggable_id_to_block,
           moderatable_type: flaggable_type,
@@ -829,7 +807,7 @@ class Seed
       end
 
       # Block the flaggable
-      founder.created_moderation_events.create!({
+      @founder.created_moderation_events.create!({
         action: 'block',
         moderatable_id: flaggable_id_to_block,
         moderatable_type: flaggable_type,
@@ -837,10 +815,10 @@ class Seed
     end
 
     # Pick a few random users to block
-    org.users.ids.sample(blocked_user_count).each do |user_id|
+    @org.users.ids.sample(blocked_user_count).each do |user_id|
       # Attempt to block each user. Note this could fail if the user is an officer
       # or other protected member.
-      founder.created_moderation_events.create({
+      @founder.created_moderation_events.create({
         action: 'block',
         moderatable_id: user_id,
         moderatable_type: 'User',
@@ -851,12 +829,10 @@ class Seed
   end
 
   def update_users
-    org = User.find(@simulation.founder_id).org
-
     # Pick up to 2 users with comments or posts to leave the Org
     users_to_leave_org = [
-      org.users.omit_blocked.where.associated(:posts).to_a.sample,
-      org.users.omit_blocked.where.associated(:comments).to_a.sample,
+      @org.users.omit_blocked.where.associated(:posts).to_a.sample,
+      @org.users.omit_blocked.where.associated(:comments).to_a.sample,
     ].compact
 
     users_to_leave_org.each { |user| user.leave_org }
