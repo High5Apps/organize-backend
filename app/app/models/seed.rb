@@ -107,7 +107,7 @@ class Seed
 
     # Adjust end dates to match the ideal screenshots
     # Note that with these adjustments, these ballots are no longer valid
-    @org.ballots.president.first.update_attribute :voting_ends_at, 2.weeks.ago
+    @org.ballots.president.first.update_attribute :voting_ends_at, 8.days.ago
     @org.ballots.treasurer.first
       .update_attribute :voting_ends_at, 3.5.days.from_now
     secretary = @org.ballots.secretary.first
