@@ -114,6 +114,22 @@ class Seed
     secretary.nominations_end_at = 1.5.days.from_now
     secretary.voting_ends_at = secretary.nominations_end_at + 1.day
     secretary.save! validate: false
+
+    create_fake_ballot(
+      category: :yes_no,
+      isActive: true,
+      question: 'Should we let officers expense up to $250 during the membership drive?',
+    ).update_attribute :voting_ends_at, 2.5.days.from_now
+    create_fake_ballot(
+      category: :multiple_choice,
+      isActive: false,
+      question: 'Which of these items should we buy with the budget?',
+    ).update_attribute :voting_ends_at, 7.days.ago
+    create_fake_ballot(
+      category: :yes_no,
+      isActive: false,
+      question: 'Should we vote for a president?',
+    ).update_attribute :voting_ends_at, 14.days.ago
   end
 
   private
@@ -286,7 +302,7 @@ class Seed
     "#{prefix}#{question}#{suffix}"
   end
 
-  def create_fake_ballot(category:, isActive:)
+  def create_fake_ballot(category:, isActive:, question: nil)
     created_at = Faker::Time.between from: @simulation.started_at,
       to: @simulation.ended_at
 
@@ -297,8 +313,9 @@ class Seed
       Faker::Time.between from: created_at, to: @simulation.ended_at
     end
 
-    encrypted_question = encrypt hipster_ipsum_ballot_question(
-      QUESTION_PREFIXES[category], QUESTION_SUFFIX)
+    question ||= hipster_ipsum_ballot_question QUESTION_PREFIXES[category],
+      QUESTION_SUFFIX
+    encrypted_question = encrypt question
 
     # Pick a random member who had joined by that time to be the creator
     creator = @org.users.joined_at_or_before(created_at).sample
