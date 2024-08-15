@@ -74,12 +74,13 @@ class Seed
       create_connections
       create_posts
       create_ballots
-      create_elections
-      create_nominations
+      create_elections office_state_map: random_office_state_map,
+        should_create_elections_fraction: 0.9
+      create_nominations acceptance_fraction: 0.6
       create_candidates
       create_candidacy_announcements
       create_votes
-      create_terms
+      create_terms acceptance_fraction: 0.9
       create_comments
       create_post_upvotes
       create_comment_upvotes
@@ -95,6 +96,24 @@ class Seed
     create_users
     update_org
     create_connections
+    create_elections office_state_map: {
+      president: :term,
+      treasurer: :voting,
+      secretary: :nominations,
+    }, should_create_elections_fraction: 1
+    create_nominations acceptance_fraction: 1
+    create_votes
+    create_terms acceptance_fraction: 1
+
+    # Adjust end dates to match the ideal screenshots
+    # Note that with these adjustments, these ballots are no longer valid
+    @org.ballots.president.first.update_attribute :voting_ends_at, 2.weeks.ago
+    @org.ballots.treasurer.first
+      .update_attribute :voting_ends_at, 3.5.days.from_now
+    secretary = @org.ballots.secretary.first
+    secretary.nominations_end_at = 1.5.days.from_now
+    secretary.voting_ends_at = secretary.nominations_end_at + 1.day
+    secretary.save! validate: false
   end
 
   private
@@ -320,45 +339,21 @@ class Seed
     end
   end
 
-  def create_elections
-    should_create_elections = rand < 0.9
-    offices = should_create_elections ? Office::TYPE_SYMBOLS : []
+  def create_elections(office_state_map:, should_create_elections_fraction:)
+    unless rand < should_create_elections_fraction
+      puts "Skipping election creation"
+      return
+    end
 
-    benchmark "Created about #{should_create_elections ? 4 : 0} elections" do
+    non_none_office_states = office_state_map.reject { |k, v| v == :none }
+    benchmark "Created #{non_none_office_states.count} elections" do
       user_count = @org.users.count
       users_per_steward = rand 15..25
       steward_count = (user_count / users_per_steward)
 
-      # Must be in progress order. :term appears twice to increase its
-      # likelihood
-      states = [
-        :none, :nominations, :voting, :term_acceptance, :term, :term,
-      ]
-      state_map = {}
-      offices.each do |office|
-        # This relies on Office::TYPE_SYMBOLS being in rank order
-        state = case office
-        when :founder
-          # Already automatically created during first Org creation
-          :none
-        when :president, :treasurer
-          states.sample
-        when :vice_president, :secretary
-          # Don't allow VP or secretary state to be ahead of president state
-          president_state_index = states.rindex(state_map[:president])
-          states[..president_state_index].sample
-        when :steward
-          (steward_count == 0) ? :none : states.sample
-        when :trustee
-          # Don't allow trustee state to be ahead of treasurer state
-          treasurer_state_index = states.rindex(state_map[:treasurer])
-          states[..treasurer_state_index].sample
-        else
-          raise "Unhandled office: #{office}"
-        end
-
-        state_map[office] = state
+      office_state_map.each do |office, state|
         next if state == :none
+        next if (office == :steward) && steward_count == 0
 
         office_title = office.to_s.titleize
         encrypted_question = encrypt("Who should we elect #{office_title}?")
@@ -392,7 +387,42 @@ class Seed
     end
   end
 
-  def create_nominations
+  def random_office_state_map
+    # Must be in progress order. :term appears twice to increase its
+    # likelihood
+    states = [
+      :none, :nominations, :voting, :term_acceptance, :term, :term,
+    ]
+    state_map = {}
+    Office::TYPE_SYMBOLS.each do |office|
+      # This relies on Office::TYPE_SYMBOLS being in rank order
+      state = case office
+      when :founder
+        # Already automatically created during first Org creation
+        :none
+      when :president, :treasurer
+        states.sample
+      when :vice_president, :secretary
+        # Don't allow VP or secretary state to be ahead of president state
+        president_state_index = states.rindex(state_map[:president])
+        states[..president_state_index].sample
+      when :steward
+        states.sample
+      when :trustee
+        # Don't allow trustee state to be ahead of treasurer state
+        treasurer_state_index = states.rindex(state_map[:treasurer])
+        states[..treasurer_state_index].sample
+      else
+        raise "Unhandled office: #{office}"
+      end
+
+      state_map[office] = state
+    end
+
+    state_map
+  end
+
+  def create_nominations(acceptance_fraction:)
     users = @org.users
     elections = @org.ballots.election
 
@@ -420,14 +450,13 @@ class Seed
               .create!(nominator_id:, nominee_id:)
           end
 
-          if rand < 0.6
-            # Accept the nomination 60% of the time
+          if rand < acceptance_fraction
             accepted = true
           elsif rand < 0.5
-            # Decline the nomination 20% of the time
+            # Decline the nomination half of the time it's not accepted
             accepted = false
           else
-            # Ignore 20% of the time
+            # Ignore the nomination half of the time it's not accepted
             next
           end
 
@@ -580,7 +609,7 @@ class Seed
     end
   end
 
-  def create_terms
+  def create_terms(acceptance_fraction:)
     elections_with_results = \
       @org.ballots.election.inactive_at @simulation.ended_at
 
@@ -588,9 +617,8 @@ class Seed
       elections_with_results.each do |election|
         election.winners.each do |winner|
           candidate = Candidate.find winner[:candidate_id]
-          sentiment = rand
-          next unless sentiment > 0.05 # Neither accepted nor declined: 5%
-          accepted = sentiment > 0.1 # Accepted: 90%, declined: 5%
+          accepted = rand < acceptance_fraction
+          next if !accepted && rand < 0.5 # Ignore 50% when it's unaccepted
           ballot = candidate.ballot
           travel_to ballot.term_starts_at - 1.second do
             ballot.terms.create!({
