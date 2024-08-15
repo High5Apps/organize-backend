@@ -47,6 +47,8 @@ NGINX web service for terminating TLS, defining non-Rails routes, and serving st
 
 ## Cross-Cutting Concerns
 
+This section talks about the things which are everywhere and nowhere in particular.
+
 ### Minimal reliance on external services with unaligned interests
 
 When one party relies on another party for critical infrastructure, it's crucial for the first party to consider whether both parties' interests are aligned. Otherwise, the first party risks a denial-of-service if the other abruptly ends its partnership.
