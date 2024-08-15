@@ -130,6 +130,22 @@ class Seed
       isActive: false,
       question: 'Should we vote for a president?',
     ).update_attribute :voting_ends_at, 14.days.ago
+
+    [
+      { title: 'Limit class sizes to 30 students', value: 26, created_at: 8.days.ago },
+      { title: 'At least one full-time nurse at each school', value: 22, created_at: 3.days.ago },
+      { title: 'Access to green-space at all schools', value: 20, created_at: 14.days.ago },
+      { title: 'A full-time librarian at every middle and high school', value: 16, created_at: 22.hours.ago },
+      { title: 'More than one counselor for every 500 students', value: 14, created_at: 6.days.ago },
+    ].each do |data|
+      data => { created_at:, title:, value: }
+      creator = @org.users.where.not(id: @founder.id).sample
+      post = creator.posts.create! category: :demands,
+        created_at: created_at,
+        encrypted_title: encrypt(title),
+        org: @org
+      post.upvotes.first.update_attribute :value, value
+    end
   end
 
   private
