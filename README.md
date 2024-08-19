@@ -60,7 +60,7 @@ bin/deploy org
 
 ## Rails Tasks
 
-Rails includes many build-in tasks for administering the application service. List them all with `drails -T`. Commonly used custom tasks are detailed below:
+Rails includes many built-in tasks for administering the application service. List them all with `drails -T`. Commonly used custom tasks are detailed below:
 
 ### `org:simulation` or `org:sim`
 
@@ -69,7 +69,7 @@ This task randomly simulates an Org at the 10-day mark to simplify development. 
 2. Run `drails org:sim` on your development machine
 3. Share your Org's group secret from the development client's development settings menu into the task's input
     - If you're using a simulator or emulator on your development machine, just copy and paste the group secret into the task's input.
-    - If you're using a physical development device external to your development machine, share the group secret using a secure meassaging service. For example you could share it from an Android phone to a Mac using the [Signal app](https://signal.org/) "Note to Self" feature, then opening the Signal desktop client on your Mac, then copy/pasting it into the task's input.
+    - If you're using a physical development device external to your development machine, share the group secret using a secure meassaging service. For example you could share it from an Android phone to a Mac using the [Signal app](https://signal.org/) "Note to Self" feature, then open the Signal desktop client on your Mac, then copy/paste it into the task's input.
 4. Refresh your development client to see the simulated Org
 
 ## Physical server setup
@@ -80,14 +80,13 @@ To run organize-api on a Raspberry Pi, perform the following steps:
 2. Format the SD card (if needed)
     1. Open Disk Utility
     2. If the SD card isn’t FAT32 formatted, erase and reformat it to FAT32
-3. Flash the Raspbian image onto the SD card (and optionally enable WiFi)
-    - To optionally use an insecure but easy-to-type password, use `INSECURE=true`
+3. Flash the Raspbian image onto the SD card
     ```sh
     bin/flash ~/Downloads/2024-03-15-raspios-bookworm-arm64-lite.img
     ```
 4. Set up the physical Raspberry Pi
     1. Insert the SD card into the Raspberry Pi
-    2. Connect an Ethernet cable to the Raspberry Pi (optional if WiFi is enabled)
+    2. Connect an Ethernet cable to the Raspberry Pi
     3. Connect the power cable to the Raspberry Pi
     4. Turn on the Raspberry Pi
 5. Bootstrap the Raspberry Pi's software
