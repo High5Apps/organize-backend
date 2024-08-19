@@ -5,7 +5,7 @@ This document describes the high-level architecture of the Organize API server. 
 
 ## Bird's Eye View
 
-This repo defines the components needed to spin-up, develop, test, and administer an Organize API server.
+This repo defines the components needed to create, develop, test, and administer an Organize API server.
 
 The server uses [Docker containers](https://www.docker.com/resources/what-container/) for each of its core services. Services are coordinated using [Docker Compose](https://docs.docker.com/compose/).
 
@@ -73,4 +73,4 @@ This project must remain lightweight enough to be self-hostable for a single Org
 
 ### Secrets
 
-Secrets live in the `.env` file in the root folder. Be sure to add a corresponding entry into the `.env.example` file too.
+Secrets live in the `.env` file in the root folder. If you add a new secret to `.env`, be sure to add a corresponding entry to the `.env.example` file too.
