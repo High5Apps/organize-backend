@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_06_201113) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_22_201544) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -105,6 +105,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_06_201113) do
     t.datetime "updated_at", null: false
     t.jsonb "encrypted_name", null: false
     t.jsonb "encrypted_member_definition", null: false
+    t.string "email", null: false
+    t.index ["email"], name: "index_orgs_on_email", unique: true
   end
 
   create_table "permissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

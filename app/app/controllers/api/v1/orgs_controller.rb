@@ -1,5 +1,6 @@
 class Api::V1::OrgsController < ApplicationController
   PERMITTED_PARAMS = [
+    :email,
     EncryptedMessage.permitted_params(:name),
     EncryptedMessage.permitted_params(:member_definition),
   ]

@@ -59,7 +59,8 @@ class UserTest < ActiveSupport::TestCase
 
   test 'should create a founder term when org is created and set on creator' do
     org = orgs :one
-    @user_without_org.create_org org.attributes.except 'id'
+    attributes = org.attributes.except('id').merge email: random_email
+    @user_without_org.create_org attributes
     assert_difference 'Term.count', 1 do
       @user_without_org.save
     end
@@ -411,6 +412,7 @@ class UserTest < ActiveSupport::TestCase
   def create_users_with_joined_at(joined_ats)
     public_key_bytes = users(:one).public_key_bytes
     org = orgs(:one).dup
+    org.email = random_email
     org.save!
 
     joined_ats.map do |joined_at|

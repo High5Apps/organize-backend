@@ -3,6 +3,7 @@ require "test_helper"
 class OrgTest < ActiveSupport::TestCase
   setup do
     @org = orgs(:one)
+    @other_org = orgs(:two)
   end
 
   test 'should be valid' do
@@ -46,6 +47,38 @@ class OrgTest < ActiveSupport::TestCase
     assert @org.valid?
     @org.encrypted_member_definition.ciphertext = \
       Base64.strict_encode64('a' * (1 + Org::MAX_MEMBER_DEFINITION_LENGTH))
+    assert @org.invalid?
+  end
+
+  test 'email should be present' do
+    @org.email = nil
+    assert @org.invalid?
+  end
+
+  test 'email should have the correct format' do
+    @org.email = 'abc.com'
+    assert @org.invalid?
+  end
+
+  test 'email should not be longer than MAX_EMAIL_LENGTH' do
+    [
+      [Org::MAX_EMAIL_LENGTH, true],
+      [1 + Org::MAX_EMAIL_LENGTH, false],
+    ].each do |length, valid|
+      suffix = '@example.com'
+      @org.email = "#{'a' * (length - suffix.length)}#{suffix}"
+      assert_equal @org.valid?, valid
+    end
+  end
+
+  test 'email should be normalized before validation' do
+    @org.email = " Email@exampLe.cOm\n"
+    assert @org.valid?
+    assert_equal @org.email, 'email@example.com'
+  end
+
+  test 'email should be unique' do
+    @org.email = @other_org.email
     assert @org.invalid?
   end
 

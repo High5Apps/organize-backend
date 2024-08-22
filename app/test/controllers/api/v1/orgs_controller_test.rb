@@ -3,11 +3,14 @@ require "test_helper"
 class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @org = orgs(:one)
-    @params = { org: @org.attributes.as_json.with_indifferent_access }
+    org_attributes = @org.as_json.with_indifferent_access
+      .merge(email: random_email)
+    @params = { org: org_attributes }
 
     @other_org = orgs(:two)
-    @update_params = {
-      org: @other_org.attributes.as_json.with_indifferent_access }
+    other_org_attributes = @other_org.as_json.with_indifferent_access
+      .merge(email: random_email)
+    @update_params = { org: other_org_attributes }
 
     @user = users(:two)
     setup_test_key(@user)

@@ -52,4 +52,8 @@ class ActiveSupport::TestCase
 
     ModerationEvent.destroy_all
   end
+
+  def random_email
+    "#{SecureRandom.uuid}@example.com"
+  end
 end
