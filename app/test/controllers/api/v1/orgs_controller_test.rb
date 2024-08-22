@@ -18,6 +18,9 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
 
     @user_in_org = users(:one)
     setup_test_key(@user_in_org)
+
+    @non_officer = users(:three)
+    setup_test_key(@non_officer)
   end
 
   test 'should create with valid params' do
@@ -61,8 +64,12 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
       headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL)
     assert_response :ok
 
+    # email is only included when requester can edit_org
+    assert @user_in_org.can? :edit_org
+
     assert_pattern do
       response.parsed_body => {
+        email: String,
         encrypted_name:,
         encrypted_member_definition:,
         graph: {
@@ -98,6 +105,15 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_my_org_url,
       headers: authorized_headers(user_without_org, Authenticatable::SCOPE_ALL)
     assert_response :not_found
+  end
+
+  test 'my_org should not include email unless requester can edit_org' do
+    [[@non_officer, false], [@user_in_org, true]].each do |user, includes_email|
+      assert_equal user.can?(:edit_org), includes_email
+      get api_v1_my_org_url,
+        headers: authorized_headers(user, Authenticatable::SCOPE_ALL)
+      assert_equal response.parsed_body.include?(:email), includes_email
+    end
   end
 
   test 'should update with valid params' do

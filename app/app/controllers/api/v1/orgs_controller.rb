@@ -19,11 +19,12 @@ class Api::V1::OrgsController < ApplicationController
 
   def my_org
     render json: {
+      email: (@org.email if authenticated_user.can? :edit_org),
       graph: @org.graph,
       id: @org.id,
       encrypted_name: @org.encrypted_name,
       encrypted_member_definition: @org.encrypted_member_definition,
-    }
+    }.compact
   end
 
   def update_my_org
