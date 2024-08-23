@@ -5,7 +5,7 @@ class Api::V1::OrgsController < ApplicationController
     EncryptedMessage.permitted_params(:member_definition),
   ]
 
-  before_action :check_org_membership, only: [:my_org, :update_my_org]
+  before_action :check_org_membership, only: [:my_org, :update_my_org, :verify]
   before_action :check_can_edit_org, only: [:update_my_org]
 
   def create
@@ -32,6 +32,14 @@ class Api::V1::OrgsController < ApplicationController
       head :ok
     else
       render_error :unprocessable_entity, @org.errors.full_messages
+    end
+  end
+
+  def verify
+    if @org.verify(params[:code])
+      head :ok
+    else
+      render_error :forbidden, ['Invalid verification code']
     end
   end
 

@@ -180,4 +180,46 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
       params: @update_params)
     assert_response :forbidden
   end
+
+  test 'should verify with valid authorization' do
+    post api_v1_verify_url,
+      headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL),
+      params: { code: @org.verification_code }
+    assert_response :ok
+  end
+
+  test 'should not verify with invalid authorization' do
+    post api_v1_verify_url,
+      headers: authorized_headers(@user_in_org,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago),
+      params: { code: @org.verification_code }
+    assert_response :unauthorized
+  end
+
+  test 'verify should return forbidden with invalid code' do
+    post api_v1_verify_url,
+      headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL),
+      params: { code: 'invalid' }
+    assert_response :forbidden
+  end
+
+  test 'verify should be idempotent' do
+    2.times do
+      post api_v1_verify_url,
+        headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL),
+        params: { code: @org.verification_code }
+      assert_response :ok
+    end
+  end
+
+  test 'should not verify if user is not in an org' do
+    @user_in_org.update!(org: nil)
+    assert_nil @user_in_org.reload.org
+
+    post api_v1_verify_url,
+      headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL),
+      params: { code: @org.verification_code }
+    assert_response :not_found
+  end
 end
