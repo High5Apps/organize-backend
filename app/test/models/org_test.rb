@@ -125,6 +125,33 @@ class OrgTest < ActiveSupport::TestCase
     Rails.env = 'test'
   end
 
+  test 'verify should return false if the code is incorrect' do
+    assert_not @org.verify('BAD_CODE')
+  end
+
+  test 'verify should return false if the code is blank' do
+    assert_not @org.verify('')
+  end
+
+  test 'verify should return true if the code is correct' do
+    assert @org.verify(@org.verification_code)
+  end
+
+  test 'verify should set verified_at to the current time on success' do
+    @org.verified_at = nil
+    freeze_time do
+      @org.verify(@org.verification_code)
+      assert_equal @org.verified_at, Time.now.utc
+    end
+  end
+
+  test 'verify should not update verified_at if already verified' do
+    assert_not_nil @org.verified_at
+    assert_no_changes -> { @org.verified_at } do
+      @org.verify(@org.verification_code)
+    end
+  end
+
   test 'graph should include blocked_user_ids' do
     expected_ids = @org.users.blocked.ids
     assert_not_empty expected_ids

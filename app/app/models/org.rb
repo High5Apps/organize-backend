@@ -54,6 +54,13 @@ class Org < ApplicationRecord
     User::Pseudonym.new(seed).at(user_count)
   end
 
+  def verify(code)
+    return false if code.blank?
+    return false unless verification_code == code
+    return true if verified_at?
+    update verified_at: Time.now.utc
+  end
+
   private
 
   def normalize_email
