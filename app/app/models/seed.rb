@@ -211,6 +211,7 @@ class Seed
       travel_to @simulation.started_at do
         attributes = {
           created_at: @simulation.started_at,
+          email: "#{SecureRandom.uuid}@getorganize.app",
           encrypted_name: encrypt("Local #{random_local_number}"),
           encrypted_member_definition: encrypt("An employee of #{random_company_name} at store ##{random_store_number}"),
         }
