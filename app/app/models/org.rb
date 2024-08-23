@@ -4,6 +4,8 @@ class Org < ApplicationRecord
   MAX_EMAIL_LENGTH = 100
   MAX_NAME_LENGTH = 35
   MAX_MEMBER_DEFINITION_LENGTH = 75
+  NON_PRODUCTION_VERIFICATION_CODE = '444444'
+  VERIFICATION_CODE_LENGTH = 6
 
   has_many :permissions
   has_many :posts
@@ -28,8 +30,12 @@ class Org < ApplicationRecord
     length: { maximum: MAX_EMAIL_LENGTH },
     uniqueness: true
   validates :email, format: { without: /[A-Z\s]/ }
+  validates :verification_code,
+    presence: true,
+    format: { with: /\A\d{#{VERIFICATION_CODE_LENGTH}}\z/ }
 
   before_validation :normalize_email
+  before_validation :set_verification_code, on: :create
 
   def graph
     connections = Connection.where(scanner_id: user_ids).or(
@@ -52,5 +58,11 @@ class Org < ApplicationRecord
 
   def normalize_email
     self.email = email&.strip&.downcase
+  end
+
+  def set_verification_code
+    self.verification_code = Rails.env.production? ?
+      SecureRandom.random_number(1E5...1E6).to_i.to_s :
+        NON_PRODUCTION_VERIFICATION_CODE
   end
 end

@@ -2,7 +2,11 @@ one:
   email: a40c89936-f180-47c5-8d92-0c4742e3a394@example.com
   encrypted_name: { c: kg5kt834S4Wwbw==, n: zp4HCpw9R5Ykf7wu, t: yq5J6E9+spj1IfeP42fahQ== }
   encrypted_member_definition: { c: gw+vgHOgqMNuveQr6BM9PEV46cWz2m7CGhi05Jdi0O1A35g=, n: iO2jsSBOPIzvB/r8, t: k/1t2cyQwKWSuocylDbsHA== }
+  verification_code: 444444
+  verified_at: <%= Time.now.to_fs(:db) %>
 two:
   email: 2fc66c63-6723-4f5f-b156-521c2da8522c@example.com
   encrypted_name: { c: 9E2ejlGrKOPA4g==, n: yw0XKAspGE8EvcTb, t: v6JqBndNRdicM6cITs+8gA== }
   encrypted_member_definition: { c: AV66RB7JJpDkHbVz45V0wh3q+jSpQemkeWPY6Soj+o0E6g==, n: zMgm/fFJvs2phc7a, t: HFsTHJEMi8Kz4k8vX8nfVQ== }
+  verification_code: 444444
+  verified_at: <%= Time.now.to_fs(:db) %>

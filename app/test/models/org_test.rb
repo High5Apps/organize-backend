@@ -82,6 +82,49 @@ class OrgTest < ActiveSupport::TestCase
     assert @org.invalid?
   end
 
+  test 'verification_code should be present' do
+    @org.verification_code = nil
+    assert @org.invalid?
+  end
+
+  test 'verification_code should be VERIFICATION_CODE_LENGTH' do
+    [
+      [Org::VERIFICATION_CODE_LENGTH - 1, false],
+      [Org::VERIFICATION_CODE_LENGTH, true],
+      [Org::VERIFICATION_CODE_LENGTH + 1, false],
+    ].each do |length, valid|
+      @org.verification_code = '1' * length
+      assert_equal @org.valid?, valid
+    end
+  end
+
+  test 'verification_code should not allow non-digit characters' do
+    @org.verification_code = '12345a'
+    assert @org.invalid?
+  end
+
+  test 'verification_code should be set to NON_PRODUCTION_VERIFICATION_CODE before validation in non-production environments for new Orgs' do
+    assert_not Rails.env.production?
+    org = Org.new
+    org.valid?
+    assert_equal org.verification_code, Org::NON_PRODUCTION_VERIFICATION_CODE
+  end
+
+  test 'verification_code should be set randomly before validation in production environments for new Orgs' do
+    Rails.env = 'production'
+    assert Rails.env.production?
+
+    org = Org.new
+    org.valid?
+    assert_match(/\A\d{6}\z/, org.verification_code)
+
+    # This is technically possible, but very unlikely
+    assert_not_equal org.verification_code,
+      Org::NON_PRODUCTION_VERIFICATION_CODE
+
+    Rails.env = 'test'
+  end
+
   test 'graph should include blocked_user_ids' do
     expected_ids = @org.users.blocked.ids
     assert_not_empty expected_ids
