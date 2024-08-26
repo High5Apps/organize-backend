@@ -23,6 +23,11 @@ class ApplicationController < ActionController::API
 
   def check_user_org_is_in_good_standing(user: nil)
     check_user_belongs_to_an_org(user:)
+    return if performed?
+
+    unless @org.verified_at?
+      return render_error :forbidden, ['You must verify your account first']
+    end
   end
 
   def check_user_belongs_to_an_org(user: nil)

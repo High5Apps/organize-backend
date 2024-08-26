@@ -61,6 +61,12 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
+  test 'should not index if Org is not verified' do
+    @user.org.update! verified_at: nil
+    get api_v1_posts_url, headers: @authorized_headers
+    assert_response :forbidden
+  end
+
   test 'index should include multiple posts' do
     get api_v1_posts_url, headers: @authorized_headers
     response.parsed_body => posts:

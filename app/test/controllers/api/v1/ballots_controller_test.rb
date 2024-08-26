@@ -431,6 +431,13 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
+  test 'should not show when Org is not verified' do
+    @user.org.update! verified_at: nil
+    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    assert_response :forbidden
+    response.parsed_body => error_messages: [/verify/]
+  end
+
   test 'show should format refreshed_at as iso8601' do
     get api_v1_ballot_url(@ballot), headers: @authorized_headers
     response.parsed_body => refreshed_at:

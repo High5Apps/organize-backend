@@ -52,6 +52,17 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'should not create if sharer Org is not verified' do
+    @sharer.org.update! verified_at: nil
+
+    assert_no_difference 'Connection.count' do
+      post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
+    end
+
+    assert_response :forbidden
+    response.parsed_body => error_messages: [/verify/]
+  end
+
   test 'should respond with ok when attempting to re-create' do
     post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
     post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
@@ -123,5 +134,13 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       header: Authenticatable::HEADER_SHARER_AUTHORIZATION
     get(api_v1_connection_preview_url, headers:)
     assert_response :forbidden
+  end
+
+  test 'should not preview if sharer Org is not verified' do
+    @sharer.org.update! verified_at: nil
+
+    get api_v1_connection_preview_url, headers: @sharer_auth_headers
+    assert_response :forbidden
+    response.parsed_body => error_messages: [/verify/]
   end
 end
