@@ -2,6 +2,7 @@ class Api::V1::CommentsController < ApplicationController
   ALLOWED_ATTRIBUTES = [
     :blocked_at,
     :created_at,
+    :deleted_at,
     :depth,
     :encrypted_body,
     :id,

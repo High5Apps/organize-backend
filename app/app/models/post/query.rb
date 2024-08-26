@@ -3,6 +3,7 @@ class Post::Query
     id: '',
     candidate_id: '',
     category: '',
+    deleted_at: '',
     encrypted_body: '',
     encrypted_title: '',
     user_id: '',

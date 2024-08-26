@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_23_173707) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_26_170811) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -53,6 +53,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_23_173707) do
     t.integer "depth", default: 0, null: false
     t.jsonb "encrypted_body", null: false
     t.datetime "blocked_at"
+    t.datetime "deleted_at"
     t.index ["ancestry"], name: "index_comments_on_ancestry"
     t.index ["post_id"], name: "index_comments_on_post_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
@@ -130,6 +131,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_23_173707) do
     t.jsonb "encrypted_body"
     t.uuid "candidate_id"
     t.datetime "blocked_at"
+    t.datetime "deleted_at"
     t.index ["candidate_id"], name: "index_posts_on_candidate_id"
     t.index ["org_id", "created_at"], name: "index_posts_on_org_id_and_created_at"
     t.index ["user_id"], name: "index_posts_on_user_id"

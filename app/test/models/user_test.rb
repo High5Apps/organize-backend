@@ -367,6 +367,24 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  test 'leave_org should set deleted_at to the current time for comments' do
+    freeze_time do
+      lam = -> { @user.comments.sample.reload.deleted_at }
+      assert_changes lam, from: nil, to: Time.now do
+        @user.leave_org
+      end
+    end
+  end
+
+  test 'leave_org should set deleted_at to the current time for posts' do
+    freeze_time do
+      lam = -> { @user.posts.sample.reload.deleted_at }
+      assert_changes lam, from: nil, to: Time.now do
+        @user.leave_org
+      end
+    end
+  end
+
   test 'leave_org should set left_org_at to the current time' do
     freeze_time do
       assert_changes -> { @user.reload.left_org_at }, from: nil, to: Time.now do

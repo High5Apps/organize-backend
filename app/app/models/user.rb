@@ -138,6 +138,8 @@ class User < ApplicationRecord
   def leave_org
     return unless left_org_at.nil?
 
+    now = Time.now
+
     transaction do
       [Comment, Post].each do |model|
         # Note that c and t must both be corrupted, instead of just c, because
@@ -152,13 +154,16 @@ class User < ApplicationRecord
             }'
           ).squish
         end
+
+        query_components.push("deleted_at = '#{now}'")
+
         query = query_components.join(', ')
         model.where(user_id: id).update_all query
       end
 
-      terms.active_at(Time.now).update_all accepted: false
+      terms.active_at(now).update_all accepted: false
 
-      update! left_org_at: Time.now
+      update! left_org_at: now
     end
   end
 
