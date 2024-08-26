@@ -45,12 +45,12 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test 'index should be empty if user is not in an Org' do
+  test 'should not index if user is not in an Org' do
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
     get api_v1_users_url, headers: @authorized_headers
-    assert_pattern { response.parsed_body => users: [], meta:, **nil }
+    assert_response :forbidden
   end
 
   test 'index should only include users from requester Org' do
@@ -187,7 +187,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_nil @user.reload.org
 
     get api_v1_user_url(@user), headers: @authorized_headers
-    assert_response :not_found
+    assert_response :forbidden
   end
 
   test 'show should include the same attributes as index for unblocked users' do
@@ -220,7 +220,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_nil @user.reload.org
 
     post api_v1_leave_org_url, headers: @authorized_headers
-    assert_response :unprocessable_entity
+    assert_response :forbidden
   end
 
   private

@@ -182,12 +182,12 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test 'index should be empty if user is not in an Org' do
+  test 'should not index if user is not in an Org' do
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
     get api_v1_ballots_url, headers: @authorized_headers
-    assert_pattern { response.parsed_body => ballots: [] }
+    assert_response :forbidden
   end
 
   test 'index should only include ballots from requester Org' do
@@ -428,7 +428,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
         user_without_org,
         Authenticatable::SCOPE_ALL)
 
-    assert_response :not_found
+    assert_response :forbidden
   end
 
   test 'show should format refreshed_at as iso8601' do

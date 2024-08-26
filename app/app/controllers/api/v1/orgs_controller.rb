@@ -5,8 +5,11 @@ class Api::V1::OrgsController < ApplicationController
     EncryptedMessage.permitted_params(:member_definition),
   ]
 
-  before_action :check_org_membership, only: [:my_org, :update_my_org, :verify]
+  before_action :check_user_belongs_to_an_org, only: [:verify]
   before_action :check_can_edit_org, only: [:update_my_org]
+
+  skip_before_action :check_user_org_is_in_good_standing,
+    only: [:create, :verify]
 
   def create
     new_org = authenticated_user.build_org(create_or_update_params)

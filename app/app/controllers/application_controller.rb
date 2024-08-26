@@ -2,6 +2,7 @@ class ApplicationController < ActionController::API
   include Authenticatable
 
   before_action :authenticate_user
+  before_action :check_user_org_is_in_good_standing
 
   private
 
@@ -20,8 +21,16 @@ class ApplicationController < ActionController::API
     end
   end
 
-  def check_org_membership
-    @org = Org.find authenticated_user.org_id
+  def check_user_org_is_in_good_standing(user: nil)
+    check_user_belongs_to_an_org(user:)
+  end
+
+  def check_user_belongs_to_an_org(user: nil)
+    user ||= authenticated_user
+    @org = user.org
+    unless @org
+      render_error :forbidden, ['You must be in an Org to do that']
+    end
   end
 
   def pagination_dict(collection)

@@ -25,7 +25,7 @@ class Api::V1::OfficesControllerTest < ActionDispatch::IntegrationTest
     assert_nil @user.reload.org
 
     get api_v1_offices_url, headers: @authorized_headers
-    assert_response :not_found
+    assert_response :forbidden
   end
 
   test 'index response open should match availability_in' do

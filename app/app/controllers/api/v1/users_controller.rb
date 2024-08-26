@@ -4,6 +4,7 @@ class Api::V1::UsersController < ApplicationController
   ]
 
   skip_before_action :authenticate_user, only: :create
+  skip_before_action :check_user_org_is_in_good_standing, only: :create
 
   def create
     new_user = User.new(create_params)

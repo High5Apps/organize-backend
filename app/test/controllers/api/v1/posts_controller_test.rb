@@ -53,12 +53,12 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test 'index should be empty if user is not in an Org' do
+  test 'should not index if user is not in an Org' do
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
     get api_v1_posts_url, headers: @authorized_headers
-    assert_pattern { response.parsed_body => posts: [], meta:, **nil }
+    assert_response :forbidden
   end
 
   test 'index should include multiple posts' do
@@ -154,7 +154,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_nil @user.reload.org
 
     get api_v1_post_url(@post), headers: @authorized_headers
-    assert_response :not_found
+    assert_response :forbidden
   end
 
   test 'should not show for non-existent posts' do

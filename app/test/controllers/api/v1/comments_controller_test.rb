@@ -94,12 +94,12 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test 'index should be empty if user is not in an Org' do
+  test 'should not index if user is not in an Org' do
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
     get api_v1_post_comments_url(@post), headers: @authorized_headers
-    assert_pattern { response.parsed_body => comments: [] }
+    assert_response :forbidden
   end
 
   test 'index should only include allow-listed attributes' do
@@ -203,7 +203,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
 
     get thread_api_v1_comment_url(@comment_with_thread),
       headers: @thread_authorized_headers
-    assert_response :not_found
+    assert_response :forbidden
   end
 
   test 'thread should only include allow-listed attributes' do

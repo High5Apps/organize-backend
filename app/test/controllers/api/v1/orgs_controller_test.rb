@@ -98,13 +98,13 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test 'my_org should return not_found when user has no org' do
+  test 'should not show my_org when user has no org' do
     user_without_org = users(:two)
     assert_nil user_without_org.org
 
     get api_v1_my_org_url,
       headers: authorized_headers(user_without_org, Authenticatable::SCOPE_ALL)
-    assert_response :not_found
+    assert_response :forbidden
   end
 
   test 'my_org should not include email unless requester can edit_org' do
@@ -167,7 +167,7 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
       headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL),
       params: @update_params)
 
-    assert_response :not_found
+    assert_response :forbidden
   end
 
   test 'should not update without permission' do
@@ -220,6 +220,6 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     post api_v1_verify_url,
       headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL),
       params: { code: @org.verification_code }
-    assert_response :not_found
+    assert_response :forbidden
   end
 end

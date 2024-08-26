@@ -3,8 +3,6 @@ class Api::V1::PermissionsController < ApplicationController
     offices: [],
   ]
 
-  before_action :check_org_membership,
-    only: [:create_by_scope, :show_by_scope, :index_my_permissions]
   before_action :check_can_edit_permissions,
     only: [:create_by_scope, :show_by_scope]
   before_action :check_valid_scope, only: [:create_by_scope, :show_by_scope]

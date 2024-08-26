@@ -75,12 +75,12 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test 'index should be empty if user is not in an Org' do
+  test 'should not index if user is not in an Org' do
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
     get api_v1_moderation_events_url, headers: @authorized_headers
-    assert_pattern { response.parsed_body => moderation_events: [] }
+    assert_response :forbidden
   end
 
   test 'index should only include moderation events from requester Org' do

@@ -115,13 +115,13 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test "preview should return not_found when sharer has no org" do
+  test "preview should return forbidden when sharer has no org" do
     assert_nil @scanner.org
 
     headers = authorized_headers @scanner,
       Authenticatable::SCOPE_CREATE_CONNECTIONS,
       header: Authenticatable::HEADER_SHARER_AUTHORIZATION
     get(api_v1_connection_preview_url, headers:)
-    assert_response :not_found
+    assert_response :forbidden
   end
 end

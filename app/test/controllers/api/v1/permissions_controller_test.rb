@@ -71,7 +71,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
       headers: @authorized_headers,
       params: create_params
 
-    assert_response :not_found
+    assert_response :forbidden
   end
 
   test 'should not create unless user can edit permissions' do
@@ -119,7 +119,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
 
     get show_by_scope_api_v1_permissions_url(@permission.scope),
       headers: @authorized_headers
-    assert_response :not_found
+    assert_response :forbidden
   end
 
   test 'should not show for non-existent scopes' do
@@ -194,7 +194,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
 
     get api_v1_index_my_permissions_url,
       headers: @authorized_headers
-    assert_response :not_found
+    assert_response :forbidden
   end
 
   test 'index my_permissions should return false for non-existent scopes' do
