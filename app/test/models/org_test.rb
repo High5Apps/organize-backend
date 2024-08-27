@@ -105,7 +105,7 @@ class OrgTest < ActiveSupport::TestCase
 
   test 'verification_code should be set to NON_PRODUCTION_VERIFICATION_CODE before validation in non-production environments for new Orgs' do
     assert_not Rails.env.production?
-    org = Org.new
+    org = Org.new email: random_email
     org.valid?
     assert_equal org.verification_code, Org::NON_PRODUCTION_VERIFICATION_CODE
   end
@@ -114,7 +114,7 @@ class OrgTest < ActiveSupport::TestCase
     Rails.env = 'production'
     assert Rails.env.production?
 
-    org = Org.new
+    org = Org.new email: random_email
     org.valid?
     assert_match(/\A\d{6}\z/, org.verification_code)
 
@@ -123,6 +123,27 @@ class OrgTest < ActiveSupport::TestCase
       Org::NON_PRODUCTION_VERIFICATION_CODE
 
     Rails.env = 'test'
+  end
+
+  test 'verification_code should use demo_mode_code if email exactly matches' do
+    demo_mode_codes = { random_email => '123456', random_email => '987654' }
+    with_rails_credentials(demo_mode_codes:) do
+      demo_mode_codes.each do |email, code|
+        org = Org.new(email:)
+        org.valid?
+        assert_equal org.verification_code, code
+      end
+    end
+  end
+
+  test 'verification_code should use demo_mode_code if normalized email matches' do
+    code = '123456'
+    email = random_email
+    with_rails_credentials(demo_mode_codes: { email => code }) do
+      org = Org.new email: " #{email.upcase}\n"
+      org.valid?
+      assert_equal org.verification_code, code
+    end
   end
 
   test 'verify should return false if the code is incorrect' do

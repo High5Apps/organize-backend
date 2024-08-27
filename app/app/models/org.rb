@@ -68,8 +68,16 @@ class Org < ApplicationRecord
   end
 
   def set_verification_code
-    self.verification_code = Rails.env.production? ?
-      SecureRandom.random_number(1E5...1E6).to_i.to_s :
-        NON_PRODUCTION_VERIFICATION_CODE
+    return unless email
+
+    demo_mode_code = Rails.application.credentials.dig(:demo_mode_codes, email)
+
+    if demo_mode_code.present?
+      self.verification_code = demo_mode_code
+    elsif Rails.env.production?
+      self.verification_code = SecureRandom.random_number(1E5...1E6).to_i.to_s
+    else
+      self.verification_code = NON_PRODUCTION_VERIFICATION_CODE
+    end
   end
 end

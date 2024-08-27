@@ -56,4 +56,12 @@ class ActiveSupport::TestCase
   def random_email
     "#{SecureRandom.uuid}@example.com"
   end
+
+  def with_rails_credentials(temporary_credentials)
+    original_credentials = Rails.application.credentials
+    Rails.application.credentials = temporary_credentials
+    yield
+  ensure
+    Rails.application.credentials = original_credentials
+  end
 end
