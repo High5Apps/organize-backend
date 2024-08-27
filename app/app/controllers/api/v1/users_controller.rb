@@ -3,8 +3,10 @@ class Api::V1::UsersController < ApplicationController
     :public_key_bytes,
   ]
 
+  before_action :check_user_belongs_to_an_org, only: [:show]
+
   skip_before_action :authenticate_user, only: :create
-  skip_before_action :check_user_org_is_in_good_standing, only: :create
+  skip_before_action :check_user_org_is_in_good_standing, only: [:create, :show]
 
   def create
     new_user = User.new(create_params)
