@@ -67,6 +67,12 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
+  test 'should not index if Org is behind on payments' do
+    @user.org.update! behind_on_payments_at: Time.now.utc
+    get api_v1_posts_url, headers: @authorized_headers
+    assert_response :forbidden
+  end
+
   test 'index should include multiple posts' do
     get api_v1_posts_url, headers: @authorized_headers
     response.parsed_body => posts:

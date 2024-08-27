@@ -190,6 +190,12 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
+  test 'should not show if Org is behind on payments' do
+    @user.org.update! behind_on_payments_at: Time.now.utc
+    get api_v1_user_url(@user), headers: @authorized_headers
+    assert_response :forbidden
+  end
+
   test 'show should include the same attributes as index for unblocked users' do
     assert_not @user.blocked_at?
 

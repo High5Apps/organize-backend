@@ -5,7 +5,8 @@ class Api::V1::OrgsController < ApplicationController
     EncryptedMessage.permitted_params(:member_definition),
   ]
 
-  before_action :check_user_belongs_to_an_org, only: [:verify]
+  before_action :check_user_org_is_in_good_standing_but_maybe_not_verified,
+    only: [:verify]
   before_action :check_can_edit_org, only: [:update_my_org]
 
   skip_before_action :check_user_org_is_in_good_standing,

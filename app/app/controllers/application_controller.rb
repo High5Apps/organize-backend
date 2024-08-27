@@ -21,21 +21,24 @@ class ApplicationController < ActionController::API
     end
   end
 
-  def check_user_org_is_in_good_standing(user: nil)
-    check_user_belongs_to_an_org(user:)
-    return if performed?
+  def check_user_org_is_in_good_standing(user: nil, skip_verified: false)
+    user ||= authenticated_user
+    @org = user.org
+    unless @org
+      return render_error :forbidden, ['You must be in an Org to do that']
+    end
 
-    unless @org.verified_at?
+    if @org.behind_on_payments_at?
+      return render_error :forbidden, ["Your Org is behind on payments. Your officers must contact the app developers to resolve this. You can't use the app until this is resolved."]
+    end
+
+    unless skip_verified || @org.verified_at?
       return render_error :forbidden, ['You must verify your account first']
     end
   end
 
-  def check_user_belongs_to_an_org(user: nil)
-    user ||= authenticated_user
-    @org = user.org
-    unless @org
-      render_error :forbidden, ['You must be in an Org to do that']
-    end
+  def check_user_org_is_in_good_standing_but_maybe_not_verified
+    check_user_org_is_in_good_standing skip_verified: true
   end
 
   def pagination_dict(collection)

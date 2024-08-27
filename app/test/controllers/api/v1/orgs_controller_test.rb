@@ -180,6 +180,16 @@ class Api::V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
+  test 'should not update if Org is behind on payments' do
+    @user_in_org.org.update! behind_on_payments_at: Time.now.utc
+
+    patch(api_v1_update_my_org_url,
+      headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL),
+      params: @update_params)
+
+    assert_response :forbidden
+  end
+
   test 'should not update without permission' do
     user = users :three
     setup_test_key(user)

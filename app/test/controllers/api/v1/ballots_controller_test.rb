@@ -438,6 +438,13 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     response.parsed_body => error_messages: [/verify/]
   end
 
+  test 'should not show when Org is behind on payments' do
+    @user.org.update! behind_on_payments_at: Time.now.utc
+    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    assert_response :forbidden
+    response.parsed_body => error_messages: [/payment/]
+  end
+
   test 'show should format refreshed_at as iso8601' do
     get api_v1_ballot_url(@ballot), headers: @authorized_headers
     response.parsed_body => refreshed_at:

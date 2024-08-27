@@ -84,6 +84,16 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
+  test 'should not create if Org is behind on payments' do
+    @user.org.update! behind_on_payments_at: Time.now.utc
+
+    post create_by_scope_api_v1_permissions_url(@permission.scope),
+      headers: @authorized_headers,
+      params: create_params
+
+    assert_response :forbidden
+  end
+
   test 'should not create unless user can edit permissions' do
     assert_not @non_officer.can? :edit_permissions
     post create_by_scope_api_v1_permissions_url(@permission.scope),

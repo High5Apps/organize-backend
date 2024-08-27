@@ -63,6 +63,17 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     response.parsed_body => error_messages: [/verify/]
   end
 
+  test 'should not create if sharer Org is behind on payments' do
+    @sharer.org.update! behind_on_payments_at: Time.now.utc
+
+    assert_no_difference 'Connection.count' do
+      post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
+    end
+
+    assert_response :forbidden
+    response.parsed_body => error_messages: [/payment/]
+  end
+
   test 'should respond with ok when attempting to re-create' do
     post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
     post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
@@ -142,5 +153,13 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     get api_v1_connection_preview_url, headers: @sharer_auth_headers
     assert_response :forbidden
     response.parsed_body => error_messages: [/verify/]
+  end
+
+  test 'should not preview if sharer Org is behind on payments' do
+    @sharer.org.update! behind_on_payments_at: Time.now.utc
+
+    get api_v1_connection_preview_url, headers: @sharer_auth_headers
+    assert_response :forbidden
+    response.parsed_body => error_messages: [/payment/]
   end
 end
