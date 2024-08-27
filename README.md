@@ -54,6 +54,7 @@ drails t -n /OrgTest#test_graph_should_include_blocked_user_ids/
 ```
 
 ## Deploying
+Copy/paste the production environment variables into your `.env` file, then:
 ```sh
 bin/deploy org
 ```

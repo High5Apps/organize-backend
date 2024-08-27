@@ -43,11 +43,13 @@ else
 
   # ORGANIZE_DATABASE_PASSWORD has a max length of 99 characters
   organize_database_password=$($dc run --no-deps app rails secret | head -c 99)
-  secret_key_base=$($dc run --no-deps app rails secret)
+
+  # RAILS_MASTER_KEY must be 32 characters of hex
+  rails_master_key=$($dc run --no-deps app rails secret | head -c 32)
 
   echo "Adding fake secrets to .env..."
   sed -i '' "s/example-password-odp/$organize_database_password/" $dot_env
-  sed -i '' "s/example-password-skb/$secret_key_base/" $dot_env
+  sed -i '' "s/example-password-rmk/$rails_master_key/" $dot_env
 
   updated_dot_env=true
 fi
