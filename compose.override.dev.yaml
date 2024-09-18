@@ -11,6 +11,14 @@ services:
     environment:
       SELF_SIGN: true
     restart: "no"
+  site:
+    build:
+      target: dev
+    environment:
+      RAILS_ENV: development
+    image: localhost:5001/organize-site-dev
+    volumes:
+      - ./site:/usr/src/app
   web:
     build:
       target: dev
