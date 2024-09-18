@@ -6,7 +6,7 @@ RUN apt update \
 
 WORKDIR /usr/src/app
 
-COPY api-proxy.conf /etc/nginx/api-proxy.conf
+COPY rails-proxy.conf /etc/nginx/rails-proxy.conf
 COPY docker-entrypoint.sh /usr/src/app/docker-entrypoint.sh
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx-auto-reloader.sh /usr/src/app/nginx-auto-reloader.sh
