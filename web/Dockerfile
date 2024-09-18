@@ -1,4 +1,4 @@
-FROM nginx:1.25.2 as prod
+FROM nginx:1.25.2 AS prod
 
 RUN apt update \
   && apt install -y inotify-tools \
