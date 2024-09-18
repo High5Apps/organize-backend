@@ -47,9 +47,13 @@ else
   # RAILS_MASTER_KEY must be 32 characters of hex
   rails_master_key=$($dc run --no-deps app rails secret | head -c 32)
 
+  # RAILS_MASTER_KEY_SITE must be 32 characters of hex
+  rails_master_key_site=$($dc run --no-deps site rails secret | head -c 32)
+
   echo "Adding fake secrets to .env..."
   sed -i '' "s/example-password-odp/$organize_database_password/" $dot_env
   sed -i '' "s/example-password-rmk/$rails_master_key/" $dot_env
+  sed -i '' "s/example-password-rmks/$rails_master_key_site/" $dot_env
 
   updated_dot_env=true
 fi
