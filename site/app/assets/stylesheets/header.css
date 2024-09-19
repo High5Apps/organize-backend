@@ -1,0 +1,21 @@
+header nav div.row {
+  align-items: center;
+  justify-content: space-between;
+}
+
+header .links {
+  display: flex;
+  gap: 10px;
+}
+
+.logo {
+  align-items: center;
+  display: flex;
+  font-size: 24px;
+}
+
+.logo img {
+  height: 40px;
+  margin: 10px 10px 10px 0;
+  width: 40px;
+}
