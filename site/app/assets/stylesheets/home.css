@@ -1,0 +1,53 @@
+#hero {
+  background-image: url('pexels-fauxels-3184432.jpg');
+  background-size: cover;
+  background-position-x: center;
+}
+
+#hero-overlay {
+  align-items: center;
+  background-color: rgba(var(--light-primary-color-rgb), 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: calc(100vh - 70px); /* 70px is the height of the navbar */
+  min-height: 480px;
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+
+@media (min-width: 768px) {
+  #hero-overlay {
+    background: linear-gradient(to right, rgba(var(--light-primary-color-rgb), 0.9) 85%, transparent);
+  }
+}
+
+.badge {
+  height: 40px;
+}
+
+.badge-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.overlay-text {
+  color: var(--light-background-color);
+  text-align: center;
+}
+
+.overlay-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.overlay-subtitle {
+  font-size: 1.2rem;
+}
+
+.screenshot-container {
+  display: flex;
+  justify-content: center;
+  min-height: 180px;
+}

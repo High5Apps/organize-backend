@@ -2,10 +2,12 @@
   <nav>
     <div class="container">
       <div class="row">
-        <div class="logo">
-          <%= image_tag 'logo.png', alt: 'Organize Logo' %>
-          Organize
-        </div>
+        <%= link_to root_path do %>
+          <div class="logo">
+            <%= image_tag 'logo.png', alt: 'Organize Logo' %>
+            Organize
+          </div>
+        <% end %>
         <div class="links">
           <%= link_to 'Download Free', '/store', class: 'semibold' %>
         </div>

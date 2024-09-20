@@ -1,6 +1,9 @@
 class StaticPagesController < ApplicationController
   before_action :set_email, only: [ :privacy, :terms ]
 
+  def home
+  end
+
   def privacy
   end
 
