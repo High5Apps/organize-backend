@@ -10,10 +10,7 @@
       <div class="screenshot-container">
         <%= image_tag 'bezel-screenshot.png', alt: 'Screenshot of the Organize app' %>
       </div>
-      <div class="badge-container">
-        <%= image_tag 'Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.png', alt: 'Download on the App Store', class: 'badge' %>
-        <%= image_tag 'google-play-badge.png', alt: 'Get it on Google Play', class: 'badge' %>
-      </div>
+      <%= render 'layouts/app_store_badges' %>
     </div>
   </div>
 </div>

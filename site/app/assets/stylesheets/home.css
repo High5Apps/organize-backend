@@ -22,16 +22,6 @@
   }
 }
 
-.badge {
-  height: 40px;
-}
-
-.badge-container {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-}
-
 .overlay-text {
   color: var(--light-background-color);
   text-align: center;
