@@ -1,0 +1,22 @@
+.fact-row {
+  background-color: var(--light-primary-color);
+  color: var(--light-background-color);
+  font-size: 2rem;
+  text-align: center;
+}
+
+.fact-row a {
+  color: var(--light-background-color);
+  text-decoration: underline;
+}
+
+.fact-row p {
+  margin: 0px;
+}
+
+.fact-row .col {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 40px;
+}
