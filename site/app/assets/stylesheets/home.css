@@ -34,12 +34,12 @@
 }
 
 .overlay-title {
-  font-size: 2.4rem;
+  font-size: var(--font-size-title);
   font-weight: 700;
 }
 
 .overlay-subtitle {
-  font-size: 1.2rem;
+  font-size: var(--font-size-subheader);
 }
 
 .screenshot-container {

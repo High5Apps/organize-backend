@@ -19,6 +19,9 @@
 }
 
 :root {
+  --font-size-header: 1.6rem;
+  --font-size-subheader: 1.2rem;
+  --font-size-title: 2.4rem;
   --light-background-color: #F8F4FB;
   --light-fill-color: #FFFFFF;
   --light-label-color: #1F082B;
