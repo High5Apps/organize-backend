@@ -1,0 +1,38 @@
+.pricing-plan {
+  background-color: var(--light-fill-color);
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.pricing-plan a {
+  align-self: center;
+  margin-bottom: 20px;
+}
+
+.pricing-plan-header {
+  background-color: rgba(var(--light-primary-color-rgb), 0.15);
+  padding: 10px;
+}
+
+.pricing-plan-price {
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.pricing-plan-price-container {
+  margin: 20px;
+}
+
+.pricing-plan-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.pricing-plan-price-units {
+  color: var(--light-label-secondary-color);
+}

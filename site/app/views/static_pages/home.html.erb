@@ -28,6 +28,23 @@
   <%= render 'layouts/fact_row',
     text: 'Union members earn an average of $8,996 more per year than non-union members',
     source: 'https://www.bls.gov/news.release/union2.nr0.htm' %>
+  <div class="row">
+    <%= render 'layouts/pricing_plan',
+      title: 'Trial Plan',
+      subtitle: 'Free for 30 days',
+      price: '$0',
+      button_title: 'Start free trial' %>
+    <%= render 'layouts/pricing_plan',
+      title: 'Monthly Plan',
+      subtitle: 'Cancel any time',
+      price: '$3',
+      button_title: 'Start growing today' %>
+    <%= render 'layouts/pricing_plan',
+      title: 'Annual Plan',
+      subtitle: 'Save 17%',
+      price: '$2.50',
+      button_title: 'Start saving today' %>
+  </div>
   <%= render 'layouts/fact_row',
     text: 'Last month 2,257 workers formed new unions',
     source: 'https://docs.google.com/spreadsheets/d/1FW4jT-swWoqM92WQvXYq-eoyaTIEZtXdHL-MSFRfJKQ/view?usp=sharing' %>
