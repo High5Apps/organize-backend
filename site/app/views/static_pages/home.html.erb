@@ -1,4 +1,4 @@
-<div class="container">
+<div id="hero-container" class="container">
   <div id="hero" class="row">
     <div id="hero-overlay" class="col col-sm-6 col-md-5">
       <div class="overlay-text overlay-title">
@@ -13,4 +13,16 @@
       <%= render 'layouts/app_store_badges' %>
     </div>
   </div>
+  <div class="row">
+    <%= render 'layouts/secondary_value_proposition',
+      img_src: 'construction_24dp_AF52DE_FILL0_wght400_GRAD0_opsz24.svg',
+      text: 'Use proven tools and strategies to build support' %>
+    <%= render 'layouts/secondary_value_proposition',
+      img_src: 'bar_chart_24dp_AF52DE_FILL0_wght400_GRAD0_opsz24.svg',
+      text: 'Democratically decide your top priorities' %>
+    <%= render 'layouts/secondary_value_proposition',
+      img_src: 'contact_support_24dp_AF52DE_FILL0_wght400_GRAD0_opsz24.svg',
+      text: 'Get expert guidance when you need it' %>
+  </div>
+  <%= render 'layouts/app_store_badges' %>
 </div>

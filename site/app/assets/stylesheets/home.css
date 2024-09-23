@@ -4,6 +4,12 @@
   background-position-x: center;
 }
 
+#hero-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
 #hero-overlay {
   align-items: center;
   background-color: rgba(var(--light-primary-color-rgb), 0.9);

@@ -1,0 +1,13 @@
+.secondary-value-proposition {
+  display: flex;
+  flex-direction: column;
+}
+
+.secondary-value-proposition img {
+  height: 150px;
+}
+
+.secondary-value-proposition p {
+  font-size: 1.2rem;
+  text-align: center;
+}
