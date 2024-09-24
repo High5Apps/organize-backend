@@ -16,7 +16,7 @@ services:
       target: dev
     image: localhost:5001/organize-site-dev
     volumes:
-      - ./site:/usr/src/app
+      - ./site:/rails
   web:
     build:
       target: dev
