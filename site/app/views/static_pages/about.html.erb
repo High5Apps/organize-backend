@@ -1,0 +1,23 @@
+<div id="about-container" class="container policy">
+  <div class="row">
+    <div class="col">
+      <header>
+        <h1>About</h1>
+      </header>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col col-12 col-sm-4">
+      <div class="headshot-container">
+        <%= image_tag 'about-julian.png',
+          alt: 'Portrait of Julian',
+          class: 'headshot' %>
+      </div>
+    </div>
+    <div class="col col-12 col-sm-8">
+      <p>Julian Tigler is from Charlotte, NC, and currently lives in Seattle, WA. He's developed software for tech giants, startups, and solar companies.</p>
+      <p>Julian is inspired by the brave people who brought us the 5-day work week, the 8-hour work day, and an end to child labor. He hopes to make them proud by helping employees everywhere majorly improve their work lives.</p>
+      <p>Feel free to <%= mail_to @email, 'send him a message' %> at any time!</p>
+    </div>
+  </div>
+</div>

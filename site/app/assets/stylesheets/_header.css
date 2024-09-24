@@ -4,6 +4,7 @@ header nav div.row {
 }
 
 header .links {
+  align-items: center;
   display: flex;
   gap: 10px;
 }
