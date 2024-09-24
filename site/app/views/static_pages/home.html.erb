@@ -10,7 +10,7 @@
       <div class="screenshot-container">
         <%= image_tag 'bezel-screenshot.png', alt: 'Screenshot of the Organize app' %>
       </div>
-      <%= render 'layouts/app_store_badges' %>
+      <%= render 'layouts/app_store_badges', ref: 'hero' %>
     </div>
   </div>
   <div class="row">
@@ -24,28 +24,33 @@
       img_src: 'contact_support_24dp_AF52DE_FILL0_wght400_GRAD0_opsz24.svg',
       text: 'Get expert guidance when you need it' %>
   </div>
-  <%= render 'layouts/app_store_badges' %>
+  <%= render 'layouts/app_store_badges', ref: 'secondary-value-prop' %>
   <%= render 'layouts/fact_row',
     text: 'Union members earn an average of $8,996 more per year than non-union members',
-    source: 'https://www.bls.gov/news.release/union2.nr0.htm' %>
+    source: 'https://www.bls.gov/news.release/union2.nr0.htm',
+    ref: 'fact-row-earnings' %>
   <div class="row">
     <%= render 'layouts/pricing_plan',
       title: 'Trial Plan',
       subtitle: 'Free for 30 days',
       price: '$0',
-      button_title: 'Start free trial' %>
+      button_title: 'Start free trial',
+      ref: 'trial' %>
     <%= render 'layouts/pricing_plan',
       title: 'Monthly Plan',
       subtitle: 'Cancel any time',
       price: '$3',
-      button_title: 'Start growing today' %>
+      button_title: 'Start growing today',
+      ref: 'monthly' %>
     <%= render 'layouts/pricing_plan',
       title: 'Annual Plan',
       subtitle: 'Save 17%',
       price: '$2.50',
-      button_title: 'Start saving today' %>
+      button_title: 'Start saving today',
+      ref: 'annual' %>
   </div>
   <%= render 'layouts/fact_row',
     text: 'Last month 2,257 workers formed new unions',
-    source: 'https://docs.google.com/spreadsheets/d/1FW4jT-swWoqM92WQvXYq-eoyaTIEZtXdHL-MSFRfJKQ/view?usp=sharing' %>
+    source: 'https://docs.google.com/spreadsheets/d/1FW4jT-swWoqM92WQvXYq-eoyaTIEZtXdHL-MSFRfJKQ/view?usp=sharing',
+    ref: 'fact-row-new-members' %>
 </div>
