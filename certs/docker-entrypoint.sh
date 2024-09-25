@@ -2,6 +2,7 @@
 set -e
 
 DOMAIN="getorganize.app"
+DOMAIN_WWW="www.$DOMAIN"
 EMAIL_ADDRESS="high5apps@gmail.com"
 WEBROOT_PATH="/var/www/certbot/"
 cert_dir="/etc/letsencrypt/live/$DOMAIN"
@@ -48,6 +49,7 @@ if ! [ -e $cert_file ]; then
   certbot certonly \
     --agree-tos \
     --domain $DOMAIN \
+    --domain $DOMAIN_WWW \
     --email ${EMAIL_ADDRESS} \
     --non-interactive \
     --renew-by-default \
