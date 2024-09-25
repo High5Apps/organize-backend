@@ -1,15 +1,15 @@
 <div id="hero-container" class="container">
   <div id="hero" class="row">
-    <div id="hero-overlay" class="col col-sm-6 col-md-5">
+    <div id="hero-overlay" class="col col-12 col-sm-6 col-md-5">
       <div class="overlay-text overlay-title">
         Fearlessly form your union
       </div>
       <div class="overlay-text overlay-subtitle">
         We help overworked employees win more time to do what they love
       </div>
-      <div class="screenshot-container">
-        <%= image_tag 'bezel-screenshot.png', alt: 'Screenshot of the Organize app' %>
-      </div>
+      <%= image_tag 'bezel-screenshot.png',
+        alt: 'Screenshot of the Organize app',
+        class: 'screenshot' %>
       <%= render 'layouts/app_store_badges', ref: 'hero' %>
     </div>
   </div>

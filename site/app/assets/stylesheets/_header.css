@@ -3,12 +3,6 @@ header nav div.row {
   justify-content: space-between;
 }
 
-header .links {
-  align-items: center;
-  display: flex;
-  gap: 10px;
-}
-
 .logo {
   align-items: center;
   display: flex;

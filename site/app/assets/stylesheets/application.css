@@ -21,7 +21,7 @@
 :root {
   --font-size-header: 1.6rem;
   --font-size-subheader: 1.2rem;
-  --font-size-title: 2.4rem;
+  --font-size-title: 2rem;
   --light-background-color: #F8F4FB;
   --light-fill-color: #FFFFFF;
   --light-label-color: #1F082B;
@@ -29,6 +29,10 @@
   --light-primary-color: #AF52DE;
   --light-primary-color-rgb: 175, 82, 222;
   --separator-border: 0.5px solid #909090;
+}
+
+@media (min-width: 768px) {
+  :root { --font-size-title: 2.3rem; }
 }
 
 a {
@@ -57,7 +61,7 @@ header > p {
   border-radius: 1000px; /* Arbitrarily large number to make corners circular */
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
   color: var(--light-background-color);
-  padding: 10px 20px;
+  padding: 8px 16px;
 }
 
 .button:hover {
