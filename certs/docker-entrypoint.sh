@@ -3,7 +3,7 @@ set -e
 
 DOMAIN="getorganize.app"
 DOMAIN_WWW="www.$DOMAIN"
-EMAIL_ADDRESS="high5apps@gmail.com"
+EMAIL_ADDRESS="GetOrganizeApp@gmail.com"
 WEBROOT_PATH="/var/www/certbot/"
 cert_dir="/etc/letsencrypt/live/$DOMAIN"
 cert_file="$cert_dir/fullchain.pem"
