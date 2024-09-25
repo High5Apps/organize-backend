@@ -25,6 +25,7 @@ class FlagReportQueryTest < ActiveSupport::TestCase
               pseudonym: String,
               **nil
             },
+            deleted_at: String | nil,
             encrypted_title: {
               c: String,
               n: String,

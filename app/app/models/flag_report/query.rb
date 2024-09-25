@@ -101,6 +101,7 @@ class FlagReport::Query
             id: creator.id,
             pseudonym: creator.pseudonym,
           },
+          deleted_at: flaggable.try(:deleted_at),
           encrypted_title: flaggable.encrypted_flaggable_title,
           id: aggregate.flaggable_id,
         },
