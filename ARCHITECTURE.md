@@ -41,6 +41,10 @@ Service for performing PostgreSQL major version upgrades. Heavily inspired by th
 
 For load testing the server using the Apache JMeter application and CLI.
 
+### `site`
+
+The root of the Ruby on Rails site service. It serves the static website at <https://getorganize.app>. It follows [Rails conventions](https://github.com/jwipeout/rails-directory-structure-guide) for its subdirectory structure.
+
 ### `web`
 
 NGINX web service for terminating TLS, defining non-Rails routes, and serving static assets.
