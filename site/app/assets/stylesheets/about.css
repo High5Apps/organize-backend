@@ -3,7 +3,7 @@
 }
 
 .headshot {
-  border: 4px solid var(--light-primary-color);
+  border: 4px solid var(--primary-color);
   border-radius: 50%;
   max-height: 250px;
   max-width: 250px;

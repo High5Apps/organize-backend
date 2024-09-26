@@ -1,12 +1,12 @@
 .fact-row {
-  background-color: var(--light-primary-color);
-  color: var(--light-background-color);
+  background-color: var(--primary-color);
+  color: var(--background-color);
   font-size: var(--font-size-header);
   text-align: center;
 }
 
 .fact-row a {
-  color: var(--light-background-color);
+  color: var(--background-color);
   text-decoration: underline;
 }
 

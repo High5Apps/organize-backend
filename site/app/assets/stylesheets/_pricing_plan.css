@@ -1,5 +1,5 @@
 .pricing-plan {
-  background-color: var(--light-fill-color);
+  background-color: var(--fill-color);
   border-radius: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -15,7 +15,7 @@
 }
 
 .pricing-plan-header {
-  background-color: rgba(var(--light-primary-color-rgb), 0.15);
+  background-color: rgba(var(--primary-color-rgb), 0.15);
   padding: 10px;
 }
 
@@ -34,5 +34,5 @@
 }
 
 .pricing-plan-price-units {
-  color: var(--light-label-secondary-color);
+  color: var(--label-secondary-color);
 }
