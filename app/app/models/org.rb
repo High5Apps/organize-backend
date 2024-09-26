@@ -75,7 +75,8 @@ class Org < ApplicationRecord
     if demo_mode_code.present?
       self.verification_code = demo_mode_code
     elsif Rails.env.production?
-      self.verification_code = SecureRandom.random_number(1E5...1E6).to_i.to_s
+      self.verification_code = \
+        SecureRandom.random_number(1E6).to_i.to_s.rjust(6, '0')
     else
       self.verification_code = NON_PRODUCTION_VERIFICATION_CODE
     end
