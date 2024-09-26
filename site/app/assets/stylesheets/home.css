@@ -24,7 +24,11 @@
 
 @media (min-width: 768px) {
   #hero-overlay {
-    background: linear-gradient(to right, rgba(var(--primary-color-rgb), 0.9) 85%, transparent);
+    background: linear-gradient(to right, rgba(var(--primary-color-rgb), 0.9) 90%, transparent);
+  }
+  .overlay-text {
+    margin-left: 20px;
+    margin-right: 20px;
   }
 }
 

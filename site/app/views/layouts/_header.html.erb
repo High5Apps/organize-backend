@@ -4,7 +4,11 @@
       <div class="row">
         <%= link_to root_path do %>
           <div class="logo">
-            <%= image_tag 'logo.png', alt: 'Organize Logo' %>
+            <%= picture_tag do %>
+              <%= tag :source, srcset: image_path('logo-dark.png'),
+                media: '(prefers-color-scheme: dark)' %>
+              <%= image_tag 'logo.png', alt: 'Organize Logo' %>
+            <% end %>
             Organize
           </div>
         <% end %>
