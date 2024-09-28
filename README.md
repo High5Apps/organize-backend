@@ -102,8 +102,6 @@ To run organize-api on a Raspberry Pi, perform the following steps:
 6. On your DNS registrar's website, create a new A record pointing from `@` to
 your local network's IP address.
 7. Set up port forwarding from router to server on 80/TCP and 443/TCP
-    - For Xfinity, use Xfinity app / Connect / \<your ssid\> / Advanced settings / Port Forwarding
-    - For HOT, open your router config page / Advanced / Forwarding
     ```
     curl http://getorganize.app # To test connection
     ```
@@ -112,4 +110,5 @@ your local network's IP address.
     ssh org
     docker compose logs -f
     ```
+    - You can also check that a new entry was added to the [certificate transparency log](https://crt.sh/?q=getorganize.app)
 9. Verify that the backend startup succeeded by hitting the new server with the mobile app
