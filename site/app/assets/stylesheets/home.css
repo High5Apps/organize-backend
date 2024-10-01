@@ -49,5 +49,6 @@
 .screenshot {
   display: flex;
   justify-content: center;
+  max-width: 100%;
   min-height: 200px;
 }
