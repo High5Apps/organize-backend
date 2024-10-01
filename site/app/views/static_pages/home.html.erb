@@ -7,9 +7,12 @@
       <div class="overlay-text overlay-subtitle">
         We help overworked employees win more time to do what they love
       </div>
-      <%= image_tag 'bezel-screenshot.png',
-        alt: 'Screenshot of the Organize app',
-        class: 'screenshot' %>
+      <%= picture_tag class: 'screenshot' do %>
+        <%= tag :source, srcset: image_path('bezel-screenshot-dark.png'),
+          media: '(prefers-color-scheme: dark)' %>
+        <%= image_tag 'bezel-screenshot.png',
+          alt: 'Screenshot of the Organize app' %>
+      <% end %>
       <%= render 'layouts/app_store_badges', ref: 'hero' %>
     </div>
   </div>
