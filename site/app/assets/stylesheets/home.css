@@ -47,8 +47,13 @@
 }
 
 .screenshot {
+  align-items: center;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   max-width: 100%;
+  min-height: 200px;
+}
+
+.screenshot img {
   min-height: 200px;
 }
