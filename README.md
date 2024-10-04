@@ -1,11 +1,11 @@
-# organize-api
-[organize-api](https://github.com/High5Apps/organize-api) is the backend server for the Organize app.
+# organize-backend
+[organize-backend](https://github.com/High5Apps/organize-backend) is the backend server for the Organize app.
 
 ## Development setup
-1. Clone the organize-api repo from GitHub
+1. Clone the organize-backend repo from GitHub
     ```sh
-    git clone git@github.com:High5Apps/organize-api.git \
-    && cd organize-api
+    git clone git@github.com:High5Apps/organize-backend.git \
+    && cd organize-backend
     ```
 2. Run the `dev-setup` script
     ```sh
@@ -74,7 +74,7 @@ This task randomly simulates an Org at the 10-day mark to simplify development. 
 4. Refresh your development client to see the simulated Org
 
 ## Physical server setup
-To run organize-api on a Raspberry Pi, perform the following steps:
+To run organize-backend on a Raspberry Pi, perform the following steps:
 
 1. Download the OS image
     - [Raspberry Pi OS (64-bit, lite)](https://www.raspberrypi.com/software/operating-systems/#raspberry-pi-os-64-bit)
