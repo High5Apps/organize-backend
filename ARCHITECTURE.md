@@ -9,7 +9,7 @@ This repo defines the components needed to create, develop, test, and administer
 
 The server uses [Docker containers](https://www.docker.com/resources/what-container/) for each of its core services. Services are coordinated using [Docker Compose](https://docs.docker.com/compose/).
 
-The core app server is a [Ruby on Rails API-only application](https://guides.rubyonrails.org/api_app.html), which serves [JSON](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON) responses. [PostgreSQL](https://www.postgresql.org/) is used as the database. [NGINX](https://nginx.org/en/docs/) is used as the web server. [Certbot](https://certbot.eff.org/) and [Let's Encrypt](https://letsencrypt.org/) are used for TLS certificates. [Apache JMeter](https://jmeter.apache.org/) is used for load testing.
+The core API server is a [Ruby on Rails API-only application](https://guides.rubyonrails.org/api_app.html), which serves [JSON](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON) responses. [PostgreSQL](https://www.postgresql.org/) is used as the database. [NGINX](https://nginx.org/en/docs/) is used as the web server. [Certbot](https://certbot.eff.org/) and [Let's Encrypt](https://letsencrypt.org/) are used for TLS certificates. [Apache JMeter](https://jmeter.apache.org/) is used for load testing.
 
 The server runs on top of [Raspberry Pi](https://www.raspberrypi.com/) hardware running the [Raspberry Pi OS Lite](https://www.raspberrypi.com/software/) operating system for now, but Docker and Docker Compose should simplify the transition onto other hardware if needed in the future.
 
@@ -17,9 +17,9 @@ The server runs on top of [Raspberry Pi](https://www.raspberrypi.com/) hardware 
 
 This section talks briefly about various important directories and data structures. Pay attention to the **Architecture Invariant** sections. They often talk about things which are deliberately absent in the source code.
 
-### `app`
+### `api`
 
-The root of the Ruby on Rails app service. It follows [Rails conventions](https://github.com/jwipeout/rails-directory-structure-guide) for its subdirectory structure.
+The root of the Ruby on Rails api service. It follows [Rails conventions](https://github.com/jwipeout/rails-directory-structure-guide) for its subdirectory structure.
 
 **Architecture Invariant**: All human-generated text must be end-to-end encrypted by the client using the relevant Org's group secret, and then stored in an `EncryptedMessage` attribute on its parent model. The attribute must begin with the prefix `encrypted_` (e.g. `Post.encrypted_title` or `Org.encrypted_member_definition`).
 

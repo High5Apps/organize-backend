@@ -19,7 +19,7 @@
     docker compose -f compose.yaml -f compose.override.dev.yaml
 
     # Instead of drails
-    docker compose -f compose.yaml -f compose.override.dev.yaml exec app rails
+    docker compose -f compose.yaml -f compose.override.dev.yaml exec api rails
     ```
 3. Download and install the following software, if you don't have it already:
     - [Docker Desktop](https://docs.docker.com/desktop/install/mac-install/)

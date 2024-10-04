@@ -5,7 +5,7 @@
 # EXAMPLES
 #   logs org
 #   logs org db
-#   logs org app web
+#   logs org api web
 
 if [ "$#" -lt 1 ]; then
   >&2 echo "Error: Must include hostname as first arg"

@@ -11,10 +11,10 @@
 set -e
 
 dc="docker compose -f compose.yaml -f compose.override.dev.yaml"
-drails="$dc exec app rails"
+drails="$dc exec api rails"
 aliases="# Added by https://github.com/High5Apps/organize-backend
 alias dc='$dc'
-alias drails='dc exec app rails'
+alias drails='dc exec api rails'
 "
 
 alias_file=$2
@@ -42,17 +42,17 @@ else
   $dc build
 
   # ORGANIZE_DATABASE_PASSWORD has a max length of 99 characters
-  organize_database_password=$($dc run --no-deps app rails secret | head -c 99)
+  organize_database_password=$($dc run --no-deps api rails secret | head -c 99)
 
   # RAILS_MASTER_KEY must be 32 characters of hex
-  rails_master_key_app=$($dc run --no-deps app rails secret | head -c 32)
+  rails_master_key_api=$($dc run --no-deps api rails secret | head -c 32)
 
   # RAILS_MASTER_KEY_SITE must be 32 characters of hex
   rails_master_key_site=$($dc run --no-deps site rails secret | head -c 32)
 
   echo "Adding fake secrets to .env..."
   sed -i '' "s/example-password-odp/$organize_database_password/" $dot_env
-  sed -i '' "s/example-password-rmka/$rails_master_key_app/" $dot_env
+  sed -i '' "s/example-password-rmka/$rails_master_key_api/" $dot_env
   sed -i '' "s/example-password-rmks/$rails_master_key_site/" $dot_env
 
   updated_dot_env=true
@@ -63,7 +63,7 @@ if ! [ -e $db_dir ] || $updated_dot_env; then
   echo 'Initializing the database...'
   rm -rf $db_dir
   $dc build
-  $dc up app --detach
+  $dc up api --detach
 
   until >/dev/null 2>/dev/null $drails db:reset
   do

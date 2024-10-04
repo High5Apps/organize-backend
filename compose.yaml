@@ -1,7 +1,7 @@
 services:
-  app:
+  api:
     build:
-      context: app
+      context: api
       target: prod
     depends_on:
       - db
@@ -11,8 +11,8 @@ services:
       ORGANIZE_DATABASE_HOST: db
       RAILS_ENV: production
       RAILS_LOG_TO_STDOUT: true
-      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY_APP:?err}
-    image: localhost:5001/organize-app
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY_API:?err}
+    image: localhost:5001/organize-api
     ports:
       - "127.0.0.1:3000:3000"
     restart: always
@@ -60,7 +60,7 @@ services:
     build:
       context: web
     depends_on:
-      - app
+      - api
       - certs
       - site
     image: localhost:5001/organize-web

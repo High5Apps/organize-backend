@@ -1,12 +1,12 @@
 services:
-  app:
+  api:
     build:
       target: dev
     environment:
       RAILS_ENV: development
-    image: localhost:5001/organize-app-dev
+    image: localhost:5001/organize-api-dev
     volumes:
-      - ./app:/usr/src/app
+      - ./api:/usr/src/app
   certs:
     environment:
       SELF_SIGN: true
