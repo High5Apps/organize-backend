@@ -1,5 +1,5 @@
 # organize-backend
-[organize-backend](https://github.com/High5Apps/organize-backend) is the backend server for the Organize app.
+[organize-backend](https://github.com/High5Apps/organize-backend) is the backend server for the [organize-rn](https://github.com/High5Apps/organize-rn) client.
 
 ## Development setup
 1. Clone the organize-backend repo from GitHub
