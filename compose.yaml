@@ -10,7 +10,6 @@ services:
       ORGANIZE_DATABASE_USER: postgres
       ORGANIZE_DATABASE_HOST: db
       RAILS_ENV: production
-      RAILS_LOG_TO_STDOUT: true
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY_API:?err}
     image: localhost:5001/organize-api
     ports:
@@ -48,7 +47,6 @@ services:
       context: site
       target: prod
     environment:
-      RAILS_LOG_TO_STDOUT: true
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY_SITE:?err}
     image: localhost:5001/organize-site
     ports:
