@@ -3,7 +3,7 @@
 # USAGE
 #   flash image_file
 # EXAMPLES
-#   flash ~/Downloads/2024-03-15-raspios-bookworm-arm64-lite.img
+#   flash ~/Downloads/2024-07-04-raspios-bookworm-arm64-lite.img
 
 set -e
 
