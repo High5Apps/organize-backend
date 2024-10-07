@@ -1,4 +1,4 @@
-FROM ruby:3.2.2 AS prod
+FROM ruby:3.3.5 AS prod
 
 RUN apt-get update && apt-get install -y \
   postgresql-client \
