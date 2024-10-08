@@ -18,8 +18,11 @@
     # Instead of dc
     docker compose -f compose.yaml -f compose.override.dev.yaml
 
-    # Instead of drails
+    # Instead of drailsa
     docker compose -f compose.yaml -f compose.override.dev.yaml exec api bin/rails
+
+    # Instead of drailss
+    docker compose -f compose.yaml -f compose.override.dev.yaml exec site bin/rails
     ```
 3. Download and install the following software, if you don't have it already:
     - [Docker Desktop](https://docs.docker.com/desktop/install/mac-install/)
@@ -36,21 +39,25 @@ VS Code [IntelliSense](https://code.visualstudio.com/docs/editor/intellisense) p
 2. In the VS Code extensions tab, search for and install `shopify.ruby-extensions-pack` 
 
 ## Testing
-Run the rails tests with the command below. For more options, see [The Rails Test Runner](https://guides.rubyonrails.org/testing.html#the-rails-test-runner).
+Run Rails tests with the commands below. For more options, see [The Rails Test Runner](https://guides.rubyonrails.org/testing.html#the-rails-test-runner).
 ```sh
-drails test
+# Run all tests for the api service
+drailsa test
+
+# Run all tests for the site service
+drailss test
 ```
 
 A subset of tests can be run with the `-n /regex/` flag, which will match against the underscored test name. For example:
 ```sh
 # Run model and controller tests relating to ballots
-drails t -n /Ballot/
+drailsa t -n /Ballot/
 
 # Run User model tests
-drails t -n /UserTest/
+drailsa t -n /UserTest/
 
 # Run a single test by name
-drails t -n /OrgTest#test_graph_should_include_blocked_user_ids/
+drailsa t -n /OrgTest#test_graph_should_include_blocked_user_ids/
 ```
 
 ## Deploying
@@ -61,13 +68,13 @@ bin/deploy org
 
 ## Rails Tasks
 
-Rails includes many built-in tasks for administering the application service. List them all with `drails -T`. Commonly used custom tasks are detailed below:
+Rails includes many built-in tasks for administering the application service. List them all with `drailsa -T`. Commonly used custom tasks are detailed below:
 
 ### `org:simulation` or `org:sim`
 
 This task randomly simulates an Org at the 10-day mark to simplify development. It's normally used as follows:
 1. Use your development client to create a new Org
-2. Run `drails org:sim` on your development machine
+2. Run `drailsa org:sim` on your development machine
 3. Share your Org's group secret from the development client's development settings menu into the task's input
     - If you're using a simulator or emulator on your development machine, just copy and paste the group secret into the task's input.
     - If you're using a physical development device external to your development machine, share the group secret using a secure meassaging service. For example you could share it from an Android phone to a Mac using the [Signal app](https://signal.org/) "Note to Self" feature, then open the Signal desktop client on your Mac, then copy/paste it into the task's input.

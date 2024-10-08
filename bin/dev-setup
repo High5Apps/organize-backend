@@ -11,10 +11,12 @@
 set -e
 
 dc="docker compose -f compose.yaml -f compose.override.dev.yaml"
-drails="$dc exec api bin/rails"
+drailsa="$dc exec api bin/rails"
 aliases="# Added by https://github.com/High5Apps/organize-backend
 alias dc='$dc'
-alias drails='dc exec api bin/rails'
+alias drailsa='dc exec api bin/rails'
+alias drails='drailsa'
+alias drailss='dc exec site bin/rails'
 "
 
 alias_file=$2
@@ -65,7 +67,7 @@ if ! [ -e $db_dir ] || $updated_dot_env; then
   $dc build
   $dc up api --detach
 
-  until >/dev/null 2>/dev/null $drails db:reset
+  until >/dev/null 2>/dev/null $drailsa db:reset
   do
     echo 'Waiting 5s for database to initialize...'
     sleep 5
@@ -82,7 +84,8 @@ $dc up --detach
 echo 'Waiting 5s for services to settle...'
 echo '(Increase this duration if the tests fail due to connection issues.)'
 sleep 5
-$drails test
+$drailsa test
+$drailss test
 $dc down
 
 echo 'Development setup succeeded'
