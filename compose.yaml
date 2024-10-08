@@ -24,19 +24,12 @@ services:
       - cert-conf:/etc/letsencrypt/:rw
   db:
     environment:
-      PGDATA: /var/lib/postgresql/15/data
-      POSTGRES_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
-    image: postgres:15.2
-    ports:
-      - "127.0.0.1:5432:5432"
-    restart: always
-    volumes:
-      - db-data:/var/lib/postgresql:rw
-  db-17:
-    environment:
       PGDATA: /var/lib/postgresql/17/data
       POSTGRES_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
     image: postgres:17.0
+    ports:
+      - "127.0.0.1:5432:5432"
+    restart: always
     volumes:
       - db-data:/var/lib/postgresql:rw
   db-upgrade:
