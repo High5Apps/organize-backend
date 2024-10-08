@@ -61,13 +61,6 @@ ssh -R 5001:localhost:5001 $1  << EOF
 
   # Only start default services
   docker compose up --detach
-
-  echo 'Setting up database...'
-
-  # For some reason, if these aren't &&-chained together, execution stops after
-  # rake db:create despite having an exit code of 0
-  docker compose exec api rake db:create \
-   && docker compose exec api rake db:migrate
 EOF
 
 cleanup

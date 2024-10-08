@@ -11,10 +11,10 @@
 set -e
 
 dc="docker compose -f compose.yaml -f compose.override.dev.yaml"
-drails="$dc exec api rails"
+drails="$dc exec api bin/rails"
 aliases="# Added by https://github.com/High5Apps/organize-backend
 alias dc='$dc'
-alias drails='dc exec api rails'
+alias drails='dc exec api bin/rails'
 "
 
 alias_file=$2

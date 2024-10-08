@@ -2,11 +2,9 @@ services:
   api:
     build:
       target: dev
-    environment:
-      RAILS_ENV: development
     image: localhost:5001/organize-api-dev
     volumes:
-      - ./api:/usr/src/app
+      - ./api:/rails
   certs:
     environment:
       SELF_SIGN: true
