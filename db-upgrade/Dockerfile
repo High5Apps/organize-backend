@@ -1,16 +1,17 @@
-FROM postgres:15
+FROM postgres:17
 
-COPY --from=postgres:14 /usr/lib/postgresql/14 /usr/lib/postgresql/14/
-COPY --from=postgres:14 /usr/share/postgresql/14 /usr/share/postgresql/14/
+COPY --from=postgres:15 /usr/lib/postgresql/15 /usr/lib/postgresql/15/
+COPY --from=postgres:15 /usr/share/postgresql/15 /usr/share/postgresql/15/
 
-ENV PGBINOLD /usr/lib/postgresql/14/bin
-ENV PGBINNEW /usr/lib/postgresql/15/bin
+ENV PGBINOLD /usr/lib/postgresql/15/bin
+ENV PGBINNEW /usr/lib/postgresql/17/bin
 
-ENV PGDATAOLD /var/lib/postgresql/14/data
-ENV PGDATANEW /var/lib/postgresql/15/data
+ENV PGDATAOLD /var/lib/postgresql/15/data
+ENV PGDATANEW /var/lib/postgresql/17/data
 
-RUN mkdir -p "$PGDATAOLD" "$PGDATANEW" \
-	&& chown -R postgres:postgres /var/lib/postgresql
+RUN set -eux; \
+  mkdir -p "$PGDATAOLD" "$PGDATANEW"; \
+  chown -R postgres:postgres /var/lib/postgresql
 
 WORKDIR /var/lib/postgresql
 
