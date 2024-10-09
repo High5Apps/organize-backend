@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.getorganize.organize",
+      "sha256_cert_fingerprints":
+        ["E4:F4:78:70:2B:CD:C2:F8:91:E0:3E:1E:79:59:5D:3F:7D:CB:C2:2A:02:C0:28:CF:82:D0:61:C9:00:1C:7D:BD"]
+    }
+  }
+]

@@ -12,6 +12,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx-auto-reloader.sh /usr/src/app/nginx-auto-reloader.sh
 COPY server-locations.conf /etc/nginx/server-locations.conf
 COPY store.conf /etc/nginx/store.conf
+COPY public public
 
 ENTRYPOINT [ "./docker-entrypoint.sh" ]
 CMD [ "nginx", "-g", "daemon off;" ]
