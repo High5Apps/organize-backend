@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appId": "58TA285GUY.app.getorganize.organize",
+        "components": [
+          {
+            "/": "/connect",
+            "comment": "Matches a URL whose path is /connect"
+          }
+        ]
+      }
+    ]
+  }
+}
