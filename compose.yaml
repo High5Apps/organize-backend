@@ -32,15 +32,6 @@ services:
     restart: always
     volumes:
       - db-data:/var/lib/postgresql:rw
-  db-upgrade:
-    build:
-      context: db-upgrade
-    image: localhost:5001/db-upgrade
-    profiles:
-      - runManually
-    restart: never
-    volumes:
-      - db-data:/var/lib/postgresql:rw
   site:
     build:
       context: site

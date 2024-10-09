@@ -31,11 +31,11 @@ fi
 # 5001 because 5000 is already used by MacOS/ControlCenter on Macs
 docker run --detach --name registry -p 5001:5000 registry:2
 
-# Build default services and services with the runManually profile
-docker compose --profile runManually build
+# Build services
+docker compose build
 
-# Push default services and services with the runManually profile
-docker compose --profile runManually push
+# Push services
+docker compose push
 
 # Transfer compose file into the home directory of the ssh target
 echo 'Transferring compose file'
@@ -54,12 +54,12 @@ ssh -R 5001:localhost:5001 $1  << EOF
 
   echo 'Pulling latest images...'
 
-  # Pull default services and services with the runManually profile
-  docker compose --profile runManually pull
+  # Pull services
+  docker compose pull
 
   echo 'Starting containers...'
 
-  # Only start default services
+  # Start services
   docker compose up --detach
 EOF
 

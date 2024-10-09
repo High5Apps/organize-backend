@@ -33,10 +33,6 @@ Admin scripts for dealing with top-level server operations.
 
 Certbot sevice for renewing Let's Encrypt TLS certificates.
 
-### `db-upgrade`
-
-Service for performing PostgreSQL major version upgrades. Heavily inspired by this [proof-of-concept repo](https://github.com/tianon/docker-postgres-upgrade).
-
 ### `jmeter`
 
 For load testing the server using the Apache JMeter application and CLI.
