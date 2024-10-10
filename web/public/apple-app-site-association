@@ -2,7 +2,7 @@
   "applinks": {
     "details": [
       {
-        "appId": "58TA285GUY.app.getorganize.organize",
+        "appIDs": ["58TA285GUY.app.getorganize.organize"],
         "components": [
           {
             "/": "/connect",
