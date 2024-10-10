@@ -5,7 +5,10 @@
       "namespace": "android_app",
       "package_name": "app.getorganize.organize",
       "sha256_cert_fingerprints":
-        ["E4:F4:78:70:2B:CD:C2:F8:91:E0:3E:1E:79:59:5D:3F:7D:CB:C2:2A:02:C0:28:CF:82:D0:61:C9:00:1C:7D:BD"]
+        [
+          "E4:F4:78:70:2B:CD:C2:F8:91:E0:3E:1E:79:59:5D:3F:7D:CB:C2:2A:02:C0:28:CF:82:D0:61:C9:00:1C:7D:BD",
+          "FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C"
+        ]
     }
   }
 ]
