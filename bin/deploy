@@ -49,18 +49,14 @@ scp .env $1:
 ssh -R 5001:localhost:5001 $1  << EOF
   set -e
 
-  echo 'Stopping existing containers (if needed)...'
-  docker compose down
-
   echo 'Pulling latest images...'
-
-  # Pull services
   docker compose pull
 
-  echo 'Starting containers...'
-
-  # Start services
+  echo 'Restarting updated containers...'
   docker compose up --detach
+
+  echo 'Cleaning up unneeded artifacts...'
+  docker system prune -f
 EOF
 
 cleanup
