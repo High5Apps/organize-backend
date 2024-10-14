@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# NAME
+#   rdocker – Perform a Docker command on a remote host
+# USAGE
+#   rdocker host [Docker command]
+# EXAMPLES
+#   rdocker org info
+#   rdocker org system df
+
+if [ "$#" -lt 1 ]; then
+  echo "Error: Must include ssh target as first arg"
+  exit 1
+fi
+
+server_host=$1
+
+if ! grep -q "Host $server_host" ~/.ssh/config; then
+  echo "Error: First argument must be an ssh target configured in ~/.ssh/config"
+  exit 1
+fi
+
+# Slice off the first 2 positional parameters, i.e the script name and the
+# server_host, so that only the Docker command remains
+docker_command="${@:2}"
+
+ssh -t $server_host "docker $docker_command"

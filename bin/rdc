@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# NAME
+#   rdc – Perform a Docker Compose command on a remote host
+# USAGE
+#   rdc host [Docker Compose command]
+# EXAMPLES
+#   rdc org logs -f
+#   rdc org exec api bash
+
+# Slice off the first 2 positional parameters, i.e the script name and the
+# server_host, so that only the Docker compose command remains
+docker_compose_command="${@:2}"
+
+# This assumes that the rdocker command exists in the same directory as rdc
+parent_dir_path=$(dirname "$0")
+$parent_dir_path/rdocker $1 compose $docker_compose_command

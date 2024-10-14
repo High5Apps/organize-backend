@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# NAME
+#   rdrails – Perform a Ruby on Rails command on a remote host's api service
+# USAGE
+#   rdrails host [Rails command]
+# EXAMPLES
+#   rdrails org console --sandbox
+#   rdrails org org:simulation
+#   rdrails org dbconsole --include-password
+
+# Slice off the first 2 positional parameters, i.e the script name and the
+# server_host, so that only the Rails command remains
+rails_command="${@:2}"
+
+# This assumes that the rdc command exists in the same directory as drails
+parent_dir_path=$(dirname "$0")
+$parent_dir_path/rdc $1 exec api bin/rails $rails_command
