@@ -7,16 +7,10 @@
 #   logs org db
 #   logs org api web
 
-if [ "$#" -lt 1 ]; then
-  >&2 echo "Error: Must include hostname as first arg"
-  exit 1
-fi
-
-server_host=$1
-
 # Slice off the first 2 positional parameters, i.e the script name and the
 # server_host, so that only the service names remain
 services="${@:2}"
 
-echo "Connecting to $server_host server..."
-ssh -t $server_host "docker compose logs --follow $services"
+# This assumes that the rdc command exists in the same directory as logs
+parent_dir_path=$(dirname "$0")
+$parent_dir_path/rdc $1 logs --follow $services
