@@ -32,6 +32,15 @@ services:
     restart: always
     volumes:
       - db-data:/var/lib/postgresql:rw
+  metrics:
+    build:
+      context: metrics
+    image: localhost:5001/organize-metrics
+    ports:
+      - "127.0.0.1:9090:9090"
+    restart: always
+    volumes:
+      - metrics-data:/prometheus:rw
   site:
     build:
       context: site
@@ -64,4 +73,5 @@ volumes:
   cert-conf:
   cert-www:
   db-data:
+  metrics-data:
   site-storage:

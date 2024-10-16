@@ -37,6 +37,10 @@ Certbot sevice for renewing Let's Encrypt TLS certificates.
 
 For load testing the server using the Apache JMeter application and CLI.
 
+### `metrics`
+
+[Prometheus](https://prometheus.io/) service for collecting metrics, running ad-hoc queries, and managing alerts. 
+
 ### `site`
 
 The root of the Ruby on Rails site service. It serves the static website at <https://getorganize.app>. It follows [Rails conventions](https://github.com/jwipeout/rails-directory-structure-guide) for its subdirectory structure.
