@@ -1,0 +1,30 @@
+#!/bin/bash -e
+
+# USAGE
+#   metrics host
+# EXAMPLES
+#   metrics org
+
+if [ "$#" -lt 1 ]; then
+  echo "Error: Must include ssh target as first arg"
+  exit 1
+fi
+
+server_host=$1
+
+if ! grep -q "Host $server_host" ~/.ssh/config; then
+  echo "Error: First argument must be an ssh target configured in ~/.ssh/config"
+  exit 1
+fi
+
+function cleanup {
+  ssh -S my-ctrl-socket -O exit $server_host
+}
+trap cleanup EXIT
+
+echo "Opening SSH tunnel to $server_host"
+ssh -M -S my-ctrl-socket -fNT -L 9091:localhost:9090 $server_host
+
+open 'http://localhost:9091'
+
+read -p 'Press <enter> to close the SSH tunnel'
