@@ -9,6 +9,9 @@ services:
     environment:
       SELF_SIGN: true
     restart: "no"
+  metrics-db:
+    environment:
+      DATA_SOURCE_URI: db:5432/organize_development?sslmode=disable
   site:
     build:
       target: dev
