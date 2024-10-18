@@ -33,6 +33,10 @@ Admin scripts for dealing with top-level server operations.
 
 Certbot sevice for renewing Let's Encrypt TLS certificates.
 
+### `dash`
+
+[Grafana OSS](https://grafana.com/oss/grafana/) service for metrics dashboards.
+
 ### `jmeter`
 
 For load testing the server using the Apache JMeter application and CLI.
