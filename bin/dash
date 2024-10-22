@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+# NAME
+#   dash – Open a remote host's monitoring dashboard in a local web browser
+# USAGE
+#   dash host
+# EXAMPLES
+#   dash org
+
+if [ "$#" -lt 1 ]; then
+  echo "Error: Must include ssh target as first arg"
+  exit 1
+fi
+
+server_host=$1
+
+if ! grep -q "Host $server_host" ~/.ssh/config; then
+  echo "Error: First argument must be an ssh target configured in ~/.ssh/config"
+  exit 1
+fi
+
+function cleanup {
+  ssh -S my-ctrl-socket -O exit $server_host
+}
+trap cleanup EXIT
+
+echo "Opening SSH tunnel to $server_host"
+ssh -M -S my-ctrl-socket -fNT -L 9001:localhost:9000 $server_host
+
+open 'http://localhost:9001'
+
+read -p 'Press <enter> to close the SSH tunnel'
