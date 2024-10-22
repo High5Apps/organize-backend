@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 watch_dir=/etc/nginx/ssl/live

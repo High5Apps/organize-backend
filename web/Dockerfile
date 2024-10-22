@@ -1,8 +1,6 @@
-FROM nginx:1.26.2 AS prod
+FROM nginx:1.26.2-alpine AS prod
 
-RUN apt update \
-  && apt install -y inotify-tools \
-  && rm -rf /var/lib/apt/lists/*
+RUN apk add --update --no-cache inotify-tools
 
 WORKDIR /usr/src/app
 
