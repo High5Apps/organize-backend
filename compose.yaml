@@ -84,6 +84,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "127.0.0.1:9991:9991"
     restart: always
     volumes:
       - cert-www:/var/www/certbot/:ro

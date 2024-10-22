@@ -1,4 +1,45 @@
-FROM nginx:1.26.2-alpine AS prod
+ARG NGINX_VERSION=1.26.2
+ARG NGINX_MODULE_VTS_VERSION=v0.2.2
+
+FROM nginx:${NGINX_VERSION}-alpine AS builder
+ARG NGINX_MODULE_VTS_VERSION
+
+RUN apk add --update --no-cache --virtual .build-deps \
+  curl \
+  gd-dev \
+  geoip-dev \
+  libc-dev \
+  libxslt-dev \
+  linux-headers \
+  make \
+  openssl-dev \
+  pcre-dev \
+  zlib-dev \
+  gcc \
+  git \
+  tar
+
+RUN git clone https://github.com/vozlt/nginx-module-vts.git \
+  --branch ${NGINX_MODULE_VTS_VERSION} \
+  --depth=1
+
+RUN curl -LO https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
+  && tar -zxf nginx-${NGINX_VERSION}.tar.gz
+
+WORKDIR /nginx-${NGINX_VERSION}
+
+RUN CONFARGS=$(nginx -V 2>&1 | sed -n -e 's/^.*arguments: //p')
+RUN ./configure --with-compat $CONFARGS \
+  --add-dynamic-module=../nginx-module-vts \
+  && make modules
+RUN cp objs/ngx_http_vhost_traffic_status_module.so \
+  /usr/lib/nginx/modules/ngx_http_vhost_traffic_status_module.so
+
+FROM nginx:${NGINX_VERSION}-alpine AS prod
+
+COPY --from=builder \
+  /usr/lib/nginx/modules/ngx_http_vhost_traffic_status_module.so \
+  /etc/nginx/modules
 
 RUN apk add --update --no-cache inotify-tools
 
