@@ -8,3 +8,6 @@ scrape_configs:
   - job_name: nginx
     static_configs:
       - targets: ['web:9991']
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['monitor-containers:8080']

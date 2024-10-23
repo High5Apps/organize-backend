@@ -41,6 +41,26 @@ services:
     restart: always
     volumes:
       - monitor-data:/prometheus:rw
+  monitor-containers:
+    command:
+      - '-housekeeping_interval=1m0s'
+      - '-docker_only=true'
+      - '-store_container_labels=false'
+    devices:
+      - /dev/kmsg
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    ports:
+      - "127.0.0.1:8081:8080"
+    privileged: true
+    restart: always
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+      - /etc/machine-id:/etc/machine-id:ro
   monitor-dash:
     build:
       context: monitor-dash
