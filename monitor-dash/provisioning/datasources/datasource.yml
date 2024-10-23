@@ -6,4 +6,4 @@ datasources:
     access: proxy
     basicAuth: false
     isDefault: true
-    url: http://metrics:9090
+    url: http://monitor:9090

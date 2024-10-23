@@ -9,10 +9,10 @@ services:
     environment:
       SELF_SIGN: true
     restart: "no"
-  dash:
+  monitor-dash:
     volumes:
-      - ./dash/provisioning:/etc/grafana/provisioning
-  metrics-db:
+      - ./monitor-dash/provisioning:/etc/grafana/provisioning
+  monitor-db:
     environment:
       DATA_SOURCE_URI: db:5432/organize_development?sslmode=disable
   site:

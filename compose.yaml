@@ -22,15 +22,6 @@ services:
     volumes:
       - cert-www:/var/www/certbot/:rw
       - cert-conf:/etc/letsencrypt/:rw
-  dash:
-    build:
-      context: dash
-    image: localhost:5001/organize-dash
-    ports:
-      - "127.0.0.1:9000:3000"
-    restart: always
-    volumes:
-      - dash-data:/var/lib/grafana
   db:
     environment:
       PGDATA: /var/lib/postgresql/17/data
@@ -41,16 +32,25 @@ services:
     restart: always
     volumes:
       - db-data:/var/lib/postgresql:rw
-  metrics:
+  monitor:
     build:
-      context: metrics
-    image: localhost:5001/organize-metrics
+      context: monitor
+    image: localhost:5001/organize-monitor
     ports:
       - "127.0.0.1:9090:9090"
     restart: always
     volumes:
-      - metrics-data:/prometheus:rw
-  metrics-db:
+      - monitor-data:/prometheus:rw
+  monitor-dash:
+    build:
+      context: monitor-dash
+    image: localhost:5001/organize-monitor-dash
+    ports:
+      - "127.0.0.1:9000:3000"
+    restart: always
+    volumes:
+      - monitor-dash-data:/var/lib/grafana
+  monitor-db:
     command: '--no-collector.stat_bgwriter'
     depends_on:
       - db
@@ -93,7 +93,7 @@ services:
 volumes:
   cert-conf:
   cert-www:
-  dash-data:
   db-data:
-  metrics-data:
+  monitor-data:
+  monitor-dash-data:
   site-storage:
