@@ -20,12 +20,12 @@ if ! grep -q "Host $server_host" ~/.ssh/config; then
 fi
 
 function cleanup {
-  ssh -S my-ctrl-socket -O exit $server_host
+  ssh -S dash-control-socket -O exit $server_host
 }
 trap cleanup EXIT
 
 echo "Opening SSH tunnel to $server_host"
-ssh -M -S my-ctrl-socket -fNT -L 9001:localhost:9000 $server_host
+ssh -M -S dash-control-socket -fNT -L 9001:localhost:9000 $server_host
 
 open 'http://localhost:9001'
 

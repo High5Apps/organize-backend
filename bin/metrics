@@ -18,12 +18,12 @@ if ! grep -q "Host $server_host" ~/.ssh/config; then
 fi
 
 function cleanup {
-  ssh -S my-ctrl-socket -O exit $server_host
+  ssh -S metrics-control-socket -O exit $server_host
 }
 trap cleanup EXIT
 
 echo "Opening SSH tunnel to $server_host"
-ssh -M -S my-ctrl-socket -fNT -L 9091:localhost:9090 $server_host
+ssh -M -S metrics-control-socket -fNT -L 9091:localhost:9090 $server_host
 
 open 'http://localhost:9091'
 
