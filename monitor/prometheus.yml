@@ -11,3 +11,6 @@ scrape_configs:
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['monitor-containers:8080']
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['monitor-node:9100']

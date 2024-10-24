@@ -81,6 +81,20 @@ services:
     image: prometheuscommunity/postgres-exporter:v0.15.0
     ports:
       - "127.0.0.1:9187:9187"
+  monitor-node:
+    image: prom/node-exporter:v1.8.2
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.rootfs=/host
+    ports:
+      - "127.0.0.1:9100:9100"
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro
   site:
     build:
       context: site
