@@ -52,6 +52,7 @@ COPY nginx-auto-reloader.sh /usr/src/app/nginx-auto-reloader.sh
 COPY server-locations.conf /etc/nginx/server-locations.conf
 COPY store.conf /etc/nginx/store.conf
 COPY public public
+COPY vhost-traffic-status.conf /etc/nginx/vhost-traffic-status.conf
 
 ENTRYPOINT [ "./docker-entrypoint.sh" ]
 CMD [ "nginx", "-g", "daemon off;" ]
