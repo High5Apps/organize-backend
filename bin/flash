@@ -31,6 +31,9 @@ echo 'Enabling SSH...'
 boot_path=/Volumes/bootfs
 touch $boot_path/ssh
 
+echo 'Enabling cgroups...'
+sed -i -e 's/$/ cgroup_memory=1 cgroup_enable=memory/' $boot_path/cmdline.txt
+
 echo 'Updating password...'
 # For info on how to create the encoded password, see
 # https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/
