@@ -13,6 +13,7 @@ services:
     image: localhost:5001/organize-api
     ports:
       - "127.0.0.1:3000:3000"
+      - "127.0.0.1:9394:9394"
     restart: always
   certs:
     build:

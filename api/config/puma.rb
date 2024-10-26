@@ -32,3 +32,8 @@ plugin :tmp_restart
 # Specify the PID file. Defaults to tmp/pids/server.pid in development.
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
+
+# Collect metrics using yabeda
+activate_control_app
+plugin :yabeda
+plugin :yabeda_prometheus

@@ -61,3 +61,9 @@ gem 'pg_search', '~> 2.3'
 gem 'sorbet', :group => :development
 gem 'sorbet-runtime'
 gem 'tapioca', require: false, :group => [:development, :test]
+
+# Used for collecting metrics
+gem 'yabeda-rails', '~> 0.9.0'
+gem 'yabeda-prometheus', '~> 0.9.1'
+gem 'yabeda-puma-plugin', '~> 0.7.1'
+gem 'yabeda-activerecord', '~> 0.1.1'
