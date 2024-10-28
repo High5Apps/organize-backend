@@ -55,3 +55,8 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+# Used for collecting metrics
+gem 'yabeda-rails', '~> 0.9.0'
+gem 'yabeda-prometheus', '~> 0.9.1'
+gem 'yabeda-puma-plugin', '~> 0.7.1'
