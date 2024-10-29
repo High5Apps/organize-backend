@@ -132,7 +132,7 @@
         "x": 0,
         "y": 1
       },
-      "id": 9,
+      "id": 10,
       "options": {
         "legend": {
           "calcs": [],
@@ -152,8 +152,8 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum(rails_requests_total{controller=\"static_pages\", action=\"home\", status=\"200\"})",
+          "editorMode": "code",
+          "expr": "sum(increase(rails_requests_total{controller=\"static_pages\", action=\"home\", status=\"200\"}[$__rate_interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -164,7 +164,7 @@
           "useBackend": false
         }
       ],
-      "title": "Landing Page Views",
+      "title": "Landing Page View Rate",
       "type": "timeseries"
     },
     {
@@ -236,7 +236,7 @@
         "x": 12,
         "y": 1
       },
-      "id": 10,
+      "id": 9,
       "options": {
         "legend": {
           "calcs": [],
@@ -256,19 +256,19 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "increase(rails_requests_total{controller=\"static_pages\", action=\"home\", status=\"200\"}[$__rate_interval])",
+          "editorMode": "builder",
+          "expr": "sum(rails_requests_total{controller=\"static_pages\", action=\"home\", status=\"200\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
           "interval": "",
-          "legendFormat": "Views per hour",
+          "legendFormat": "Views",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "Landing Page View Rate",
+      "title": "Landing Page Views",
       "type": "timeseries"
     },
     {
@@ -286,7 +286,7 @@
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -373,7 +373,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(filter) (nginx_vts_filter_requests_total)",
+          "expr": "sum by(filter) (increase(nginx_vts_filter_requests_total[$__rate_interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -398,7 +398,7 @@
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -485,7 +485,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(filter_name) (nginx_vts_filter_requests_total)",
+          "expr": "sum by(filter_name) (increase(nginx_vts_filter_requests_total[$__rate_interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -523,7 +523,7 @@
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -614,7 +614,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"users\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"users\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -624,12 +624,12 @@
           "useBackend": false
         }
       ],
-      "title": "Users vs. time",
+      "title": "Users",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -720,7 +720,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"connections\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"connections\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -730,12 +730,12 @@
           "useBackend": false
         }
       ],
-      "title": "Connections vs. time",
+      "title": "Connections",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -826,7 +826,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"orgs\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"orgs\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -836,7 +836,7 @@
           "useBackend": false
         }
       ],
-      "title": "Orgs vs. time",
+      "title": "Orgs",
       "type": "timeseries"
     }
   ],
@@ -870,6 +870,6 @@
   "timezone": "browser",
   "title": "User Funnel",
   "uid": "de1z92u0yy51ca",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
