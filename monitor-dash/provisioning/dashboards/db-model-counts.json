@@ -67,7 +67,7 @@
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -158,7 +158,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"users\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"users\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -168,12 +168,12 @@
           "useBackend": false
         }
       ],
-      "title": "Users vs. time",
+      "title": "User Increase",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -264,7 +264,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"orgs\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"orgs\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -274,12 +274,12 @@
           "useBackend": false
         }
       ],
-      "title": "Orgs vs. time",
+      "title": "Org Increase",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -370,7 +370,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"connections\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"connections\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -380,7 +380,7 @@
           "useBackend": false
         }
       ],
-      "title": "Connections vs. time",
+      "title": "Connection Increase",
       "type": "timeseries"
     },
     {
@@ -398,7 +398,7 @@
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -489,7 +489,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"posts\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"posts\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -499,12 +499,12 @@
           "useBackend": false
         }
       ],
-      "title": "Posts vs. time",
+      "title": "Post Increase",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -595,7 +595,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"comments\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"comments\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -605,12 +605,12 @@
           "useBackend": false
         }
       ],
-      "title": "Comments vs. time",
+      "title": "Comment Increase",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -701,7 +701,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"upvotes\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"upvotes\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -711,7 +711,7 @@
           "useBackend": false
         }
       ],
-      "title": "Upvotes vs. time",
+      "title": "Upvote Increase",
       "type": "timeseries"
     },
     {
@@ -729,7 +729,7 @@
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -820,7 +820,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"ballots\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"ballots\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -830,11 +830,12 @@
           "useBackend": false
         }
       ],
-      "title": "Ballots vs. time",
+      "title": "Ballot Increase",
       "type": "timeseries"
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -925,7 +926,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"candidates\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"candidates\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -935,11 +936,12 @@
           "useBackend": false
         }
       ],
-      "title": "Candidates vs. time",
+      "title": "Candidate Increase",
       "type": "timeseries"
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -1030,7 +1032,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"votes\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"votes\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -1040,7 +1042,7 @@
           "useBackend": false
         }
       ],
-      "title": "Votes vs. time",
+      "title": "Vote Increase",
       "type": "timeseries"
     },
     {
@@ -1058,7 +1060,7 @@
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -1149,7 +1151,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"nominations\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"nominations\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -1159,12 +1161,12 @@
           "useBackend": false
         }
       ],
-      "title": "Nominations vs. time",
+      "title": "Nomination Increase",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -1255,7 +1257,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"terms\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"terms\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -1265,7 +1267,7 @@
           "useBackend": false
         }
       ],
-      "title": "Terms vs. time",
+      "title": "Term Increase",
       "type": "timeseries"
     },
     {
@@ -1283,7 +1285,7 @@
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -1374,7 +1376,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"flags\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"flags\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -1384,12 +1386,12 @@
           "useBackend": false
         }
       ],
-      "title": "Flags vs. time",
+      "title": "Flag Increase",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -1480,7 +1482,7 @@
           "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "pg_stat_user_tables_n_tup_ins{relname=\"moderation_events\"}",
+          "expr": "increase(pg_stat_user_tables_n_tup_ins{relname=\"moderation_events\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -1490,7 +1492,7 @@
           "useBackend": false
         }
       ],
-      "title": "Moderation Events vs. time",
+      "title": "Moderation Event Increase",
       "type": "timeseries"
     }
   ],
@@ -1518,13 +1520,13 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "DB Model Counts",
   "uid": "be1m4ji18it4wd",
-  "version": 10,
+  "version": 1,
   "weekStart": ""
 }
