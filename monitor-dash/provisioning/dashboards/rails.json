@@ -170,7 +170,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(method) (increase(rails_requests_total{job=~\"$job\"}[2m]))",
+          "expr": "sum by(method) (increase(rails_requests_total{job=~\"$job\"}[$__rate_interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -272,7 +272,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(status) (increase(rails_requests_total{job=~\"$job\"}[2m]))",
+          "expr": "sum by(status) (increase(rails_requests_total{job=~\"$job\"}[$__rate_interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -432,8 +432,8 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(status) (rate(rails_requests_total{job=~\"$job\"}[2m]))",
+          "editorMode": "code",
+          "expr": "sum by(status) (rate(rails_requests_total{job=~\"$job\"}[$__rate_interval]))",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -560,7 +560,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(rails_request_duration_seconds_sum{job=~\"$job\"}[2m]))\n/\nsum(rate(rails_request_duration_seconds_count{job=~\"$job\"}[2m]))",
+          "expr": "sum(rate(rails_request_duration_seconds_sum{job=~\"$job\"}[$__rate_interval]))\n/\nsum(rate(rails_request_duration_seconds_count{job=~\"$job\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Total",
@@ -573,7 +573,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(rails_db_runtime_seconds_sum{job=~\"$job\"}[2m]))\n/\nsum(rate(rails_db_runtime_seconds_count{job=~\"$job\"}[2m]))",
+          "expr": "sum(rate(rails_db_runtime_seconds_sum{job=~\"$job\"}[$__rate_interval]))\n/\nsum(rate(rails_db_runtime_seconds_count{job=~\"$job\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "ActiveRecord",
@@ -586,7 +586,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(rails_view_runtime_seconds_sum{job=~\"$job\"}[2m]))\n/\nsum(rate(rails_view_runtime_seconds_count{job=~\"$job\"}[2m]))",
+          "expr": "sum(rate(rails_view_runtime_seconds_sum{job=~\"$job\"}[$__rate_interval]))\n/\nsum(rate(rails_view_runtime_seconds_count{job=~\"$job\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Views",
@@ -731,7 +731,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(rails_requests_total{job=~\"$job\"}[2m])) by (controller, action)",
+          "expr": "sum(rate(rails_requests_total{job=~\"$job\"}[$__rate_interval])) by (controller, action)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{controller}}#{{action}}",
@@ -882,7 +882,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(rails_request_duration_seconds_bucket{job=~\"$job\"}[2m])) by (le,controller,action))",
+          "expr": "histogram_quantile(0.95, sum(rate(rails_request_duration_seconds_bucket{job=~\"$job\"}[$__rate_interval])) by (le,controller,action))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{controller}}#{{action}}",
@@ -971,7 +971,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum(increase(rails_request_duration_seconds_bucket{job=~\"$job\"}[2m])) by (le)",
+          "expr": "sum(increase(rails_request_duration_seconds_bucket{job=~\"$job\"}[$__rate_interval])) by (le)",
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
@@ -1059,7 +1059,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(increase(rails_request_duration_seconds_bucket{job=~\"$job\"}[2m])) by (le)",
+          "expr": "sum(increase(rails_request_duration_seconds_bucket{job=~\"$job\"}[$__rate_interval])) by (le)",
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
@@ -1750,7 +1750,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {
@@ -1781,6 +1781,6 @@
   "timezone": "",
   "title": "Rails",
   "uid": "yabeda-rails",
-  "version": 12,
+  "version": 1,
   "weekStart": ""
 }

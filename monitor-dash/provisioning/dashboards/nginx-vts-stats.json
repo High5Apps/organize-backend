@@ -466,7 +466,7 @@
     },
     {
       "datasource": {
-        "name": "${DS_PROMETHEUS}",
+        "default": false,
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
@@ -553,7 +553,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(irate(nginx_vts_server_requests_total{instance=~\"$Instance\", code!=\"total\"}[5m])) by (code)",
+          "expr": "sum(irate(nginx_vts_server_requests_total{instance=~\"$Instance\", code!=\"total\"}[$__rate_interval])) by (code)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -952,7 +952,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(irate(nginx_vts_upstream_requests_total{instance=~\"$Instance\", upstream=~\"$Upstream\", code!=\"total\"} [2m])) by (code)",
+          "expr": "sum(irate(nginx_vts_upstream_requests_total{instance=~\"$Instance\", upstream=~\"$Upstream\", code!=\"total\"} [$__rate_interval])) by (code)",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{code}}",
@@ -1052,12 +1052,14 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(irate(nginx_vts_server_cache_total{instance=~\"$Instance\", host=~\"^$Host$\"}[5m])) by (status)",
+          "editorMode": "code",
+          "expr": "sum(irate(nginx_vts_server_cache_total{instance=~\"$Instance\", host=~\"^$Host$\"}[$__rate_interval])) by (status)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{ status }}",
           "metric": "nginx_vts_server_cache_total",
+          "range": true,
           "refId": "A",
           "step": 240
         }
@@ -1153,11 +1155,13 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(irate(nginx_vts_server_bytes_total{instance=~\"$Instance\", host=~\"^$Host$\"}[5m])) by (direction)",
+          "editorMode": "code",
+          "expr": "sum(irate(nginx_vts_server_bytes_total{instance=~\"$Instance\", host=~\"^$Host$\"}[$__rate_interval])) by (direction)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{ direction }}",
           "metric": "nginx_vts_server_bytes_total",
+          "range": true,
           "refId": "A",
           "step": 240
         }
@@ -1279,12 +1283,14 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(irate(nginx_vts_upstream_requests_total{instance=~\"$Instance\", upstream=~\"^$Upstream$\",code!=\"total\"}[5m])) by (code)",
+          "editorMode": "code",
+          "expr": "sum(irate(nginx_vts_upstream_requests_total{instance=~\"$Instance\", upstream=~\"^$Upstream$\",code!=\"total\"}[$__rate_interval])) by (code)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{ code }}",
           "metric": "nginx_vts_upstream_requests_total",
+          "range": true,
           "refId": "A",
           "step": 240
         }
@@ -1482,12 +1488,14 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(irate(nginx_vts_upstream_bytes_total{instance=~\"$Instance\", upstream=~\"^$Upstream$\"}[5m])) by (direction)",
+          "editorMode": "code",
+          "expr": "sum(irate(nginx_vts_upstream_bytes_total{instance=~\"$Instance\", upstream=~\"^$Upstream$\"}[$__rate_interval])) by (direction)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{ direction }}",
           "metric": "nginx_vts_upstream_bytes_total",
+          "range": true,
           "refId": "A",
           "step": 240
         }
@@ -1598,7 +1606,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -1629,6 +1637,6 @@
   "timezone": "browser",
   "title": "Nginx VTS Stats",
   "uid": "_Q98f6Znk",
-  "version": 4,
+  "version": 1,
   "weekStart": ""
 }
