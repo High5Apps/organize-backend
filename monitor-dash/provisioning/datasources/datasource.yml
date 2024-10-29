@@ -7,3 +7,5 @@ datasources:
     basicAuth: false
     isDefault: true
     url: http://monitor:9090
+    jsonData:
+      timeInterval: 1m
