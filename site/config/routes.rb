@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     root "home"
 
     get "about"
+    get "faq", action: "frequently_asked_questions"
     get "privacy"
     get "terms"
   end

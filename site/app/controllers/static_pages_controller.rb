@@ -4,6 +4,9 @@ class StaticPagesController < ApplicationController
   def about
   end
 
+  def frequently_asked_questions
+  end
+
   def home
   end
 
