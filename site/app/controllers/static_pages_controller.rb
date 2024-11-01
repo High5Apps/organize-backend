@@ -4,6 +4,9 @@ class StaticPagesController < ApplicationController
   def about
   end
 
+  def blog_tips_for_starting_a_union
+  end
+
   def frequently_asked_questions
   end
 

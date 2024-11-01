@@ -6,6 +6,10 @@ Rails.application.routes.draw do
     get "faq", action: "frequently_asked_questions"
     get "privacy"
     get "terms"
+
+    scope as: :blog, path: :blog do
+      get "tips_for_starting_a_union"
+    end
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

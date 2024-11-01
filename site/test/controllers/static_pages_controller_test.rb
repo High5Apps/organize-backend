@@ -25,4 +25,9 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
     get terms_url
     assert_response :success
   end
+
+  test "should get tips_for_starting_a_union" do
+    get blog_tips_for_starting_a_union_url
+    assert_response :success
+  end
 end
