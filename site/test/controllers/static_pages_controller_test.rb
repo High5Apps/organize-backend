@@ -6,6 +6,11 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get blog" do
+    get blog_url
+    assert_response :success
+  end
+
   test "should get frequently_asked_questions" do
     get faq_url
     assert_response :success
