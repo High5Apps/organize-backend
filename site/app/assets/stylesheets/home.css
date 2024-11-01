@@ -57,3 +57,8 @@
 .screenshot img {
   min-height: 200px;
 }
+
+.secondary-call-to-action {
+  font-size: var(--font-size-subheader);
+  text-align: center;
+}

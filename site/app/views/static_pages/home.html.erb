@@ -27,7 +27,12 @@
       img_src: 'contact_support_24dp_AF52DE_FILL0_wght400_GRAD0_opsz24.svg',
       text: 'Get expert guidance when you need it' %>
   </div>
-  <%= render 'layouts/app_store_badges', ref: 'secondary-value-prop' %>
+  <div class="row">
+    <div class="col col-12 secondary-call-to-action">
+      <%= link_to "Learn 5 Tips for Successfully Starting Your Union",
+        blog_tips_for_starting_a_union_path %>
+    </div>
+  </div>
   <%= render 'layouts/fact_row',
     text: 'Union members earn an average of $8,996 more per year than non-union members',
     source: 'https://docs.google.com/spreadsheets/d/1-blxWF0x9YZ-NWRAX-0Kj0BsyYuOgvI-l2omHxX0mPk/view?usp=sharing',
