@@ -31,6 +31,11 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get tips_for_organizing_conversations" do
+    get blog_tips_for_organizing_conversations_url
+    assert_response :success
+  end
+
   test "should get tips_for_starting_a_union" do
     get blog_tips_for_starting_a_union_url
     assert_response :success

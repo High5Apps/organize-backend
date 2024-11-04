@@ -7,6 +7,9 @@ class StaticPagesController < ApplicationController
   def blog
   end
 
+  def blog_tips_for_organizing_conversations
+  end
+
   def blog_tips_for_starting_a_union
   end
 
