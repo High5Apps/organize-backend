@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     get "terms"
 
     scope as: :blog, path: :blog do
+      get "aeiou_framework"
       get "tips_for_organizing_conversations"
       get "tips_for_starting_a_union"
     end

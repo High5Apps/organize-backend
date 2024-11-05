@@ -6,6 +6,11 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get aeiou_framework" do
+    get blog_aeiou_framework_url
+    assert_response :success
+  end
+
   test "should get blog" do
     get blog_url
     assert_response :success
