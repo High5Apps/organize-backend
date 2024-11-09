@@ -10,6 +10,9 @@ class StaticPagesController < ApplicationController
   def blog_aeiou_framework
   end
 
+  def blog_tips_for_organic_leader_identification
+  end
+
   def blog_tips_for_organizing_conversations
   end
 
