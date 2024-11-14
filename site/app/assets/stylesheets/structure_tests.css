@@ -1,0 +1,15 @@
+#structure-tests-majority-petitions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#structure-tests-majority-petitions a {
+  display: flex;
+  flex: 1;
+  min-width: 200px;
+}
+
+#structure-tests-majority-petitions a img {
+  min-width: 200px;
+}

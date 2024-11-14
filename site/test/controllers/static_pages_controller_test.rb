@@ -31,6 +31,11 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get structure_tests" do
+    get blog_structure_tests_url
+    assert_response :success
+  end
+
   test "should get terms" do
     get terms_url
     assert_response :success

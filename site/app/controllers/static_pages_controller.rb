@@ -28,6 +28,9 @@ class StaticPagesController < ApplicationController
   def privacy
   end
 
+  def structure_tests
+  end
+
   def terms
   end
 
