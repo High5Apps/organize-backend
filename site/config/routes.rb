@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
     scope as: :blog, path: :blog do
       get "aeiou_framework"
+      get "community_allies"
       get "structure_tests"
       get "tips_for_organic_leader_identification"
       get "tips_for_organizing_conversations"

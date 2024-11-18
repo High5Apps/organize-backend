@@ -16,6 +16,11 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get community_allies" do
+    get blog_community_allies_url
+    assert_response :success
+  end
+
   test "should get frequently_asked_questions" do
     get faq_url
     assert_response :success
