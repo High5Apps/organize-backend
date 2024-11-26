@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       get "tips_for_organic_leader_identification"
       get "tips_for_organizing_conversations"
       get "tips_for_starting_a_union"
+      get "union_busting_defenses"
     end
   end
 

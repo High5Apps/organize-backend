@@ -163,3 +163,26 @@ header > p {
   border-radius: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
+
+div:has(> blockquote) p {
+  margin-block: 0px;
+}
+
+blockquote {
+  margin-block: 0px;
+  margin-inline: 40px;
+}
+
+blockquote + p {
+  margin-inline: 40px;
+  text-align: right;
+}
+
+blockquote p::before {
+  content: '\201C';
+}
+
+blockquote p::after {
+  content: '\201D';
+}

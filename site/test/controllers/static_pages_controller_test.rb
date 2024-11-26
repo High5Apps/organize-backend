@@ -60,4 +60,9 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
     get blog_tips_for_starting_a_union_url
     assert_response :success
   end
+
+  test "should get union_busting_defenses" do
+    get blog_union_busting_defenses_url
+    assert_response :success
+  end
 end
