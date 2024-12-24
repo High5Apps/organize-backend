@@ -31,6 +31,11 @@ class StaticPagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get negotiations" do
+    get blog_negotiations_url
+    assert_response :success
+  end
+
   test "should get privacy" do
     get privacy_url
     assert_response :success
