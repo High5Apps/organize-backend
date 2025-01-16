@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Api::V1::TermsControllerTest < ActionDispatch::IntegrationTest
+class V1::TermsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @term = terms :three
     @user = @term.user
@@ -11,7 +11,7 @@ class Api::V1::TermsControllerTest < ActionDispatch::IntegrationTest
   test 'should create with valid params' do
     params = destroy_template_term_for_create_params
     assert_difference 'Term.count', 1 do
-      post(api_v1_ballot_terms_url(@term.ballot),
+      post(v1_ballot_terms_url(@term.ballot),
         headers: @authorized_headers,
         params:)
       assert_response :created
@@ -23,7 +23,7 @@ class Api::V1::TermsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create with invalid authorization' do
     params = destroy_template_term_for_create_params
     assert_no_difference 'Term.count' do
-      post(api_v1_ballot_terms_url(@term.ballot),
+      post(v1_ballot_terms_url(@term.ballot),
         headers: authorized_headers(@user,
           Authenticatable::SCOPE_ALL,
           expiration: 1.second.ago),
@@ -35,7 +35,7 @@ class Api::V1::TermsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create with invalid params' do
     params = destroy_template_term_for_create_params.merge term: {}
     assert_no_difference 'Term.count' do
-      post(api_v1_ballot_terms_url(@term.ballot),
+      post(v1_ballot_terms_url(@term.ballot),
         headers: @authorized_headers,
         params:)
     end

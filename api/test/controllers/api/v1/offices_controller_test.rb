@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Api::V1::OfficesControllerTest < ActionDispatch::IntegrationTest
+class V1::OfficesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     setup_test_key(@user)
@@ -8,12 +8,12 @@ class Api::V1::OfficesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should index with valid authorization' do
-    get api_v1_offices_url, headers: @authorized_headers
+    get v1_offices_url, headers: @authorized_headers
     assert_response :ok
   end
 
   test 'should not index with invalid authorization' do
-    get api_v1_offices_url,
+    get v1_offices_url,
       headers: authorized_headers(@user,
         Authenticatable::SCOPE_ALL,
         expiration: 1.second.ago)
@@ -24,12 +24,12 @@ class Api::V1::OfficesControllerTest < ActionDispatch::IntegrationTest
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
-    get api_v1_offices_url, headers: @authorized_headers
+    get v1_offices_url, headers: @authorized_headers
     assert_response :forbidden
   end
 
   test 'index response open should match availability_in' do
-    get api_v1_offices_url, headers: @authorized_headers
+    get v1_offices_url, headers: @authorized_headers
 
     # This doesn't use response.parsed_body because names need to be symbolized
     json_response = JSON.parse(response.body, symbolize_names: true)

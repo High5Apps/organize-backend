@@ -1,4 +1,4 @@
-class Api::V1::VotesController < ApplicationController
+class V1::VotesController < ApplicationController
   PERMITTED_PARAMS = [
     candidate_ids: [],
   ]

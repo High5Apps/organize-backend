@@ -1,7 +1,7 @@
 require "test_helper"
 
-class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
-  MAX_CANDIDATES = Api::V1::BallotsController::MAX_CANDIDATES_PER_CREATE
+class V1::BallotsControllerTest < ActionDispatch::IntegrationTest
+  MAX_CANDIDATES = V1::BallotsController::MAX_CANDIDATES_PER_CREATE
 
   setup do
     @ballot = ballots(:three)
@@ -35,7 +35,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
     assert_difference 'Ballot.count', 1 do
       assert_difference 'Candidate.count', candidate_count do
-        post api_v1_ballots_url, headers: @authorized_headers, params: @params
+        post v1_ballots_url, headers: @authorized_headers, params: @params
       end
     end
 
@@ -47,7 +47,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create with invalid authorization' do
     assert_no_difference 'Ballot.count' do
       assert_no_difference 'Candidate.count' do
-        post api_v1_ballots_url,
+        post v1_ballots_url,
           headers: authorized_headers(@user,
             Authenticatable::SCOPE_ALL,
             expiration: 1.second.ago),
@@ -64,7 +64,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
     assert_no_difference 'Ballot.count' do
       assert_no_difference 'Candidate.count' do
-        post api_v1_ballots_url,
+        post v1_ballots_url,
           headers: @authorized_headers,
           params: invalid_params
       end
@@ -79,7 +79,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
       [bad_params, :unprocessable_entity],
       [@election_params, :created],
     ].each do |params, expected_response|
-      post api_v1_ballots_url,
+      post v1_ballots_url,
         params:,
         headers: @authorized_headers
       assert_response expected_response
@@ -88,7 +88,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create election without permission' do
     assert_not @other_user.can? :create_elections
-    post api_v1_ballots_url,
+    post v1_ballots_url,
       headers: authorized_headers(@other_user, Authenticatable::SCOPE_ALL),
       params: @election_params
     assert_response :forbidden
@@ -97,7 +97,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create yes no without exactly 2 candidates' do
     4.times do |n|
       params = @params.merge(candidates: [@ballot.candidates.first.as_json] * n)
-      post api_v1_ballots_url,
+      post v1_ballots_url,
         params:,
         headers: @authorized_headers
         assert_response :unprocessable_entity unless n == 2
@@ -107,7 +107,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create multiple choice with less than 2 candidates' do
     [nil, [], [@multi_choice_params[:candidates][0]]].each do |candidates|
-      post api_v1_ballots_url,
+      post v1_ballots_url,
         headers: @authorized_headers,
         params: @multi_choice_params.merge(candidates:)
       assert_response :unprocessable_entity
@@ -130,7 +130,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
       @multi_choice_ballot.candidates.destroy_all
       assert_difference 'Ballot.count', ballot_difference do
         assert_difference 'Candidate.count', candidate_difference do
-          post api_v1_ballots_url,
+          post v1_ballots_url,
             params:,
             headers: @authorized_headers
         end
@@ -145,7 +145,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
       [@multi_choice_ballot.candidates.count, :created],
       [1 + @multi_choice_ballot.candidates.count, :unprocessable_entity],
     ].each do |max_candidate_ids_per_vote, expected_response|
-      post api_v1_ballots_url,
+      post v1_ballots_url,
         headers: @authorized_headers,
         params: @multi_choice_params.merge({
           ballot: @multi_choice_params[:ballot].merge({
@@ -162,7 +162,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
     assert_no_difference 'Ballot.count' do
       assert_no_difference 'Candidate.count' do
-        post api_v1_ballots_url, headers: @authorized_headers, params:
+        post v1_ballots_url, headers: @authorized_headers, params:
       end
     end
 
@@ -170,12 +170,12 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should index with valid authorization' do
-    get api_v1_ballots_url, headers: @authorized_headers
+    get v1_ballots_url, headers: @authorized_headers
     assert_response :ok
   end
 
   test 'should not index with invalid authorization' do
-    get api_v1_ballots_url,
+    get v1_ballots_url,
       headers: authorized_headers(@user,
         Authenticatable::SCOPE_ALL,
         expiration: 1.second.ago)
@@ -186,12 +186,12 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
-    get api_v1_ballots_url, headers: @authorized_headers
+    get v1_ballots_url, headers: @authorized_headers
     assert_response :forbidden
   end
 
   test 'index should only include ballots from requester Org' do
-    get api_v1_ballots_url, headers: @authorized_headers
+    get v1_ballots_url, headers: @authorized_headers
     ballot_ids = get_ballot_ids_from_response
     assert_not_equal 0, ballot_ids.length
     ballots = Ballot.find(ballot_ids)
@@ -201,24 +201,24 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index should format voting_ends_at attributes as iso8601' do
-    get api_v1_ballots_url, headers: @authorized_headers
+    get v1_ballots_url, headers: @authorized_headers
     response.parsed_body => ballots: [{ voting_ends_at: }, *]
     assert Time.iso8601(voting_ends_at)
   end
 
   test 'index should not include pagination metadata when page param is not included' do
-    get api_v1_ballots_url, headers: @authorized_headers
+    get v1_ballots_url, headers: @authorized_headers
     assert_not_includes response.parsed_body, :meta
   end
 
   test 'index should include pagination metadata when page param is included' do
-    get api_v1_ballots_url, headers: @authorized_headers, params: { page: 0 }
+    get v1_ballots_url, headers: @authorized_headers, params: { page: 0 }
     assert_contains_pagination_data
   end
 
   test 'index should respect page param' do
     page = 99
-    get api_v1_ballots_url, headers: @authorized_headers, params: { page: }
+    get v1_ballots_url, headers: @authorized_headers, params: { page: }
     pagination_data = assert_contains_pagination_data
     assert_equal page, pagination_data[:current_page]
   end
@@ -228,7 +228,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     event = moderation_events(:one).dup
     unblock_all
 
-    get api_v1_ballots_url, headers: @authorized_headers
+    get v1_ballots_url, headers: @authorized_headers
     ballot_ids = get_ballot_ids_from_response
 
     all_ballot_ids = @user.org.ballots.ids
@@ -237,7 +237,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     [[:unblock, nil], [:block, flagged_ballot]].each do |action, blocked_ballot|
       flagged_ballot.send action
 
-      get api_v1_ballots_url, headers: @authorized_headers
+      get v1_ballots_url, headers: @authorized_headers
       ballot_ids = get_ballot_ids_from_response
 
       assert_equal (all_ballot_ids - [blocked_ballot&.id]).sort, ballot_ids.sort
@@ -247,20 +247,20 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   test 'should show ballots from request Org with valid auth' do
     assert_equal @ballot.org, @user.org
 
-    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    get v1_ballot_url(@ballot), headers: @authorized_headers
     assert_response :ok
   end
 
   test 'show should only include allowed attributes' do
-    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    get v1_ballot_url(@ballot), headers: @authorized_headers
     assert_only_includes_allowed_attributes response.parsed_body,
-      Api::V1::BallotsController::ALLOWED_ATTRIBUTES,
+      V1::BallotsController::ALLOWED_ATTRIBUTES,
       optional_attributes: [:nominations, :results, :terms]
   end
 
   test 'show should only include nominations for elections' do
     [[@election, true], [@ballot, false]].each do |ballot, expect_nominations|
-      get api_v1_ballot_url(ballot), headers: @authorized_headers
+      get v1_ballot_url(ballot), headers: @authorized_headers
       nominations = response.parsed_body[:nominations]
       assert_nil(nominations) unless expect_nominations
       assert_not_nil(nominations) if expect_nominations
@@ -269,7 +269,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show should only include allowed nominations attributes' do
     travel_to @election.nominations_end_at - 1.second do
-      get api_v1_ballot_url(@election),
+      get v1_ballot_url(@election),
         # Can't use @authorized_headers due to travel_to
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
     end
@@ -278,25 +278,25 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_not_empty nominations
     nominations.each do |nomination|
       assert_only_includes_allowed_attributes nomination,
-        Api::V1::BallotsController::ALLOWED_NOMINATION_ATTRIBUTES
+        V1::BallotsController::ALLOWED_NOMINATION_ATTRIBUTES
 
       [nomination[:nominator], nomination[:nominee]].each do |user|
         assert_only_includes_allowed_attributes user,
-          Api::V1::BallotsController::ALLOWED_NOMINATION_USER_ATTRIBUTES
+          V1::BallotsController::ALLOWED_NOMINATION_USER_ATTRIBUTES
       end
     end
   end
 
   test 'show should not include results until voting ends' do
     travel_to @ballot.voting_ends_at - 1.second do
-      get api_v1_ballot_url(@ballot),
+      get v1_ballot_url(@ballot),
         # Can't use @authorized_headers due to travel_to
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
       assert_not_includes response.parsed_body, :results
     end
 
     travel_to @ballot.voting_ends_at do
-      get api_v1_ballot_url(@ballot),
+      get v1_ballot_url(@ballot),
         # Can't use @authorized_headers due to travel_to
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
       assert_not_empty response.parsed_body[:results]
@@ -305,7 +305,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show should only include allowed results attributes' do
     travel_to @ballot.voting_ends_at do
-      get api_v1_ballot_url(@ballot),
+      get v1_ballot_url(@ballot),
         # Can't use @authorized_headers due to travel_to
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
     end
@@ -314,7 +314,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_not_empty results
     results.each do |result|
       assert_only_includes_allowed_attributes result,
-        Api::V1::BallotsController::ALLOWED_RESULTS_ATTRIBUTES
+        V1::BallotsController::ALLOWED_RESULTS_ATTRIBUTES
     end
   end
 
@@ -324,7 +324,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
       [@election.voting_ends_at, true],
     ].each do |time, expected_presence|
       travel_to time do
-        get api_v1_ballot_url(@election),
+        get v1_ballot_url(@election),
           headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
         terms = response.parsed_body[:terms]
         assert_not_nil terms if expected_presence
@@ -336,7 +336,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   test 'show should only include allowed terms attributes' do
     election_with_term = ballots :election_president
     travel_to election_with_term.voting_ends_at do
-      get api_v1_ballot_url(election_with_term),
+      get v1_ballot_url(election_with_term),
         # Can't use @authorized_headers due to travel_to
         headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
     end
@@ -345,22 +345,22 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_not_empty terms
     terms.each do |term|
       assert_only_includes_allowed_attributes term,
-        Api::V1::BallotsController::ALLOWED_TERMS_ATTRIBUTES
+        V1::BallotsController::ALLOWED_TERMS_ATTRIBUTES
     end
   end
 
   test 'show should only include allowed ballot attributes for non-elections' do
-    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    get v1_ballot_url(@ballot), headers: @authorized_headers
     response.parsed_body => ballot:
     assert_only_includes_allowed_attributes ballot,
-      Api::V1::BallotsController::ALLOWED_BALLOT_ATTRIBUTES
+      V1::BallotsController::ALLOWED_BALLOT_ATTRIBUTES
   end
 
   test 'show should only include allowed ballot attributes for elections' do
-    get api_v1_ballot_url(@election), headers: @authorized_headers
+    get v1_ballot_url(@election), headers: @authorized_headers
     response.parsed_body => ballot:
     assert_only_includes_allowed_attributes ballot,
-      Api::V1::BallotsController::ALLOWED_BALLOT_ELECTION_ATTRIBUTES
+      V1::BallotsController::ALLOWED_BALLOT_ELECTION_ATTRIBUTES
   end
 
   test 'show should only include allowed candidate attributes' do
@@ -371,18 +371,18 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     [
       [
         @ballot,
-        Api::V1::BallotsController::ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES,
+        V1::BallotsController::ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES,
       ],
       [
         @multi_choice_ballot,
-        Api::V1::BallotsController::ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES,
+        V1::BallotsController::ALLOWED_NON_ELECTION_CANDIDATE_ATTRIBUTES,
       ],
       [
         @election,
-        Api::V1::BallotsController::ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES,
+        V1::BallotsController::ALLOWED_ELECTION_CANDIDATE_ATTRIBUTES,
       ],
     ].each do |ballot, attributes|
-      get api_v1_ballot_url(ballot), headers: @authorized_headers
+      get v1_ballot_url(ballot), headers: @authorized_headers
       response.parsed_body => candidates:
       candidates.each do |candidate|
         assert_only_includes_allowed_attributes candidate, attributes
@@ -391,7 +391,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show should only include candidates for the requested ballot' do
-    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    get v1_ballot_url(@ballot), headers: @authorized_headers
     response.parsed_body => candidates: candidate_jsons
     assert_not_equal 0, candidate_jsons.count
     assert_equal @ballot.candidates.ids.sort,
@@ -399,7 +399,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not show with invalid auth' do
-    get api_v1_ballot_url(@ballot),
+    get v1_ballot_url(@ballot),
       headers: authorized_headers(@user,
         Authenticatable::SCOPE_ALL,
         expiration: 1.second.ago)
@@ -407,14 +407,14 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not show for non-existent ballots' do
-    get api_v1_ballot_url('bad-ballot_id'), headers: @authorized_headers
+    get v1_ballot_url('bad-ballot_id'), headers: @authorized_headers
     assert_response :not_found
   end
 
   test 'should not show ballots in other Orgs' do
     ballot_in_another_org = ballots(:two)
     assert_not_equal @user.org, ballot_in_another_org.org
-    get api_v1_ballot_url(ballot_in_another_org), headers: @authorized_headers
+    get v1_ballot_url(ballot_in_another_org), headers: @authorized_headers
     assert_response :not_found
   end
 
@@ -423,7 +423,7 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
     assert_nil user_without_org.org
 
     setup_test_key(user_without_org)
-    get api_v1_ballot_url(@ballot),
+    get v1_ballot_url(@ballot),
       headers: authorized_headers(
         user_without_org,
         Authenticatable::SCOPE_ALL)
@@ -433,20 +433,20 @@ class Api::V1::BallotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not show when Org is not verified' do
     @user.org.update! verified_at: nil
-    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    get v1_ballot_url(@ballot), headers: @authorized_headers
     assert_response :forbidden
     response.parsed_body => error_messages: [/verify/]
   end
 
   test 'should not show when Org is behind on payments' do
     @user.org.update! behind_on_payments_at: Time.now.utc
-    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    get v1_ballot_url(@ballot), headers: @authorized_headers
     assert_response :forbidden
     response.parsed_body => error_messages: [/payment/]
   end
 
   test 'show should format refreshed_at as iso8601' do
-    get api_v1_ballot_url(@ballot), headers: @authorized_headers
+    get v1_ballot_url(@ballot), headers: @authorized_headers
     response.parsed_body => refreshed_at:
     assert Time.iso8601(refreshed_at)
   end

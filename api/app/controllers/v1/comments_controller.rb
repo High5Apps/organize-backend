@@ -1,4 +1,4 @@
-class Api::V1::CommentsController < ApplicationController
+class V1::CommentsController < ApplicationController
   ALLOWED_ATTRIBUTES = [
     :blocked_at,
     :created_at,

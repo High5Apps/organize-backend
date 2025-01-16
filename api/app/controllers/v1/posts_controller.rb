@@ -1,4 +1,4 @@
-class Api::V1::PostsController < ApplicationController
+class V1::PostsController < ApplicationController
   PERMITTED_PARAMS = [
     :candidate_id,
     :category,

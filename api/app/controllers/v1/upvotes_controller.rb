@@ -1,4 +1,4 @@
-class Api::V1::UpvotesController < ApplicationController
+class V1::UpvotesController < ApplicationController
   PERMITTED_PARAMS = [
     :value,
   ]

@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
+class V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @sharer = users(:one)
     setup_test_key(@sharer)
@@ -17,7 +17,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should create with valid auth' do
     assert_difference 'Connection.count', 1 do
-      post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
+      post v1_connections_url, headers: @sharer_and_scanner_auth_headers
       assert_response :created
     end
 
@@ -26,7 +26,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create with invalid scanner auth' do
     assert_no_difference 'Connection.count' do
-      post api_v1_connections_url,
+      post v1_connections_url,
         headers: @sharer_and_scanner_auth_headers
           .merge(Authenticatable::HEADER_AUTHORIZATION => 'bad')
       assert_response :unauthorized
@@ -35,7 +35,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create with invalid sharer auth' do
     assert_no_difference 'Connection.count' do
-      post api_v1_connections_url,
+      post v1_connections_url,
         headers: @sharer_and_scanner_auth_headers
           .merge(Authenticatable::HEADER_SHARER_AUTHORIZATION => 'bad')
       assert_response :unauthorized
@@ -44,11 +44,11 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create duplicate connections' do
     assert_difference 'Connection.count', 1 do
-      post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
+      post v1_connections_url, headers: @sharer_and_scanner_auth_headers
     end
 
     assert_no_difference 'Connection.count' do
-      post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
+      post v1_connections_url, headers: @sharer_and_scanner_auth_headers
     end
   end
 
@@ -56,7 +56,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     @sharer.org.update! verified_at: nil
 
     assert_no_difference 'Connection.count' do
-      post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
+      post v1_connections_url, headers: @sharer_and_scanner_auth_headers
     end
 
     assert_response :forbidden
@@ -67,7 +67,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     @sharer.org.update! behind_on_payments_at: Time.now.utc
 
     assert_no_difference 'Connection.count' do
-      post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
+      post v1_connections_url, headers: @sharer_and_scanner_auth_headers
     end
 
     assert_response :forbidden
@@ -75,8 +75,8 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should respond with ok when attempting to re-create' do
-    post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
-    post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
+    post v1_connections_url, headers: @sharer_and_scanner_auth_headers
+    post v1_connections_url, headers: @sharer_and_scanner_auth_headers
     assert_response :ok
   end
 
@@ -91,25 +91,25 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
       Authenticatable::SCOPE_CREATE_CONNECTIONS,
       header: Authenticatable::HEADER_SHARER_AUTHORIZATION
     ).merge(authorized_headers(original_sharer, Authenticatable::SCOPE_ALL))
-    post api_v1_connections_url, headers: reversed_headers
+    post v1_connections_url, headers: reversed_headers
     assert_response :ok
   end
 
   test 'should update updated_at when attempting to re-create' do
-    post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
+    post v1_connections_url, headers: @sharer_and_scanner_auth_headers
     response.parsed_body => id:
     connection = Connection.find(id)
     assert_equal connection.created_at, connection.updated_at
 
     travel 1.second
 
-    post api_v1_connections_url, headers: @sharer_and_scanner_auth_headers
+    post v1_connections_url, headers: @sharer_and_scanner_auth_headers
     response.parsed_body => id:
     assert_operator connection.reload.created_at, :<, connection.updated_at
   end
 
   test "should preview" do
-    get api_v1_connection_preview_url, headers: @sharer_auth_headers
+    get v1_connection_preview_url, headers: @sharer_auth_headers
     assert_response :ok
 
     assert_pattern do
@@ -127,12 +127,12 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not preview without sharer auth" do
-    get api_v1_connection_preview_url
+    get v1_connection_preview_url
     assert_response :unauthorized
   end
 
   test "should not preview with invalid sharer auth" do
-    get api_v1_connection_preview_url,
+    get v1_connection_preview_url,
       headers: { Authenticatable::HEADER_SHARER_AUTHORIZATION => 'bad' }
     assert_response :unauthorized
   end
@@ -143,14 +143,14 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
     headers = authorized_headers @scanner,
       Authenticatable::SCOPE_CREATE_CONNECTIONS,
       header: Authenticatable::HEADER_SHARER_AUTHORIZATION
-    get(api_v1_connection_preview_url, headers:)
+    get(v1_connection_preview_url, headers:)
     assert_response :forbidden
   end
 
   test 'should not preview if sharer Org is not verified' do
     @sharer.org.update! verified_at: nil
 
-    get api_v1_connection_preview_url, headers: @sharer_auth_headers
+    get v1_connection_preview_url, headers: @sharer_auth_headers
     assert_response :forbidden
     response.parsed_body => error_messages: [/verify/]
   end
@@ -158,7 +158,7 @@ class Api::V1::ConnectionsControllerTest < ActionDispatch::IntegrationTest
   test 'should not preview if sharer Org is behind on payments' do
     @sharer.org.update! behind_on_payments_at: Time.now.utc
 
-    get api_v1_connection_preview_url, headers: @sharer_auth_headers
+    get v1_connection_preview_url, headers: @sharer_auth_headers
     assert_response :forbidden
     response.parsed_body => error_messages: [/payment/]
   end

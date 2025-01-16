@@ -1,4 +1,4 @@
-class Api::V1::ConnectionsController < ApplicationController
+class V1::ConnectionsController < ApplicationController
   before_action :authenticate_sharer, only: [:create, :preview]
   before_action :check_sharer_org_is_in_good_standing, only: [:create, :preview]
 

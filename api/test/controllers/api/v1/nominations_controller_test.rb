@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
+class V1::NominationsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @nomination = nominations(:election_one_choice_four)
 
@@ -16,7 +16,7 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
   test 'should create with valid params' do
     params = destroy_template_nomination_for_create_params
     assert_difference 'Nomination.count', 1 do
-      post(api_v1_ballot_nominations_url(@nomination.ballot),
+      post(v1_ballot_nominations_url(@nomination.ballot),
         headers: @create_headers,
         params:)
       assert_response :created
@@ -28,7 +28,7 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create with invalid authorization' do
     params = destroy_template_nomination_for_create_params
     assert_no_difference 'Nomination.count' do
-      post(api_v1_ballot_nominations_url(@nomination.ballot),
+      post(v1_ballot_nominations_url(@nomination.ballot),
         headers: authorized_headers(@nominator,
           Authenticatable::SCOPE_ALL,
           expiration: 1.second.ago),
@@ -40,7 +40,7 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create with invalid params' do
     params = destroy_template_nomination_for_create_params.merge nomination: {}
     assert_no_difference 'Nomination.count' do
-      post(api_v1_ballot_nominations_url(@nomination.ballot),
+      post(v1_ballot_nominations_url(@nomination.ballot),
         headers: @create_headers,
         params:)
     end
@@ -51,7 +51,7 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
   test 'should update with valid params' do
     params = update_params accepted: false
     assert_changes -> { @nomination.reload.accepted }, from: nil, to: false do
-      patch(api_v1_nomination_url(@nomination),
+      patch(v1_nomination_url(@nomination),
         headers: @update_headers,
         params:)
       assert_response :ok
@@ -60,35 +60,35 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
 
   test 'update response should only include ALLOWED_UPDATE_ATTRIBUTES' do
     params = update_params accepted: false
-    patch(api_v1_nomination_url(@nomination), headers: @update_headers, params:)
-    assert_equal Api::V1::NominationsController::ALLOWED_UPDATE_ATTRIBUTES,
+    patch(v1_nomination_url(@nomination), headers: @update_headers, params:)
+    assert_equal V1::NominationsController::ALLOWED_UPDATE_ATTRIBUTES,
       response.parsed_body.keys.map(&:to_sym)
   end
 
   test 'update response nomination should only include ALLOWED_UPDATE_NOMINATION_ATTRIBUTES' do
     params = update_params accepted: false
-    patch(api_v1_nomination_url(@nomination), headers: @update_headers, params:)
+    patch(v1_nomination_url(@nomination), headers: @update_headers, params:)
     response.parsed_body => nomination:
-    assert_equal Api::V1::NominationsController::ALLOWED_UPDATE_NOMINATION_ATTRIBUTES,
+    assert_equal V1::NominationsController::ALLOWED_UPDATE_NOMINATION_ATTRIBUTES,
       nomination.keys.map(&:to_sym)
   end
 
   test 'update response nomination should be the same as the request' do
     params = update_params accepted: false
-    patch(api_v1_nomination_url(@nomination), headers: @update_headers, params:)
+    patch(v1_nomination_url(@nomination), headers: @update_headers, params:)
     response.parsed_body => nomination: { id: }
     assert_equal @nomination.id, id
   end
 
   test 'update response candidate should only include id' do
     params = update_params accepted: false
-    patch(api_v1_nomination_url(@nomination), headers: @update_headers, params:)
+    patch(v1_nomination_url(@nomination), headers: @update_headers, params:)
     assert_pattern { response.parsed_body => candidate: { id: nil, **nil } }
   end
 
   test 'update response candidate should be the newly created candidate' do
     params = update_params accepted: true
-    patch(api_v1_nomination_url(@nomination), headers: @update_headers, params:)
+    patch(v1_nomination_url(@nomination), headers: @update_headers, params:)
     response.parsed_body => candidate: { id: candidate_id }
     assert_equal @nomination.reload.candidate.id, candidate_id
   end
@@ -97,7 +97,7 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
     params = update_params accepted: true
     assert_difference 'Candidate.count', 1 do
       assert_changes -> { @nomination.reload.accepted }, from: nil, to: true do
-        patch(api_v1_nomination_url(@nomination),
+        patch(v1_nomination_url(@nomination),
           headers: @update_headers,
           params:)
       end
@@ -107,7 +107,7 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
   test 'should not update with invalid authorization' do
     params = update_params accepted: false
     assert_no_changes -> { @nomination.reload.accepted } do
-      patch(api_v1_nomination_url(@nomination),
+      patch(v1_nomination_url(@nomination),
         headers: authorized_headers(@nominee,
           Authenticatable::SCOPE_ALL,
           expiration: 1.second.ago),
@@ -118,7 +118,7 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not update with invalid params' do
     assert_no_changes -> { @nomination.reload.accepted } do
-      patch(api_v1_nomination_url(@nomination),
+      patch(v1_nomination_url(@nomination),
         headers: @update_headers,
         params: {})
       assert_response :unprocessable_entity
@@ -128,7 +128,7 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
   test 'should not update unless requester is nominee' do
     params = update_params accepted: false
     assert_no_changes -> { @nomination.reload.accepted } do
-      patch(api_v1_nomination_url(@nomination),
+      patch(v1_nomination_url(@nomination),
         headers: authorized_headers(@nominator, Authenticatable::SCOPE_ALL),
         params:)
       assert_response :not_found
@@ -137,7 +137,7 @@ class Api::V1::NominationsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not update on a nonexistent nomination' do
     params = update_params accepted: false
-    patch(api_v1_nomination_url('bad-nomination-id'),
+    patch(v1_nomination_url('bad-nomination-id'),
       headers: @update_headers,
       params:)
     assert_response :not_found

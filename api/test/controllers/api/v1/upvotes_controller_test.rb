@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Api::V1::UpvotesControllerTest < ActionDispatch::IntegrationTest
+class V1::UpvotesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     setup_test_key(@user)
@@ -10,8 +10,8 @@ class Api::V1::UpvotesControllerTest < ActionDispatch::IntegrationTest
     comment = comments(:two)
     @upvotables = [post, comment]
     @upvotable_urls = [
-      api_v1_post_upvotes_url(post),
-      api_v1_comment_upvotes_url(comment),
+      v1_post_upvotes_url(post),
+      v1_comment_upvotes_url(comment),
     ]
 
     @params = create_params value: 1

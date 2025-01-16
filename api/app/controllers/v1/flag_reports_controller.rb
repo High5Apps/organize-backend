@@ -1,4 +1,4 @@
-class Api::V1::FlagReportsController < ApplicationController
+class V1::FlagReportsController < ApplicationController
   before_action :check_can_moderate, only: [:index]
 
   def index

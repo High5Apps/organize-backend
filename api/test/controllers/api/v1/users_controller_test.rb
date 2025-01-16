@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
+class V1::UsersControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     setup_test_key(@user)
@@ -9,14 +9,14 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
     @params = {
       user: @user.attributes.with_indifferent_access.slice(
-        *Api::V1::UsersController::PERMITTED_PARAMS,
+        *V1::UsersController::PERMITTED_PARAMS,
       ).merge(public_key_bytes: @user.public_key.to_pem)
     }
   end
 
   test 'should create with valid params' do
     assert_difference 'User.count', 1 do
-      post api_v1_users_url, params: @params
+      post v1_users_url, params: @params
       assert_response :created
     end
 
@@ -25,7 +25,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create with invalid params' do
     assert_no_difference 'User.count' do
-      post api_v1_users_url, params: {
+      post v1_users_url, params: {
         user: @params[:user].except(:public_key_bytes)
       }
       assert_response :unprocessable_entity
@@ -33,12 +33,12 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should index with valid authorization' do
-    get api_v1_users_url, headers: @authorized_headers
+    get v1_users_url, headers: @authorized_headers
     assert_response :ok
   end
 
   test 'should not index with invalid authorization' do
-    get api_v1_users_url,
+    get v1_users_url,
       headers: authorized_headers(@user,
         Authenticatable::SCOPE_ALL,
         expiration: 1.second.ago)
@@ -49,12 +49,12 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
-    get api_v1_users_url, headers: @authorized_headers
+    get v1_users_url, headers: @authorized_headers
     assert_response :forbidden
   end
 
   test 'index should only include users from requester Org' do
-    get api_v1_users_url, headers: @authorized_headers
+    get v1_users_url, headers: @authorized_headers
     user_ids = get_user_ids_from_response
     assert_not_empty user_ids
     users = User.find(user_ids)
@@ -64,27 +64,27 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index should include pagination metadata by default' do
-    get api_v1_users_url, headers: @authorized_headers
+    get v1_users_url, headers: @authorized_headers
     assert_contains_pagination_data
   end
 
   test 'index should only include pagination metadata if query paginates' do
     filter = User::Query::PAGINATION_BYPASSING_FILTERS.first
-    get api_v1_users_url, headers: @authorized_headers, params: { filter: }
+    get v1_users_url, headers: @authorized_headers, params: { filter: }
     assert_not @controller.view_assigns['query'].paginates?
     assert_not_includes response.parsed_body, :meta
   end
 
   test 'index should respect page param' do
     page = 99
-    get api_v1_users_url, headers: @authorized_headers, params: { page: }
+    get v1_users_url, headers: @authorized_headers, params: { page: }
     pagination_data = assert_contains_pagination_data
     assert_equal page, pagination_data[:current_page]
   end
 
   test 'index should not include blocked users' do
     user = users :blocked
-    get api_v1_users_url, headers: @authorized_headers
+    get v1_users_url, headers: @authorized_headers
     user_ids = get_user_ids_from_response
     assert_not_empty user_ids
     assert_not_includes user_ids, user.id
@@ -92,14 +92,14 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
 
   test 'index should not include users who left the Org' do
     user = users :left_org
-    get api_v1_users_url, headers: @authorized_headers
+    get v1_users_url, headers: @authorized_headers
     user_ids = get_user_ids_from_response
     assert_not_empty user_ids
     assert_not_includes user_ids, user.id
   end
 
   test 'should not show with invalid authorization' do
-    get api_v1_user_url(@user_in_org),
+    get v1_user_url(@user_in_org),
       headers: authorized_headers(@user,
         Authenticatable::SCOPE_ALL,
         expiration: 1.second.ago)
@@ -109,7 +109,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   test 'should show users in the same Org with valid authorization' do
     assert_equal @user.org, @user_in_org.org
 
-    get api_v1_user_url(@user_in_org), headers: @authorized_headers
+    get v1_user_url(@user_in_org), headers: @authorized_headers
     assert_response :ok
   end
 
@@ -117,7 +117,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_not @user_in_org.blocked_at?
     assert_not_includes User::Query::ALLOWED_ATTRIBUTES, :blocked_at
 
-    get api_v1_user_url(@user_in_org), headers: @authorized_headers
+    get v1_user_url(@user_in_org), headers: @authorized_headers
     json_response = response.parsed_body
 
     attribute_allow_list = User::Query::ALLOWED_ATTRIBUTES
@@ -131,7 +131,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   test 'show should include blocked_at attribute for blocked users' do
     @user_in_org.block
 
-    get api_v1_user_url(@user_in_org), headers: @authorized_headers
+    get v1_user_url(@user_in_org), headers: @authorized_headers
     json_response = response.parsed_body
 
     attribute_allow_list = User::Query::ALLOWED_ATTRIBUTES + [:blocked_at]
@@ -145,7 +145,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   test 'show should include left_org_at attribute for users who left the Org' do
     @user_in_org.leave_org
 
-    get api_v1_user_url(@user_in_org), headers: @authorized_headers
+    get v1_user_url(@user_in_org), headers: @authorized_headers
     json_response = response.parsed_body
 
     attribute_allow_list = User::Query::ALLOWED_ATTRIBUTES + [:left_org_at]
@@ -158,7 +158,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not show users in other Orgs' do
     assert_not_equal @user.org, @user_in_other_org.org
-    get api_v1_user_url(@user_in_other_org), headers: @authorized_headers
+    get v1_user_url(@user_in_other_org), headers: @authorized_headers
     assert_response :not_found
   end
 
@@ -167,7 +167,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   # first adding a similar test to another controller.
   test 'should not show if requester is blocked' do
     @user.block
-    get api_v1_user_url(@user_in_org), headers: @authorized_headers
+    get v1_user_url(@user_in_org), headers: @authorized_headers
     assert_response :forbidden
     response.parsed_body => error_messages: [/blocked/]
   end
@@ -177,7 +177,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   # first adding a similar test to another controller.
   test 'should not show if requester left the Org' do
     @user.leave_org
-    get api_v1_user_url(@user_in_org), headers: @authorized_headers
+    get v1_user_url(@user_in_org), headers: @authorized_headers
     assert_response :forbidden
     response.parsed_body => error_messages: [/left/]
   end
@@ -186,35 +186,35 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     @user.update! org: nil
     assert_nil @user.reload.org
 
-    get api_v1_user_url(@user), headers: @authorized_headers
+    get v1_user_url(@user), headers: @authorized_headers
     assert_response :forbidden
   end
 
   test 'should not show if Org is behind on payments' do
     @user.org.update! behind_on_payments_at: Time.now.utc
-    get api_v1_user_url(@user), headers: @authorized_headers
+    get v1_user_url(@user), headers: @authorized_headers
     assert_response :forbidden
   end
 
   test 'show should include the same attributes as index for unblocked users' do
     assert_not @user.blocked_at?
 
-    get api_v1_users_url, headers: @authorized_headers
+    get v1_users_url, headers: @authorized_headers
     response.parsed_body => users:
     index_user = users.filter { |u| u[:id] === @user.id }.first
 
-    get api_v1_user_url(@user), headers: @authorized_headers
+    get v1_user_url(@user), headers: @authorized_headers
     show_user = response.parsed_body
     assert_equal index_user, show_user
   end
 
   test 'should leave_org with valid auth' do
-    post api_v1_leave_org_url, headers: @authorized_headers
+    post v1_leave_org_url, headers: @authorized_headers
     assert_response :ok
   end
 
   test 'should not leave_org with invalid auth' do
-    post api_v1_leave_org_url,
+    post v1_leave_org_url,
       headers: authorized_headers(@user,
         Authenticatable::SCOPE_ALL,
         expiration: 1.second.ago)
@@ -225,7 +225,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     @user.update! org: nil
     assert_nil @user.reload.org
 
-    post api_v1_leave_org_url, headers: @authorized_headers
+    post v1_leave_org_url, headers: @authorized_headers
     assert_response :forbidden
   end
 

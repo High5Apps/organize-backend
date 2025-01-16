@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
+class V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @moderatables = [
       ballots(:three), comments(:two), posts(:three), users(:seven)
@@ -21,7 +21,7 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
       params = create_params(moderatable)
 
       assert_difference 'ModerationEvent.count', 1 do
-        post api_v1_moderation_events_url, params:, headers: @authorized_headers
+        post v1_moderation_events_url, params:, headers: @authorized_headers
 
         assert_response :created
         assert_pattern { response.parsed_body => id: String, **nil }
@@ -34,7 +34,7 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
       params = create_params(moderatable)
 
       assert_no_difference 'ModerationEvent.count' do
-        post api_v1_moderation_events_url,
+        post v1_moderation_events_url,
           params:,
           headers: authorized_headers(@user,
             Authenticatable::SCOPE_ALL,
@@ -53,7 +53,7 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
       params = create_params(moderatable)
 
       assert_no_difference 'ModerationEvent.count' do
-        post api_v1_moderation_events_url,
+        post v1_moderation_events_url,
           params:,
           headers: authorized_headers(@other_user, Authenticatable::SCOPE_ALL)
 
@@ -63,12 +63,12 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should index with valid authorization' do
-    get api_v1_moderation_events_url, headers: @authorized_headers
+    get v1_moderation_events_url, headers: @authorized_headers
     assert_response :ok
   end
 
   test 'should not index with invalid authorization' do
-    get api_v1_moderation_events_url,
+    get v1_moderation_events_url,
       headers: authorized_headers(@user,
         Authenticatable::SCOPE_ALL,
         expiration: 1.second.ago)
@@ -79,12 +79,12 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
-    get api_v1_moderation_events_url, headers: @authorized_headers
+    get v1_moderation_events_url, headers: @authorized_headers
     assert_response :forbidden
   end
 
   test 'index should only include moderation events from requester Org' do
-    get api_v1_moderation_events_url, headers: @authorized_headers
+    get v1_moderation_events_url, headers: @authorized_headers
     moderation_event_ids = get_moderation_event_ids_from_response
     assert_not_empty moderation_event_ids
     moderation_events = ModerationEvent.find(moderation_event_ids)
@@ -94,13 +94,13 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index should format created_at attributes as iso8601' do
-    get api_v1_moderation_events_url, headers: @authorized_headers
+    get v1_moderation_events_url, headers: @authorized_headers
     response.parsed_body => moderation_events: [{ created_at: }, *]
     assert Time.iso8601(created_at)
   end
 
   test 'index should only include expected attributes' do
-    get api_v1_moderation_events_url, headers: @authorized_headers
+    get v1_moderation_events_url, headers: @authorized_headers
     response.parsed_body => moderation_events:
     moderation_events.each do |moderation_event|
       assert_pattern do
@@ -129,13 +129,13 @@ class Api::V1::ModerationEventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index should include pagination metadata' do
-    get api_v1_moderation_events_url, headers: @authorized_headers
+    get v1_moderation_events_url, headers: @authorized_headers
     assert_contains_pagination_data
   end
 
   test 'index should respect page param' do
     page = 99
-    get api_v1_moderation_events_url, headers: @authorized_headers,
+    get v1_moderation_events_url, headers: @authorized_headers,
       params: { page: }
     pagination_data = assert_contains_pagination_data
     assert_equal page, pagination_data[:current_page]

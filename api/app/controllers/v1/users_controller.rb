@@ -1,4 +1,4 @@
-class Api::V1::UsersController < ApplicationController
+class V1::UsersController < ApplicationController
   PERMITTED_PARAMS = [
     :public_key_bytes,
   ]

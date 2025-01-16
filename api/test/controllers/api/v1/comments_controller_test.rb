@@ -1,12 +1,12 @@
 require "test_helper"
 
-class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
+class V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @post = posts(:one)
     @comment = comments(:one)
     @commentable_urls = [
-      api_v1_post_comments_url(@post),
-      api_v1_comment_comments_url(@comment),
+      v1_post_comments_url(@post),
+      v1_comment_comments_url(@comment),
     ]
     @post_without_comments = posts(:three)
     @params = { comment: @comment.attributes.as_json.with_indifferent_access }
@@ -60,7 +60,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create reply should set parent comment' do
-    post api_v1_comment_comments_url(@comment),
+    post v1_comment_comments_url(@comment),
       headers: @authorized_headers, params: @params
     response.parsed_body => { id: new_comment_id }
     new_comment = Comment.find new_comment_id
@@ -68,12 +68,12 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should index with valid authorization' do
-    get api_v1_post_comments_url(@post), headers: @authorized_headers
+    get v1_post_comments_url(@post), headers: @authorized_headers
     assert_response :ok
   end
 
   test 'should not index with invalid authorization' do
-    get api_v1_post_comments_url(@post),
+    get v1_post_comments_url(@post),
       headers: authorized_headers(@user,
         Authenticatable::SCOPE_ALL,
         expiration: 1.second.ago)
@@ -81,7 +81,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not index on a nonexistent post' do
-    get api_v1_post_comments_url('bad-post-id'), headers: @authorized_headers
+    get v1_post_comments_url('bad-post-id'), headers: @authorized_headers
     assert_response :not_found
   end
 
@@ -89,7 +89,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     post_in_another_org = posts(:two)
     assert_not_equal post_in_another_org.org, @user.org
 
-    get api_v1_post_comments_url(post_in_another_org),
+    get v1_post_comments_url(post_in_another_org),
       headers: @authorized_headers
     assert_response :not_found
   end
@@ -98,30 +98,30 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
-    get api_v1_post_comments_url(@post), headers: @authorized_headers
+    get v1_post_comments_url(@post), headers: @authorized_headers
     assert_response :forbidden
   end
 
   test 'index should only include allow-listed attributes' do
-    get api_v1_post_comments_url(@post), headers: @authorized_headers
+    get v1_post_comments_url(@post), headers: @authorized_headers
     response.parsed_body => comments: [first_comment, *]
     assert_only_includes_allowed_attributes first_comment
   end
 
   test 'index should format created_at attributes as iso8601' do
-    get api_v1_post_comments_url(@post), headers: @authorized_headers
+    get v1_post_comments_url(@post), headers: @authorized_headers
     response.parsed_body => comments: [{ created_at: }, *]
     assert Time.iso8601(created_at)
   end
 
   test 'index should include multiple comments' do
-    get api_v1_post_comments_url(@post), headers: @authorized_headers
+    get v1_post_comments_url(@post), headers: @authorized_headers
     response.parsed_body => comments:
     assert_operator comments.count, :>, 1
   end
 
   test 'index should only include comments for the given post' do
-    get api_v1_post_comments_url(@post), headers: @authorized_headers
+    get v1_post_comments_url(@post), headers: @authorized_headers
     response.parsed_body => comments: comment_jsons
     comment_ids = comment_jsons.map {|comment| comment[:id]}
     comments = Comment.find(comment_ids)
@@ -135,7 +135,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     post = comment.post
     created_at_or_before = comment.created_at.iso8601(6)
 
-    get api_v1_post_comments_url(post),
+    get v1_post_comments_url(post),
       headers: @authorized_headers,
       params: { created_at_or_before: }
     response.parsed_body => comments: comment_jsons
@@ -156,7 +156,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     user = post.user
     setup_test_key(user)
 
-    get api_v1_post_comments_url(post),
+    get v1_post_comments_url(post),
       headers: authorized_headers(user, Authenticatable::SCOPE_ALL)
     response.parsed_body => comments:
     parent_comment = comments.find { |c| c[:id] == comment_with_reply.id }
@@ -168,13 +168,13 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should get thread with valid authorization' do
-    get thread_api_v1_comment_url(@comment_with_thread),
+    get thread_v1_comment_url(@comment_with_thread),
       headers: @thread_authorized_headers
     assert_response :ok
   end
 
   test 'should not get thread with invalid authorization' do
-    get thread_api_v1_comment_url(@comment_with_thread),
+    get thread_v1_comment_url(@comment_with_thread),
       headers: authorized_headers(@thread_user,
         Authenticatable::SCOPE_ALL,
         expiration: 1.second.ago)
@@ -182,7 +182,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not get thread on a nonexistent comment' do
-    get thread_api_v1_comment_url('bad-comment-id'),
+    get thread_v1_comment_url('bad-comment-id'),
       headers: @authorized_headers
     assert_response :not_found
   end
@@ -191,7 +191,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     user_in_another_org = @user
     assert_not_equal user_in_another_org, @comment_with_thread.post.org
 
-    get thread_api_v1_comment_url(@comment_with_thread),
+    get thread_v1_comment_url(@comment_with_thread),
       headers: authorized_headers(@user, Authenticatable::SCOPE_ALL)
     assert_response :not_found
   end
@@ -201,27 +201,27 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
     @thread_user.save validate: false
     assert_nil @thread_user.reload.org
 
-    get thread_api_v1_comment_url(@comment_with_thread),
+    get thread_v1_comment_url(@comment_with_thread),
       headers: @thread_authorized_headers
     assert_response :forbidden
   end
 
   test 'thread should only include allow-listed attributes' do
-    get thread_api_v1_comment_url(@comment_with_thread),
+    get thread_v1_comment_url(@comment_with_thread),
       headers: @thread_authorized_headers
     response.parsed_body => thread:
     assert_only_includes_allowed_attributes thread
   end
 
   test 'thread should format created_at attributes as iso8601' do
-    get thread_api_v1_comment_url(@comment_with_thread),
+    get thread_v1_comment_url(@comment_with_thread),
       headers: @thread_authorized_headers
     response.parsed_body => thread: { created_at: }
     assert Time.iso8601(created_at)
   end
 
   test 'thread should only return comments from the ancestry path' do
-    get thread_api_v1_comment_url(@comment_with_thread),
+    get thread_v1_comment_url(@comment_with_thread),
       headers: @thread_authorized_headers
     response.parsed_body => thread:
 
@@ -236,7 +236,7 @@ class Api::V1::CommentsControllerTest < ActionDispatch::IntegrationTest
   private
 
   def assert_only_includes_allowed_attributes(comment)
-    attribute_allow_list = Api::V1::CommentsController::ALLOWED_ATTRIBUTES
+    attribute_allow_list = V1::CommentsController::ALLOWED_ATTRIBUTES
     assert_equal attribute_allow_list.count, comment.keys.count
     attribute_allow_list.each do |attribute|
       assert comment.key? attribute

@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
+class V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @permission = permissions :one_edit_permissions
     @other_permission = @permission.dup
@@ -19,7 +19,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
     @permission.destroy!
 
     assert_difference 'Permission.count', 1 do
-      post create_by_scope_api_v1_permissions_url(@permission.scope),
+      post create_by_scope_v1_permissions_url(@permission.scope),
         headers: @authorized_headers,
         params: create_params
     end
@@ -35,7 +35,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
       [['founder', 'president'], 0],
     ].each do |expected_offices, difference|
       assert_difference 'Permission.count', difference do
-        post create_by_scope_api_v1_permissions_url(@permission.scope),
+        post create_by_scope_v1_permissions_url(@permission.scope),
           headers: @authorized_headers,
           params: create_params(expected_offices)
         assert_response :created
@@ -47,7 +47,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create with invalid authorization' do
-    post create_by_scope_api_v1_permissions_url(@permission.scope),
+    post create_by_scope_v1_permissions_url(@permission.scope),
       headers: authorized_headers(@user,
         Authenticatable::SCOPE_ALL,
         expiration: 1.second.ago),
@@ -56,7 +56,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create with invalid params' do
-    post create_by_scope_api_v1_permissions_url(@permission.scope),
+    post create_by_scope_v1_permissions_url(@permission.scope),
       headers: @authorized_headers,
       params: create_params([:bad_office])
 
@@ -67,7 +67,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
-    post create_by_scope_api_v1_permissions_url(@permission.scope),
+    post create_by_scope_v1_permissions_url(@permission.scope),
       headers: @authorized_headers,
       params: create_params
 
@@ -77,7 +77,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create if Org is not verified' do
     @user.org.update! verified_at: nil
 
-    post create_by_scope_api_v1_permissions_url(@permission.scope),
+    post create_by_scope_v1_permissions_url(@permission.scope),
       headers: @authorized_headers,
       params: create_params
 
@@ -87,7 +87,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
   test 'should not create if Org is behind on payments' do
     @user.org.update! behind_on_payments_at: Time.now.utc
 
-    post create_by_scope_api_v1_permissions_url(@permission.scope),
+    post create_by_scope_v1_permissions_url(@permission.scope),
       headers: @authorized_headers,
       params: create_params
 
@@ -96,21 +96,21 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create unless user can edit permissions' do
     assert_not @non_officer.can? :edit_permissions
-    post create_by_scope_api_v1_permissions_url(@permission.scope),
+    post create_by_scope_v1_permissions_url(@permission.scope),
       headers: authorized_headers(@non_officer, Authenticatable::SCOPE_ALL),
       params: create_params
     assert_response :forbidden
   end
 
   test 'should not create for non-existent scopes' do
-    get create_by_scope_api_v1_permissions_url('bad_scope'),
+    get create_by_scope_v1_permissions_url('bad_scope'),
       headers: @authorized_headers,
       params: create_params
     assert_response :not_found
   end
 
   test 'should show with valid authorization' do
-    get show_by_scope_api_v1_permissions_url(@permission.scope),
+    get show_by_scope_v1_permissions_url(@permission.scope),
       headers: @authorized_headers
     assert_response :ok
     assert_pattern do
@@ -119,7 +119,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not show with invalid authorization' do
-    get show_by_scope_api_v1_permissions_url(@permission.scope),
+    get show_by_scope_v1_permissions_url(@permission.scope),
     headers: authorized_headers(@user,
       Authenticatable::SCOPE_ALL,
       expiration: 1.second.ago)
@@ -128,7 +128,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not show unless user can edit permissions' do
     assert_not @non_officer.can? :edit_permissions
-    get show_by_scope_api_v1_permissions_url(@permission.scope),
+    get show_by_scope_v1_permissions_url(@permission.scope),
       headers: authorized_headers(@non_officer, Authenticatable::SCOPE_ALL)
     assert_response :forbidden
   end
@@ -137,19 +137,19 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
-    get show_by_scope_api_v1_permissions_url(@permission.scope),
+    get show_by_scope_v1_permissions_url(@permission.scope),
       headers: @authorized_headers
     assert_response :forbidden
   end
 
   test 'should not show for non-existent scopes' do
-    get show_by_scope_api_v1_permissions_url('bad_scope'),
+    get show_by_scope_v1_permissions_url('bad_scope'),
       headers: @authorized_headers
     assert_response :not_found
   end
 
   test 'should index my_permissions with valid authorization' do
-    get api_v1_index_my_permissions_url,
+    get v1_index_my_permissions_url,
       headers: @authorized_headers,
       params: { scopes: @scopes }
     assert_response :ok
@@ -179,7 +179,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
         assert_equal expected_permitted, @user.can?(scope)
       end
 
-      get api_v1_index_my_permissions_url,
+      get v1_index_my_permissions_url,
         headers: @authorized_headers,
         params: { scopes: @scopes }
       response.parsed_body => my_permissions:
@@ -192,7 +192,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index my_permissions should run for all scopes when no scopes param is given' do
-    get api_v1_index_my_permissions_url,
+    get v1_index_my_permissions_url,
       headers: @authorized_headers
     response.parsed_body => my_permissions:
     assert_equal Permission::SCOPE_SYMBOLS.count, my_permissions.count
@@ -201,7 +201,7 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not index my_permissions with invalid authorization' do
-    get api_v1_index_my_permissions_url,
+    get v1_index_my_permissions_url,
     headers: authorized_headers(@user,
       Authenticatable::SCOPE_ALL,
       expiration: 1.second.ago)
@@ -212,13 +212,13 @@ class Api::V1::PermissionsControllerTest < ActionDispatch::IntegrationTest
     @user.update!(org: nil)
     assert_nil @user.reload.org
 
-    get api_v1_index_my_permissions_url,
+    get v1_index_my_permissions_url,
       headers: @authorized_headers
     assert_response :forbidden
   end
 
   test 'index my_permissions should return false for non-existent scopes' do
-    get api_v1_index_my_permissions_url,
+    get v1_index_my_permissions_url,
       headers: @authorized_headers,
       params: { scopes: [@permission.scope, 'bad_scope'] }
     assert_response :ok

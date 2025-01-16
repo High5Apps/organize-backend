@@ -1,4 +1,4 @@
-class Api::V1::FlagsController < ApplicationController
+class V1::FlagsController < ApplicationController
   PERMITTED_PARAMS = [:flaggable_id, :flaggable_type]
 
   def create

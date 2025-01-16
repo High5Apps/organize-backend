@@ -1,4 +1,4 @@
-class Api::V1::TermsController < ApplicationController
+class V1::TermsController < ApplicationController
   def create
     new_term = authenticated_user.terms.build create_params
     if new_term.save

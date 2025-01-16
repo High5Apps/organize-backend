@@ -1,4 +1,4 @@
-class Api::V1::BallotsController < ApplicationController
+class V1::BallotsController < ApplicationController
   ALLOWED_ATTRIBUTES = [
     :ballot,
     :candidates,

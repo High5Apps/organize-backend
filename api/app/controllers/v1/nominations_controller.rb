@@ -1,4 +1,4 @@
-class Api::V1::NominationsController < ApplicationController
+class V1::NominationsController < ApplicationController
   ALLOWED_UPDATE_ATTRIBUTES = [
     :candidate,
     :nomination,

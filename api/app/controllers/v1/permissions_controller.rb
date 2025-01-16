@@ -1,4 +1,4 @@
-class Api::V1::PermissionsController < ApplicationController
+class V1::PermissionsController < ApplicationController
   PERMITTED_PARAMS = [
     offices: [],
   ]

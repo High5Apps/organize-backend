@@ -1,4 +1,4 @@
-class Api::V1::ModerationEventsController < ApplicationController
+class V1::ModerationEventsController < ApplicationController
   PERMITTED_CREATE_PARAMS = [
     :action,
     :moderatable_id,
