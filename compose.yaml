@@ -51,7 +51,7 @@ services:
       - /dev/kmsg
     image: gcr.io/cadvisor/cadvisor:v0.49.1
     ports:
-      - "127.0.0.1:8081:8080"
+      - "127.0.0.1:8082:8080"
     privileged: true
     restart: always
     volumes:
