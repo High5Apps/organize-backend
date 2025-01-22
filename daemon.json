@@ -1,0 +1,12 @@
+{
+  "log-driver": "loki",
+  "log-opts": {
+    "keep-file": "true",
+    "loki-max-backoff": "800ms",
+    "loki-retries": "2",
+    "loki-timeout": "1s",
+    "loki-url": "http://127.0.0.1:3100/loki/api/v1/push",
+    "max-file": "2",
+    "max-size": "5m"
+  }
+}

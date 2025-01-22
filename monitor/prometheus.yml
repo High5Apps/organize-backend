@@ -20,3 +20,6 @@ scrape_configs:
   - job_name: 'site'
     static_configs:
       - targets: ['site:9394']
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['monitor-logs:3100']

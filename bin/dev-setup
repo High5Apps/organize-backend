@@ -79,6 +79,13 @@ else
   echo 'No need to initialize the database, since .env was unchanged'
 fi
 
+# Note this also happens in bin/bootstrap
+echo 'Installing the loki-docker-driver pulgin'
+docker plugin install grafana/loki-docker-driver:3.3.2-arm64 --alias loki --grant-all-permissions
+parent_dir_path=$(dirname "$0")
+cp $parent_dir_path/../daemon.json ~/.docker/daemon.json
+echo 'Restart Docker Desktop to begin logging to Loki'
+
 echo 'Testing project...'
 $dc up --detach
 echo 'Waiting 5s for services to settle...'

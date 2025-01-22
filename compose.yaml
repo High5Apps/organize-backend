@@ -82,6 +82,15 @@ services:
     image: prometheuscommunity/postgres-exporter:v0.15.0
     ports:
       - "127.0.0.1:9187:9187"
+  monitor-logs:
+    build:
+      context: monitor-logs
+    image: localhost:5001/organize-monitor-logs
+    ports:
+      - "127.0.0.1:3100:3100"
+    restart: always
+    volumes:
+      - monitor-logs-data:/loki:rw
   monitor-node:
     image: prom/node-exporter:v1.8.2
     command:
@@ -132,4 +141,5 @@ volumes:
   db-data:
   monitor-data:
   monitor-dash-data:
+  monitor-logs-data:
   site-storage:

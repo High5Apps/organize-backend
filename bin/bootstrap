@@ -118,6 +118,23 @@ ssh -i $SSH_KEY_PATH $new_host << EOF
   newgrp docker
 EOF
 
+# Note this also happens in bin/dev-setup
+echo 'Transferring Docker daemon.json file'
+scp -i $SSH_KEY_PATH daemon.json $new_host:
+
+ssh -i $SSH_KEY_PATH $new_host << EOF
+  set -e
+
+  echo 'Installing the loki-docker-driver pulgin'
+  docker plugin install grafana/loki-docker-driver:3.3.2-arm64 --alias loki --grant-all-permissions
+
+  echo 'Moving the daemon.json file into place'
+  sudo mv daemon.json /etc/docker/daemon.json
+
+  echo 'Restarting the Docker daemon'
+  sudo systemctl restart docker
+EOF
+
 echo
 echo 'Setup port forwarding on your router using the network info below.'
 echo 'You may also need to setup an IPv6 proxy (e.g. on Cloudflare).'
