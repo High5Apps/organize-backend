@@ -47,6 +47,7 @@ WORKDIR /usr/src/app
 
 COPY rails-proxy.conf /etc/nginx/rails-proxy.conf
 COPY docker-entrypoint.sh /usr/src/app/docker-entrypoint.sh
+COPY logging.conf /etc/nginx/logging.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx-auto-reloader.sh /usr/src/app/nginx-auto-reloader.sh
 COPY ssl-server.conf /etc/nginx/ssl-server.conf
