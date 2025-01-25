@@ -60,3 +60,6 @@ end
 gem 'yabeda-rails', '~> 0.9.0'
 gem 'yabeda-prometheus', '~> 0.9.1'
 gem 'yabeda-puma-plugin', '~> 0.7.1'
+
+# Used for page caching
+gem 'actionpack-page_caching', '~> 1.2.4'
