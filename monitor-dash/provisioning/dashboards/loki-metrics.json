@@ -1,47 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.4.0"
-    },
-    {
-      "type": "panel",
-      "id": "heatmap",
-      "name": "Heatmap",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -69,7 +26,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": null,
+  "id": 17,
   "links": [],
   "panels": [
     {
@@ -122,7 +79,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 3,
+        "w": 12,
         "x": 0,
         "y": 1
       },
@@ -199,240 +156,6 @@
           }
         }
       ],
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "decimals": 0,
-          "links": [],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 3,
-        "x": 3,
-        "y": 1
-      },
-      "id": 10,
-      "interval": "$interval",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "sum(loki_internal_log_messages_total{job=\"$jobs\",instance=\"$host:$instance\"})",
-          "instant": false,
-          "interval": "$interval",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Internal Log Messages",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [],
-          "mappings": [
-            {
-              "options": {
-                "null": {
-                  "index": 0,
-                  "text": "N/A"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 3,
-        "x": 6,
-        "y": 1
-      },
-      "id": 80,
-      "interval": "$interval",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "deprecated_flags_inuse_total{job=\"$jobs\",instance=\"$host:$instance\"}",
-          "instant": false,
-          "interval": "$interval",
-          "legendFormat": "Deprecated",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "loki_experimental_features_in_use_total{job=\"$jobs\",instance=\"$host:$instance\"}",
-          "hide": false,
-          "instant": false,
-          "interval": "$interval",
-          "legendFormat": "Experimental",
-          "refId": "B"
-        }
-      ],
-      "title": "Features Currently Set",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [],
-          "mappings": [
-            {
-              "options": {
-                "null": {
-                  "index": 0,
-                  "text": "N/A"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "semi-dark-red",
-                "value": 1
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 3,
-        "x": 9,
-        "y": 1
-      },
-      "id": 24,
-      "interval": "$interval",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "loki_panic_total{job=\"$jobs\",instance=\"$host:$instance\"}",
-          "instant": false,
-          "interval": "$interval",
-          "legendFormat": "The total number of panics triggered",
-          "refId": "A"
-        }
-      ],
-      "title": "Panics",
       "type": "stat"
     },
     {
@@ -838,8 +561,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 6,
+        "h": 4,
+        "w": 3,
         "x": 0,
         "y": 4
       },
@@ -881,6 +604,7 @@
       "title": "Distributor Lines",
       "transformations": [
         {
+          "disabled": true,
           "id": "calculateField",
           "options": {}
         },
@@ -895,6 +619,73 @@
           }
         }
       ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 4
+      },
+      "id": 10,
+      "interval": "$interval",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "sum(loki_internal_log_messages_total{job=\"$jobs\",instance=\"$host:$instance\"})",
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Internal Log Messages",
       "type": "stat"
     },
     {
@@ -930,8 +721,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 6,
+        "h": 4,
+        "w": 3,
         "x": 6,
         "y": 4
       },
@@ -973,16 +764,6 @@
       "title": "Distributor Volume",
       "transformations": [
         {
-          "id": "calculateField",
-          "options": {
-            "mode": "reduceRow",
-            "reduce": {
-              "include": [],
-              "reducer": "sum"
-            }
-          }
-        },
-        {
           "id": "organize",
           "options": {
             "excludeByName": {},
@@ -1021,6 +802,173 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 4
+      },
+      "id": 24,
+      "interval": "$interval",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "loki_panic_total{job=\"$jobs\",instance=\"$host:$instance\"}",
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "The total number of panics triggered",
+          "refId": "A"
+        }
+      ],
+      "title": "Panics",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "mappings": [
+            {
+              "options": {
+                "null": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 12,
+        "y": 4
+      },
+      "id": 80,
+      "interval": "$interval",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "deprecated_flags_inuse_total{job=\"$jobs\",instance=\"$host:$instance\"}",
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "Deprecated",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "loki_experimental_features_in_use_total{job=\"$jobs\",instance=\"$host:$instance\"}",
+          "hide": false,
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "Experimental",
+          "refId": "B"
+        }
+      ],
+      "title": "Features Currently Set",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "mappings": [
+            {
+              "options": {
+                "null": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -1029,9 +977,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 12,
+        "h": 4,
+        "w": 9,
+        "x": 15,
         "y": 4
       },
       "id": 230,
@@ -1129,106 +1077,15 @@
               }
             ]
           },
-          "unit": "binBps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 18,
-        "y": 4
-      },
-      "id": 188,
-      "interval": "$interval",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "sum(rate(loki_ingester_chunk_stored_bytes_total{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])) by (tenant)",
-          "instant": false,
-          "interval": "$interval",
-          "legendFormat": "{{ tenant }}",
-          "refId": "A"
-        }
-      ],
-      "title": "Ingester Chunks Volume",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "fake": "Default Tenant"
-            }
-          }
-        }
-      ],
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [],
-          "mappings": [
-            {
-              "options": {
-                "null": {
-                  "index": 0,
-                  "text": "N/A"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
           "unit": "short"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 3,
         "x": 0,
-        "y": 10
+        "y": 8
       },
       "id": 23,
       "interval": "$interval",
@@ -1317,10 +1174,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 3,
         "x": 3,
-        "y": 10
+        "y": 8
       },
       "id": 131,
       "interval": "$interval",
@@ -1409,10 +1266,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 3,
         "x": 6,
-        "y": 10
+        "y": 8
       },
       "id": 137,
       "interval": "$interval",
@@ -1496,15 +1353,91 @@
               }
             ]
           },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 8
+      },
+      "id": 240,
+      "interval": "$interval",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "loki_ingester_chunk_stored_bytes_total",
+          "hide": false,
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "Chunk Size",
+          "refId": "A"
+        }
+      ],
+      "title": "Chunk Storage Volume",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "mappings": [
+            {
+              "options": {
+                "null": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
           "unit": "short"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 3,
         "x": 12,
-        "y": 10
+        "y": 8
       },
       "id": 191,
       "interval": "$interval",
@@ -1577,10 +1510,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 3,
         "x": 15,
-        "y": 10
+        "y": 8
       },
       "id": 192,
       "interval": "$interval",
@@ -1618,10 +1551,6 @@
       ],
       "title": "Ingester Streams in Memory",
       "transformations": [
-        {
-          "id": "calculateField",
-          "options": {}
-        },
         {
           "id": "organize",
           "options": {
@@ -1669,15 +1598,622 @@
               }
             ]
           },
+          "unit": "binBps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 18,
+        "y": 8
+      },
+      "id": 188,
+      "interval": "$interval",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(loki_ingester_chunk_stored_bytes_total{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])) by (tenant)",
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "{{ tenant }}",
+          "refId": "A"
+        }
+      ],
+      "title": "Ingester Chunks Volume",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "fake": "Default Tenant"
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "mappings": [
+            {
+              "options": {
+                "null": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 21,
+        "y": 8
+      },
+      "id": 232,
+      "interval": "$interval",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum(rate(loki_ingester_chunk_compression_ratio_bucket{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])) by (le))",
+          "hide": false,
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "Compression Ratio",
+          "refId": "A"
+        }
+      ],
+      "title": "Ingester Chunk Compression",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "mappings": [
+            {
+              "options": {
+                "null": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
           "unit": "ops"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 18,
-        "y": 10
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 12
+      },
+      "id": 236,
+      "interval": "$interval",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(loki_chunk_store_fetched_chunks_total{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])) by (user)",
+          "hide": false,
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "{{ user}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Store Operations Fetched",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Create / fake": "Create / Default Tenant",
+              "Delete / fake": "Delete / Default Tenant",
+              "Fetch / fake": "Fetch / Default Tenant",
+              "Store / fake": "Store / Default Tenant",
+              "fake": "Default Tenant"
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "mappings": [
+            {
+              "options": {
+                "null": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "binBps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 12
+      },
+      "id": 238,
+      "interval": "$interval",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "rate(loki_chunk_store_fetched_chunk_bytes_total{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])",
+          "hide": false,
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "{{ user}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Store Volume Fetched",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Create / fake": "Create / Default Tenant",
+              "Delete / fake": "Delete / Default Tenant",
+              "Fetch / fake": "Fetch / Default Tenant",
+              "Store / fake": "Store / Default Tenant",
+              "fake": "Default Tenant"
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "mappings": [
+            {
+              "options": {
+                "null": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 12
+      },
+      "id": 237,
+      "interval": "$interval",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(loki_chunk_store_stored_chunks_total{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])) by (user)",
+          "hide": false,
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "{{ user}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Store Operations Stored",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Create / fake": "Create / Default Tenant",
+              "Delete / fake": "Delete / Default Tenant",
+              "Fetch / fake": "Default Tenant",
+              "Store / fake": "Store / Default Tenant",
+              "fake": "Default Tenant"
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "mappings": [
+            {
+              "options": {
+                "null": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "binBps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 12
+      },
+      "id": 239,
+      "interval": "$interval",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "rate(loki_chunk_store_stored_chunk_bytes_total{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])",
+          "hide": false,
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "{{ user}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Store Volume Stored",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Create / fake": "Create / Default Tenant",
+              "Delete / fake": "Delete / Default Tenant",
+              "Fetch / fake": "Fetch / Default Tenant",
+              "Store / fake": "Store / Default Tenant",
+              "fake": "Default Tenant"
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "mappings": [
+            {
+              "options": {
+                "null": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 12,
+        "y": 12
+      },
+      "id": 231,
+      "interval": "$interval",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum(rate(loki_ingester_chunk_size_bytes_bucket{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])) by (le))",
+          "hide": false,
+          "instant": false,
+          "interval": "$interval",
+          "legendFormat": "Chunk Size",
+          "refId": "A"
+        }
+      ],
+      "title": "Ingester Chunk Size",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "mappings": [
+            {
+              "options": {
+                "null": {
+                  "index": 0,
+                  "text": "N/A"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 9,
+        "x": 15,
+        "y": 12
       },
       "id": 233,
       "interval": "$interval",
@@ -1749,548 +2285,12 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [],
-          "mappings": [
-            {
-              "options": {
-                "null": {
-                  "index": 0,
-                  "text": "N/A"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "ops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 0,
-        "y": 13
-      },
-      "id": 236,
-      "interval": "$interval",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "sum(rate(loki_chunk_store_fetched_chunks_total{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])) by (user)",
-          "hide": false,
-          "instant": false,
-          "interval": "$interval",
-          "legendFormat": "{{ user}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Store Operations Fetched",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "Create / fake": "Create / Default Tenant",
-              "Delete / fake": "Delete / Default Tenant",
-              "Fetch / fake": "Fetch / Default Tenant",
-              "Store / fake": "Store / Default Tenant",
-              "fake": "Default Tenant"
-            }
-          }
-        }
-      ],
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [],
-          "mappings": [
-            {
-              "options": {
-                "null": {
-                  "index": 0,
-                  "text": "N/A"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "ops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 6,
-        "y": 13
-      },
-      "id": 237,
-      "interval": "$interval",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "sum(rate(loki_chunk_store_stored_chunks_total{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])) by (user)",
-          "hide": false,
-          "instant": false,
-          "interval": "$interval",
-          "legendFormat": "{{ user}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Store Operations Stored",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "Create / fake": "Create / Default Tenant",
-              "Delete / fake": "Delete / Default Tenant",
-              "Fetch / fake": "Default Tenant",
-              "Store / fake": "Store / Default Tenant",
-              "fake": "Default Tenant"
-            }
-          }
-        }
-      ],
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [],
-          "mappings": [
-            {
-              "options": {
-                "null": {
-                  "index": 0,
-                  "text": "N/A"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 3,
-        "x": 12,
-        "y": 13
-      },
-      "id": 231,
-      "interval": "$interval",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(loki_ingester_chunk_size_bytes_bucket{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])) by (le))",
-          "hide": false,
-          "instant": false,
-          "interval": "$interval",
-          "legendFormat": "Chunk Size",
-          "refId": "A"
-        }
-      ],
-      "title": "Ingester Chunk Size",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [],
-          "mappings": [
-            {
-              "options": {
-                "null": {
-                  "index": 0,
-                  "text": "N/A"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 3,
-        "x": 15,
-        "y": 13
-      },
-      "id": 232,
-      "interval": "$interval",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(loki_ingester_chunk_compression_ratio_bucket{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])) by (le))",
-          "hide": false,
-          "instant": false,
-          "interval": "$interval",
-          "legendFormat": "Compression Ratio",
-          "refId": "A"
-        }
-      ],
-      "title": "Ingester Chunk Compression",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [],
-          "mappings": [
-            {
-              "options": {
-                "null": {
-                  "index": 0,
-                  "text": "N/A"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "binBps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 0,
-        "y": 16
-      },
-      "id": 238,
-      "interval": "$interval",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(loki_chunk_store_fetched_chunk_bytes_total{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])",
-          "hide": false,
-          "instant": false,
-          "interval": "$interval",
-          "legendFormat": "{{ user}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Store Volume Fetched",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "Create / fake": "Create / Default Tenant",
-              "Delete / fake": "Delete / Default Tenant",
-              "Fetch / fake": "Fetch / Default Tenant",
-              "Store / fake": "Store / Default Tenant",
-              "fake": "Default Tenant"
-            }
-          }
-        }
-      ],
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [],
-          "mappings": [
-            {
-              "options": {
-                "null": {
-                  "index": 0,
-                  "text": "N/A"
-                }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "binBps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 6,
-        "y": 16
-      },
-      "id": 239,
-      "interval": "$interval",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "rate(loki_chunk_store_stored_chunk_bytes_total{job=\"$jobs\",instance=\"$host:$instance\"}[$__rate_interval])",
-          "hide": false,
-          "instant": false,
-          "interval": "$interval",
-          "legendFormat": "{{ user}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Store Volume Stored",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "Create / fake": "Create / Default Tenant",
-              "Delete / fake": "Delete / Default Tenant",
-              "Fetch / fake": "Fetch / Default Tenant",
-              "Store / fake": "Store / Default Tenant",
-              "fake": "Default Tenant"
-            }
-          }
-        }
-      ],
-      "type": "stat"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 16
       },
       "id": 143,
       "panels": [],
@@ -2359,7 +2359,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 20
+        "y": 17
       },
       "id": 151,
       "options": {
@@ -2460,7 +2460,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 20
+        "y": 17
       },
       "id": 128,
       "options": {
@@ -2561,7 +2561,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 28
+        "y": 25
       },
       "id": 153,
       "options": {
@@ -2662,7 +2662,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 28
+        "y": 25
       },
       "id": 152,
       "options": {
@@ -2763,7 +2763,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 36
+        "y": 33
       },
       "id": 96,
       "options": {
@@ -2839,7 +2839,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 41
       },
       "id": 114,
       "panels": [],
@@ -2908,7 +2908,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 45
+        "y": 42
       },
       "id": 115,
       "options": {
@@ -3009,7 +3009,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 45
+        "y": 42
       },
       "id": 116,
       "options": {
@@ -3110,7 +3110,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 53
+        "y": 50
       },
       "id": 118,
       "options": {
@@ -3220,7 +3220,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 53
+        "y": 50
       },
       "id": 119,
       "options": {
@@ -3265,7 +3265,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 58
       },
       "id": 108,
       "panels": [],
@@ -3334,7 +3334,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 62
+        "y": 59
       },
       "id": 109,
       "options": {
@@ -3447,7 +3447,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 62
+        "y": 59
       },
       "id": 110,
       "options": {
@@ -3560,7 +3560,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 70
+        "y": 67
       },
       "id": 111,
       "options": {
@@ -3617,7 +3617,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 78
+        "y": 75
       },
       "id": 127,
       "panels": [],
@@ -3686,7 +3686,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 79
+        "y": 76
       },
       "id": 130,
       "options": {
@@ -3796,7 +3796,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 79
+        "y": 76
       },
       "id": 138,
       "options": {
@@ -3936,7 +3936,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 87
+        "y": 84
       },
       "id": 201,
       "options": {
@@ -3981,7 +3981,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 95
+        "y": 92
       },
       "id": 174,
       "panels": [],
@@ -4050,7 +4050,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 96
+        "y": 93
       },
       "id": 189,
       "options": {
@@ -4151,7 +4151,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 96
+        "y": 93
       },
       "id": 185,
       "options": {
@@ -4287,7 +4287,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 104
+        "y": 101
       },
       "id": 175,
       "options": {
@@ -4436,7 +4436,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 104
+        "y": 101
       },
       "id": 177,
       "options": {
@@ -4546,7 +4546,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 112
+        "y": 109
       },
       "id": 183,
       "options": {
@@ -4673,7 +4673,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 112
+        "y": 109
       },
       "id": 176,
       "options": {
@@ -4774,7 +4774,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 120
+        "y": 117
       },
       "id": 180,
       "options": {
@@ -4875,7 +4875,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 120
+        "y": 117
       },
       "id": 190,
       "options": {
@@ -4976,7 +4976,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 128
+        "y": 125
       },
       "id": 184,
       "options": {
@@ -5077,7 +5077,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 128
+        "y": 125
       },
       "id": 178,
       "options": {
@@ -5178,7 +5178,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 136
+        "y": 133
       },
       "id": 186,
       "options": {
@@ -5279,7 +5279,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 136
+        "y": 133
       },
       "id": 187,
       "options": {
@@ -5389,7 +5389,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 144
+        "y": 141
       },
       "id": 194,
       "options": {
@@ -5490,7 +5490,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 144
+        "y": 141
       },
       "id": 179,
       "options": {
@@ -5591,7 +5591,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 152
+        "y": 149
       },
       "id": 181,
       "options": {
@@ -5692,7 +5692,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 152
+        "y": 149
       },
       "id": 182,
       "options": {
@@ -5793,7 +5793,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 160
+        "y": 157
       },
       "id": 196,
       "options": {
@@ -5916,7 +5916,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 160
+        "y": 157
       },
       "id": 193,
       "options": {
@@ -6026,7 +6026,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 168
+        "y": 165
       },
       "id": 197,
       "options": {
@@ -6175,7 +6175,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 168
+        "y": 165
       },
       "id": 200,
       "options": {
@@ -6323,7 +6323,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 176
+        "y": 173
       },
       "id": 198,
       "options": {
@@ -6459,7 +6459,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 176
+        "y": 173
       },
       "id": 199,
       "options": {
@@ -6526,7 +6526,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 184
+        "y": 181
       },
       "id": 121,
       "panels": [],
@@ -6595,7 +6595,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 185
+        "y": 182
       },
       "id": 124,
       "options": {
@@ -6733,7 +6733,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 185
+        "y": 182
       },
       "id": 217,
       "options": {
@@ -6798,7 +6798,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 193
+        "y": 190
       },
       "id": 122,
       "maxDataPoints": 50,
@@ -6945,7 +6945,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 193
+        "y": 190
       },
       "id": 123,
       "options": {
@@ -6999,7 +6999,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 201
+        "y": 198
       },
       "id": 140,
       "panels": [],
@@ -7068,7 +7068,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 202
+        "y": 199
       },
       "id": 148,
       "options": {
@@ -7169,7 +7169,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 202
+        "y": 199
       },
       "id": 150,
       "options": {
@@ -7270,7 +7270,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 210
+        "y": 207
       },
       "id": 125,
       "options": {
@@ -7371,7 +7371,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 210
+        "y": 207
       },
       "id": 147,
       "options": {
@@ -7472,7 +7472,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 218
+        "y": 215
       },
       "id": 141,
       "options": {
@@ -7573,7 +7573,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 218
+        "y": 215
       },
       "id": 149,
       "options": {
@@ -7674,7 +7674,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 226
+        "y": 223
       },
       "id": 146,
       "options": {
@@ -7719,7 +7719,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 234
+        "y": 231
       },
       "id": 204,
       "panels": [],
@@ -7788,7 +7788,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 235
+        "y": 232
       },
       "id": 206,
       "options": {
@@ -7889,7 +7889,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 235
+        "y": 232
       },
       "id": 210,
       "options": {
@@ -8003,7 +8003,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 243
+        "y": 240
       },
       "id": 211,
       "options": {
@@ -8104,7 +8104,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 243
+        "y": 240
       },
       "id": 212,
       "options": {
@@ -8205,7 +8205,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 251
+        "y": 248
       },
       "id": 213,
       "options": {
@@ -8319,7 +8319,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 251
+        "y": 248
       },
       "id": 209,
       "options": {
@@ -8472,7 +8472,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 259
+        "y": 256
       },
       "id": 208,
       "options": {
@@ -8625,7 +8625,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 259
+        "y": 256
       },
       "id": 214,
       "options": {
@@ -8726,7 +8726,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 267
+        "y": 264
       },
       "id": 215,
       "options": {
@@ -8879,7 +8879,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 267
+        "y": 264
       },
       "id": 216,
       "options": {
@@ -8932,7 +8932,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 275
+        "y": 272
       },
       "id": 224,
       "panels": [],
@@ -9001,7 +9001,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 276
+        "y": 273
       },
       "id": 225,
       "options": {
@@ -9037,7 +9037,7 @@
           "refId": "A"
         }
       ],
-      "title": "Loki Ring - Heathbeats",
+      "title": "Loki Ring - Heartbeats",
       "type": "timeseries"
     },
     {
@@ -9102,7 +9102,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 276
+        "y": 273
       },
       "id": 226,
       "options": {
@@ -9160,7 +9160,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 284
+        "y": 281
       },
       "id": 133,
       "panels": [],
@@ -9229,7 +9229,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 285
+        "y": 282
       },
       "id": 135,
       "options": {
@@ -9369,7 +9369,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 285
+        "y": 282
       },
       "id": 134,
       "options": {
@@ -9509,7 +9509,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 293
+        "y": 290
       },
       "id": 136,
       "options": {
@@ -9610,7 +9610,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 293
+        "y": 290
       },
       "id": 165,
       "options": {
@@ -9737,7 +9737,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 301
+        "y": 298
       },
       "id": 166,
       "options": {
@@ -9860,7 +9860,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 301
+        "y": 298
       },
       "id": 167,
       "options": {
@@ -9947,7 +9947,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 309
+        "y": 306
       },
       "id": 163,
       "maxDataPoints": 50,
@@ -10105,7 +10105,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 309
+        "y": 306
       },
       "id": 156,
       "options": {
@@ -10170,7 +10170,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 317
+        "y": 314
       },
       "id": 154,
       "maxDataPoints": 50,
@@ -10328,7 +10328,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 317
+        "y": 314
       },
       "id": 164,
       "options": {
@@ -10393,7 +10393,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 325
+        "y": 322
       },
       "id": 159,
       "maxDataPoints": 50,
@@ -10551,7 +10551,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 325
+        "y": 322
       },
       "id": 160,
       "options": {
@@ -10616,7 +10616,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 333
+        "y": 330
       },
       "id": 157,
       "maxDataPoints": 50,
@@ -10774,7 +10774,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 333
+        "y": 330
       },
       "id": 158,
       "options": {
@@ -10839,7 +10839,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 341
+        "y": 338
       },
       "id": 161,
       "maxDataPoints": 50,
@@ -10997,7 +10997,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 341
+        "y": 338
       },
       "id": 162,
       "options": {
@@ -11042,7 +11042,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 349
+        "y": 346
       },
       "id": 83,
       "panels": [],
@@ -11111,7 +11111,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 350
+        "y": 347
       },
       "id": 168,
       "options": {
@@ -11234,7 +11234,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 350
+        "y": 347
       },
       "id": 91,
       "options": {
@@ -11300,7 +11300,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 358
+        "y": 355
       },
       "id": 94,
       "maxDataPoints": 50,
@@ -11402,7 +11402,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 366
+        "y": 363
       },
       "id": 104,
       "panels": [],
@@ -11475,7 +11475,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 367
+        "y": 364
       },
       "id": 92,
       "options": {
@@ -11631,7 +11631,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 367
+        "y": 364
       },
       "id": 93,
       "options": {
@@ -11822,7 +11822,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 375
+        "y": 372
       },
       "id": 95,
       "options": {
@@ -11903,7 +11903,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 375
+        "y": 372
       },
       "id": 89,
       "maxDataPoints": 50,
@@ -12016,7 +12016,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 383
+        "y": 380
       },
       "id": 88,
       "maxDataPoints": 50,
@@ -12109,7 +12109,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 391
+        "y": 388
       },
       "id": 106,
       "panels": [],
@@ -12178,7 +12178,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 392
+        "y": 389
       },
       "id": 84,
       "options": {
@@ -12304,7 +12304,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 392
+        "y": 389
       },
       "id": 85,
       "options": {
@@ -12382,7 +12382,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 400
+        "y": 397
       },
       "id": 90,
       "maxDataPoints": 50,
@@ -12473,7 +12473,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 408
+        "y": 405
       },
       "id": 75,
       "panels": [],
@@ -12546,7 +12546,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 409
+        "y": 406
       },
       "id": 78,
       "options": {
@@ -12651,7 +12651,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 409
+        "y": 406
       },
       "id": 79,
       "options": {
@@ -12768,7 +12768,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 417
+        "y": 414
       },
       "id": 77,
       "options": {
@@ -12820,6 +12820,7 @@
       "type": "timeseries"
     }
   ],
+  "preload": false,
   "refresh": "",
   "schemaVersion": 40,
   "tags": [
@@ -12955,6 +12956,6 @@
   "timezone": "browser",
   "title": "Loki Metrics Dashboard",
   "uid": "deaw7hb99mbcwb",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
