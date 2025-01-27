@@ -5,7 +5,7 @@ module StaticPagesHelper
   end
 
   def link_to_faq(question:)
-    link_to question, faq_url(anchor: question.parameterize)
+    link_to question, faq_path(anchor: question.parameterize)
   end
 
   def store_path(ref, platform: nil)
