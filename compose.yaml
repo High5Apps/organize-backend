@@ -117,6 +117,7 @@ services:
       - "127.0.0.1:9395:9394"
     restart: always
     volumes:
+      - site-page-cache:/rails/public/cached_pages
       - site-storage:/rails/storage
   web:
     build:
@@ -134,6 +135,7 @@ services:
     volumes:
       - cert-www:/var/www/certbot/:ro
       - cert-conf:/etc/nginx/ssl/:ro
+      - site-page-cache:/var/www/site/cached_pages/:ro
 
 volumes:
   cert-conf:
@@ -142,4 +144,5 @@ volumes:
   monitor-data:
   monitor-dash-data:
   monitor-logs-data:
+  site-page-cache:
   site-storage:

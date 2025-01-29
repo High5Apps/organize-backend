@@ -55,6 +55,8 @@ COPY store.conf /etc/nginx/store.conf
 COPY public public
 COPY vhost-traffic-status.conf /etc/nginx/vhost-traffic-status.conf
 
+COPY --from=localhost:5001/organize-site /rails/public /var/www/site
+
 ENTRYPOINT [ "./docker-entrypoint.sh" ]
 CMD [ "nginx", "-g", "daemon off;" ]
 
