@@ -55,13 +55,14 @@ COPY store.conf /etc/nginx/store.conf
 COPY public public
 COPY vhost-traffic-status.conf /etc/nginx/vhost-traffic-status.conf
 
-COPY --from=localhost:5001/organize-site /rails/public /var/www/site
-
 ENTRYPOINT [ "./docker-entrypoint.sh" ]
 CMD [ "nginx", "-g", "daemon off;" ]
 
 FROM prod AS dev
 
 COPY nginx.development.conf /etc/nginx/nginx.development.conf
+COPY --from=localhost:5001/organize-site-dev /rails/public /var/www/site
 
 FROM prod
+
+COPY --from=localhost:5001/organize-site /rails/public /var/www/site
