@@ -67,3 +67,6 @@ gem 'yabeda-rails', '~> 0.9.0'
 gem 'yabeda-prometheus', '~> 0.9.1'
 gem 'yabeda-puma-plugin', '~> 0.7.1'
 gem 'yabeda-activerecord', '~> 0.1.1'
+
+# Used for structured request logging
+gem 'lograge', '~> 0.14.0'

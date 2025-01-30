@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   include Authenticatable
+  include SetCurrentRequestDetails
 
   before_action :authenticate_user
   before_action :check_user_org_is_in_good_standing
