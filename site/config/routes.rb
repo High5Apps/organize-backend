@@ -1,22 +1,24 @@
 Rails.application.routes.draw do
-  controller "static_pages" do
-    root "home"
+  scope format: false do
+    controller "static_pages" do
+      root "home"
 
-    get "about"
-    get "blog"
-    get "faq", action: "frequently_asked_questions"
-    get "privacy"
-    get "terms"
+      get "about"
+      get "blog"
+      get "faq", action: "frequently_asked_questions"
+      get "privacy"
+      get "terms"
 
-    scope as: :blog, path: :blog do
-      get "aeiou_framework"
-      get "community_allies"
-      get "negotiations"
-      get "structure_tests"
-      get "tips_for_organic_leader_identification"
-      get "tips_for_organizing_conversations"
-      get "tips_for_starting_a_union"
-      get "union_busting_defenses"
+      scope as: :blog, path: :blog do
+        get "aeiou_framework"
+        get "community_allies"
+        get "negotiations"
+        get "structure_tests"
+        get "tips_for_organic_leader_identification"
+        get "tips_for_organizing_conversations"
+        get "tips_for_starting_a_union"
+        get "union_busting_defenses"
+      end
     end
   end
 
