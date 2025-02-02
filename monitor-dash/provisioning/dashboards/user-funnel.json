@@ -124,7 +124,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "sum by (status) (count_over_time({compose_service=\"web\"} |= `\"uri\": \"/\"` | json [$__auto]))",
+          "expr": "sum by (status) (count_over_time({compose_service=\"web\"} |= `\"uri\": \"/\"` or `\"uri\": \"/cached_pages/index.html\"` | json [$__auto]))",
           "legendFormat": "{{status}}",
           "queryType": "range",
           "refId": "A"
@@ -852,6 +852,6 @@
   "timezone": "browser",
   "title": "User Funnel",
   "uid": "de1z92u0yy51ca",
-  "version": 5,
+  "version": 6,
   "weekStart": ""
 }
