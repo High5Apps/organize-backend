@@ -2,6 +2,7 @@ class ApplicationController < ActionController::API
   include Authenticatable
   include SetCurrentRequestDetails
 
+  before_action :delay_development_responses
   before_action :authenticate_user
   before_action :check_user_org_is_in_good_standing
 
@@ -40,6 +41,10 @@ class ApplicationController < ActionController::API
 
   def check_user_org_is_in_good_standing_but_maybe_not_verified
     check_user_org_is_in_good_standing skip_verified: true
+  end
+
+  def delay_development_responses
+    sleep 0.5 if Rails.env.development?
   end
 
   def pagination_dict(collection)
