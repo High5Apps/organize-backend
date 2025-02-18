@@ -70,6 +70,7 @@ class V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_pattern do
       response.parsed_body => {
         email: String,
+        encrypted_employer_name:,
         encrypted_name:,
         encrypted_member_definition:,
         graph: {

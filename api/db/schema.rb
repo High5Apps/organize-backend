@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_27_183842) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_17_222602) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -110,6 +110,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_27_183842) do
     t.datetime "verified_at"
     t.string "verification_code", null: false
     t.datetime "behind_on_payments_at"
+    t.jsonb "encrypted_employer_name"
     t.index ["email"], name: "index_orgs_on_email", unique: true
   end
 

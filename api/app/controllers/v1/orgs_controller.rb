@@ -1,6 +1,7 @@
 class V1::OrgsController < ApplicationController
   PERMITTED_PARAMS = [
     :email,
+    EncryptedMessage.permitted_params(:employer_name),
     EncryptedMessage.permitted_params(:name),
     EncryptedMessage.permitted_params(:member_definition),
   ]
@@ -26,6 +27,7 @@ class V1::OrgsController < ApplicationController
       email: (@org.email if authenticated_user.can? :edit_org),
       graph: @org.graph,
       id: @org.id,
+      encrypted_employer_name: @org.encrypted_employer_name,
       encrypted_name: @org.encrypted_name,
       encrypted_member_definition: @org.encrypted_member_definition,
     }.compact

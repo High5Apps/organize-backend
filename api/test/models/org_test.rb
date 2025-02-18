@@ -10,6 +10,33 @@ class OrgTest < ActiveSupport::TestCase
     assert @org.valid?
   end
 
+  test 'encrypted_employer_name should be optional' do
+    @org.encrypted_employer_name = nil
+    assert @org.valid?
+  end
+
+  test 'encrypted_employer_name should be nil when not present' do
+    @org.update! encrypted_employer_name: nil
+    assert_nil @org.encrypted_employer_name_before_type_cast
+  end
+
+  test 'encrypted_employer_name error messages should not include "Encrypted"' do
+    @org.encrypted_employer_name.ciphertext = \
+      Base64.strict_encode64('a' * (1 + Org::MAX_EMPLOYER_NAME_LENGTH))
+    @org.valid?
+    assert_not @org.errors.full_messages.first.include? 'Encrypted'
+  end
+
+  test 'encrypted_employer_name should be less than MAX_EMPLOYER_NAME_LENGTH' do
+    @org.encrypted_employer_name.ciphertext = \
+      Base64.strict_encode64('a' * Org::MAX_EMPLOYER_NAME_LENGTH)
+    @org.valid?
+    assert @org.valid?
+    @org.encrypted_employer_name.ciphertext = \
+      Base64.strict_encode64('a' * (1 + Org::MAX_EMPLOYER_NAME_LENGTH))
+    assert @org.invalid?
+  end
+
   test 'encrypted_name should be present' do
     @org.encrypted_name = nil
     assert @org.invalid?

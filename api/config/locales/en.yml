@@ -42,6 +42,7 @@ en:
       comment:
         encrypted_body: 'Body'
       org:
+        encrypted_employer_name: 'Employer name'
         encrypted_name: 'Name'
         encrypted_member_definition: 'Member definition'
       post:

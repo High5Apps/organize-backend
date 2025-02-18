@@ -2,6 +2,7 @@ class Org < ApplicationRecord
   include Encryptable
 
   MAX_EMAIL_LENGTH = 100
+  MAX_EMPLOYER_NAME_LENGTH = 50
   MAX_NAME_LENGTH = 35
   MAX_MEMBER_DEFINITION_LENGTH = 75
   NON_PRODUCTION_VERIFICATION_CODE = '444444'
@@ -19,6 +20,7 @@ class Org < ApplicationRecord
   has_many :terms, through: :users
   has_many :upvotes, through: :users
 
+  has_encrypted :employer_name, max_length: MAX_EMPLOYER_NAME_LENGTH
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
   has_encrypted :member_definition,
     present: true,

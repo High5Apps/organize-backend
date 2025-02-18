@@ -1,5 +1,6 @@
 one:
   email: a40c89936-f180-47c5-8d92-0c4742e3a394@example.com
+  encrypted_employer_name: { c: Y39AjOaIixhGzQMpwpJnlwK+8aGG, n: f5mM6WLKKKaSHBbe, t: vsOT7x8EVJua2Ti27LL3RQ== }
   encrypted_name: { c: kg5kt834S4Wwbw==, n: zp4HCpw9R5Ykf7wu, t: yq5J6E9+spj1IfeP42fahQ== }
   encrypted_member_definition: { c: gw+vgHOgqMNuveQr6BM9PEV46cWz2m7CGhi05Jdi0O1A35g=, n: iO2jsSBOPIzvB/r8, t: k/1t2cyQwKWSuocylDbsHA== }
   verification_code: 444444
