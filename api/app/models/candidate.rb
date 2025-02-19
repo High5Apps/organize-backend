@@ -33,13 +33,13 @@ class Candidate < ApplicationRecord
   private
 
   def encrypted_title_absent
-    unless encrypted_title&.blank?
+    unless encrypted_title.blank?
       errors.add :encrypted_title, 'Must be absent for elections'
     end
   end
 
   def encrypted_title_present
-    if encrypted_title&.blank?
+    if encrypted_title.blank?
       errors.add :encrypted_title, 'Must be present for non-elections'
     end
   end

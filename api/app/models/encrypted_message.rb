@@ -35,7 +35,9 @@ class EncryptedMessage
   end
 
   def self.load(hash)
-    filtered_hash = hash&.slice *KEYS.map(&:to_s)
+    return nil if hash.nil?
+
+    filtered_hash = hash.slice *KEYS.map(&:to_s)
     EncryptedMessage.new filtered_hash
   end
 

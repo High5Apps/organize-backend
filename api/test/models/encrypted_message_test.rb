@@ -49,4 +49,8 @@ class EncryptedMessageTest < ActiveSupport::TestCase
       EncryptedMessage.new unexpected_attribute: 'foo'
     end
   end
+
+  test 'load should return nil if input is nil' do
+    assert_nil EncryptedMessage.load(nil)
+  end
 end

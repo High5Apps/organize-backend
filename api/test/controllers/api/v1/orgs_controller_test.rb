@@ -86,6 +86,13 @@ class V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'my_org should not include encrypted_employer_name if it is not set' do
+    @user_in_org.org.update! encrypted_employer_name: nil
+    get v1_my_org_url,
+      headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL)
+    assert_not response.parsed_body.has_key?(:encrypted_employer_name)
+  end
+
   test 'should not show my_org without authorization' do
     get v1_my_org_url
     assert_response :unauthorized

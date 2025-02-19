@@ -154,6 +154,13 @@ class V1::PostsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'show response encrypted_body should be nil if it is not set' do
+    assert_not @post.encrypted_body.blank?
+    @post.update! encrypted_body: nil
+    get v1_post_url(@post), headers: @authorized_headers
+    assert_nil response.parsed_body.dig(:post, :encrypted_body)
+  end
+
   test 'should not show post in another Org' do
     post_in_another_org = posts :two
     assert_not_equal @user.org, post_in_another_org.org
