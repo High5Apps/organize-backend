@@ -17,6 +17,8 @@ class UnionCard < ApplicationRecord
   validates :signed_at, presence: true
   validates :user, uniqueness: true
 
+  before_validation :convert_signature_to_binary, on: :create
+
   has_encrypted :agreement, present: true, max_length: MAX_AGREEMENT_LENGTH
   has_encrypted :email, present: true, max_length: MAX_EMAIL_LENGTH
   has_encrypted :employer_name,
@@ -24,4 +26,15 @@ class UnionCard < ApplicationRecord
     max_length: MAX_EMPLOYER_NAME_LENGTH
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
   has_encrypted :phone, present: true, max_length: MAX_PHONE_LENGTH
+
+  private
+
+  def convert_signature_to_binary
+    begin
+      signature_bytes = Base64.strict_decode64(self.signature_bytes)
+      self.signature_bytes = signature_bytes
+    rescue => exception
+      self.signature_bytes = nil
+    end
+  end
 end
