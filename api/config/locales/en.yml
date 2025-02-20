@@ -68,3 +68,7 @@ en:
           attributes:
             nominee:
               taken: 'has already been nominated'
+        union_card:
+          attributes:
+            user:
+              taken: 'has already created a union card'

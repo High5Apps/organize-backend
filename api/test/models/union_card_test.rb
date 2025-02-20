@@ -138,4 +138,16 @@ class UnionCardTest < ActiveSupport::TestCase
     @card.user = nil
     assert @card.invalid?
   end
+
+  test 'user should not be able to create multiple union cards' do
+    assert_no_difference 'UnionCard.count' do
+      @card.dup.save
+    end
+  end
+
+  test 'user uniqueness error message should be custom' do
+    duplicate = @card.dup
+    assert duplicate.invalid?
+    assert_not_includes duplicate.errors.full_messages.first, 'taken'
+  end
 end

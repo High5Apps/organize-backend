@@ -15,6 +15,7 @@ class UnionCard < ApplicationRecord
     presence: true,
     length: { is: SIGNATURE_LENGTH }
   validates :signed_at, presence: true
+  validates :user, uniqueness: true
 
   has_encrypted :agreement, present: true, max_length: MAX_AGREEMENT_LENGTH
   has_encrypted :email, present: true, max_length: MAX_EMAIL_LENGTH

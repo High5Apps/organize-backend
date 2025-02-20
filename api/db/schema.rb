@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_20_011445) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_20_181719) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -163,7 +163,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_20_011445) do
     t.datetime "signed_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_union_cards_on_user_id"
+    t.index ["user_id"], name: "index_union_cards_on_user_id", unique: true
   end
 
   create_table "upvotes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
