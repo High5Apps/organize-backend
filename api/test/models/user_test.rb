@@ -231,7 +231,7 @@ class UserTest < ActiveSupport::TestCase
     before_user_seven_joined = \
       @user.org.users.with_service_stats(users(:seven).joined_at - 1.second)
     recruiter = before_user_seven_joined.find users(:three).id
-    assert_equal -1, recruiter.recruit_count - recruit_count
+    assert_equal (-1), recruiter.recruit_count - recruit_count
   end
 
   test 'with_service_stats recruit_count should sum to (member count - 1) for an org' do
@@ -268,7 +268,7 @@ class UserTest < ActiveSupport::TestCase
     before_connection = \
       @user.org.users.with_service_stats(connection.created_at - 1.second)
     sharer = before_connection.find connection.sharer.id
-    assert_equal -1, sharer.connection_count - connection_count
+    assert_equal (-1), sharer.connection_count - connection_count
   end
 
   test 'with_service_stats should not include scanned_connections created after time' do
@@ -282,7 +282,7 @@ class UserTest < ActiveSupport::TestCase
     before_connection = \
       @user.org.users.with_service_stats(connection.created_at - 1.second)
     scanner = before_connection.find connection.scanner.id
-    assert_equal -1, scanner.connection_count - connection_count
+    assert_equal (-1), scanner.connection_count - connection_count
   end
 
   test 'search_by_pseudonym should match full name' do
@@ -443,7 +443,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def sort_by_service(relation, time)
-    expected_ordered_users = relation.with_service_stats(time)
+    relation.with_service_stats(time)
       .sort_by do |u|
         tenureInMonths = ((time - u.joined_at) / 1.month)
         [tenureInMonths + u.connection_count + 3 * u.recruit_count, u.id]
