@@ -102,6 +102,8 @@ class User < ApplicationRecord
   has_many :scanners, through: :shared_connections
   has_many :sharers, through: :scanned_connections
 
+  has_one :union_card
+
   validates :org, presence: true, if: :will_save_change_to_left_org_at?
   validates :public_key_bytes,
     presence: true,

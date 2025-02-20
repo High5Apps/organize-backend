@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_17_222602) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_20_011445) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -152,6 +152,20 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_17_222602) do
     t.index ["user_id"], name: "index_terms_on_user_id"
   end
 
+  create_table "union_cards", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.jsonb "encrypted_agreement", null: false
+    t.jsonb "encrypted_email", null: false
+    t.jsonb "encrypted_employer_name", null: false
+    t.jsonb "encrypted_name", null: false
+    t.jsonb "encrypted_phone", null: false
+    t.binary "signature_bytes", null: false
+    t.uuid "user_id", null: false
+    t.datetime "signed_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_union_cards_on_user_id"
+  end
+
   create_table "upvotes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "value", null: false
     t.uuid "user_id", null: false
@@ -207,6 +221,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_17_222602) do
   add_foreign_key "posts", "users"
   add_foreign_key "terms", "ballots"
   add_foreign_key "terms", "users"
+  add_foreign_key "union_cards", "users"
   add_foreign_key "upvotes", "comments"
   add_foreign_key "upvotes", "posts"
   add_foreign_key "upvotes", "users"

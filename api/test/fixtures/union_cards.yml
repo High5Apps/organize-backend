@@ -1,0 +1,9 @@
+one:
+  encrypted_agreement: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_email: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_employer_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_phone: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  signature_bytes: !!binary "tE9c0yunB9lB03mh6nh5C-bqBb2VL4gebwL6Vt_sV_pln5ji-7Qz2bTl6ZkOsjpTSpKwNGXRDtxeVHrF6POAHw"
+  signed_at: <%= 1.second.ago.to_fs(:db) %>
+  user: one
