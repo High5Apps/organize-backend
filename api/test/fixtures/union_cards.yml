@@ -4,6 +4,6 @@ one:
   encrypted_employer_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_phone: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
-  signature_bytes: !!binary "tE9c0yunB9lB03mh6nh5C-bqBb2VL4gebwL6Vt_sV_pln5ji-7Qz2bTl6ZkOsjpTSpKwNGXRDtxeVHrF6POAHw"
+  signature_bytes: !!binary "VVFY0veX6mcDmEeLTmHWyM77yu/E5RpAhEQMeQuOF5HwMaAPnMDmuZ5SHQ10atvaFIaupcqnYltBSGiPuqkTbw=="
   signed_at: <%= 1.second.ago.to_fs(:db) %>
   user: one

@@ -7,7 +7,7 @@ class UnionCard < ApplicationRecord
   MAX_EMPLOYER_NAME_LENGTH = Org::MAX_EMPLOYER_NAME_LENGTH
   MAX_NAME_LENGTH = 100
   MAX_PHONE_LENGTH = 20
-  SIGNATURE_LENGTH = 61
+  SIGNATURE_LENGTH = 64
 
   belongs_to :user
 
