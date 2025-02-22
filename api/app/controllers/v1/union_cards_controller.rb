@@ -18,6 +18,21 @@ class V1::UnionCardsController < ApplicationController
     end
   end
 
+  def my_union_card
+    union_card = authenticated_user.union_card
+    if union_card
+      # Convert EncryptedMessage params into just the encrypted attribute name
+      attr_names = PERMITTED_PARAMS
+        .map { |v| v.is_a?(Hash) ? v.keys.first : v }
+        .push(:id, :user_id)
+      render json: union_card.slice(attr_names).merge({
+        signature_bytes: union_card.signature,
+      })
+    else
+      head :no_content
+    end
+  end
+
   private
 
   def create_params

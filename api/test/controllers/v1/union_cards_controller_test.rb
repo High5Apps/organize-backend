@@ -45,6 +45,34 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'should show my_union_card' do
+    get v1_my_union_card_url, headers: @authorized_headers
+    assert_response :ok
+
+    assert_pattern do
+      response.parsed_body => {
+        encrypted_agreement: { c: String, n: String, t: String },
+        encrypted_email: { c: String, n: String, t: String },
+        encrypted_employer_name: { c: String, n: String, t: String },
+        encrypted_name: { c: String, n: String, t: String },
+        encrypted_phone: { c: String, n: String, t: String },
+        id: String,
+        signature_bytes: String,
+        signed_at: String,
+        user_id: String,
+        **nil
+      }
+    end
+  end
+
+  test 'should not show my_union_card with invalid authorization' do
+    get v1_my_union_card_url,
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
+    assert_response :unauthorized
+  end
+
   private
 
   def destroy_template_union_card_for_create_params

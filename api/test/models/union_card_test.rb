@@ -119,6 +119,10 @@ class UnionCardTest < ActiveSupport::TestCase
     assert @card.invalid?
   end
 
+  test 'signature should return the Base64 encoded version of signature_bytes' do
+    assert_equal @card.signature, Base64.strict_encode64(@card.signature_bytes)
+  end
+
   test 'signature_bytes should be present' do
     @card.signature_bytes = nil
     assert @card.invalid?

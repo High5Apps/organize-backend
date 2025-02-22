@@ -27,6 +27,10 @@ class UnionCard < ApplicationRecord
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
   has_encrypted :phone, present: true, max_length: MAX_PHONE_LENGTH
 
+  def signature
+    Base64.strict_encode64 signature_bytes
+  end
+
   private
 
   def convert_signature_to_binary
