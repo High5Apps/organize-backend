@@ -152,6 +152,8 @@ class UnionCardTest < ActiveSupport::TestCase
   test 'user uniqueness error message should be custom' do
     duplicate = @card.dup
     assert duplicate.invalid?
-    assert_not_includes duplicate.errors.full_messages.first, 'taken'
+    error = duplicate.errors[:user].first
+    assert_not_nil error
+    assert_not_includes error, 'taken'
   end
 end

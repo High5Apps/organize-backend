@@ -45,6 +45,19 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'should not create if user has already created a union card' do
+    params = {
+      union_card: @card.attributes.as_json.with_indifferent_access
+        .merge(signature_bytes: Base64.strict_encode64(@card.signature_bytes)),
+    }
+    post v1_union_cards_url, params:, headers: @authorized_headers
+    assert_response :unprocessable_entity
+
+    response.parsed_body => error_messages: [error_message,]
+    assert_includes error_message,
+      I18n.t('activerecord.errors.models.union_card.attributes.user.taken')
+  end
+
   test 'should show my_union_card' do
     get v1_my_union_card_url, headers: @authorized_headers
     assert_response :ok
