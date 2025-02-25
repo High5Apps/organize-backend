@@ -58,6 +58,26 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
       I18n.t('activerecord.errors.models.union_card.attributes.user.taken')
   end
 
+  test 'should destroy_my_union_card' do
+    delete v1_destroy_my_union_card_url, headers: @authorized_headers
+    assert_response :no_content
+  end
+
+  test 'should not destroy_my_union_card with invalid authorization' do
+    delete v1_destroy_my_union_card_url,
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
+    assert_response :unauthorized
+  end
+
+  test 'destroy_my_union_card should succeed even if user has no union card' do
+    3.times do
+      delete v1_destroy_my_union_card_url, headers: @authorized_headers
+      assert_response :no_content
+    end
+  end
+
   test 'should show my_union_card' do
     get v1_my_union_card_url, headers: @authorized_headers
     assert_response :ok

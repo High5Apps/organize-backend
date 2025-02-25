@@ -55,6 +55,9 @@ module GeneratedPathHelpersModule
   def v1_connections_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
+  def v1_destroy_my_union_card_path(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
   def v1_flag_reports_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -71,6 +74,9 @@ module GeneratedPathHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def v1_my_org_path(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
+  def v1_my_union_card_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def v1_nomination_path(*args); end

@@ -22,6 +22,11 @@ class V1::UnionCardsController < ApplicationController
     end
   end
 
+  def destroy_my_union_card
+    authenticated_user.union_card&.destroy!
+    head :no_content
+  end
+
   def my_union_card
     union_card = authenticated_user.union_card
     if union_card

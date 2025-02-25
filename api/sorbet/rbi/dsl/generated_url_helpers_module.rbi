@@ -55,6 +55,9 @@ module GeneratedUrlHelpersModule
   def v1_connections_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
+  def v1_destroy_my_union_card_url(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
   def v1_flag_reports_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -71,6 +74,9 @@ module GeneratedUrlHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def v1_my_org_url(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
+  def v1_my_union_card_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
   def v1_nomination_url(*args); end

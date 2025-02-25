@@ -41,6 +41,7 @@ Rails.application.routes.draw do
     get 'connection_preview', to: 'connections#preview'
     get 'my_permissions', to: 'permissions#index_my_permissions', as: 'index_my_permissions'
     get 'union_card', to: 'union_cards#my_union_card', as: 'my_union_card'
+    delete 'union_card', to: 'union_cards#destroy_my_union_card', as: 'destroy_my_union_card'
     get 'org', to: 'orgs#my_org', as: 'my_org'
     patch 'org', to: 'orgs#update_my_org', as: 'update_my_org'
     post 'leave_org', to: 'users#leave_org'
