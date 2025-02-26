@@ -9,6 +9,11 @@ class V1::UnionCardsController < ApplicationController
     :signed_at,
   ]
 
+  # Convert EncryptedMessage params into just the encrypted attribute name
+  PERMITTED_ATTRIBUTE_NAMES = PERMITTED_PARAMS
+    .map { |v| v.is_a?(Hash) ? v.keys.first : v }
+    .push(:id, :user_id)
+
   def create
     return render_error :unprocessable_entity, [
       "User #{I18n.t 'activerecord.errors.models.union_card.attributes.user.taken'}"
@@ -30,13 +35,7 @@ class V1::UnionCardsController < ApplicationController
   def my_union_card
     union_card = authenticated_user.union_card
     if union_card
-      # Convert EncryptedMessage params into just the encrypted attribute name
-      attr_names = PERMITTED_PARAMS
-        .map { |v| v.is_a?(Hash) ? v.keys.first : v }
-        .push(:id, :user_id)
-      render json: union_card.slice(attr_names).merge({
-        signature_bytes: union_card.signature,
-      })
+      render json: union_card.slice(PERMITTED_ATTRIBUTE_NAMES)
     else
       head :no_content
     end

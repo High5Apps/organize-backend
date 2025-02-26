@@ -7,10 +7,6 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
     @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
 
     @card = union_cards(:one)
-    @params = {
-      union_card: @card.attributes.as_json.with_indifferent_access
-        .merge(signature_bytes: Base64.strict_encode64(@card.signature_bytes)),
-    }
   end
 
   test 'should create with valid params' do
@@ -113,8 +109,9 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
     # errors
     @card.destroy!
     {
-      union_card: @card.attributes.as_json.with_indifferent_access
-        .merge(signature_bytes: Base64.strict_encode64(@card.signature_bytes)),
+      union_card: @card
+        .slice(V1::UnionCardsController::PERMITTED_ATTRIBUTE_NAMES)
+        .as_json
     }
   end
 end
