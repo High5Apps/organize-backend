@@ -9,6 +9,9 @@ module Permission::Defaults
     moderate: {
       offices: Office::TYPE_STRINGS,
     },
+    view_union_cards: {
+      offices: ['founder', 'president', 'secretary'],
+    }
   }.with_indifferent_access.freeze
 
   DEFAULT_DEFAULT = {

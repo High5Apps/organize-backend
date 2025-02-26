@@ -5,6 +5,7 @@ class Permission < ApplicationRecord
     :edit_org,
     :moderate,
     :block_members,
+    :view_union_cards,
   ].freeze
 
   enum :scope, SCOPE_SYMBOLS, validate: true
