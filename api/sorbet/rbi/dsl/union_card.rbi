@@ -379,8 +379,17 @@ class UnionCard
   end
 
   module GeneratedAssociationMethods
+    sig { params(args: T.untyped, blk: T.untyped).returns(::Org) }
+    def build_org(*args, &blk); end
+
     sig { params(args: T.untyped, blk: T.untyped).returns(::User) }
     def build_user(*args, &blk); end
+
+    sig { params(args: T.untyped, blk: T.untyped).returns(::Org) }
+    def create_org(*args, &blk); end
+
+    sig { params(args: T.untyped, blk: T.untyped).returns(::Org) }
+    def create_org!(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(::User) }
     def create_user(*args, &blk); end
@@ -388,8 +397,20 @@ class UnionCard
     sig { params(args: T.untyped, blk: T.untyped).returns(::User) }
     def create_user!(*args, &blk); end
 
+    sig { returns(T.nilable(::Org)) }
+    def org; end
+
+    sig { params(value: T.nilable(::Org)).void }
+    def org=(value); end
+
+    sig { returns(T.nilable(::Org)) }
+    def reload_org; end
+
     sig { returns(T.nilable(::User)) }
     def reload_user; end
+
+    sig { void }
+    def reset_org; end
 
     sig { void }
     def reset_user; end

@@ -27,6 +27,15 @@ class UnionCard < ApplicationRecord
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
   has_encrypted :phone, present: true, max_length: MAX_PHONE_LENGTH
 
+  # This should only be used when joined with user
+  def public_key_bytes
+    begin
+      OpenSSL::PKey::EC.new(attributes['public_key_bytes']).to_pem
+    rescue
+      nil
+    end
+  end
+
   def signature_bytes=(value)
     begin
       write_attribute :signature_bytes, Base64.strict_decode64(value)

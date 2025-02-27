@@ -42,6 +42,7 @@ class V1::UnionCardsController < ApplicationController
     union_card = authenticated_user.union_card
     if union_card
       render json: union_card.slice(PERMITTED_ATTRIBUTE_NAMES)
+        .merge(public_key_bytes: authenticated_user.public_key_bytes)
     else
       head :no_content
     end
@@ -54,6 +55,8 @@ class V1::UnionCardsController < ApplicationController
   end
 
   def union_cards
-    authenticated_user.org&.union_cards.select(PERMITTED_ATTRIBUTE_NAMES)
+    authenticated_user.org&.union_cards
+      .joins(:user)
+      .select(PERMITTED_ATTRIBUTE_NAMES + ['users.public_key_bytes'])
   end
 end

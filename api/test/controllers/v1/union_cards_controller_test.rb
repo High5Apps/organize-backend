@@ -134,6 +134,7 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
         encrypted_name: { c: String, n: String, t: String },
         encrypted_phone: { c: String, n: String, t: String },
         id: String,
+        public_key_bytes: String,
         signature_bytes: String,
         signed_at: String,
         user_id: String,
