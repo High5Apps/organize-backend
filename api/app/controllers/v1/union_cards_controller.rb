@@ -35,7 +35,10 @@ class V1::UnionCardsController < ApplicationController
   end
 
   def index
-    render json: { union_cards: }
+    render json: {
+      union_cards:,
+      meta: pagination_dict(union_cards),
+    }
   end
 
   def my_union_card
@@ -63,5 +66,6 @@ class V1::UnionCardsController < ApplicationController
       .created_at_or_before(created_at_or_before)
       .joins(:user)
       .select(PERMITTED_ATTRIBUTE_NAMES + ['users.public_key_bytes'])
+      .page(params[:page]).without_count
   end
 end

@@ -122,6 +122,20 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
       @user.org.union_cards.created_at_or_before(created_at_or_before).ids.sort
   end
 
+  test 'index should include pagination metadata' do
+    get v1_union_cards_url, headers: @authorized_headers
+    assert_contains_pagination_data
+  end
+
+  test 'index should respect page param' do
+    page = 99
+    get v1_union_cards_url,
+      headers: @authorized_headers,
+      params: { page: }
+    pagination_data = assert_contains_pagination_data
+    assert_equal page, pagination_data[:current_page]
+  end
+
   test 'should show my_union_card' do
     get v1_my_union_card_url, headers: @authorized_headers
     assert_response :ok
