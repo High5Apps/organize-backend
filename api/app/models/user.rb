@@ -63,7 +63,7 @@ class User < ApplicationRecord
 
   CORRUPTED_AUTH_TAG_VALUE = Base64.strict_encode64('0' * EncryptedMessage::BYTE_LENGTH_AUTH_TAG).freeze
   CORRUPTED_CIPHERTEXT_VALUE = Base64.strict_encode64('0').freeze
-  PUBLIC_KEY_LENGTH = 91
+  PUBLIC_KEY_LENGTH = 178
 
   attr_writer :private_key
 
@@ -112,7 +112,6 @@ class User < ApplicationRecord
     same_org: { as: ->(user) { user }, name: 'Recruiter' },
     if: :recruiter
 
-  before_validation :convert_public_key_to_binary, on: :create
   before_update :on_join_org,
     if: -> { will_save_change_to_org_id? from: nil }
 
@@ -126,7 +125,23 @@ class User < ApplicationRecord
   end
 
   def public_key
-    OpenSSL::PKey::EC.new(public_key_bytes)
+    OpenSSL::PKey::EC.new(attributes['public_key_bytes'])
+  end
+
+  def public_key_bytes
+    begin
+      public_key.to_pem
+    rescue
+      nil
+    end
+  end
+
+  def public_key_bytes=(value)
+    begin
+      write_attribute :public_key_bytes, OpenSSL::PKey::EC.new(value).to_der
+    rescue
+      write_attribute :public_key_bytes, nil
+    end
   end
 
   def directly_connected_to?(user_id)
@@ -187,15 +202,6 @@ class User < ApplicationRecord
   private
 
     attr_reader :private_key
-
-    def convert_public_key_to_binary
-      begin
-        public_key_bytes = OpenSSL::PKey::EC.new(self.public_key_bytes).to_der
-        self.public_key_bytes = public_key_bytes
-      rescue => exception
-        self.public_key_bytes = nil
-      end
-    end
 
     def on_join_org
       self.pseudonym = org.next_pseudonym

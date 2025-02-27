@@ -7,11 +7,7 @@ class V1::UsersControllerTest < ActionDispatch::IntegrationTest
     @user_in_org = users(:three)
     @user_in_other_org = users(:two)
     @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
-    @params = {
-      user: @user.attributes.with_indifferent_access.slice(
-        *V1::UsersController::PERMITTED_PARAMS,
-      ).merge(public_key_bytes: @user.public_key.to_pem)
-    }
+    @params = { user: @user.slice(V1::UsersController::PERMITTED_PARAMS) }
   end
 
   test 'should create with valid params' do
