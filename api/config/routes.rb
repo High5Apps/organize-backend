@@ -35,7 +35,7 @@ Rails.application.routes.draw do
           resources :comments, only: [:create]
         end
     end
-    resources :union_cards, only: [:create]
+    resources :union_cards, only: [:index, :create]
     resources :users, only: [:index, :create, :show]
 
     get 'connection_preview', to: 'connections#preview'

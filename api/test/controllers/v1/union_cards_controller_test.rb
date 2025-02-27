@@ -7,6 +7,9 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
     @authorized_headers = authorized_headers(@user, Authenticatable::SCOPE_ALL)
 
     @card = union_cards(:one)
+
+    @non_officer = users(:three)
+    setup_test_key(@non_officer)
   end
 
   test 'should create with valid params' do
@@ -74,12 +77,57 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'should index' do
+    get v1_union_cards_url, headers: @authorized_headers
+    response.parsed_body => union_cards: [first_union_card, *]
+    assert_expected_union_card_format first_union_card
+  end
+
+  test 'should not index with invalid authorization' do
+    get v1_union_cards_url,
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
+    assert_response :unauthorized
+  end
+
+  test 'should not index unless user can view union cards' do
+    assert_not @non_officer.can? :view_union_cards
+    get v1_union_cards_url,
+      headers: authorized_headers(@non_officer, Authenticatable::SCOPE_ALL)
+    assert_response :forbidden
+  end
+
+  test 'index should only include union_cards from requester Org' do
+    get v1_union_cards_url, headers: @authorized_headers
+    union_card_ids = get_union_card_ids_from_response
+    assert_not_empty union_card_ids
+    union_cards = UnionCard.find(union_card_ids)
+    assert_not_equal union_cards.count, UnionCard.count
+    union_cards.each do |union_card|
+      assert_equal @user.org, union_card.org
+    end
+  end
+
   test 'should show my_union_card' do
     get v1_my_union_card_url, headers: @authorized_headers
     assert_response :ok
+    assert_expected_union_card_format response.parsed_body
+  end
 
+  test 'should not show my_union_card with invalid authorization' do
+    get v1_my_union_card_url,
+      headers: authorized_headers(@user,
+        Authenticatable::SCOPE_ALL,
+        expiration: 1.second.ago)
+    assert_response :unauthorized
+  end
+
+  private
+
+  def assert_expected_union_card_format(union_card)
     assert_pattern do
-      response.parsed_body => {
+      union_card => {
         encrypted_agreement: { c: String, n: String, t: String },
         encrypted_email: { c: String, n: String, t: String },
         encrypted_employer_name: { c: String, n: String, t: String },
@@ -94,16 +142,6 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'should not show my_union_card with invalid authorization' do
-    get v1_my_union_card_url,
-      headers: authorized_headers(@user,
-        Authenticatable::SCOPE_ALL,
-        expiration: 1.second.ago)
-    assert_response :unauthorized
-  end
-
-  private
-
   def destroy_template_union_card_for_create_params
     # Destroy the existing union card to prevent triggering duplicate validation
     # errors
@@ -113,5 +151,10 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
         .slice(V1::UnionCardsController::PERMITTED_ATTRIBUTE_NAMES)
         .as_json
     }
+  end
+
+  def get_union_card_ids_from_response
+    response.parsed_body => union_cards: union_card_jsons
+    union_card_jsons.map { |u| u[:id] }
   end
 end

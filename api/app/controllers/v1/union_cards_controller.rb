@@ -14,6 +14,8 @@ class V1::UnionCardsController < ApplicationController
     .map { |v| v.is_a?(Hash) ? v.keys.first : v }
     .push(:id, :user_id)
 
+  before_action :check_can_view_union_cards, only: [:index]
+
   def create
     return render_error :unprocessable_entity, [
       "User #{I18n.t 'activerecord.errors.models.union_card.attributes.user.taken'}"
@@ -32,6 +34,10 @@ class V1::UnionCardsController < ApplicationController
     head :no_content
   end
 
+  def index
+    render json: { union_cards: }
+  end
+
   def my_union_card
     union_card = authenticated_user.union_card
     if union_card
@@ -45,5 +51,9 @@ class V1::UnionCardsController < ApplicationController
 
   def create_params
     params.require(:union_card).permit(PERMITTED_PARAMS)
+  end
+
+  def union_cards
+    authenticated_user.org&.union_cards.select(PERMITTED_ATTRIBUTE_NAMES)
   end
 end

@@ -18,6 +18,7 @@ class Org < ApplicationRecord
   has_many :moderation_events, through: :users,
     source: :created_moderation_events
   has_many :terms, through: :users
+  has_many :union_cards, through: :users
   has_many :upvotes, through: :users
 
   has_encrypted :employer_name, max_length: MAX_EMPLOYER_NAME_LENGTH

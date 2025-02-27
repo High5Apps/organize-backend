@@ -11,6 +11,8 @@ class UnionCard < ApplicationRecord
 
   belongs_to :user
 
+  has_one :org, through: :user
+
   validates :signature_bytes,
     presence: true,
     length: { is: SIGNATURE_LENGTH }
