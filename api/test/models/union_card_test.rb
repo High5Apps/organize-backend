@@ -157,4 +157,14 @@ class UnionCardTest < ActiveSupport::TestCase
     assert_not_nil error
     assert_not_includes error, 'taken'
   end
+
+  test 'created_at_or_before should not include union_cards created after time' do
+    card_created_at = union_cards(:one).created_at
+    recent_cards = UnionCard.created_at_or_before(card_created_at)
+    assert_not_equal UnionCard.count, recent_cards.count
+    assert_not_empty recent_cards
+    recent_cards.each do |card|
+      assert_operator card.created_at, :<=, card_created_at
+    end
+  end
 end

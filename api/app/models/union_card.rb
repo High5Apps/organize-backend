@@ -1,6 +1,8 @@
 class UnionCard < ApplicationRecord
   include Encryptable
 
+  scope :created_at_or_before, ->(time) { where(created_at: ..time) }
+
   MAX_AGREEMENT_LENGTH = \
     93 + Org::MAX_NAME_LENGTH + Org::MAX_EMPLOYER_NAME_LENGTH
   MAX_EMAIL_LENGTH = Org::MAX_EMAIL_LENGTH
