@@ -109,6 +109,19 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'index should respect created_at_or_before param' do
+    union_card = union_cards :one
+    created_at_or_before = union_card.created_at.iso8601(6)
+    get v1_union_cards_url, headers: @authorized_headers,
+      params: { created_at_or_before: }
+    union_card_ids = get_union_card_ids_from_response
+
+    assert_not_empty union_card_ids
+    assert_not_equal union_card_ids.sort, @user.org.union_cards.ids.sort
+    assert_equal union_card_ids.sort,
+      @user.org.union_cards.created_at_or_before(created_at_or_before).ids.sort
+  end
+
   test 'should show my_union_card' do
     get v1_my_union_card_url, headers: @authorized_headers
     assert_response :ok

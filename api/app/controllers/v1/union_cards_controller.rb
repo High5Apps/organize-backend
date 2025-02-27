@@ -55,7 +55,12 @@ class V1::UnionCardsController < ApplicationController
   end
 
   def union_cards
+    created_at_or_before_param = params[:created_at_or_before] ||
+      Time.now.iso8601(6)
+    created_at_or_before = Time.iso8601(created_at_or_before_param.to_s).utc
+
     authenticated_user.org&.union_cards
+      .created_at_or_before(created_at_or_before)
       .joins(:user)
       .select(PERMITTED_ATTRIBUTE_NAMES + ['users.public_key_bytes'])
   end
