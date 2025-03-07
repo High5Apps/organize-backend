@@ -367,6 +367,18 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  test 'leave_org should destroy the associated union_card' do
+    assert_not_nil @user.union_card
+    @user.leave_org
+    assert_nil @user.reload.union_card
+  end
+
+  test 'leave_org should not fail if user has no associated union_card' do
+    @user.union_card.destroy!
+    assert_nil @user.reload.union_card
+    @user.leave_org
+  end
+
   test 'leave_org should set deleted_at to the current time for comments' do
     freeze_time do
       lam = -> { @user.comments.sample.reload.deleted_at }

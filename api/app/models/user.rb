@@ -180,6 +180,8 @@ class User < ApplicationRecord
 
       terms.active_at(now).update_all accepted: false
 
+      union_card&.destroy!
+
       update! left_org_at: now
     end
   end
