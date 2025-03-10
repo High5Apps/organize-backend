@@ -124,6 +124,44 @@ class V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'should show my_org_graph' do
+    get v1_my_org_graph_url,
+      headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL)
+    assert_response :ok
+
+    assert_pattern do
+      response.parsed_body => {
+        blocked_user_ids: [String, *],
+        connections: [[String, String], *],
+        left_org_user_ids: [String, *],
+        user_ids: [String, *],
+        **nil
+      }
+    end
+  end
+
+  test 'should not show my_org_graph without authorization' do
+    get v1_my_org_graph_url
+    assert_response :unauthorized
+  end
+
+  test 'should not show my_org_graph with invalid authorization' do
+    headers = authorized_headers @user_in_org,
+      Authenticatable::SCOPE_ALL,
+      expiration: 1.second.ago
+    get(v1_my_org_graph_url, headers:)
+    assert_response :unauthorized
+  end
+
+  test 'should not show my_org_graph when user has no org' do
+    user_without_org = users(:two)
+    assert_nil user_without_org.org
+
+    get v1_my_org_graph_url,
+      headers: authorized_headers(user_without_org, Authenticatable::SCOPE_ALL)
+    assert_response :forbidden
+  end
+
   test 'should update with valid params' do
     assert_changes -> { @org.reload.encrypted_name.attributes },
         from: @org.encrypted_name.attributes,

@@ -33,6 +33,10 @@ class V1::OrgsController < ApplicationController
     }.compact
   end
 
+  def my_org_graph
+    render json: @org.graph
+  end
+
   def update_my_org
     if @org.update(create_or_update_params)
       head :ok

@@ -43,6 +43,7 @@ Rails.application.routes.draw do
     get 'union_card', to: 'union_cards#my_union_card', as: 'my_union_card'
     delete 'union_card', to: 'union_cards#destroy_my_union_card', as: 'destroy_my_union_card'
     get 'org', to: 'orgs#my_org', as: 'my_org'
+    get 'org/graph', to: 'orgs#my_org_graph', as: 'my_org_graph'
     patch 'org', to: 'orgs#update_my_org', as: 'update_my_org'
     post 'leave_org', to: 'users#leave_org'
     post 'verify', to: 'orgs#verify'
