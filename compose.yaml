@@ -72,14 +72,13 @@ services:
     volumes:
       - monitor-dash-data:/var/lib/grafana
   monitor-db:
-    command: '--no-collector.stat_bgwriter'
     depends_on:
       - db
     environment:
       DATA_SOURCE_PASS: ${ORGANIZE_DATABASE_PASSWORD:?err}
       DATA_SOURCE_URI: db:5432/organize_production?sslmode=disable
       DATA_SOURCE_USER: postgres
-    image: prometheuscommunity/postgres-exporter:v0.15.0
+    image: prometheuscommunity/postgres-exporter:v0.17.1
     ports:
       - "127.0.0.1:9187:9187"
   monitor-logs:

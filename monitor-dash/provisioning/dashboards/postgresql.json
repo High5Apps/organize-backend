@@ -1425,7 +1425,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "pg_settings_seq_page_cost",
+          "expr": "pg_settings_seq_page_cost{instance=\"$instance\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "refId": "A"
@@ -2732,7 +2732,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "irate(pg_stat_bgwriter_buffers_backend{instance=\"$instance\"}[$__rate_interval])",
+          "expr": "irate(pg_stat_bgwriter_buffers_backend_total{instance=\"$instance\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "buffers_backend",
@@ -2745,7 +2745,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "irate(pg_stat_bgwriter_buffers_alloc{instance=\"$instance\"}[$__rate_interval])",
+          "expr": "irate(pg_stat_bgwriter_buffers_alloc_total{instance=\"$instance\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "buffers_alloc",
@@ -2758,7 +2758,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "irate(pg_stat_bgwriter_buffers_backend_fsync{instance=\"$instance\"}[$__rate_interval])",
+          "expr": "irate(pg_stat_bgwriter_buffers_backend_fsync_total{instance=\"$instance\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "backend_fsync",
@@ -2771,7 +2771,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "irate(pg_stat_bgwriter_buffers_checkpoint{instance=\"$instance\"}[$__rate_interval])",
+          "expr": "irate(pg_stat_bgwriter_buffers_checkpoint_total{instance=\"$instance\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "buffers_checkpoint",
@@ -2784,7 +2784,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "irate(pg_stat_bgwriter_buffers_clean{instance=\"$instance\"}[$__rate_interval])",
+          "expr": "irate(pg_stat_bgwriter_buffers_clean_total{instance=\"$instance\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "buffers_clean",
@@ -3108,7 +3108,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "irate(pg_stat_bgwriter_checkpoint_write_time{instance=\"$instance\"}[$__rate_interval])",
+          "expr": "irate(pg_stat_bgwriter_checkpoint_write_time_total{instance=\"$instance\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "write_time - Total amount of time that has been spent in the portion of checkpoint processing where files are written to disk.",
@@ -3121,7 +3121,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "irate(pg_stat_bgwriter_checkpoint_sync_time{instance=\"$instance\"}[$__rate_interval])",
+          "expr": "irate(pg_stat_bgwriter_checkpoint_sync_time_total{instance=\"$instance\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "sync_time - Total amount of time that has been spent in the portion of checkpoint processing where files are synchronized to disk.",
