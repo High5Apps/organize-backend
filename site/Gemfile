@@ -66,3 +66,6 @@ gem "actionpack-page_caching", "~> 1.2.4"
 
 # Used for structured request logging
 gem "lograge", "~> 0.14.0"
+
+# Used for SEO social sharing meta tags
+gem "meta-tags", "~> 2"

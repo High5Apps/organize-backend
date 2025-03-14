@@ -1,22 +1,38 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>
-      <%= "#{sanitize content_for :title} | " if content_for? :title %>
-      Organize
-    </title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <%= display_meta_tags 'apple-mobile-web-app-capable': 'yes',
+      canonical: full_url_for,
+      charset: 'UTF-8',
+      description: 'Form your own labor union. With Organize, you and your coworkers can stand up to bad bosses together and win more of what you love.',
+      icon: [
+        { href: image_path('favicon.ico') },
+        { href: image_path('icon.png'), type: 'image/png' },
+        { href: image_path('icon.svg'), type: 'image/svg+xml' },
+        { href: image_path('icon.png'), rel: 'apple-touch-icon', sizes: '512x512', type: 'image/png' },
+      ],
+      image_src: image_url('icon.png'),
+      manifest: '/manifest.json',
+      og: {
+        description: :description,
+        image: :image_src,
+        site_name: :site,
+        type: 'website',
+        title:,
+        url: :canonical,
+      },
+      reverse: true,
+      site: 'Organize',
+      twitter: {
+        card: 'summary',
+      },
+      viewport: 'width=device-width,initial-scale=1'
+    %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <link rel="manifest" href="/manifest.json">
-    <%= favicon_link_tag %>
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
 

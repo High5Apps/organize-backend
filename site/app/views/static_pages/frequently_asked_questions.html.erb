@@ -1,11 +1,18 @@
-<% content_for :title, "Frequently Asked Questions" %>
+<% set_meta_tags article: {
+    modified_time: '2024-11-12',
+    published_time: '2024-10-31',
+  },
+  og: {
+    type: 'article',
+  }
+%>
 
 <div class="container policy">
 <div class="row">
 <div class="col col-12">
 
 <header>
-  <h1><%= content_for :title %></h1>
+  <h1><%= title "Frequently Asked Questions" %></h1>
 </header>
 
 <%= anchored_header :h2, "What's a Labor Union?" %>
