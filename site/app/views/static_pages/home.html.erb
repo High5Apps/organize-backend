@@ -10,9 +10,9 @@
         Win more of what you love
       </div>
       <%= picture_tag class: 'screenshot' do %>
-        <%= tag :source, srcset: image_path('bezel-screenshot-dark.png'),
+        <%= tag :source, srcset: image_path('bezel-screenshot-dark.webp'),
           media: '(prefers-color-scheme: dark)' %>
-        <%= image_tag 'bezel-screenshot.png',
+        <%= image_tag 'bezel-screenshot.webp',
           alt: 'Screenshot of the Organize app' %>
       <% end %>
       <%= render 'layouts/app_store_badges', ref: 'hero' %>
@@ -21,13 +21,16 @@
   <div class="row">
     <%= render 'layouts/secondary_value_proposition',
       img_src: 'construction_24dp_AF52DE_FILL0_wght400_GRAD0_opsz24.svg',
-      text: 'Build support with proven tools and strategies' %>
+      text: 'Build support with proven tools and strategies',
+      alt: 'Icon of hammer and wrench crossed like an X' %>
     <%= render 'layouts/secondary_value_proposition',
       img_src: 'bar_chart_24dp_AF52DE_FILL0_wght400_GRAD0_opsz24.svg',
-      text: 'Democratically decide your top priorities' %>
+      text: 'Democratically decide your top priorities',
+      alt: 'Icon of 3 bar graph bars with varying heights' %>
     <%= render 'layouts/secondary_value_proposition',
       img_src: 'contact_support_24dp_AF52DE_FILL0_wght400_GRAD0_opsz24.svg',
-      text: 'Get expert guidance when you need it' %>
+      text: 'Get expert guidance when you need it',
+      alt: 'Icon of speech bubble with question mark inside' %>
   </div>
   <div class="row">
     <div class="col col-12 secondary-call-to-action">

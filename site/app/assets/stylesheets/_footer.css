@@ -5,6 +5,10 @@ footer {
   text-align: center
 }
 
+footer div.link-row {
+  margin-block-end: 5px;
+}
+
 footer p {
   color: var(--label-secondary-color);
   margin: 10px 0px;
