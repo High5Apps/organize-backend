@@ -1,5 +1,5 @@
 <% set_meta_tags article: {
-    modified_time: '2024-11-12T11:16:32-08:00',
+    modified_time: '2025-03-18T12:23:43-07:00',
     published_time: '2024-10-31T16:33:17-07:00',
   },
   description: "Learn the basics of labor unions with answers to these frequently asked questions. What's a labor union? How are labor unions created? Find out today",
@@ -20,8 +20,7 @@
 
 <p>A labor union is an organization formed by workers who come together to improve their working conditions through <em>collective action</em>. By pooling their individual strength, workers can negotiate with employers as a united front, making it more difficult for bosses to take advantage of them.</p>
 <p>In essence, companies don't need any one worker, but they do need all of them.</p>
-<p>As part of the American workforce, every employee has the right to form or join a labor union, provided they are not in management positions.</p>
-<p>The contributions of labor unions have had a lasting impact on modern society. Many of the benefits we enjoy today are directly attributed to the collective efforts of labor unions, such as:</p>
+<p>Many of the benefits we enjoy today are thanks to the collective efforts of labor unions, such as:</p>
 <ul>
   <li>The two-day weekend</li>
   <li>The 8-hour workday</li>
@@ -32,13 +31,20 @@
   <li>Labor day</li>
 </ul>
 
+<%= anchored_header :h2, "Who can create a labor union?" %>
+
+<p>The vast majority of American workers have the <%= link_to "legal right", "https://www.nlrb.gov/about-nlrb/rights-we-protect/the-law/employees/your-rights-during-union-organizing", target: "_blank" %> to form or join a labor union.</p>
+<p>The only groups that definitely can't are managers, supervisors, and close family of a company's owners.</p>
+<p>Unfortunately, the following groups may or may not be protected based on state laws: independent contractors, agricultural laborers, domestic workers, religious institution workers, and local/state government employees.</p>
+<p>Everyone else has the legal right to form or join a labor union.</p>
+
 <%= anchored_header :h2, "How are Labor Unions Created?" %>
 
-<p>As part of the American workforce, every employee has the right to form or join a labor union, provided they are not in management positions. So anyone can start the process. Here's what it looks like:</p>
+<p>The vast majority of American workers have the legal right to form or join a labor union. So <a href="#who-can-create-a-labor-union">almost anyone</a> can start the process. Here's what it looks like:</p>
 <ol>
   <li>
     <strong>Workers Begin Organizing</strong>
-    <p>Employees decide on a <em>bargaining unit</em>, such as their entire workplace or specific departments, and start organizing support for their union among workers in that unit. While momentum is building, organizing is typically kept secret from the boss to avoid retaliation and to delay the company from hiring <em>union busters</em> to oppose the effort.</p>
+    <p>Employees decide on a <em>bargaining unit</em>, such as their entire workplace or specific departments, and start organizing support for their union among workers in that unit. While momentum is building, organizing is typically kept secret from the boss to avoid retaliation and to delay the company from hiring <em><%= link_to "union busters", blog_union_busting_defenses_path %></em> to oppose the effort.</p>
   </li>
   <li>
     <strong>Workers Request Their Union Certification Election</strong>
@@ -46,7 +52,9 @@
   </li>
   <li>
     <strong>Workers Vote to Certify Their Union</strong>
-    <p>The NLRB typically sets the vote on a date within one month of the request. However, the vote can be delayed if the company legally challenges the bargaining unit definition. Employees in the bargaining unit receive secret ballots, which are counted on the day of the vote by the NLRB. If more than 50% of returned votes support the employees' union, their union is certified, and negotiations with management can begin.</p>
+    <p>The NLRB typically sets the vote on a date within one month of the request. However, the vote can be delayed if the company legally challenges the bargaining unit definition.</p>
+    <p>Every employee in the bargaining unit receives a secret ballot from the NLRB. Then, on the day of the vote, the NLRB counts up all the ballots that employees returned. If more than 50% are "yes" votes, the NLRB certifies the employees' union.</p>
+    <p>Finally <%= link_to "negotiations", blog_negotiations_path %> with management begin, where employees can secure real workplace improvements with a union contract for years to come.
   </li>
 </ol>
 <p>For more info, see the NLRB page on how they <%= link_to "Conduct Elections", "https://www.nlrb.gov/about-nlrb/what-we-do/conduct-elections", target: "_blank" %>.</p>
