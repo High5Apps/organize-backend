@@ -73,13 +73,6 @@ class V1::OrgsControllerTest < ActionDispatch::IntegrationTest
         encrypted_employer_name:,
         encrypted_name:,
         encrypted_member_definition:,
-        graph: {
-          blocked_user_ids: [String, *],
-          connections: [[String, String], *],
-          left_org_user_ids: [String, *],
-          user_ids: [String, *],
-          **nil
-        },
         id: String,
         **nil
       }
