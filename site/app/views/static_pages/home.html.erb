@@ -1,5 +1,9 @@
 <% set_meta_tags og: { title: :site } %>
 
+<% content_for :head do %>
+  <link rel="preload" fetchpriority="high" as="image" href="<%= image_path 'pexels-fauxels-3184432.webp' %>" type="image/webp">
+<% end %>
+
 <div id="hero-container" class="container">
   <div id="hero" class="row">
     <div id="hero-overlay" class="col col-12 col-sm-7 col-md-5">
