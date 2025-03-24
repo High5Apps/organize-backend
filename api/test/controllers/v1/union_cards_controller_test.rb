@@ -158,6 +158,7 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
         encrypted_agreement: { c: String, n: String, t: String },
         encrypted_email: { c: String, n: String, t: String },
         encrypted_employer_name: { c: String, n: String, t: String },
+        encrypted_home_address: { c: String, n: String, t: String },
         encrypted_name: { c: String, n: String, t: String },
         encrypted_phone: { c: String, n: String, t: String },
         id: String,

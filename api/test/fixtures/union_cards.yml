@@ -3,6 +3,7 @@ one:
   encrypted_agreement: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_email: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_employer_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_home_address: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_phone: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   signature_bytes: !!binary "VVFY0veX6mcDmEeLTmHWyM77yu/E5RpAhEQMeQuOF5HwMaAPnMDmuZ5SHQ10atvaFIaupcqnYltBSGiPuqkTbw=="
@@ -14,6 +15,7 @@ two:
   encrypted_agreement: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_email: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_employer_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_home_address: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_phone: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   signature_bytes: !!binary "VVFY0veX6mcDmEeLTmHWyM77yu/E5RpAhEQMeQuOF5HwMaAPnMDmuZ5SHQ10atvaFIaupcqnYltBSGiPuqkTbw=="
@@ -25,6 +27,7 @@ three:
   encrypted_agreement: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_email: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_employer_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_home_address: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_phone: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   signature_bytes: !!binary "VVFY0veX6mcDmEeLTmHWyM77yu/E5RpAhEQMeQuOF5HwMaAPnMDmuZ5SHQ10atvaFIaupcqnYltBSGiPuqkTbw=="

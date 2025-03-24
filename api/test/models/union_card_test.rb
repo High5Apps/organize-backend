@@ -75,6 +75,28 @@ class UnionCardTest < ActiveSupport::TestCase
     assert @card.invalid?
   end
 
+  test 'encrypted_home_address should be optional' do
+    @card.encrypted_home_address = nil
+    assert @card.valid?
+  end
+
+  test 'encrypted_home_address error messages should not include "Encrypted"' do
+    @card.encrypted_home_address.ciphertext = \
+      Base64.strict_encode64('a' * (1 + UnionCard::MAX_HOME_ADDRESS_LENGTH))
+    @card.valid?
+    assert_not @card.errors.full_messages.first.include? 'Encrypted'
+  end
+
+  test 'encrypted_home_address should be no longer than MAX_HOME_ADDRESS_LENGTH' do
+    @card.encrypted_home_address.ciphertext = \
+      Base64.strict_encode64('a' * UnionCard::MAX_HOME_ADDRESS_LENGTH)
+    assert @card.valid?
+
+    @card.encrypted_home_address.ciphertext = \
+      Base64.strict_encode64('a' * (1 + UnionCard::MAX_HOME_ADDRESS_LENGTH))
+    assert @card.invalid?
+  end
+
   test 'encrypted_name should be present' do
     @card.encrypted_name = nil
     assert @card.invalid?

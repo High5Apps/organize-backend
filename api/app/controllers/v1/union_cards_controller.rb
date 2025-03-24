@@ -3,6 +3,7 @@ class V1::UnionCardsController < ApplicationController
     EncryptedMessage.permitted_params(:agreement),
     EncryptedMessage.permitted_params(:email),
     EncryptedMessage.permitted_params(:employer_name),
+    EncryptedMessage.permitted_params(:home_address),
     EncryptedMessage.permitted_params(:name),
     EncryptedMessage.permitted_params(:phone),
     :signature_bytes,
