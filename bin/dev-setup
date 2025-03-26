@@ -46,15 +46,23 @@ else
   # ORGANIZE_DATABASE_PASSWORD has a max length of 99 characters
   organize_database_password=$($dc run --no-deps api rails secret | head -c 99)
 
-  # RAILS_MASTER_KEY must be 32 characters of hex
+  # RAILS_MASTER_KEY_API must be 32 characters of hex
   rails_master_key_api=$($dc run --no-deps api rails secret | head -c 32)
+
+  # RAILS_MASTER_KEY_API_DEV must be 32 characters of hex
+  rails_master_key_api_dev=$($dc run --no-deps api rails secret | head -c 32)
 
   # RAILS_MASTER_KEY_SITE must be 32 characters of hex
   rails_master_key_site=$($dc run --no-deps site rails secret | head -c 32)
 
   echo "Adding fake secrets to .env..."
   sed -i '' "s/example-password-odp/$organize_database_password/" $dot_env
+
+  # The rmkad substitution must occur before the rmka substitution, since they
+  # share a prefix. Otherwise the rmka substitution would happen on both lines
+  sed -i '' "s/example-password-rmkad/$rails_master_key_api_dev/" $dot_env
   sed -i '' "s/example-password-rmka/$rails_master_key_api/" $dot_env
+
   sed -i '' "s/example-password-rmks/$rails_master_key_site/" $dot_env
 
   updated_dot_env=true
