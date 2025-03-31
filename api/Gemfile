@@ -42,10 +42,6 @@ group :development do
   # gem "spring"
 end
 
-group :test do
-  gem 'webmock', '~> 3.25'
-end
-
 # Used in simulation and db seeds
 gem "rubystats", "~> 0.4.1"
 
@@ -74,6 +70,3 @@ gem 'yabeda-activerecord', '~> 0.1.1'
 
 # Used for structured request logging
 gem 'lograge', '~> 0.14.0'
-
-# Used for external HTTP requests
-gem 'httparty', '~> 0.23'
