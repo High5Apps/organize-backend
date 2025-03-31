@@ -2,8 +2,6 @@ services:
   api:
     build:
       target: dev
-    environment:
-      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY_API_DEV:?err}
     image: localhost:5001/organize-api-dev
     volumes:
       - ./api:/rails
