@@ -52,7 +52,8 @@ en:
         encrypted_agreement: 'Agreement'
         encrypted_email: 'Email'
         encrypted_employer_name: 'Employer name'
-        encrypted_home_address: 'Home address'
+        encrypted_home_address_line1: 'Home address line 1'
+        encrypted_home_address_line2: 'Home address line 2'
         encrypted_name: 'Name'
         encrypted_phone: 'Phone'
     errors:

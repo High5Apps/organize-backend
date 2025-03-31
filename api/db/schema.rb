@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_24_203232) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_31_194743) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -163,7 +163,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_24_203232) do
     t.datetime "signed_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.jsonb "encrypted_home_address"
+    t.jsonb "encrypted_home_address_line1"
+    t.jsonb "encrypted_home_address_line2"
     t.index ["user_id"], name: "index_union_cards_on_user_id", unique: true
   end
 

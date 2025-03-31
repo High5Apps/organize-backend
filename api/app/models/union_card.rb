@@ -7,7 +7,8 @@ class UnionCard < ApplicationRecord
     93 + Org::MAX_NAME_LENGTH + Org::MAX_EMPLOYER_NAME_LENGTH
   MAX_EMAIL_LENGTH = Org::MAX_EMAIL_LENGTH
   MAX_EMPLOYER_NAME_LENGTH = Org::MAX_EMPLOYER_NAME_LENGTH
-  MAX_HOME_ADDRESS_LENGTH = 100
+  MAX_HOME_ADDRESS_LINE1_LENGTH = 100
+  MAX_HOME_ADDRESS_LINE2_LENGTH = 100
   MAX_NAME_LENGTH = 100
   MAX_PHONE_LENGTH = 20
   SIGNATURE_LENGTH = 88
@@ -27,7 +28,8 @@ class UnionCard < ApplicationRecord
   has_encrypted :employer_name,
     present: true,
     max_length: MAX_EMPLOYER_NAME_LENGTH
-  has_encrypted :home_address, max_length: MAX_HOME_ADDRESS_LENGTH
+  has_encrypted :home_address_line1, max_length: MAX_HOME_ADDRESS_LINE1_LENGTH
+  has_encrypted :home_address_line2, max_length: MAX_HOME_ADDRESS_LINE2_LENGTH
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
   has_encrypted :phone, present: true, max_length: MAX_PHONE_LENGTH
 

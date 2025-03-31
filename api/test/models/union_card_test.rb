@@ -75,25 +75,47 @@ class UnionCardTest < ActiveSupport::TestCase
     assert @card.invalid?
   end
 
-  test 'encrypted_home_address should be optional' do
-    @card.encrypted_home_address = nil
+  test 'encrypted_home_address_line1 should be optional' do
+    @card.encrypted_home_address_line1 = nil
     assert @card.valid?
   end
 
-  test 'encrypted_home_address error messages should not include "Encrypted"' do
-    @card.encrypted_home_address.ciphertext = \
-      Base64.strict_encode64('a' * (1 + UnionCard::MAX_HOME_ADDRESS_LENGTH))
+  test 'encrypted_home_address_line1 error messages should not include "Encrypted"' do
+    @card.encrypted_home_address_line1.ciphertext = \
+      Base64.strict_encode64('a' * (1 + UnionCard::MAX_HOME_ADDRESS_LINE1_LENGTH))
     @card.valid?
     assert_not @card.errors.full_messages.first.include? 'Encrypted'
   end
 
-  test 'encrypted_home_address should be no longer than MAX_HOME_ADDRESS_LENGTH' do
-    @card.encrypted_home_address.ciphertext = \
-      Base64.strict_encode64('a' * UnionCard::MAX_HOME_ADDRESS_LENGTH)
+  test 'encrypted_home_address_line1 should be no longer than MAX_HOME_ADDRESS_LINE1_LENGTH' do
+    @card.encrypted_home_address_line1.ciphertext = \
+      Base64.strict_encode64('a' * UnionCard::MAX_HOME_ADDRESS_LINE1_LENGTH)
     assert @card.valid?
 
-    @card.encrypted_home_address.ciphertext = \
-      Base64.strict_encode64('a' * (1 + UnionCard::MAX_HOME_ADDRESS_LENGTH))
+    @card.encrypted_home_address_line1.ciphertext = \
+      Base64.strict_encode64('a' * (1 + UnionCard::MAX_HOME_ADDRESS_LINE1_LENGTH))
+    assert @card.invalid?
+  end
+
+  test 'encrypted_home_address_line2 should be optional' do
+    @card.encrypted_home_address_line2 = nil
+    assert @card.valid?
+  end
+
+  test 'encrypted_home_address_line2 error messages should not include "Encrypted"' do
+    @card.encrypted_home_address_line2.ciphertext = \
+      Base64.strict_encode64('a' * (1 + UnionCard::MAX_HOME_ADDRESS_LINE2_LENGTH))
+    @card.valid?
+    assert_not @card.errors.full_messages.first.include? 'Encrypted'
+  end
+
+  test 'encrypted_home_address_line2 should be no longer than MAX_HOME_ADDRESS_LINE2_LENGTH' do
+    @card.encrypted_home_address_line2.ciphertext = \
+      Base64.strict_encode64('a' * UnionCard::MAX_HOME_ADDRESS_LINE2_LENGTH)
+    assert @card.valid?
+
+    @card.encrypted_home_address_line2.ciphertext = \
+      Base64.strict_encode64('a' * (1 + UnionCard::MAX_HOME_ADDRESS_LINE2_LENGTH))
     assert @card.invalid?
   end
 
