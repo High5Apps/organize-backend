@@ -75,9 +75,9 @@ class UnionCardTest < ActiveSupport::TestCase
     assert @card.invalid?
   end
 
-  test 'encrypted_home_address_line1 should be optional' do
+  test 'encrypted_home_address_line1 should be present' do
     @card.encrypted_home_address_line1 = nil
-    assert @card.valid?
+    assert @card.invalid?
   end
 
   test 'encrypted_home_address_line1 error messages should not include "Encrypted"' do
@@ -97,9 +97,9 @@ class UnionCardTest < ActiveSupport::TestCase
     assert @card.invalid?
   end
 
-  test 'encrypted_home_address_line2 should be optional' do
+  test 'encrypted_home_address_line2 should be present' do
     @card.encrypted_home_address_line2 = nil
-    assert @card.valid?
+    assert @card.invalid?
   end
 
   test 'encrypted_home_address_line2 error messages should not include "Encrypted"' do
