@@ -24,6 +24,8 @@ class UnionCard < ApplicationRecord
   validates :signed_at, presence: true
   validates :user, uniqueness: true
 
+  before_create :create_work_group_if_needed
+
   has_encrypted :agreement, present: true, max_length: MAX_AGREEMENT_LENGTH
   has_encrypted :email, present: true, max_length: MAX_EMAIL_LENGTH
   has_encrypted :employer_name,
@@ -61,6 +63,21 @@ class UnionCard < ApplicationRecord
       Base64.strict_encode64 attributes['signature_bytes']
     rescue
       nil
+    end
+  end
+
+  private
+
+  def create_work_group_if_needed
+    return if encrypted_job_title.nil?
+    return if work_group_id && org.work_groups.exists?(work_group_id)
+    begin
+      self.work_group = user.created_work_groups.create! encrypted_department:,
+        encrypted_job_title:,
+        encrypted_shift:
+    rescue ActiveRecord::RecordInvalid => invalid
+      errors.merge! invalid.record.errors
+      raise
     end
   end
 end

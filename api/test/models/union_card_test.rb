@@ -282,4 +282,94 @@ class UnionCardTest < ActiveSupport::TestCase
       assert_operator card.created_at, :<=, card_created_at
     end
   end
+
+  test 'should create associated work_group on create when work_group_id absent and work_group info present' do
+    card = @card.dup
+    @card.destroy!
+    card.work_group_id = nil
+    assert_difference 'WorkGroup.count', 1 do
+      card.save!
+    end
+    assert_not_nil card.work_group
+    assert_equal card.work_group.encrypted_department.as_json,
+      card.encrypted_department.as_json
+    assert_equal card.work_group.encrypted_job_title.as_json,
+      card.encrypted_job_title.as_json
+    assert_equal card.work_group.encrypted_shift.as_json,
+      card.encrypted_shift.as_json
+  end
+
+  test 'should not create associated work_group on update when work_group_id absent and work_group info present' do
+    @card.work_group_id = nil
+    assert_no_difference 'WorkGroup.count' do
+      @card.save!
+    end
+  end
+
+  test 'should not create assoiated work_group on create when work_group_id absent and work_group info absent' do
+    card = @card.dup
+    @card.destroy!
+    card.work_group_id = nil
+    card.encrypted_job_title = nil
+    assert_no_difference 'WorkGroup.count' do
+      card.save!
+    end
+  end
+
+  test 'should create associated work_group on create when work_group_id present but not found and work_group info present' do
+    card = @card.dup
+    @card.destroy!
+    WorkGroup.find(card.work_group_id).destroy!
+    assert_difference 'WorkGroup.count', 1 do
+      card.save!
+    end
+    assert_not_nil card.work_group
+    assert_equal card.work_group.encrypted_department.as_json,
+      card.encrypted_department.as_json
+    assert_equal card.work_group.encrypted_job_title.as_json,
+      card.encrypted_job_title.as_json
+    assert_equal card.work_group.encrypted_shift.as_json,
+      card.encrypted_shift.as_json
+  end
+
+  test 'should not create associated work_group on update when work_group_id present but not found and work_group info present' do
+    old_id = @card.work_group_id
+    @card.update! work_group_id: nil
+    WorkGroup.find(old_id).destroy!
+    @card.work_group_id = old_id
+    assert_no_difference 'WorkGroup.count', 1 do
+      begin
+        @card.save!
+      rescue
+      end
+    end
+  end
+
+  test 'should not created associated work_group on create when work_group_id present and found and work_group_info present' do
+    card = @card.dup
+    @card.destroy!
+    assert_no_difference 'WorkGroup.count' do
+      card.save!
+    end
+  end
+
+  test 'should merge associated work_group errors into union_card errors on create' do
+    card = @card.dup
+    @card.destroy!
+    card.work_group_id = nil
+
+    error_type = 'test error'
+    raises_exception = ->(_) do
+      work_group = WorkGroup.new
+      errors = ActiveModel::Errors.new work_group
+      errors.add :base, error_type
+      work_group.errors.merge! errors
+      raise ActiveRecord::RecordInvalid.new work_group
+    end
+    card.user.created_work_groups.stub :create!, raises_exception do
+      card.save
+      first_error = card.errors.first
+      assert_equal first_error.type, error_type
+    end
+  end
 end
