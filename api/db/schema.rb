@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_01_181953) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_03_172857) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -165,7 +165,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_01_181953) do
     t.datetime "updated_at", null: false
     t.jsonb "encrypted_home_address_line1", null: false
     t.jsonb "encrypted_home_address_line2", null: false
+    t.uuid "work_group_id"
+    t.jsonb "encrypted_department"
+    t.jsonb "encrypted_job_title"
+    t.jsonb "encrypted_shift"
     t.index ["user_id"], name: "index_union_cards_on_user_id", unique: true
+    t.index ["work_group_id"], name: "index_union_cards_on_work_group_id"
   end
 
   create_table "upvotes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -205,6 +210,16 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_01_181953) do
     t.index ["candidate_ids"], name: "index_votes_on_candidate_ids", using: :gin
   end
 
+  create_table "work_groups", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.jsonb "encrypted_department"
+    t.jsonb "encrypted_job_title", null: false
+    t.jsonb "encrypted_shift", null: false
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_work_groups_on_user_id"
+  end
+
   add_foreign_key "ballots", "users"
   add_foreign_key "candidates", "ballots"
   add_foreign_key "candidates", "nominations"
@@ -224,10 +239,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_01_181953) do
   add_foreign_key "terms", "ballots"
   add_foreign_key "terms", "users"
   add_foreign_key "union_cards", "users"
+  add_foreign_key "union_cards", "work_groups"
   add_foreign_key "upvotes", "comments"
   add_foreign_key "upvotes", "posts"
   add_foreign_key "upvotes", "users"
   add_foreign_key "users", "users", column: "recruiter_id"
   add_foreign_key "votes", "ballots"
   add_foreign_key "votes", "users"
+  add_foreign_key "work_groups", "users"
 end

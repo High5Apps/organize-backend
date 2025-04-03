@@ -110,4 +110,14 @@ class ActiveSupport::TestCase
   sig { params(fixture_name: T.any(String, Symbol), other_fixtures: NilClass).returns(Vote) }
   sig { params(fixture_name: T.any(String, Symbol), other_fixtures: T.any(String, Symbol)).returns(T::Array[Vote]) }
   def votes(fixture_name = nil, *other_fixtures); end
+
+  sig { params(fixture_name: NilClass, other_fixtures: NilClass).returns(T::Array[WorkGroup]) }
+  sig { params(fixture_name: T.any(String, Symbol), other_fixtures: NilClass).returns(WorkGroup) }
+  sig do
+    params(
+      fixture_name: T.any(String, Symbol),
+      other_fixtures: T.any(String, Symbol)
+    ).returns(T::Array[WorkGroup])
+  end
+  def work_groups(fixture_name = nil, *other_fixtures); end
 end

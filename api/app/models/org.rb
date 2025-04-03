@@ -20,6 +20,7 @@ class Org < ApplicationRecord
   has_many :terms, through: :users
   has_many :union_cards, through: :users
   has_many :upvotes, through: :users
+  has_many :work_groups, through: :users, source: :created_work_groups
 
   has_encrypted :employer_name, max_length: MAX_EMPLOYER_NAME_LENGTH
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH

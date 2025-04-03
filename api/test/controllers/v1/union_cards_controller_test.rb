@@ -156,17 +156,21 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
     assert_pattern do
       union_card => {
         encrypted_agreement: { c: String, n: String, t: String },
+        encrypted_department: { c: String, n: String, t: String },
         encrypted_email: { c: String, n: String, t: String },
         encrypted_employer_name: { c: String, n: String, t: String },
         encrypted_home_address_line1: { c: String, n: String, t: String },
         encrypted_home_address_line2: { c: String, n: String, t: String },
+        encrypted_job_title: { c: String, n: String, t: String },
         encrypted_name: { c: String, n: String, t: String },
         encrypted_phone: { c: String, n: String, t: String },
+        encrypted_shift: { c: String, n: String, t: String },
         id: String,
         public_key_bytes: String,
         signature_bytes: String,
         signed_at: String,
         user_id: String,
+        work_group_id: String,
         **nil
       }
     end

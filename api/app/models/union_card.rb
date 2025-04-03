@@ -14,6 +14,7 @@ class UnionCard < ApplicationRecord
   SIGNATURE_LENGTH = 88
 
   belongs_to :user
+  belongs_to :work_group, optional: true
 
   has_one :org, through: :user
 
@@ -28,12 +29,15 @@ class UnionCard < ApplicationRecord
   has_encrypted :employer_name,
     present: true,
     max_length: MAX_EMPLOYER_NAME_LENGTH
+  has_encrypted :department, max_length: WorkGroup::MAX_DEPARTMENT_LENGTH
   has_encrypted :home_address_line1, present: true,
     max_length: MAX_HOME_ADDRESS_LINE1_LENGTH
   has_encrypted :home_address_line2, present: true,
     max_length: MAX_HOME_ADDRESS_LINE2_LENGTH
+  has_encrypted :job_title, max_length: WorkGroup::MAX_JOB_TITLE_LENGTH
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
   has_encrypted :phone, present: true, max_length: MAX_PHONE_LENGTH
+  has_encrypted :shift, max_length: WorkGroup::MAX_SHIFT_LENGTH
 
   # This should only be used when joined with user
   def public_key_bytes

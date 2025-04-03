@@ -436,6 +436,20 @@ class User
     def created_nominations=(value); end
 
     sig { returns(T::Array[T.untyped]) }
+    def created_work_group_ids; end
+
+    sig { params(ids: T::Array[T.untyped]).returns(T::Array[T.untyped]) }
+    def created_work_group_ids=(ids); end
+
+    # This method is created by ActiveRecord on the `User` class because it declared `has_many :created_work_groups`.
+    # 🔗 [Rails guide for `has_many` association](https://guides.rubyonrails.org/association_basics.html#the-has-many-association)
+    sig { returns(::WorkGroup::PrivateCollectionProxy) }
+    def created_work_groups; end
+
+    sig { params(value: T::Enumerable[::WorkGroup]).void }
+    def created_work_groups=(value); end
+
+    sig { returns(T::Array[T.untyped]) }
     def flag_ids; end
 
     sig { params(ids: T::Array[T.untyped]).returns(T::Array[T.untyped]) }

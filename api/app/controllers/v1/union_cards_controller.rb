@@ -1,14 +1,18 @@
 class V1::UnionCardsController < ApplicationController
   PERMITTED_PARAMS = [
     EncryptedMessage.permitted_params(:agreement),
+    EncryptedMessage.permitted_params(:department),
     EncryptedMessage.permitted_params(:email),
     EncryptedMessage.permitted_params(:employer_name),
     EncryptedMessage.permitted_params(:home_address_line1),
     EncryptedMessage.permitted_params(:home_address_line2),
+    EncryptedMessage.permitted_params(:job_title),
     EncryptedMessage.permitted_params(:name),
     EncryptedMessage.permitted_params(:phone),
+    EncryptedMessage.permitted_params(:shift),
     :signature_bytes,
     :signed_at,
+    :work_group_id,
   ]
 
   # Convert EncryptedMessage params into just the encrypted attribute name

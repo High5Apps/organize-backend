@@ -428,6 +428,20 @@ class Org
     def terms=(value); end
 
     sig { returns(T::Array[T.untyped]) }
+    def union_card_ids; end
+
+    sig { params(ids: T::Array[T.untyped]).returns(T::Array[T.untyped]) }
+    def union_card_ids=(ids); end
+
+    # This method is created by ActiveRecord on the `Org` class because it declared `has_many :union_cards, through: :users`.
+    # 🔗 [Rails guide for `has_many_through` association](https://guides.rubyonrails.org/association_basics.html#the-has-many-through-association)
+    sig { returns(::UnionCard::PrivateCollectionProxy) }
+    def union_cards; end
+
+    sig { params(value: T::Enumerable[::UnionCard]).void }
+    def union_cards=(value); end
+
+    sig { returns(T::Array[T.untyped]) }
     def upvote_ids; end
 
     sig { params(ids: T::Array[T.untyped]).returns(T::Array[T.untyped]) }
@@ -454,6 +468,20 @@ class Org
 
     sig { params(value: T::Enumerable[::User]).void }
     def users=(value); end
+
+    sig { returns(T::Array[T.untyped]) }
+    def work_group_ids; end
+
+    sig { params(ids: T::Array[T.untyped]).returns(T::Array[T.untyped]) }
+    def work_group_ids=(ids); end
+
+    # This method is created by ActiveRecord on the `Org` class because it declared `has_many :work_groups, through: :users`.
+    # 🔗 [Rails guide for `has_many_through` association](https://guides.rubyonrails.org/association_basics.html#the-has-many-through-association)
+    sig { returns(::WorkGroup::PrivateCollectionProxy) }
+    def work_groups; end
+
+    sig { params(value: T::Enumerable[::WorkGroup]).void }
+    def work_groups=(value); end
   end
 
   module GeneratedAssociationRelationMethods

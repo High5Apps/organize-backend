@@ -31,6 +31,28 @@ class UnionCardTest < ActiveSupport::TestCase
     assert @card.invalid?
   end
 
+  test 'encrypted_department should be optional' do
+    @card.encrypted_department = nil
+    assert @card.valid?
+  end
+
+  test 'encrypted_department error messages should not include "Encrypted"' do
+    @card.encrypted_department.ciphertext = \
+      Base64.strict_encode64('a' * (1 + WorkGroup::MAX_DEPARTMENT_LENGTH))
+    @card.valid?
+    assert_not @card.errors.full_messages.first.include? 'Encrypted'
+  end
+
+  test 'encrypted_department should be no longer than MAX_DEPARTMENT_LENGTH' do
+    @card.encrypted_department.ciphertext = \
+      Base64.strict_encode64('a' * WorkGroup::MAX_DEPARTMENT_LENGTH)
+    assert @card.valid?
+
+    @card.encrypted_department.ciphertext = \
+      Base64.strict_encode64('a' * (1 + WorkGroup::MAX_DEPARTMENT_LENGTH))
+    assert @card.invalid?
+  end
+
   test 'encrypted_email should be present' do
     @card.encrypted_email = nil
     assert @card.invalid?
@@ -119,6 +141,28 @@ class UnionCardTest < ActiveSupport::TestCase
     assert @card.invalid?
   end
 
+  test 'encrypted_job_title should be optional' do
+    @card.encrypted_job_title = nil
+    assert @card.valid?
+  end
+
+  test 'encrypted_job_title error messages should not include "Encrypted"' do
+    @card.encrypted_job_title.ciphertext = \
+      Base64.strict_encode64('a' * (1 + WorkGroup::MAX_JOB_TITLE_LENGTH))
+    @card.valid?
+    assert_not @card.errors.full_messages.first.include? 'Encrypted'
+  end
+
+  test 'encrypted_job_title should be no longer than MAX_JOB_TITLE_LENGTH' do
+    @card.encrypted_job_title.ciphertext = \
+      Base64.strict_encode64('a' * WorkGroup::MAX_JOB_TITLE_LENGTH)
+    assert @card.valid?
+
+    @card.encrypted_job_title.ciphertext = \
+      Base64.strict_encode64('a' * (1 + WorkGroup::MAX_JOB_TITLE_LENGTH))
+    assert @card.invalid?
+  end
+
   test 'encrypted_name should be present' do
     @card.encrypted_name = nil
     assert @card.invalid?
@@ -163,6 +207,28 @@ class UnionCardTest < ActiveSupport::TestCase
     assert @card.invalid?
   end
 
+  test 'encrypted_shift should be optional' do
+    @card.encrypted_shift = nil
+    assert @card.valid?
+  end
+
+  test 'encrypted_shift error messages should not include "Encrypted"' do
+    @card.encrypted_shift.ciphertext = \
+      Base64.strict_encode64('a' * (1 + WorkGroup::MAX_SHIFT_LENGTH))
+    @card.valid?
+    assert_not @card.errors.full_messages.first.include? 'Encrypted'
+  end
+
+  test 'encrypted_shift should be no longer than MAX_SHIFT_LENGTH' do
+    @card.encrypted_shift.ciphertext = \
+      Base64.strict_encode64('a' * WorkGroup::MAX_SHIFT_LENGTH)
+    assert @card.valid?
+
+    @card.encrypted_shift.ciphertext = \
+      Base64.strict_encode64('a' * (1 + WorkGroup::MAX_SHIFT_LENGTH))
+    assert @card.invalid?
+  end
+
   test 'signature_bytes should be Base64 encoded' do
     assert_equal @card.signature_bytes,
       Base64.strict_encode64(@card.attributes['signature_bytes'])
@@ -200,6 +266,11 @@ class UnionCardTest < ActiveSupport::TestCase
     error = duplicate.errors[:user].first
     assert_not_nil error
     assert_not_includes error, 'taken'
+  end
+
+  test 'work_group should be optional' do
+    @card.work_group = nil
+    assert @card.valid?
   end
 
   test 'created_at_or_before should not include union_cards created after time' do

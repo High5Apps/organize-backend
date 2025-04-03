@@ -50,12 +50,19 @@ en:
         encrypted_title: 'Title'
       union_card:
         encrypted_agreement: 'Agreement'
+        encrypted_department: 'Department'
         encrypted_email: 'Email'
         encrypted_employer_name: 'Employer name'
         encrypted_home_address_line1: 'Home address line 1'
         encrypted_home_address_line2: 'Home address line 2'
+        encrypted_job_title: 'Job title'
         encrypted_name: 'Name'
         encrypted_phone: 'Phone'
+        encrypted_shift: 'Shift'
+      work_group:
+        encrypted_department: 'Department'
+        encrypted_job_title: 'Job title'
+        encrypted_shift: 'Shift'
     errors:
       models:
         ballot:
