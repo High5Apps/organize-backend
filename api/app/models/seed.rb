@@ -45,6 +45,7 @@ class Seed
 
   FLAGGED_DOWNVOTES_FRACTION = 0.03
   FLAGGED_VOTES_FRACTION = 0.01
+  NEW_WORK_GROUP_FRACTION = 0.25
   PARAGRAPH_COUNT_MAX = 10
   PARAGRAPH_WITH_URL_FRACTION = 0.05
   POSTS_WITHOUT_BODY_FRACTION = 0.5
@@ -53,18 +54,25 @@ class Seed
     yes_no: 'Should we ',
   }
   QUESTION_SUFFIX = '?'
+  SUBADDRESS_FRACTION = 0.5
   TITLE_CHARACTER_RANGE = 20..Post::MAX_TITLE_LENGTH
+
+  UNION_CARD_FRACTION = 0.5
 
   # https://www.wolframalpha.com/input?i=beta+distribution+%282%2C+19%29
   UPVOTES_DISTRIBUTION = Rubystats::BetaDistribution.new(2, 19)
 
   VOTER_TURNOUT_DISTRIBUTION = Rubystats::NormalDistribution.new(0.7, 0.1)
+  WORK_GROUP_DEPARTMENT_FRACTION = 0.5
 
   def initialize(simulation, group_key_base64)
     @simulation = simulation
     @group_key_base64 = group_key_base64
     @founder = User.find @simulation.founder_id
     @org = @founder.org
+    @org_name = "Local #{rand 1000..9999}"
+    @company_name = random_company_name
+    @user_key_map = {}
   end
 
   def create_random_seeds
@@ -84,6 +92,7 @@ class Seed
       create_comments
       create_post_upvotes
       create_comment_upvotes
+      create_union_cards
       create_post_flags
       create_comment_flags
       create_ballot_flags
@@ -174,6 +183,7 @@ class Seed
 
           key_pair = OpenSSL::PKey::EC.generate "prime256v1"
           User.create! id: user_id, public_key_bytes: key_pair.public_to_der
+          @user_key_map[user_id] = key_pair
         end
       end
     end
@@ -205,15 +215,15 @@ class Seed
 
   def update_org
     benchmark "Updated Org" do
-      random_local_number = rand 1000..9999
       random_store_number = rand 100..999
 
       travel_to @simulation.started_at do
         attributes = {
           created_at: @simulation.started_at,
           email: "#{SecureRandom.uuid}@getorganize.app",
-          encrypted_name: encrypt("Local #{random_local_number}"),
-          encrypted_member_definition: encrypt("An employee of #{random_company_name} at store ##{random_store_number}"),
+          encrypted_employer_name: encrypt(@company_name),
+          encrypted_name: encrypt(@org_name),
+          encrypted_member_definition: encrypt("An employee of #{@company_name} at store ##{random_store_number}"),
         }
         @org.update! attributes
         @founder.reload
@@ -880,6 +890,88 @@ class Seed
         })
       end
     end
+  end
+
+  def create_union_cards
+    user_count = @org.users.count
+    expected_union_card_count = (user_count * UNION_CARD_FRACTION).round
+    expected_work_group_count = (expected_union_card_count * NEW_WORK_GROUP_FRACTION).round
+    benchmark "Created about #{expected_union_card_count} union cards and #{expected_work_group_count} work groups" do
+      city = Faker::Address.city
+      state = Faker::Address.state_abbr
+      work_groups = []
+      @org.users.where.not(id: @founder.id).each do |user|
+        next unless rand < UNION_CARD_FRACTION
+
+        if work_groups.empty? || rand < NEW_WORK_GROUP_FRACTION
+          work_group = random_work_group
+          work_groups.push work_group
+        else
+          work_group = work_groups.sample
+        end
+
+        work_group => department:, id: work_group_id, job_title:, shift:
+
+        agreement = "By tapping Sign, I authorize #{@org_name} to represent me for the purpose of collective bargaining with #{@company_name}"
+        name = Faker::Name.name
+        email = Faker::Internet.email(name:)
+        subaddress = rand < SUBADDRESS_FRACTION ?
+          ", #{Faker::Address.secondary_address}" : ''
+        home_address_line_1 = Faker::Address.street_address + subaddress
+        postcode = Faker::Address.postcode state_abbreviation: state
+        home_address_line_2 = "#{city}, #{state}, #{postcode}"
+        home_address = "#{home_address_line_1}\n#{home_address_line_2}"
+        phone = Faker::PhoneNumber.phone_number
+        joined_at = user.joined_at
+        signed_at = rand joined_at..(joined_at + 1.day)
+        key_pair = @user_key_map[user.id]
+
+        columns = [
+          name, email, phone, agreement, signed_at.iso8601(3), @company_name,
+          key_pair.public_to_pem, home_address, job_title, shift, department,
+        ]
+        data = columns.map { |f| escape_csv_field f }.join ','
+        ecdsa = JWT::JWA::Ecdsa.new 'ES256', 'sha256'
+        signature = ecdsa.sign data:, signing_key: key_pair
+        signature_bytes = Base64.strict_encode64 signature
+
+        card = user.create_union_card!(
+          encrypted_agreement: encrypt(agreement),
+          encrypted_department: encrypt(department),
+          encrypted_email: encrypt(email),
+          encrypted_employer_name: encrypt(@company_name),
+          encrypted_home_address_line1: encrypt(home_address_line_1),
+          encrypted_home_address_line2: encrypt(home_address_line_2),
+          encrypted_job_title: encrypt(job_title),
+          encrypted_name: encrypt(name),
+          encrypted_phone: encrypt(phone),
+          encrypted_shift: encrypt(shift),
+          signature_bytes:,
+          signed_at:,
+          work_group_id:)
+
+        work_group[:id] = card.work_group_id
+      end
+    end
+  end
+
+  def random_work_group
+    {
+      department:rand < WORK_GROUP_DEPARTMENT_FRACTION ?
+        Faker::Company.department : nil,
+      id: nil,
+      job_title: Faker::Job.title,
+      shift: ['1st', '2nd', '3rd'].sample,
+    }
+  end
+
+  def escape_csv_field(field)
+    return '' if field.nil?
+    return field unless /["\n,]/.match? field
+
+    # Escape any existing double quotes by doubling them and wrap the field in
+    # double quotes
+    "\"#{field.gsub(/"/, '""')}\""
   end
 
   def update_users
