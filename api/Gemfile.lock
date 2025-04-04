@@ -102,7 +102,8 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.7.4)
-    jwt (2.7.0)
+    jwt (2.10.1)
+      base64
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.2)
@@ -278,7 +279,7 @@ DEPENDENCIES
   bootsnap
   debug
   faker (~> 3)
-  jwt (~> 2.4)
+  jwt (~> 2)
   kaminari (~> 1)
   lograge (~> 0.14.0)
   pg (~> 1.1)
