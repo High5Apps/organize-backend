@@ -29,7 +29,10 @@ class V1::UnionCardsController < ApplicationController
 
     new_union_card = authenticated_user.build_union_card create_params
     if new_union_card.save
-      render json: { id: new_union_card.id }, status: :created
+      render json: {
+        id: new_union_card.id,
+        work_group_id: new_union_card.work_group_id,
+      }, status: :created
     else
       render_error :unprocessable_entity, new_union_card.errors.full_messages
     end

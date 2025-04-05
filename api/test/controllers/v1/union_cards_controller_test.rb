@@ -19,7 +19,7 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
       assert_response :created
     end
 
-    response.parsed_body => { id: String, **nil }
+    response.parsed_body => { id: String, work_group_id: String, **nil }
   end
 
   test 'should not create with invalid authorization' do
