@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_07_222511) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_07_234717) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -242,6 +242,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_07_222511) do
   add_foreign_key "upvotes", "comments"
   add_foreign_key "upvotes", "posts"
   add_foreign_key "upvotes", "users"
+  add_foreign_key "users", "orgs"
   add_foreign_key "users", "users", column: "recruiter_id"
   add_foreign_key "votes", "ballots"
   add_foreign_key "votes", "users"
