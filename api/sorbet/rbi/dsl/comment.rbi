@@ -332,6 +332,9 @@ class Comment
     sig { params(args: T.untyped, blk: T.untyped).returns(::ModerationEvent) }
     def build_last_moderation_event(*args, &blk); end
 
+    sig { params(args: T.untyped, blk: T.untyped).returns(::Org) }
+    def build_org(*args, &blk); end
+
     sig { params(args: T.untyped, blk: T.untyped).returns(::Post) }
     def build_post(*args, &blk); end
 
@@ -343,6 +346,12 @@ class Comment
 
     sig { params(args: T.untyped, blk: T.untyped).returns(::ModerationEvent) }
     def create_last_moderation_event!(*args, &blk); end
+
+    sig { params(args: T.untyped, blk: T.untyped).returns(::Org) }
+    def create_org(*args, &blk); end
+
+    sig { params(args: T.untyped, blk: T.untyped).returns(::Org) }
+    def create_org!(*args, &blk); end
 
     sig { params(args: T.untyped, blk: T.untyped).returns(::Post) }
     def create_post(*args, &blk); end
@@ -390,6 +399,12 @@ class Comment
     sig { params(value: T::Enumerable[::ModerationEvent]).void }
     def moderation_events=(value); end
 
+    sig { returns(T.nilable(::Org)) }
+    def org; end
+
+    sig { params(value: T.nilable(::Org)).void }
+    def org=(value); end
+
     sig { returns(T.nilable(::Post)) }
     def post; end
 
@@ -405,6 +420,9 @@ class Comment
     sig { returns(T.nilable(::ModerationEvent)) }
     def reload_last_moderation_event; end
 
+    sig { returns(T.nilable(::Org)) }
+    def reload_org; end
+
     sig { returns(T.nilable(::Post)) }
     def reload_post; end
 
@@ -413,6 +431,9 @@ class Comment
 
     sig { void }
     def reset_last_moderation_event; end
+
+    sig { void }
+    def reset_org; end
 
     sig { void }
     def reset_post; end

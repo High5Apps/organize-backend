@@ -6,13 +6,9 @@ class Flag < ApplicationRecord
   belongs_to :flaggable, polymorphic: true
   belongs_to :user
 
+  validates :flaggable, same_org: { as: :user, name: 'Item' }
   validates :flaggable_type, inclusion: { in: ALLOWED_TYPES }
-  validates :user,
-    presence: true,
-    same_org: {
-      as: ->(flag) { flag.flaggable&.user },
-      name: 'Item',
-    }
+  validates :user, presence: true
 
   validate :ballot_category_is_not_election
   validate :post_is_not_candidacy_announcement

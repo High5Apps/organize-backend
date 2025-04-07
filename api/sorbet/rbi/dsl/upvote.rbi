@@ -332,6 +332,9 @@ class Upvote
     sig { params(args: T.untyped, blk: T.untyped).returns(::Comment) }
     def build_comment(*args, &blk); end
 
+    sig { params(args: T.untyped, blk: T.untyped).returns(::Org) }
+    def build_org(*args, &blk); end
+
     sig { params(args: T.untyped, blk: T.untyped).returns(::Post) }
     def build_post(*args, &blk); end
 
@@ -356,6 +359,12 @@ class Upvote
     sig { params(args: T.untyped, blk: T.untyped).returns(::Comment) }
     def create_comment!(*args, &blk); end
 
+    sig { params(args: T.untyped, blk: T.untyped).returns(::Org) }
+    def create_org(*args, &blk); end
+
+    sig { params(args: T.untyped, blk: T.untyped).returns(::Org) }
+    def create_org!(*args, &blk); end
+
     sig { params(args: T.untyped, blk: T.untyped).returns(::Post) }
     def create_post(*args, &blk); end
 
@@ -367,6 +376,12 @@ class Upvote
 
     sig { params(args: T.untyped, blk: T.untyped).returns(::User) }
     def create_user!(*args, &blk); end
+
+    sig { returns(T.nilable(::Org)) }
+    def org; end
+
+    sig { params(value: T.nilable(::Org)).void }
+    def org=(value); end
 
     sig { returns(T.nilable(::Post)) }
     def post; end
@@ -383,6 +398,9 @@ class Upvote
     sig { returns(T.nilable(::Comment)) }
     def reload_comment; end
 
+    sig { returns(T.nilable(::Org)) }
+    def reload_org; end
+
     sig { returns(T.nilable(::Post)) }
     def reload_post; end
 
@@ -391,6 +409,9 @@ class Upvote
 
     sig { void }
     def reset_comment; end
+
+    sig { void }
+    def reset_org; end
 
     sig { void }
     def reset_post; end

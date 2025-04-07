@@ -20,7 +20,7 @@ class Candidate < ApplicationRecord
   validates :user, absence: true, unless: -> { ballot&.election? }
   validates :user,
     presence: true,
-    same_org: { as: ->(candidate) { candidate.ballot.user }, name: 'User' },
+    same_org: :ballot,
     if: -> { ballot&.election? }
 
   validate :encrypted_title_absent, if: -> { ballot&.election? }

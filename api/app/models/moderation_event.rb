@@ -25,12 +25,9 @@ class ModerationEvent < ApplicationRecord
   belongs_to :moderatable, polymorphic: true
   belongs_to :user
 
+  validates :moderatable, same_org: { as: :user, name: 'Item' }
   validates :moderatable_type, inclusion: { in: ALLOWED_TYPES }
   validates :user, presence: true
-  validates :user,
-    same_org: { as: ->(event) { event.moderatable&.user}, name: 'Item' },
-    unless: :moderatable_user?
-  validates :user, same_org: :moderatable, if: :moderatable_user?
 
   validate :action_transitions, on: :create
   validate :moderatable_flagged, unless: :moderatable_user?

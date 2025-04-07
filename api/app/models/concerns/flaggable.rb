@@ -7,6 +7,8 @@ module Flaggable
 
     has_many :flags, as: :flaggable
 
+    has_one :org, through: :user
+
     validates :user, presence: true
 
     def encrypted_flaggable_title

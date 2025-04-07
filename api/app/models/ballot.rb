@@ -38,8 +38,6 @@ class Ballot < ApplicationRecord
   has_many :terms
   has_many :votes
 
-  has_one :org, through: :user
-
   validates :max_candidate_ids_per_vote,
     numericality: { allow_nil: true, greater_than: 0, only_integer: true }
   validates :max_candidate_ids_per_vote,
