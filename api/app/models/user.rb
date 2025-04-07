@@ -109,9 +109,7 @@ class User < ApplicationRecord
   validates :public_key_bytes,
     presence: true,
     length: { is: PUBLIC_KEY_LENGTH }
-  validates :recruiter,
-    same_org: { as: ->(user) { user }, name: 'Recruiter' },
-    if: :recruiter
+  validates :recruiter, same_org: :self, if: :recruiter
 
   before_update :on_join_org,
     if: -> { will_save_change_to_org_id? from: nil }

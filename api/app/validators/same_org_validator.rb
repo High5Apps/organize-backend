@@ -2,19 +2,16 @@ class SameOrgValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     is_other_value_symbol = options[:with].instance_of?(Symbol) ||
       options[:as].instance_of?(Symbol)
-    is_other_value_proc = options[:as].instance_of?(Proc)
-    has_message_info = options[:name].instance_of?(String) ||
-      options[:message].instance_of?(String)
+    raise 'unexpected options' unless is_other_value_symbol
 
-    if is_other_value_symbol
+
+    is_other_value_self = options[:with] === :self || options[:as] === :self
+    if is_other_value_self
+      other_org = record.org
+    else
       other_attribute = options[:with] || options[:as]
       other_value = record.send(other_attribute)
-      other_org = (other_attribute == :org) ? other_value : other_value&.org
-    elsif is_other_value_proc && has_message_info
-      other_value = options[:as].call(record)
       other_org = other_value&.org
-    else
-      raise 'unexpected options'
     end
 
     if options[:message] || options[:name]
@@ -31,7 +28,7 @@ class SameOrgValidator < ActiveModel::EachValidator
       message = 'not found'
     end
 
-    org = (attribute == :org) ? value : value&.org
+    org = value&.org
 
     unless org && (org == other_org)
       record.errors.add error_attribute, message
