@@ -10,18 +10,14 @@ class Post < ApplicationRecord
   enum :category, [:general, :grievances, :demands], validate: true
 
   belongs_to :candidate, optional: true
-  belongs_to :org
 
   has_many :comments
   has_many :upvotes
-
-  validates :org, presence: true, same_org: :user
 
   validate :candidacy_announcement_category_is_general
   validate :candidacy_announcement_created_by_candidate
   validate :candidacy_announcement_created_before_vote_ends, on: :create
 
-  before_validation :set_org_id_from_user, on: :create
   after_create :create_upvote_for_user
 
   has_encrypted :title, present: true, max_length: MAX_TITLE_LENGTH
@@ -57,9 +53,5 @@ class Post < ApplicationRecord
 
   def create_upvote_for_user
     upvotes.create! user:, value: 1
-  end
-
-  def set_org_id_from_user
-    self.org_id = user&.org_id
   end
 end

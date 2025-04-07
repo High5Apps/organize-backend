@@ -8,7 +8,7 @@ class Post::Query
     encrypted_title: '',
     user_id: '',
     created_at: '',
-    pseudonym: '',
+    pseudonym: 'users.pseudonym',
     score: '',
     my_vote: '',
   }
@@ -27,7 +27,7 @@ class Post::Query
       .with(upvotes: Upvote.created_at_or_before(created_at_or_before))
       .left_outer_joins(:upvotes)
       .page(params[:page]).without_count
-      .group(:id, :pseudonym)
+      .group(:id, 'users.pseudonym')
       .select(*selections(params))
 
     category_parameter = params[:category]

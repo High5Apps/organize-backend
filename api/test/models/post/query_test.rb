@@ -9,7 +9,7 @@ class PostQueryTest < ActiveSupport::TestCase
 
   test 'should respect initial_posts' do
     org = @user.org
-    assert Post.where.not(org:)
+    assert_not_equal Post.count, org.posts.count
     post_ids = Post::Query.build(org.posts).ids
     posts = Post.find(post_ids)
     assert posts.all? { |post| post.org == org }

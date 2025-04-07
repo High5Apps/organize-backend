@@ -11,17 +11,6 @@ class PostTest < ActiveSupport::TestCase
     assert @candidacy_announcement.valid?
   end
 
-  test 'org should be present' do
-    @post.org = nil
-    assert @post.invalid?
-  end
-
-  test 'org should be user org' do
-    @post.org_id = 'bad-id'
-    assert_not_equal @post.user.org_id, @post.org_id
-    assert @post.invalid?
-  end
-
   test 'candidacy announcement should not be created once voting ends' do
     post = @candidacy_announcement.dup
     @candidacy_announcement.destroy!
@@ -114,13 +103,6 @@ class PostTest < ActiveSupport::TestCase
 
   test 'user should be present' do
     @post.user = nil
-    assert @post.invalid?
-  end
-
-  test 'user should be in an Org' do
-    user_without_org = users :two
-    assert_nil user_without_org.org
-    @post.user = user_without_org
     assert @post.invalid?
   end
 

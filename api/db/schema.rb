@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_03_172857) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_07_222511) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
@@ -128,14 +128,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_03_172857) do
     t.uuid "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "org_id", null: false
     t.jsonb "encrypted_title", null: false
     t.jsonb "encrypted_body"
     t.uuid "candidate_id"
     t.datetime "blocked_at"
     t.datetime "deleted_at"
     t.index ["candidate_id"], name: "index_posts_on_candidate_id"
-    t.index ["org_id", "created_at"], name: "index_posts_on_org_id_and_created_at"
+    t.index ["created_at"], name: "index_posts_on_created_at"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 

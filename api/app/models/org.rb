@@ -9,10 +9,10 @@ class Org < ApplicationRecord
   VERIFICATION_CODE_LENGTH = 6
 
   has_many :permissions
-  has_many :posts
   has_many :users
 
   has_many :ballots, through: :users
+  has_many :posts, through: :users
   has_many :comments, through: :posts
   has_many :flags, through: :users
   has_many :moderation_events, through: :users,
