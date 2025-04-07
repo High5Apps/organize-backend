@@ -43,8 +43,7 @@ class V1::CommentsController < ApplicationController
   end
 
   def thread
-    @comment = authenticated_user.org&.comments&.find params[:id]
-    return render_not_found unless @comment
+    @comment = authenticated_user.org.comments.find params[:id]
 
     thread = @comment.path
       .includes_pseudonym
@@ -61,8 +60,7 @@ class V1::CommentsController < ApplicationController
   private
 
   def comments
-    post = authenticated_user.org&.posts&.find params[:post_id]
-    return [] unless post
+    post = authenticated_user.org.posts.find params[:post_id]
 
     now = Time.now
 

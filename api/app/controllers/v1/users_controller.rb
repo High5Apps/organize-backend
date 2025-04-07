@@ -19,7 +19,7 @@ class V1::UsersController < ApplicationController
   end
 
   def index
-    initial_users = authenticated_user.org&.users&.omit_blocked&.omit_left_org
+    initial_users = authenticated_user.org.users.omit_blocked.omit_left_org
     @query = User::Query.new(initial_users, params)
     users = @query.relation
     render json: {
@@ -29,12 +29,7 @@ class V1::UsersController < ApplicationController
   end
 
   def show
-    user = authenticated_user.org&.users&.with_service_stats
-      &.find_by(id: params[:id])
-
-    unless user
-      return render_error :not_found, ["No user found with id #{params[:id]}"]
-    end
+    user = authenticated_user.org.users.with_service_stats.find params[:id]
 
     allowed = User::Query::ALLOWED_ATTRIBUTES + [
       *(:blocked_at if user.blocked_at?),

@@ -70,7 +70,7 @@ class V1::BallotsController < ApplicationController
   end
 
   def index
-    initial_ballots = authenticated_user.org&.ballots&.omit_blocked
+    initial_ballots = authenticated_user.org.ballots.omit_blocked
     ballots = Ballot::Query.build initial_ballots, params
     render json: {
       ballots:,
@@ -79,8 +79,7 @@ class V1::BallotsController < ApplicationController
   end
 
   def show
-    @ballot = authenticated_user.org&.ballots&.find params[:id]
-    return render_not_found unless @ballot
+    @ballot = authenticated_user.org.ballots.find params[:id]
 
     render json: {
       ballot:,

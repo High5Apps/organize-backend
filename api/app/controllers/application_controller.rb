@@ -58,10 +58,6 @@ class ApplicationController < ActionController::API
     render json: { error_messages: }, status:
   end
 
-  def render_not_found
-    render_error :not_found, ['Not found']
-  end
-
   # For the difference between unauthorized and forbidden, see:
   # https://stackoverflow.com/a/6937030/2421313
   def render_unauthenticated

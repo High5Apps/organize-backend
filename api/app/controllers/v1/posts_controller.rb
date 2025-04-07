@@ -17,13 +17,13 @@ class V1::PostsController < ApplicationController
   end
 
   def index
-    initial_posts = authenticated_user.org&.posts&.omit_blocked
+    initial_posts = authenticated_user.org.posts.omit_blocked
     posts = Post::Query.build initial_posts, query_params
     render json: { posts:, meta: pagination_dict(posts) }
   end
 
   def show
-    initial_posts = authenticated_user.org&.posts
+    initial_posts = authenticated_user.org.posts
     post = Post::Query.build(initial_posts, query_params).find params[:id]
     render json: { post: }
   end

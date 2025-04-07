@@ -20,7 +20,7 @@ class V1::ModerationEventsController < ApplicationController
   end
 
   def index
-    initial_moderation_events = authenticated_user.org&.moderation_events
+    initial_moderation_events = authenticated_user.org.moderation_events
     @query = ModerationEvent::Query.build initial_moderation_events, params
     render json: {
       moderation_events:,
