@@ -23,6 +23,7 @@ class UnionCard < ApplicationRecord
     length: { is: SIGNATURE_LENGTH }
   validates :signed_at, presence: true
   validates :user, uniqueness: true
+  validates :work_group, same_org: :user, if: :work_group
 
   before_create :create_work_group_if_needed
 

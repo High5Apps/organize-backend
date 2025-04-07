@@ -273,6 +273,13 @@ class UnionCardTest < ActiveSupport::TestCase
     assert @card.valid?
   end
 
+  test 'work_group should belong to user Org' do
+    work_group_in_another_org = work_groups :two
+    assert_not_equal work_group_in_another_org.org, @card.user.org
+    @card.work_group = work_group_in_another_org
+    assert @card.invalid?
+  end
+
   test 'created_at_or_before should not include union_cards created after time' do
     card_created_at = union_cards(:one).created_at
     recent_cards = UnionCard.created_at_or_before(card_created_at)
