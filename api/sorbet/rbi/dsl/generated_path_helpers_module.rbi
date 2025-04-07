@@ -73,6 +73,9 @@ module GeneratedPathHelpersModule
   def v1_moderation_events_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
+  def v1_my_org_graph_path(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
   def v1_my_org_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -113,4 +116,7 @@ module GeneratedPathHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def v1_verify_path(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
+  def v1_work_groups_path(*args); end
 end

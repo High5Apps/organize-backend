@@ -40,3 +40,4 @@ three:
   signature_bytes: !!binary "VVFY0veX6mcDmEeLTmHWyM77yu/E5RpAhEQMeQuOF5HwMaAPnMDmuZ5SHQ10atvaFIaupcqnYltBSGiPuqkTbw=="
   signed_at: <%= 1.second.ago.to_fs(:db) %>
   user: five
+  work_group: two

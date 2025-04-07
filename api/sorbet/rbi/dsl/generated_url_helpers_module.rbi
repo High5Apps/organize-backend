@@ -73,6 +73,9 @@ module GeneratedUrlHelpersModule
   def v1_moderation_events_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
+  def v1_my_org_graph_url(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
   def v1_my_org_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
@@ -113,4 +116,7 @@ module GeneratedUrlHelpersModule
 
   sig { params(args: T.untyped).returns(String) }
   def v1_verify_url(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
+  def v1_work_groups_url(*args); end
 end
