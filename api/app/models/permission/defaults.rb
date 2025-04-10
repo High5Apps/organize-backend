@@ -6,6 +6,9 @@ module Permission::Defaults
     edit_org: {
       offices: ['founder', 'president', 'secretary'],
     },
+    edit_work_groups: {
+      offices: Office::TYPE_STRINGS,
+    },
     moderate: {
       offices: Office::TYPE_STRINGS,
     },
