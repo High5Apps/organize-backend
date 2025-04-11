@@ -25,6 +25,8 @@ class UnionCard < ApplicationRecord
   validates :user, uniqueness: true
   validates :work_group, same_org: :user, if: :work_group
 
+  after_destroy :destroy_work_group_if_needed
+
   before_create :create_work_group_if_needed
 
   has_encrypted :agreement, present: true, max_length: MAX_AGREEMENT_LENGTH
@@ -80,5 +82,11 @@ class UnionCard < ApplicationRecord
       errors.merge! invalid.record.errors
       raise
     end
+  end
+
+  def destroy_work_group_if_needed
+    return unless work_group_id?
+    return if work_group.union_cards.any?
+    work_group.destroy!
   end
 end

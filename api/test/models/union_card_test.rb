@@ -326,7 +326,6 @@ class UnionCardTest < ActiveSupport::TestCase
   test 'should create associated work_group on create when work_group_id present but not found and work_group info present' do
     card = @card.dup
     @card.destroy!
-    WorkGroup.find(card.work_group_id).destroy!
     assert_difference 'WorkGroup.count', 1 do
       card.save!
     end
@@ -344,7 +343,7 @@ class UnionCardTest < ActiveSupport::TestCase
     @card.update! work_group_id: nil
     WorkGroup.find(old_id).destroy!
     @card.work_group_id = old_id
-    assert_no_difference 'WorkGroup.count', 1 do
+    assert_no_difference 'WorkGroup.count' do
       begin
         @card.save!
       rescue
@@ -354,6 +353,7 @@ class UnionCardTest < ActiveSupport::TestCase
 
   test 'should not created associated work_group on create when work_group_id present and found and work_group_info present' do
     card = @card.dup
+    @card.work_group_id = nil # Prevents destroy_work_group_if_needed
     @card.destroy!
     assert_no_difference 'WorkGroup.count' do
       card.save!
@@ -377,6 +377,22 @@ class UnionCardTest < ActiveSupport::TestCase
       card.save
       first_error = card.errors.first
       assert_equal first_error.type, error_type
+    end
+  end
+
+  test 'should destroy work_group on destroy if no other union_cards refernce it' do
+    assert_equal 1, @card.work_group.union_cards.count
+    assert_difference 'WorkGroup.count', -1 do
+      @card.destroy!
+    end
+  end
+
+  test 'should not destroy work_group on destroy if other union_cards still reference it' do
+    other_union_card = union_cards :two
+    other_union_card.update! work_group: @card.work_group
+    assert @card.work_group.union_cards.many?
+    assert_no_difference 'WorkGroup.count' do
+      @card.destroy!
     end
   end
 end
