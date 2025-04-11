@@ -118,5 +118,8 @@ module GeneratedUrlHelpersModule
   def v1_verify_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
+  def v1_work_group_url(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
   def v1_work_groups_url(*args); end
 end

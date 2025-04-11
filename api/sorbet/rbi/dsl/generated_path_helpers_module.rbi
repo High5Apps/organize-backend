@@ -118,5 +118,8 @@ module GeneratedPathHelpersModule
   def v1_verify_path(*args); end
 
   sig { params(args: T.untyped).returns(String) }
+  def v1_work_group_path(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
   def v1_work_groups_path(*args); end
 end

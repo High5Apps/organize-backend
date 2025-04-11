@@ -37,7 +37,7 @@ Rails.application.routes.draw do
     end
     resources :union_cards, only: [:index, :create]
     resources :users, only: [:index, :create, :show]
-    resources :work_groups, only: [:index]
+    resources :work_groups, only: [:index, :update]
 
     get 'connection_preview', to: 'connections#preview'
     get 'my_permissions', to: 'permissions#index_my_permissions', as: 'index_my_permissions'
