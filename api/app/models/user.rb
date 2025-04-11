@@ -71,6 +71,7 @@ class User < ApplicationRecord
   belongs_to :recruiter,
     class_name: 'User',
     foreign_key: 'recruiter_id',
+    inverse_of: :recruits,
     optional: true
 
   has_many :ballots
@@ -78,24 +79,31 @@ class User < ApplicationRecord
   has_many :comments
   has_many :created_nominations,
     foreign_key: 'nominator_id',
-    class_name: 'Nomination'
+    class_name: 'Nomination',
+    inverse_of: :nominator
   has_many :created_moderation_events,
     foreign_key: 'user_id',
     class_name: 'ModerationEvent'
-  has_many :created_work_groups, class_name: 'WorkGroup'
+  has_many :created_work_groups, class_name: 'WorkGroup', inverse_of: :creator
   has_many :flags
   has_many :moderation_events, as: :moderatable
   has_many :posts
   has_many :received_nominations,
     foreign_key: 'nominee_id',
-    class_name: 'Nomination'
-  has_many :recruits, foreign_key: 'recruiter_id', class_name: 'User'
+    class_name: 'Nomination',
+    inverse_of: :nominee
+  has_many :recruits,
+    foreign_key: 'recruiter_id',
+    class_name: 'User',
+    inverse_of: :recruiter
   has_many :scanned_connections,
     foreign_key: 'scanner_id',
-    class_name: 'Connection'
+    class_name: 'Connection',
+    inverse_of: :scanner
   has_many :shared_connections,
     foreign_key: 'sharer_id',
-    class_name: 'Connection'
+    class_name: 'Connection',
+    inverse_of: :sharer
   has_many :terms
   has_many :upvotes
   has_many :votes

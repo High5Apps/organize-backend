@@ -23,7 +23,7 @@ class ModerationEvent < ApplicationRecord
   enum :action, [:allow, :block, :undo_allow, :undo_block], validate: true
 
   belongs_to :moderatable, polymorphic: true
-  belongs_to :user
+  belongs_to :user, inverse_of: :created_moderation_events
 
   validates :moderatable, same_org: { as: :user, name: 'Item' }
   validates :moderatable_type, inclusion: { in: ALLOWED_TYPES }

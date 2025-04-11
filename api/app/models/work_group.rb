@@ -5,7 +5,10 @@ class WorkGroup < ApplicationRecord
   MAX_JOB_TITLE_LENGTH = 100
   MAX_SHIFT_LENGTH = 3
 
-  belongs_to :creator, class_name: 'User', foreign_key: :user_id
+  belongs_to :creator,
+    class_name: 'User',
+    foreign_key: :user_id,
+    inverse_of: :created_work_groups
 
   has_many :union_cards
   has_many :users, through: :union_cards

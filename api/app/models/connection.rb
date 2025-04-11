@@ -5,8 +5,8 @@ class Connection < ApplicationRecord
   ERROR_MESSAGE_DIFFERENT_ORGS = 'You must be in the same org'
   ERROR_MESSAGE_SELF_CONNECTION = "You can't connect to yourself"
 
-  belongs_to :scanner, class_name: 'User'
-  belongs_to :sharer, class_name: 'User'
+  belongs_to :scanner, class_name: 'User', inverse_of: :scanned_connections
+  belongs_to :sharer, class_name: 'User', inverse_of: :shared_connections
 
   validates :scanner,
     presence: true,
@@ -19,6 +19,9 @@ class Connection < ApplicationRecord
   before_validation :set_scanner_info_from_sharer_info,
     if: -> { scanner.org.nil? },
     on: :create
+
+  after_create -> { scanner.save! },
+    if: -> { @did_set_scanner_info_from_sharer_info }
 
   def self.directly_connected?(user_id, other_user_id)
     between(user_id, other_user_id).present?
@@ -33,7 +36,9 @@ class Connection < ApplicationRecord
   private
 
   def set_scanner_info_from_sharer_info
-    scanner.update!(org: sharer.org, recruiter: sharer);
+    scanner.org = sharer.org
+    scanner.recruiter = sharer
+    @did_set_scanner_info_from_sharer_info = true
   end
 
   def not_already_connected

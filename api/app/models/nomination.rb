@@ -1,7 +1,7 @@
 class Nomination < ApplicationRecord
   belongs_to :ballot
-  belongs_to :nominator, class_name: 'User'
-  belongs_to :nominee, class_name: 'User'
+  belongs_to :nominator, class_name: 'User', inverse_of: :created_nominations
+  belongs_to :nominee, class_name: 'User', inverse_of: :received_nominations
 
   has_one :candidate
 
