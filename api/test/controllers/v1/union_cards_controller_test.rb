@@ -122,6 +122,14 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
       @user.org.union_cards.created_at_or_before(created_at_or_before).ids.sort
   end
 
+  test 'index should order by earliest signed_at first' do
+    get v1_union_cards_url, headers: @authorized_headers
+    union_card_ids = get_union_card_ids_from_response
+
+    assert_not_empty union_card_ids
+    assert_equal union_card_ids, @user.org.union_cards.order(:signed_at).ids
+  end
+
   test 'index should include pagination metadata' do
     get v1_union_cards_url, headers: @authorized_headers
     assert_contains_pagination_data

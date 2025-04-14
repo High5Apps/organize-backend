@@ -74,6 +74,7 @@ class V1::UnionCardsController < ApplicationController
     authenticated_user.org.union_cards
       .created_at_or_before(created_at_or_before)
       .joins(:user)
+      .order(:signed_at)
       .select(PERMITTED_ATTRIBUTE_NAMES + ['users.public_key_bytes'])
       .page(params[:page]).without_count
   end
