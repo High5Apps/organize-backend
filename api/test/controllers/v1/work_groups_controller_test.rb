@@ -78,6 +78,18 @@ class V1::WorkGroupsControllerTest < ActionDispatch::IntegrationTest
     assert_empty response.body
   end
 
+  test 'update should allow resetting department' do
+    assert_changes -> { @work_group.reload.encrypted_department&.attributes },
+        from: @work_group.encrypted_department.attributes,
+        to: nil do
+      patch v1_work_group_url(@work_group),
+        headers: @authorized_headers,
+        params: { work_group: { encrypted_department: nil } }
+    end
+
+    assert_response :ok
+  end
+
   test 'should not update with invalid authorization' do
     assert_no_changes -> { @work_group.reload } do
       patch v1_work_group_url(@work_group),

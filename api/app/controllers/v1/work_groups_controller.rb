@@ -1,5 +1,6 @@
 class V1::WorkGroupsController < ApplicationController
   PERMITTED_PARAMS = [
+    :encrypted_department, # Allow nil to reset
     EncryptedMessage.permitted_params(:department),
     EncryptedMessage.permitted_params(:job_title),
     EncryptedMessage.permitted_params(:shift),
