@@ -54,16 +54,7 @@ namespace :org do
 
   desc 'Simulate a fake org for any user'
   task :simulation => :environment do
-    include ActionView::Helpers::DateHelper
-    include ActiveSupport::Testing::TimeHelpers
-
-    founder_id, group_key_base64 = get_founder_id_and_group_key_from_user_input
-
-    simulation = Simulation.new
-    simulation.run(founder_id:)
-
-    seed = Seed.new simulation, group_key_base64
-    seed.create_random_seeds
+    basic_seed.create_random_seeds
   end
 
   # Alias rake org:sim to rake org:simulation
@@ -71,6 +62,17 @@ namespace :org do
 
   desc 'Simulate a fake org to use in marketing screenshots'
   task :screenshots => :environment do
+    basic_seed.create_screenshot_seeds
+  end
+
+  desc 'Simulate a fake org to test nomination acceptance flows'
+  task :nominate_me => :environment do
+    basic_seed.create_nomination_acceptance_seeds
+  end
+
+  private
+
+  def basic_seed
     include ActionView::Helpers::DateHelper
     include ActiveSupport::Testing::TimeHelpers
 
@@ -79,7 +81,6 @@ namespace :org do
     simulation = Simulation.new
     simulation.run(founder_id:)
 
-    seed = Seed.new simulation, group_key_base64
-    seed.create_screenshot_seeds
+    Seed.new simulation, group_key_base64
   end
 end

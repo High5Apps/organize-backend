@@ -101,6 +101,19 @@ class Seed
     end
   end
 
+  def create_nomination_acceptance_seeds
+    create_users
+    update_org
+    create_connections
+
+    offices = Office::TYPE_SYMBOLS - [:founder]
+    all_in_nominations = offices.zip([:nominations] * offices.count).to_h
+    create_elections office_state_map: all_in_nominations,
+      should_create_elections_fraction: 1
+
+    create_nominations acceptance_fraction: 0.5, forced_nominee_id: @founder.id
+  end
+
   def create_screenshot_seeds
     create_users
     update_org
@@ -466,19 +479,21 @@ class Seed
     state_map
   end
 
-  def create_nominations(acceptance_fraction:)
+  def create_nominations(acceptance_fraction:, forced_nominee_id: nil)
     users = @org.users
     elections = @org.ballots.election
 
     benchmark "Created about #{5 * elections.count} nominations" do
       elections.each do |election|
         nominations_end = election.nominations_end_at
-        joined_users = users.joined_at_or_before(nominations_end)
+        joined_user_ids = users.joined_at_or_before(nominations_end).ids
+        user_id_pool = joined_user_ids - [forced_nominee_id]
         max_nomination_count = rand 1..10
-        nominators_and_nominees = joined_users.ids.sample 2 * max_nomination_count
+        nominators_and_nominees = user_id_pool.sample 2 * max_nomination_count
         nomination_count = nominators_and_nominees.count / 2
 
-        nomination_count.times do
+        forced_nominee_insert_index = rand nomination_count
+        nomination_count.times do |i|
           # nominations_end could be after the simulation ends, so need to
           # clamp, because don't want to simulate user actions after the
           # simulation ends
@@ -487,14 +502,19 @@ class Seed
 
           nomination_created_at = \
             rand (election.created_at)...nomination_actions_cutoff
-          nominator_id, nominee_id = nominators_and_nominees.shift 2
+          nominator_id, random_nominee_id = nominators_and_nominees.shift 2
+          nominee_id = ((i == forced_nominee_insert_index) && forced_nominee_id) ||
+            random_nominee_id
           nomination = nil
           travel_to nomination_created_at do
             nomination = election.nominations
               .create!(nominator_id:, nominee_id:)
           end
 
-          if rand < acceptance_fraction
+          if forced_nominee_id === nominee_id
+            # Let forced nominee manually accept or decline
+            next
+          elsif rand < acceptance_fraction
             accepted = true
           elsif rand < 0.5
             # Decline the nomination half of the time it's not accepted
