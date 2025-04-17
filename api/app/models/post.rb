@@ -14,6 +14,8 @@ class Post < ApplicationRecord
   has_many :comments
   has_many :upvotes
 
+  validates :candidate, uniqueness: true, if: :candidate_id?
+
   validate :candidacy_announcement_category_is_general
   validate :candidacy_announcement_created_by_candidate
   validate :candidacy_announcement_created_before_vote_ends, on: :create

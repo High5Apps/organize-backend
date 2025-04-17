@@ -29,6 +29,17 @@ class PostTest < ActiveSupport::TestCase
     assert @candidacy_announcement.invalid?
   end
 
+  test 'candidacy announcement should only be allowed once per candidate' do
+    duplicate = @candidacy_announcement.dup
+    assert duplicate.invalid?
+  end
+
+  test 'candidacy announcement taken error message should be custom' do
+    duplicate = @candidacy_announcement.dup
+    duplicate.validate
+    assert duplicate.errors.full_messages.any?(/candidacy announcement/)
+  end
+
   test 'category should be present' do
     @post.category = nil
     assert @post.invalid?
