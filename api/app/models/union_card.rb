@@ -74,12 +74,14 @@ class UnionCard < ApplicationRecord
 
   def create_work_group_if_needed
     return if work_group_id && org.work_groups.exists?(work_group_id)
+
     begin
-      self.work_group = user.created_work_groups.create! encrypted_department:,
+      create_work_group! encrypted_department:,
         encrypted_job_title:,
-        encrypted_shift:
-    rescue ActiveRecord::RecordInvalid => invalid
-      errors.merge! invalid.record.errors
+        encrypted_shift:,
+        user_id:
+    rescue ActiveRecord::RecordInvalid
+      errors.add :work_group, :invalid
     end
   end
 

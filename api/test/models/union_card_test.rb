@@ -329,24 +329,13 @@ class UnionCardTest < ActiveSupport::TestCase
     end
   end
 
-  test 'should merge associated work_group errors into union_card errors on create' do
+  test 'first error should be invalid work_group if new work group was invalid' do
     card = @card.dup
     @card.destroy!
     card.work_group_id = nil
-
-    error_type = 'test error'
-    raises_exception = ->(_) do
-      work_group = WorkGroup.new
-      errors = ActiveModel::Errors.new work_group
-      errors.add :base, error_type
-      work_group.errors.merge! errors
-      raise ActiveRecord::RecordInvalid.new work_group
-    end
-    card.user.created_work_groups.stub :create!, raises_exception do
-      card.save
-      first_error = card.errors.first
-      assert_equal first_error.type, error_type
-    end
+    card.encrypted_job_title = nil
+    card.save
+    assert card.errors.first.match? :work_group, :invalid
   end
 
   test 'should destroy work_group on destroy if no other union_cards refernce it' do
