@@ -14,7 +14,7 @@ class UnionCard < ApplicationRecord
   SIGNATURE_LENGTH = 88
 
   belongs_to :user
-  belongs_to :work_group, optional: true
+  belongs_to :work_group
 
   has_one :org, through: :user
 
@@ -23,11 +23,11 @@ class UnionCard < ApplicationRecord
     length: { is: SIGNATURE_LENGTH }
   validates :signed_at, presence: true
   validates :user, uniqueness: true
-  validates :work_group, same_org: :user, if: :work_group
+  validates :work_group, presence: true, same_org: :user
 
   after_destroy :destroy_work_group_if_needed
 
-  before_create :create_work_group_if_needed
+  before_validation :create_work_group_if_needed, on: :create
 
   has_encrypted :agreement, present: true, max_length: MAX_AGREEMENT_LENGTH
   has_encrypted :email, present: true, max_length: MAX_EMAIL_LENGTH
@@ -39,10 +39,11 @@ class UnionCard < ApplicationRecord
     max_length: MAX_HOME_ADDRESS_LINE1_LENGTH
   has_encrypted :home_address_line2, present: true,
     max_length: MAX_HOME_ADDRESS_LINE2_LENGTH
-  has_encrypted :job_title, max_length: WorkGroup::MAX_JOB_TITLE_LENGTH
+  has_encrypted :job_title, present: true,
+    max_length: WorkGroup::MAX_JOB_TITLE_LENGTH
   has_encrypted :name, present: true, max_length: MAX_NAME_LENGTH
   has_encrypted :phone, present: true, max_length: MAX_PHONE_LENGTH
-  has_encrypted :shift, max_length: WorkGroup::MAX_SHIFT_LENGTH
+  has_encrypted :shift, present: true, max_length: WorkGroup::MAX_SHIFT_LENGTH
 
   # This should only be used when joined with user
   def public_key_bytes
@@ -72,7 +73,6 @@ class UnionCard < ApplicationRecord
   private
 
   def create_work_group_if_needed
-    return if encrypted_job_title.nil?
     return if work_group_id && org.work_groups.exists?(work_group_id)
     begin
       self.work_group = user.created_work_groups.create! encrypted_department:,
@@ -80,13 +80,10 @@ class UnionCard < ApplicationRecord
         encrypted_shift:
     rescue ActiveRecord::RecordInvalid => invalid
       errors.merge! invalid.record.errors
-      raise
     end
   end
 
   def destroy_work_group_if_needed
-    return unless work_group_id?
-    return if work_group.union_cards.any?
-    work_group.destroy!
+    work_group.destroy! unless work_group.union_cards.any?
   end
 end

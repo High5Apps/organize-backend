@@ -141,9 +141,9 @@ class UnionCardTest < ActiveSupport::TestCase
     assert @card.invalid?
   end
 
-  test 'encrypted_job_title should be optional' do
+  test 'encrypted_job_title should be present' do
     @card.encrypted_job_title = nil
-    assert @card.valid?
+    assert @card.invalid?
   end
 
   test 'encrypted_job_title error messages should not include "Encrypted"' do
@@ -207,9 +207,9 @@ class UnionCardTest < ActiveSupport::TestCase
     assert @card.invalid?
   end
 
-  test 'encrypted_shift should be optional' do
+  test 'encrypted_shift should be present' do
     @card.encrypted_shift = nil
-    assert @card.valid?
+    assert @card.invalid?
   end
 
   test 'encrypted_shift error messages should not include "Encrypted"' do
@@ -268,9 +268,9 @@ class UnionCardTest < ActiveSupport::TestCase
     assert_not_includes error, 'taken'
   end
 
-  test 'work_group should be optional' do
+  test 'work_group should be present' do
     @card.work_group = nil
-    assert @card.valid?
+    assert @card.invalid?
   end
 
   test 'work_group should belong to user Org' do
@@ -290,7 +290,7 @@ class UnionCardTest < ActiveSupport::TestCase
     end
   end
 
-  test 'should create associated work_group on create when work_group_id absent and work_group info present' do
+  test 'should create associated work_group on create when work_group_id absent' do
     card = @card.dup
     @card.destroy!
     card.work_group_id = nil
@@ -306,24 +306,7 @@ class UnionCardTest < ActiveSupport::TestCase
       card.encrypted_shift.as_json
   end
 
-  test 'should not create associated work_group on update when work_group_id absent and work_group info present' do
-    @card.work_group_id = nil
-    assert_no_difference 'WorkGroup.count' do
-      @card.save!
-    end
-  end
-
-  test 'should not create assoiated work_group on create when work_group_id absent and work_group info absent' do
-    card = @card.dup
-    @card.destroy!
-    card.work_group_id = nil
-    card.encrypted_job_title = nil
-    assert_no_difference 'WorkGroup.count' do
-      card.save!
-    end
-  end
-
-  test 'should create associated work_group on create when work_group_id present but not found and work_group info present' do
+  test 'should create associated work_group on create when work_group_id present but not found' do
     card = @card.dup
     @card.destroy!
     assert_difference 'WorkGroup.count', 1 do
@@ -338,23 +321,9 @@ class UnionCardTest < ActiveSupport::TestCase
       card.encrypted_shift.as_json
   end
 
-  test 'should not create associated work_group on update when work_group_id present but not found and work_group info present' do
-    old_id = @card.work_group_id
-    @card.update! work_group_id: nil
-    WorkGroup.find(old_id).destroy!
-    @card.work_group_id = old_id
-    assert_no_difference 'WorkGroup.count' do
-      begin
-        @card.save!
-      rescue
-      end
-    end
-  end
-
-  test 'should not created associated work_group on create when work_group_id present and found and work_group_info present' do
+  test 'should not create associated work_group on create when work_group_id present and found' do
     card = @card.dup
-    @card.work_group_id = nil # Prevents destroy_work_group_if_needed
-    @card.destroy!
+    card.user = users :four
     assert_no_difference 'WorkGroup.count' do
       card.save!
     end

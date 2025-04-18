@@ -15,16 +15,19 @@ class V1::WorkGroupsControllerTest < ActionDispatch::IntegrationTest
     get v1_work_groups_url, headers: @authorized_headers
     assert_response :ok
 
-    response.parsed_body => work_groups: [first_work_group, *]
-    assert_pattern do
-      first_work_group => {
-        encrypted_department: { c: String, n: String, t: String },
-        encrypted_job_title: { c: String, n: String, t: String },
-        encrypted_shift: { c: String, n: String, t: String },
-        id: String,
-        member_count: Integer,
-        **nil
-      }
+    response.parsed_body => work_groups:
+    assert_not_empty work_groups
+    work_groups.each do |work_group|
+      assert_pattern do
+        work_group => {
+          encrypted_department: nil | { c: String, n: String, t: String },
+          encrypted_job_title: { c: String, n: String, t: String },
+          encrypted_shift: { c: String, n: String, t: String },
+          id: String,
+          member_count: Integer,
+          **nil
+        }
+      end
     end
   end
 

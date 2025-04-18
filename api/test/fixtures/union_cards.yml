@@ -22,21 +22,27 @@ two:
   encrypted_employer_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_home_address_line1: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_home_address_line2: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_job_title: { c: QLHUrZ83qZK/svjX9WtOsdxuireUxRpX4bTEXRx1nKs=, n: MbFKjxnH3Rw2uh+o, t: bZpYzbA9esSCGFeVQqDtZg== }
   encrypted_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_phone: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_shift: { c: 3Xlv, n: VqPJY9JPETv1uBRl, t: tT6RJM7zAjv1SuI7YFr8JA== }
   signature_bytes: !!binary "VVFY0veX6mcDmEeLTmHWyM77yu/E5RpAhEQMeQuOF5HwMaAPnMDmuZ5SHQ10atvaFIaupcqnYltBSGiPuqkTbw=="
   signed_at: <%= 2.second.ago.to_fs(:db) %>
   user: three
+  work_group: three
 
 three:
   created_at: <%= 1.second.ago.to_fs(:db) %>
   encrypted_agreement: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_department: { c: 4MaIhtsX4K9CTb7Lx/HitEAEIw==, n: HT9GHyAwiIImZZSy, t: tgbvStFKoh3XKhq6ZsZlMg== }
   encrypted_email: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_employer_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_home_address_line1: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_home_address_line2: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_job_title: { c: QLHUrZ83qZK/svjX9WtOsdxuireUxRpX4bTEXRx1nKs=, n: MbFKjxnH3Rw2uh+o, t: bZpYzbA9esSCGFeVQqDtZg== }
   encrypted_name: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
   encrypted_phone: { c: H0PO, n: 6itiamUMb8Ot+nlq, t: +CqMPYzZu1/XcrUmKu/yUw== }
+  encrypted_shift: { c: 3Xlv, n: VqPJY9JPETv1uBRl, t: tT6RJM7zAjv1SuI7YFr8JA== }
   signature_bytes: !!binary "VVFY0veX6mcDmEeLTmHWyM77yu/E5RpAhEQMeQuOF5HwMaAPnMDmuZ5SHQ10atvaFIaupcqnYltBSGiPuqkTbw=="
   signed_at: <%= 1.second.ago.to_fs(:db) %>
   user: five
