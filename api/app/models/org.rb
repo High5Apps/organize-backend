@@ -38,8 +38,9 @@ class Org < ApplicationRecord
     presence: true,
     format: { with: /\A\d{#{VERIFICATION_CODE_LENGTH}}\z/ }
 
-  before_validation :normalize_email
   before_validation :set_verification_code, on: :create
+
+  normalizes :email, with: ->(email) { email.downcase.strip }
 
   def graph
     connections = Connection.where(scanner_id: user_ids).or(
@@ -66,10 +67,6 @@ class Org < ApplicationRecord
   end
 
   private
-
-  def normalize_email
-    self.email = email&.strip&.downcase
-  end
 
   def set_verification_code
     return unless email
