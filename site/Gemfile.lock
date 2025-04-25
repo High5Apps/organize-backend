@@ -171,6 +171,11 @@ GEM
     prism (1.4.0)
     prometheus-client (4.2.4)
       base64
+    propshaft (1.1.0)
+      actionpack (>= 7.0.0)
+      activesupport (>= 7.0.0)
+      rack
+      railties (>= 7.0.0)
     psych (5.2.3)
       date
       stringio
@@ -263,14 +268,6 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    sprockets (4.2.2)
-      concurrent-ruby (~> 1.0)
-      logger
-      rack (>= 2.2.4, < 4)
-    sprockets-rails (3.5.2)
-      actionpack (>= 6.1)
-      activesupport (>= 6.1)
-      sprockets (>= 3.0.0)
     sqlite3 (2.6.0-aarch64-linux-gnu)
     sqlite3 (2.6.0-x86_64-linux-gnu)
     stimulus-rails (1.3.4)
@@ -333,11 +330,11 @@ DEPENDENCIES
   jbuilder
   lograge (~> 0.14.0)
   meta-tags (~> 2)
+  propshaft
   puma (>= 5.0)
   rails (~> 8.0.2)
   rubocop-rails-omakase
   selenium-webdriver
-  sprockets-rails
   sqlite3 (>= 1.4)
   stimulus-rails
   turbo-rails
