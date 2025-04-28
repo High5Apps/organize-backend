@@ -90,7 +90,7 @@ To run organize-backend on a Raspberry Pi, perform the following steps:
     2. If the SD card isn’t FAT32 formatted, erase and reformat it to FAT32
 3. Flash the Raspbian image onto the SD card
     ```sh
-    bin/flash ~/Downloads/2024-07-04-raspios-bookworm-arm64-lite.img
+    bin/flash ~/Downloads/2024-11-19-raspios-bookworm-arm64-lite.img
     ```
 4. Set up the physical Raspberry Pi
     1. Insert the SD card into the Raspberry Pi
