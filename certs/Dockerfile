@@ -1,4 +1,4 @@
-FROM certbot/certbot:arm64v8-v2.11.0
+FROM certbot/certbot:arm64v8-v4.0.0
 
 WORKDIR /usr/src/app
 
