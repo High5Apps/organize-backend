@@ -91,7 +91,7 @@ services:
     volumes:
       - monitor-logs-data:/loki:rw
   monitor-node:
-    image: prom/node-exporter:v1.8.2
+    image: prom/node-exporter:v1.9.1
     command:
       - --path.procfs=/host/proc
       - --path.sysfs=/host/sys
