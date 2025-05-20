@@ -49,7 +49,7 @@ services:
       - '-store_container_labels=false'
     devices:
       - /dev/kmsg
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    image: gcr.io/cadvisor/cadvisor:v0.52.1
     ports:
       - "127.0.0.1:8082:8080"
     privileged: true
