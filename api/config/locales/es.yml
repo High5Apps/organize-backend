@@ -1,0 +1,68 @@
+es:
+  activerecord:
+    attributes:
+      ballot:
+        encrypted_question: 'sQuestion'
+        term_ends_at: '"sTerm ends on"'
+        term_starts_at: '"sTerm starts on"'
+        voting_ends_at: '"sVoting ends on"'
+      candidate:
+        encrypted_title: 'sTitle'
+      comment:
+        encrypted_body: 'sBody'
+      org:
+        encrypted_employer_name: 'sEmployer name'
+        encrypted_name: 'sName'
+        encrypted_member_definition: 'sMember definition'
+      post:
+        encrypted_body: 'sBody'
+        encrypted_title: 'sTitle'
+      union_card:
+        encrypted_agreement: 'sAgreement'
+        encrypted_department: 'sDepartment'
+        encrypted_email: 'sEmail'
+        encrypted_employer_name: 'sEmployer name'
+        encrypted_home_address_line1: 'sHome address line 1'
+        encrypted_home_address_line2: 'sHome address line 2'
+        encrypted_job_title: 'sJob title'
+        encrypted_name: 'sName'
+        encrypted_phone: 'sPhone'
+        encrypted_shift: 'sShift'
+      work_group:
+        encrypted_department: 'sDepartment'
+        encrypted_job_title: 'sJob title'
+        encrypted_shift: 'sShift'
+    errors:
+      models:
+        ballot:
+          attributes:
+            term_ends_at:
+              greater_than: 'smust be after term starts'
+            term_starts_at:
+              greater_than_or_equal_to: 'smust be at least 24 hours after voting ends to give the election winner enough time to accept office. A "lame duck" period of 1 to 6 weeks is usually recommended before the next term starts, so that the outgoing officer has time to wrap things up.'
+            voting_ends_at:
+              greater_than: 'smust be after nominations end'
+        post:
+          attributes:
+            candidate:
+              taken: 'shas already created a candidacy announcement'
+        nomination:
+          attributes:
+            nominee:
+              taken: 'shas already been nominated'
+        union_card:
+          attributes:
+            user:
+              taken: 'shas already created a union card'
+  errors:
+    messages:
+      authenticatable:
+        blocked_user: "sYou can't do that because you were blocked by your Org's moderators. If you think this was a mistake, please contact your Org's moderators to request that they unblock you. You can't use the app until you're unblocked."
+        left_org: "sYou can't do that because you left the Org"
+        unauthenticated: 'sInvalid auth token.'
+        unauthorized: "sYou aren't allowed to do that."
+      behind_on_payments: "sYour Org is behind on payments. Your officers must contact the app developers to resolve this. You can't use the app until this is resolved."
+      custom_not_found: 'sNot found'
+      not_in_org: 'sYou must be in an Org to do that'
+      org_not_verified: 'sYou must verify your account first'
+

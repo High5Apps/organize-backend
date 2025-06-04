@@ -70,3 +70,6 @@ gem 'yabeda-activerecord', '~> 0.1.1'
 
 # Used for structured request logging
 gem 'lograge', '~> 0.14.0'
+
+# Used for error message localization
+gem 'http_accept_language', '~> 2'

@@ -225,6 +225,18 @@ class V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
+  # This is the only test covering the i18n of error messages. Do not remove
+  # this test without first adding a similar test to another controller.
+  test 'should internationalize error messages based on Accept-Language header' do
+    [[nil, :en], [:en, :en], [:de, :en], [:es, :es]].each do |locale, expected|
+      get v1_users_url, headers: { 'Accept-Language': locale }
+      response.parsed_body => error_messages: [first_error, *]
+      expected_message = I18n.t 'errors.messages.authenticatable.unauthenticated',
+        locale: expected
+      assert_equal expected_message, first_error
+    end
+  end
+
   private
 
   def get_user_ids_from_response

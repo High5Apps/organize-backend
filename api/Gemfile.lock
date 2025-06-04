@@ -96,6 +96,7 @@ GEM
       i18n (>= 1.8.11, < 2)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    http_accept_language (2.1.1)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     io-console (0.8.0)
@@ -289,6 +290,7 @@ DEPENDENCIES
   bootsnap
   debug
   faker (~> 3)
+  http_accept_language (~> 2)
   jwt (~> 2)
   kaminari (~> 1)
   lograge (~> 0.14.0)
@@ -307,7 +309,7 @@ DEPENDENCIES
   yabeda-rails (~> 0.9.0)
 
 RUBY VERSION
-   ruby 3.3.5p100
+   ruby 3.4.4p34
 
 BUNDLED WITH
    2.4.10
