@@ -3,7 +3,6 @@ class EncryptedMessage
 
   BYTE_LENGTH_AUTH_TAG = 16
   BYTE_LENGTH_NONCE = 12
-  ERROR_MESSAGE_UNEXPECTED_BASE64_BYTE_LENGTH = 'had unexpected byte length when decoded from base64'
   KEYS = [:c, :n, :t]
 
   attr_accessor *KEYS
@@ -50,7 +49,7 @@ class EncryptedMessage
   def base64_decoded_byte_length(attribute_name, byte_length)
     length = decoded_attribute_length attribute_name
     if length != byte_length
-      errors.add(attribute_name, ERROR_MESSAGE_UNEXPECTED_BASE64_BYTE_LENGTH)
+      errors.add attribute_name, :unexpected_base64_byte_length
     end
   end
 

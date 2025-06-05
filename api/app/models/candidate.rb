@@ -34,20 +34,20 @@ class Candidate < ApplicationRecord
 
   def encrypted_title_absent
     unless encrypted_title.blank?
-      errors.add :encrypted_title, 'Must be absent for elections'
+      errors.add :encrypted_title, :present_for_elections
     end
   end
 
   def encrypted_title_present
     if encrypted_title.blank?
-      errors.add :encrypted_title, 'Must be present for non-elections'
+      errors.add :encrypted_title, :blank_for_non_elections
     end
   end
 
   def nomination_matches_candidate
     return unless ballot && nomination && user
     unless ballot == nomination.ballot && user == nomination.nominee
-      errors.add :base, "Nomination's nominee and ballot must match candidate"
+      errors.add :base, :nomination_mismatch
     end
   end
 end

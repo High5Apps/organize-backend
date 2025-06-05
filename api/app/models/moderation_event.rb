@@ -59,8 +59,8 @@ class ModerationEvent < ApplicationRecord
     end
 
     unless allowed_actions.include? action
-      errors.add :action,
-        "can't be #{action.inspect} when then last action was #{last_action.inspect}. Another moderator probably moderated this item just now."
+      errors.add :action, :invalid_transition, action: action.inspect,
+        last_action: last_action.inspect
     end
   end
 
@@ -68,7 +68,7 @@ class ModerationEvent < ApplicationRecord
     return unless moderatable
 
     unless moderatable.respond_to?(:flags) && moderatable.flags.any?
-      errors.add :base, "can't moderate an item that isn't flagged"
+      errors.add :base, :moderatable_not_flagged
     end
   end
 
@@ -76,7 +76,7 @@ class ModerationEvent < ApplicationRecord
     return unless moderatable
 
     if moderatable.terms.impending_at(Time.now).any?
-      errors.add :base, "Can't block impending officers"
+      errors.add :base, :impending_officer_blocked
     end
   end
 
@@ -84,7 +84,7 @@ class ModerationEvent < ApplicationRecord
     return unless moderatable
 
     if moderatable.terms.active_at(Time.now).any?
-      errors.add :base, "Can't block officers"
+      errors.add :base, :officer_blocked
     end
   end
 end

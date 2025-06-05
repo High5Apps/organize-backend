@@ -26,7 +26,7 @@ class Nomination < ApplicationRecord
 
   def check_unaccepted
     unless accepted_in_database.nil?
-      errors.add :accepted, "can't be modified"
+      errors.add :accepted, :modified
     end
   end
 
@@ -37,7 +37,7 @@ class Nomination < ApplicationRecord
   def not_self_nomination
     return unless nominator && nominee
     if nominator == nominee
-      errors.add :base, "Can't nominate yourself"
+      errors.add :base, :self_nomination
     end
   end
 
@@ -45,7 +45,7 @@ class Nomination < ApplicationRecord
     return unless ballot
 
     unless ballot.election?
-      errors.add(:base, "Can't nominate candidates for non-elections")
+      errors.add :base, :non_election
     end
   end
 
@@ -53,7 +53,7 @@ class Nomination < ApplicationRecord
     return unless ballot&.election?
 
     unless updated_at < ballot.nominations_end_at
-      errors.add(:base, "Nomination can't be changed after nominations end")
+      errors.add :base, :modified_after_nominations_end
       raise ActiveRecord::RecordInvalid
     end
   end

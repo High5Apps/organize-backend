@@ -3,9 +3,6 @@ class Upvote < ApplicationRecord
     where(created_at: ..time)
   }
 
-  ERROR_EXACTLY_ONE_COMMENT_OR_POST = \
-    'Up votes must be associated with exactly one comment or post'
-
   belongs_to :comment, optional: true
   belongs_to :post, optional: true
   belongs_to :user
@@ -28,7 +25,7 @@ class Upvote < ApplicationRecord
 
   def exactly_one_of_comment_or_post_present
     unless [comment, post].compact.length == 1
-      errors.add(:base, ERROR_EXACTLY_ONE_COMMENT_OR_POST)
+      errors.add :base, :on_comment_and_post
     end
   end
 end

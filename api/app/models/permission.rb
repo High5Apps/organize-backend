@@ -43,7 +43,7 @@ class Permission < ApplicationRecord
     return unless data&.offices
 
     unless data.offices.include? 'president'
-      errors.add :base, 'President must be allowed to edit permissions'
+      errors.add :base, :president_removed_from_edit_permissions
     end
   end
 
@@ -51,7 +51,7 @@ class Permission < ApplicationRecord
     return unless data&.offices
 
     unless data.offices.include? 'secretary'
-      errors.add :base, 'Secretary must be allowed to edit Org info'
+      errors.add :base, :secretary_removed_from_edit_org
     end
   end
 
@@ -60,7 +60,7 @@ class Permission < ApplicationRecord
 
     active_offices = org.terms.active_at(Time.now).pluck(:office).uniq
     if (active_offices & data.offices).blank?
-      errors.add :base, 'At least one active officer must have permission'
+      errors.add :base, :all_officers_removed
     end
   end
 end

@@ -23,9 +23,9 @@ class SameOrgValidator < ActiveModel::EachValidator
     if options[:message]
       message = options[:message]
     elsif options[:name]
-      message = "#{options[:name]} not found"
+      message = I18n.t 'errors.messages.named_not_found', name: options[:name]
     else
-      message = 'not found'
+      message = :not_found
     end
 
     org = value&.org

@@ -19,7 +19,7 @@ class Flag < ApplicationRecord
     return unless flaggable_type == 'Ballot'
 
     if flaggable.election?
-      errors.add :base, "Elections can't be flagged"
+      errors.add :base, :election
     end
   end
 
@@ -27,7 +27,7 @@ class Flag < ApplicationRecord
     return unless flaggable_type == 'Post'
 
     if flaggable.candidate_id
-      errors.add :base, "Candidacy announcements can't be flagged"
+      errors.add :base, :candidacy_announcement
     end
   end
 end

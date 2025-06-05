@@ -32,7 +32,7 @@ class Post < ApplicationRecord
     return unless candidate_id
 
     unless general?
-      errors.add :category, 'must be "general" for candidacy announcements'
+      errors.add :category, :not_general_for_candidacy_announcement
     end
   end
 
@@ -40,7 +40,7 @@ class Post < ApplicationRecord
     return unless candidate_id
 
     unless Time.now < candidate.ballot.voting_ends_at
-      errors.add :base, "Can't create candidacy announcement after voting ends"
+      errors.add :base, :candidacy_announcement_created_after_voting_end
     end
   end
 
@@ -48,8 +48,7 @@ class Post < ApplicationRecord
     return unless candidate_id
 
     unless user_id == candidate.user_id
-      errors.add :base,
-        'Candidacy announcement can only be created by the candidate'
+      errors.add :base, :candidacy_announcement_not_created_by_candidate
     end
   end
 

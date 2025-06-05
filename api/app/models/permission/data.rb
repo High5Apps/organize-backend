@@ -29,14 +29,14 @@ class Permission::Data
     return unless offices
 
     unless offices.uniq.length == offices.length
-      errors.add :offices, 'must not contain duplicates'
+      errors.add :offices, :contains_duplicates
     end
   end
 
   def offices_only_includes_offices
     return unless offices
     unless offices.all? { |office| Office::TYPE_STRINGS.include? office }
-      errors.add :offices, 'must only include offices'
+      errors.add :offices, :includes_non_offices
     end
   end
 end

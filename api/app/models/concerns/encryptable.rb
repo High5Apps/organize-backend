@@ -20,8 +20,8 @@ module Encryptable
         encrypted_attribute = send(encrypted_attribute_name)
         length = encrypted_attribute&.decoded_ciphertext_length || 0
         if length > max_length
-          errors.add(encrypted_attribute_name,
-            "is too long. Emojis count more. Length: #{length}, max: #{max_length}")
+          errors.add(encrypted_attribute_name, :encrypted_attribute_too_long,
+            length:, max_length:)
         end
       end
     end

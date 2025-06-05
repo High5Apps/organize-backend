@@ -30,7 +30,7 @@ class Vote < ApplicationRecord
     ballot_candidate_id_set = ballot.candidates.ids.to_set
     candidate_id_set = candidate_ids.to_set
     unless candidate_id_set.subset? ballot_candidate_id_set
-      errors.add(:candidate_ids, "must be a subset of ballot's candidates")
+      errors.add :candidate_ids, :not_subset_of_ballot_candidates
     end
   end
 
@@ -38,7 +38,7 @@ class Vote < ApplicationRecord
     return if candidate_ids.blank?
 
     unless candidate_ids.uniq.length == candidate_ids.length
-      errors.add(:candidate_ids, 'must not contain duplicates')
+      errors.add :candidate_ids, :contains_duplicates
     end
   end
 
@@ -47,8 +47,7 @@ class Vote < ApplicationRecord
 
     max = ballot.max_candidate_ids_per_vote
     if candidate_ids.length > max
-      errors.add :base,
-        "must not contain more than #{max} #{'choice'.pluralize(max)}"
+      errors.add :base, :contains_too_many_choices, count: max
     end
   end
 
@@ -56,7 +55,7 @@ class Vote < ApplicationRecord
     return unless ballot
 
     if ballot.nominations_end_at && (updated_at < ballot.nominations_end_at)
-      errors.add(:base, "Vote can't be created before nominations end")
+      errors.add :base, :created_before_nominations_end
       raise ActiveRecord::RecordInvalid
     end
   end
@@ -65,7 +64,7 @@ class Vote < ApplicationRecord
     return unless ballot
 
     unless updated_at < ballot.voting_ends_at
-      errors.add(:base, "Vote can't be changed after voting ends")
+      errors.add :base, :modified_after_voting_end
       raise ActiveRecord::RecordInvalid
     end
   end

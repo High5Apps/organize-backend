@@ -5,10 +5,10 @@ class AfterCreatedAtValidator < ActiveModel::EachValidator
     created_at = record.created_at || Time.now
 
     if value.blank?
-      message = options[:message] || "can't be blank"
+      message = options[:message] || :blank
       record.errors.add attribute, message
     elsif value <= created_at
-      message = options[:message] || "can't be in the past"
+      message = options[:message] || :in_the_past
       record.errors.add attribute, message
     end
   end

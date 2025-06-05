@@ -138,7 +138,7 @@ class Ballot < ApplicationRecord
 
   def office_open
     unless Office.availability_in(org, office)[:open]
-      errors.add :office, 'is already filled or currently has an open election'
+      errors.add :office, :not_open
     end
   end
 
@@ -147,7 +147,7 @@ class Ballot < ApplicationRecord
     return if office === 'steward'
 
     if org.terms.where(office:).active_at(term_starts_at).exists?
-      errors.add :term_starts_at, "can't be before the previous term ends"
+      errors.add :term_starts_at, :before_previous_term_ends
     end
   end
 end

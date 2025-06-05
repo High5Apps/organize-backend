@@ -47,12 +47,12 @@ class Term < ApplicationRecord
     return unless user
 
     unless user.org
-      errors.add :user, 'must be a member of an Org'
+      errors.add :user, :not_in_org
       return
     end
 
     unless user == user.org.users.order(:joined_at).first
-      errors.add :user, "must be the Org's first member to be the founder"
+      errors.add :user, :founder_not_first_member
     end
   end
 
@@ -61,7 +61,7 @@ class Term < ApplicationRecord
 
     candidate_id = ballot.candidates.where(user:).first&.id
     unless ballot.winner? candidate_id
-      errors.add :user, 'must have won the election'
+      errors.add :user, :lost_election
     end
   end
 end

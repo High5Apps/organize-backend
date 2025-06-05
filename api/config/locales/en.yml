@@ -1,4 +1,14 @@
 en:
+  activemodel:
+    errors:
+      models:
+        encrypted_message:
+          unexpected_base64_byte_length: 'had unexpected byte length when decoded from base64'
+        permission/data:
+          attributes:
+            offices:
+              contains_duplicates: 'must not contain duplicates'
+              includes_non_offices: 'must only include offices'
   activerecord:
     attributes:
       ballot:
@@ -33,27 +43,87 @@ en:
         encrypted_job_title: 'Job title'
         encrypted_shift: 'Shift'
     errors:
+      messages:
+        encrypted_attribute_too_long: "is too long. Emojis count more. Length: %{length}, max: %{max_length}"
+        blocked: "can't be blocked"
+        in_the_past: "can't be in the past"
+        left_org: "can't have left the Org"
+        not_found: 'not found'
+        not_in_org: 'must be in an Org'
       models:
         ballot:
           attributes:
+            office:
+              not_open: 'is already filled or currently has an open election'
             term_ends_at:
               greater_than: 'must be after term starts'
             term_starts_at:
+              before_previous_term_ends: "can't be before the previous term ends"
               greater_than_or_equal_to: 'must be at least 24 hours after voting ends to give the election winner enough time to accept office. A "lame duck" period of 1 to 6 weeks is usually recommended before the next term starts, so that the outgoing officer has time to wrap things up.'
             voting_ends_at:
               greater_than: 'must be after nominations end'
+        candidate:
+          attributes:
+            encrypted_title:
+              blank_for_non_elections: 'must be present for non-elections'
+              present_for_elections: 'must be absent for elections'
+          nomination_mismatch: "Nomination's nominee and ballot must match candidate"
+        connection:
+          already_connected: "You're already connected to that user"
+          different_orgs: 'You must be in the same org'
+          self_connection: "You can't connect to yourself"
+        flag:
+          candidacy_announcement: "Candidacy announcements can't be flagged"
+          election: "Elections can't be flagged"
+        moderation_event:
+          attributes:
+            action:
+              invalid_transition: "can't be %{action} when then last action was %{last_action}. Another moderator probably moderated this item just now."
+          impending_officer_blocked: "Can't block impending officers"
+          moderatable_not_flagged: "Can't moderate an item that isn't flagged"
+          officer_blocked: "Can't block officers"
         nomination:
           attributes:
+            accepted:
+              modified: "can't be modified"
             nominee:
               taken: 'has already been nominated'
+          modified_after_nominations_end: "Nomination can't be changed after nominations end"
+          non_election: "Can't nominate candidates for non-elections"
+          self_nomination: "Can't nominate yourself"
+        permission:
+          all_officers_removed: 'At least one active officer must have permission'
+          president_removed_from_edit_permissions: 'President must be allowed to edit permissions'
+          secretary_removed_from_edit_org: 'Secretary must be allowed to edit Org info'
         post:
           attributes:
             candidate:
               taken: 'has already created a candidacy announcement'
+            category:
+              not_general_for_candidacy_announcement: 'must be "general" for candidacy announcements'
+          candidacy_announcement_created_after_voting_end: "Can't create candidacy announcement after voting ends"
+          candidacy_announcement_not_created_by_candidate: 'Candidacy announcement can only be created by the candidate'
+        term:
+          attributes:
+            user:
+              founder_not_first_member: "must be the Org's first member to be the founder"
+              lost_election: 'must have won the election'
         union_card:
           attributes:
             user:
               taken: 'has already created a union card'
+        upvote:
+          on_comment_and_post: 'Upvotes must be associated with exactly one comment or post'
+        vote:
+          attributes:
+            candidate_ids:
+              not_subset_of_ballot_candidates: "must be a subset of ballot's candidates"
+              contains_duplicates: 'must not contain duplicates'
+          contains_too_many_choices:
+            one: "must not contain more than %{count} choice"
+            other: "must not contain more than %{count} choices"
+          created_before_nominations_end: "Vote can't be created before nominations end"
+          modified_after_voting_end: "Vote can't be changed after voting ends"
   errors:
     messages:
       authenticatable:
@@ -63,6 +133,7 @@ en:
         unauthorized: "You aren't allowed to do that."
       behind_on_payments: "Your Org is behind on payments. Your officers must contact the app developers to resolve this. You can't use the app until this is resolved."
       custom_not_found: 'Not found'
+      named_not_found: "%{name} not found"
       not_in_org: 'You must be in an Org to do that'
       org_not_verified: 'You must verify your account first'
 

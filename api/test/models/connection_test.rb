@@ -45,8 +45,8 @@ class ConnectionTest < ActiveSupport::TestCase
 
     error_messages = reverse_connection.errors.full_messages
     assert_equal 1, error_messages.count
-    assert_equal Connection::ERROR_MESSAGE_ALREADY_CONNECTED,
-      error_messages.first
+    expected = I18n.t 'activerecord.errors.models.connection.already_connected'
+    assert_equal expected, error_messages.first
   end
 
   test 'should not be able to connect to yourself' do
@@ -56,7 +56,8 @@ class ConnectionTest < ActiveSupport::TestCase
 
     error_messages = self_connection.errors.full_messages
     assert_equal 1, error_messages.count
-    assert_equal Connection::ERROR_MESSAGE_SELF_CONNECTION, error_messages.first
+    expected = I18n.t 'activerecord.errors.models.connection.self_connection'
+    assert_equal expected, error_messages.first
   end
 
   test "sharer's scanners should include scanner" do
@@ -124,7 +125,8 @@ class ConnectionTest < ActiveSupport::TestCase
       sharer: @user_with_other_org)
     error_messages = connection.errors.full_messages
     assert_equal 1, error_messages.count
-    assert_equal Connection::ERROR_MESSAGE_DIFFERENT_ORGS, error_messages.first
+    expected = I18n.t 'activerecord.errors.models.connection.different_orgs'
+    assert_equal expected, error_messages.first
   end
 
   test 'created_at_or_before should not include connections with created_at after time' do
