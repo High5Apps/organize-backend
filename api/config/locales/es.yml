@@ -42,14 +42,14 @@ es:
               greater_than_or_equal_to: 'smust be at least 24 hours after voting ends to give the election winner enough time to accept office. A "lame duck" period of 1 to 6 weeks is usually recommended before the next term starts, so that the outgoing officer has time to wrap things up.'
             voting_ends_at:
               greater_than: 'smust be after nominations end'
-        post:
-          attributes:
-            candidate:
-              taken: 'shas already created a candidacy announcement'
         nomination:
           attributes:
             nominee:
               taken: 'shas already been nominated'
+        post:
+          attributes:
+            candidate:
+              taken: 'shas already created a candidacy announcement'
         union_card:
           attributes:
             user:
