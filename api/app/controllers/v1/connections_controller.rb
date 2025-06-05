@@ -30,20 +30,15 @@ class V1::ConnectionsController < ApplicationController
   # users register, so it's not possible to require requester authentication.
   # However, it's still relatively safe, because it authenticates the sharer.
   def preview
-    org = @authenticated_sharer.org
-    if org
-      render json: {
-        org: {
-          encrypted_name: org.encrypted_name,
-          encrypted_member_definition: org.encrypted_member_definition,
-          id: org.id,
-        }, user: {
-          pseudonym: @authenticated_sharer.pseudonym,
-        }
+    render json: {
+      org: {
+        encrypted_name: @org.encrypted_name,
+        encrypted_member_definition: @org.encrypted_member_definition,
+        id: @org.id,
+      }, user: {
+        pseudonym: @authenticated_sharer.pseudonym,
       }
-    else
-      render_error :not_found, ["No org found for user #{@authenticated_sharer.id}"]
-    end
+    }
   end
 
   private
