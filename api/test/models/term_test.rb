@@ -76,6 +76,13 @@ class TermTest < ActiveSupport::TestCase
     assert_not @founder_term.valid?
   end
 
+  test 'user should be in an Org for founders' do
+    user_without_org = users :two
+    assert_nil user_without_org.org
+    @founder_term.user = user_without_org
+    assert @founder_term.invalid?
+  end
+
   test 'user should be in an Org for non-founders' do
     user_without_org = users :two
     assert_nil user_without_org.org

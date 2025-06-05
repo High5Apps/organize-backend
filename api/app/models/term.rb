@@ -48,6 +48,7 @@ class Term < ApplicationRecord
 
     unless user.org
       errors.add :user, 'must be a member of an Org'
+      return
     end
 
     unless user == user.org.users.order(:joined_at).first
