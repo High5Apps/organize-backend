@@ -136,4 +136,23 @@ es:
       named_not_found: "s%{name} not found"
       not_in_org: 'sYou must be in an Org to do that'
       org_not_verified: 'sYou must verify your account first'
-
+  v1:
+    ballots:
+      create:
+        errors:
+          election:
+            with_candidates: 'sElection candidates must be created via nominations'
+          multiple_choice:
+            max_selections_greater_than_selections: "sMax selections can't be more than the number of unique choices"
+            too_few_choices: 'sMultiple choice ballots must have at least 2 unique choices'
+            too_many_choices: "sMultiple choice ballots can't have more than %{count} choices"
+          yes_no:
+            without_two_choices: 'sYes/No ballots must have 2 choices'
+    orgs:
+      verify:
+        errors:
+          invalid: 'sInvalid verification code'
+    union_cards:
+      create:
+        errors:
+          taken: 'sUser has already created a union card'

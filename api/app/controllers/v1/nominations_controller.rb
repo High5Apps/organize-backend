@@ -41,7 +41,9 @@ class V1::NominationsController < ApplicationController
     @nomination = authenticated_user.received_nominations
       .find_by id: params[:id]
     unless @nomination
-      render_error :not_found, ['Nomination not found']
+      error_message = t 'errors.messages.named_not_found',
+        name: Nomination.model_name.human
+      render_error :not_found, [error_message]
     end
   end
 

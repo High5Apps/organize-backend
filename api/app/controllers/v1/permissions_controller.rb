@@ -41,7 +41,9 @@ class V1::PermissionsController < ApplicationController
     @scope = params[:scope]
     @permission_data = Permission.who_can @scope, @org
     unless @permission_data
-      render_error :not_found, ['Permission not found']
+      error_message = t 'errors.messages.named_not_found',
+        name: Permission.model_name.human
+      render_error :not_found, [error_message]
     end
   end
 

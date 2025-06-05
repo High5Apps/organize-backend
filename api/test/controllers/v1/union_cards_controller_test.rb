@@ -53,8 +53,7 @@ class V1::UnionCardsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
 
     response.parsed_body => error_messages: [error_message,]
-    assert_includes error_message,
-      I18n.t('activerecord.errors.models.union_card.attributes.user.taken')
+    assert_includes error_message, I18n.t('v1.union_cards.create.errors.taken')
   end
 
   test 'should destroy_my_union_card' do

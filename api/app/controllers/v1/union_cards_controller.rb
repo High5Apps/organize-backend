@@ -23,9 +23,8 @@ class V1::UnionCardsController < ApplicationController
   before_action :check_can_view_union_cards, only: [:index]
 
   def create
-    return render_error :unprocessable_entity, [
-      "User #{I18n.t 'activerecord.errors.models.union_card.attributes.user.taken'}"
-    ] if authenticated_user.union_card
+    return render_error :unprocessable_entity,
+      [t('.errors.taken')] if authenticated_user.union_card
 
     new_union_card = authenticated_user.build_union_card create_params
     if new_union_card.save

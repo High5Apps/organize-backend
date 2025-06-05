@@ -166,7 +166,7 @@ class V1::BallotsController < ApplicationController
   def validate_election
     unless create_candidates_params.count == 0
       return render_error :unprocessable_entity,
-        ['Election candidates must be created via nominations']
+        [t('.errors.election.with_candidates')]
     end
   end
 
@@ -174,25 +174,27 @@ class V1::BallotsController < ApplicationController
     candidate_count = create_candidates_params.count
     unless candidate_count >= 2
       return render_error :unprocessable_entity,
-        ['Multiple choice ballots must have at least 2 unique choices']
+        [t('.errors.multiple_choice.too_few_choices')]
     end
 
     unless candidate_count <= MAX_CANDIDATES_PER_CREATE
-      return render_error :unprocessable_entity,
-        ["Multiple choice ballots can't have more than #{MAX_CANDIDATES_PER_CREATE} choices"]
+      error_message = t '.errors.multiple_choice.too_many_choices',
+        count: MAX_CANDIDATES_PER_CREATE
+      return render_error :unprocessable_entity, [error_message]
     end
 
     max_candidate_ids_per_vote = \
       create_ballot_params[:max_candidate_ids_per_vote].to_i || 1
     unless max_candidate_ids_per_vote <= candidate_count
       return render_error :unprocessable_entity,
-        ["Max selections can't be more than the number of unique choices"]
+        [t('.errors.multiple_choice.max_selections_greater_than_selections')]
     end
   end
 
   def validate_yes_no
     unless create_candidates_params.count == 2
-      render_error :unprocessable_entity, ['Yes/No ballots must have 2 choices']
+      render_error :unprocessable_entity,
+        [t('.errors.yes_no.without_two_choices')]
     end
   end
 end

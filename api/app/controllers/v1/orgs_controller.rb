@@ -48,7 +48,7 @@ class V1::OrgsController < ApplicationController
     if @org.verify(params[:code])
       head :ok
     else
-      render_error :forbidden, ['Invalid verification code']
+      render_error :forbidden, [t('.errors.invalid')]
     end
   end
 

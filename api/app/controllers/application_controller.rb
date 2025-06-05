@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  include AbstractController::Translation
   include Authenticatable
   include HttpAcceptLanguage::AutoLocale
   include SetCurrentRequestDetails
