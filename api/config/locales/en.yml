@@ -97,7 +97,7 @@ en:
             user:
               taken: 'has already created a union card'
         upvote:
-          on_comment_and_post: 'Upvotes must be associated with exactly one comment or post'
+          on_comment_and_post: 'Upvotes must be associated with exactly one comment or discussion'
         vote:
           attributes:
             candidate_ids:
@@ -108,6 +108,8 @@ en:
             other: "must not contain more than %{count} choices"
           created_before_nominations_end: "Vote can't be created before nominations end"
           modified_after_voting_end: "Vote can't be changed after voting ends"
+    models:
+      post: 'Discussion'
   attributes:
     encrypted_body: 'Body'
     encrypted_department: 'Department'
