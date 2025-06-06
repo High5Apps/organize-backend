@@ -3,221 +3,221 @@ es:
     errors:
       models:
         encrypted_message:
-          unexpected_base64_byte_length: 'shad unexpected byte length when decoded from base64'
+          unexpected_base64_byte_length: 'tuvo una longitud inesperada cuando se decodificó desde base64'
         permission/data:
           attributes:
             offices:
-              contains_duplicates: 'smust not contain duplicates'
-              includes_non_offices: 'smust only include offices'
+              contains_duplicates: 'no debe contener duplicados'
+              includes_non_offices: 'solo debe incluir cargos'
     models:
       office:
-        one: 'Soffice'
-        other: 'Soffices'
+        one: 'Cargo'
+        other: 'Cargos'
       permission/data:
-        one: 'sDatum'
-        other: 'sData'
+        one: 'Dato'
+        other: 'Datos'
   activerecord:
     attributes:
       ballot:
-        encrypted_question: 'sQuestion'
-        max_candidate_ids_per_vote: 'sMax selections'
-        nominations_end_at: '"sNominations end on"'
-        term_ends_at: '"sTerm ends on"'
-        term_starts_at: '"sTerm starts on"'
-        voting_ends_at: '"sVoting ends on"'
+        encrypted_question: 'Pregunta'
+        max_candidate_ids_per_vote: 'Selecciones máximas'
+        nominations_end_at: '"Las nominaciones terminan el"'
+        term_ends_at: '"El mandato termina el"'
+        term_starts_at: '"El mandato comienza el"'
+        voting_ends_at: '"La votación termina el"'
       comment:
-        ancestry: 'sAncestry'
-        depth: 'sDepth'
+        ancestry: 'Linaje'
+        depth: 'Profundidad'
       connection:
-        scanner: 'sScanner'
-        sharer: 'sSharer'
+        scanner: 'Escáner'
+        sharer: 'Compartidor'
       flag:
-        flaggable: 'sFlaggable'
-        flaggable_type: 'sFlaggable type'
+        flaggable: 'Elemento marcable'
+        flaggable_type: 'Tipo de elemento marcable'
       moderation_event:
-        action: 'sAction'
-        moderatable: 'sModeratable'
-        moderatable_type: 'sModeratable type'
+        action: 'Acción'
+        moderatable: 'Elemento moderable'
+        moderatable_type: 'Tipo de elemento moderable'
       nomination:
-        nominator: 'sNominator'
-        nominee: 'sNominee'
+        nominator: 'Nominador'
+        nominee: 'Nominado'
       org:
-        behind_on_payments_at: 'sBehind on payments at'
-        encrypted_employer_name: 'sEmployer name'
-        encrypted_member_definition: 'sMember definition'
-        email: 'sEmail'
-        verification_code: 'sVerification code'
-        verified_at: 'sVerified at'
+        behind_on_payments_at: 'Moroso en los pagos desde'
+        encrypted_employer_name: 'Nombre del empleador'
+        encrypted_member_definition: 'Definición de miembro'
+        email: 'Correo electrónico'
+        verification_code: 'Código de verificación'
+        verified_at: 'Verificado el'
       permission:
         data: :activemodel.models.permission/data
-        scope: 'sScope'
+        scope: 'Alcance'
       term:
-        ends_at: 'sEnds at'
-        starts_at: 'sStarts at'
+        ends_at: 'Termina el'
+        starts_at: 'Comienza el'
       union_card:
-        encrypted_agreement: 'sAgreement'
-        encrypted_email: 'sEmail'
-        encrypted_employer_name: 'sEmployer name'
-        encrypted_home_address_line1: 'sHome address line 1'
-        encrypted_home_address_line2: 'sHome address line 2'
-        encrypted_phone: 'sPhone'
-        signature_bytes: 'sSignature bytes'
-        signed_at: 'sSigned at'
+        encrypted_agreement: 'Acuerdo'
+        encrypted_email: 'Correo electrónico'
+        encrypted_employer_name: 'Nombre del empleador'
+        encrypted_home_address_line1: 'Línea 1 de la dirección del hogar'
+        encrypted_home_address_line2: 'Línea 2 de la dirección del hogar'
+        encrypted_phone: 'Teléfono'
+        signature_bytes: 'Bytes de la firma'
+        signed_at: 'Firmado el'
       upvote:
-        value: 'sValue'
+        value: 'Valor'
       user:
-        joined_at: 'sJoined at'
-        left_org_at: 'sLeft Org at'
-        public_key_bytes: 'sPublic key bytes'
-        pseudonym: 'sPseudonym'
-        recruiter: 'sRecruiter'
+        joined_at: 'Se unió el'
+        left_org_at: 'Abandonó la Org el'
+        public_key_bytes: 'Bytes de la clave pública'
+        pseudonym: 'Pseudónimo'
+        recruiter: 'Reclutador'
       vote:
-        candidate_ids: 'sCandidate IDs'
+        candidate_ids: 'IDs de candidatos'
     errors:
       messages:
-        encrypted_attribute_too_long: "sis too long. Emojis count more. Length: %{length}, max: %{max_length}"
-        blocked: "scan't be blocked"
-        in_the_past: "scan't be in the past"
-        left_org: "scan't have left the Org"
-        not_found: 'snot found'
-        not_in_org: 'smust be in an Org'
+        encrypted_attribute_too_long: "es demasiado largo. Los emojis cuentan más. Longitud: %{length}, máximo: %{max_length}"
+        blocked: "no se puede bloquear"
+        in_the_past: "no puede estar en el pasado"
+        left_org: "no puede haber abandonado la Org"
+        not_found: 'no encontrado'
+        not_in_org: 'debe estar en una Org'
       models:
         ballot:
           attributes:
             office:
-              not_open: 'sis already filled or currently has an open election'
+              not_open: 'ya está ocupado o actualmente tiene una elección abierta'
             term_ends_at:
-              greater_than: 'smust be after term starts'
+              greater_than: 'debe ser después del comienzo del mandato'
             term_starts_at:
-              before_previous_term_ends: "scan't be before the previous term ends"
-              greater_than_or_equal_to: 'smust be at least 24 hours after voting ends to give the election winner enough time to accept office. A "lame duck" period of 1 to 6 weeks is usually recommended before the next term starts, so that the outgoing officer has time to wrap things up.'
+              before_previous_term_ends: "no puede ser antes del final del mandato anterior"
+              greater_than_or_equal_to: 'debe ser al menos 24 horas después de que termine la votación para darle suficiente tiempo al ganador de la elección para aceptar el cargo. Generalmente se recomienda un período de inactividad de 1 a 6 semanas antes de que comience el próximo mandato, para que el funcionario saliente tenga tiempo de terminar.'
             voting_ends_at:
-              greater_than: 'smust be after nominations end'
+              greater_than: 'debe ser después de que terminen las nominaciones'
         candidate:
           attributes:
             encrypted_title:
-              blank_for_non_elections: 'smust be present for non-elections'
-              present_for_elections: 'smust be absent for elections'
-          nomination_mismatch: "sNomination's nominee and ballot must match candidate"
+              blank_for_non_elections: 'debe estar presente para las no elecciones'
+              present_for_elections: 'debe estar ausente para las elecciones'
+          nomination_mismatch: "El nominado de la nominación y la papeleta deben coincidir"
         connection:
-          already_connected: "sYou're already connected to that user"
-          different_orgs: 'sYou must be in the same org'
-          self_connection: "sYou can't connect to yourself"
+          already_connected: "Ya estás conectado a ese usuario"
+          different_orgs: 'Debes estar en la misma Org'
+          self_connection: "No puedes conectarte contigo mismo"
         flag:
-          candidacy_announcement: "sCandidacy announcements can't be flagged"
-          election: "sElections can't be flagged"
+          candidacy_announcement: "Declaraciones de candidatura no se pueden marcar"
+          election: "Las elecciones no se pueden marcar"
         moderation_event:
           attributes:
             action:
-              invalid_transition: "scan't be %{action} when then last action was %{last_action}. Another moderator probably moderated this item just now."
-          impending_officer_blocked: "sCan't block impending officers"
-          moderatable_not_flagged: "sCan't moderate an item that isn't flagged"
-          officer_blocked: "sCan't block officers"
+              invalid_transition: "no se puede %{action} cuando la acción anterior fue %{last_action}. Es probable que otro moderador haya moderado este elemento recientemente."
+          impending_officer_blocked: "No se puede bloquear a los funcionarios entrantes"
+          moderatable_not_flagged: "No se puede moderar un elemento que no esté marcado"
+          officer_blocked: "No se puede bloquear a los funcionarios"
         nomination:
           attributes:
             accepted:
-              modified: "scan't be modified"
+              modified: "no se puede modificar"
             nominee:
-              taken: 'shas already been nominated'
-          modified_after_nominations_end: "sNomination can't be changed after nominations end"
-          non_election: "sCan't nominate candidates for non-elections"
-          self_nomination: "sCan't nominate yourself"
+              taken: 'ya ha sido nominado'
+          modified_after_nominations_end: "La nominación no se puede cambiar después de que terminen las nominaciones"
+          non_election: "No se puede nominar candidatos para no elecciones"
+          self_nomination: "No se puede nominar a uno mismo"
         permission:
-          all_officers_removed: 'sAt least one active officer must have permission'
-          president_removed_from_edit_permissions: 'sPresident must be allowed to edit permissions'
-          secretary_removed_from_edit_org: 'sSecretary must be allowed to edit Org info'
+          all_officers_removed: 'Al menos un funcionario activo debe tener permiso'
+          president_removed_from_edit_permissions: 'El presidente debe tener permiso para editar permisos'
+          secretary_removed_from_edit_org: 'El secretario debe tener permiso para editar la información de la Org'
         post:
           attributes:
             candidate:
-              taken: 'shas already created a candidacy announcement'
+              taken: 'ya ha creado una declaración de candidatura'
             category:
-              not_general_for_candidacy_announcement: 'smust be "general" for candidacy announcements'
-          candidacy_announcement_created_after_voting_end: "sCan't create candidacy announcement after voting ends"
-          candidacy_announcement_not_created_by_candidate: 'sCandidacy announcement can only be created by the candidate'
+              not_general_for_candidacy_announcement: 'debe ser "general" para las declaraciones de candidatura'
+          candidacy_announcement_created_after_voting_end: "No se puede crear una declaración de candidatura después de que termine la votación"
+          candidacy_announcement_not_created_by_candidate: 'La declaración de candidatura solo puede ser creada por el candidato'
         term:
           attributes:
             user:
-              founder_not_first_member: "smust be the Org's first member to be the founder"
-              lost_election: 'smust have won the election'
+              founder_not_first_member: "debe ser el primer miembro de la Org para ser el fundador"
+              lost_election: 'debe haber ganado la elección'
         union_card:
           attributes:
             user:
-              taken: 'shas already created a union card'
+              taken: 'ya ha creado una tarjeta sindical'
         upvote:
-          on_comment_and_post: 'sUpvotes must be associated with exactly one comment or post'
+          on_comment_and_post: 'Los votos positivos deben estar asociados con exactamente un comentario o discusión'
         vote:
           attributes:
             candidate_ids:
-              not_subset_of_ballot_candidates: "smust be a subset of ballot's candidates"
-              contains_duplicates: 'smust not contain duplicates'
+              not_subset_of_ballot_candidates: "deben ser un subconjunto de los candidatos de la papeleta"
+              contains_duplicates: 'no debe contener duplicados'
           contains_too_many_choices:
-            one: "smust not contain more than %{count} choice"
-            other: "smust not contain more than %{count} choices"
-          created_before_nominations_end: "sVote can't be created before nominations end"
-          modified_after_voting_end: "sVote can't be changed after voting ends"
+            one: "no debe contener más de %{count} opción"
+            other: "no debe contener más de %{count} opciones"
+          created_before_nominations_end: "El voto no se puede crear antes de que terminen las nominaciones"
+          modified_after_voting_end: "El voto no se puede cambiar después de que termine la votación"
     models:
       ballot:
-        one: 'Sballot'
-        other: Sballots
+        one: 'Papeleta'
+        other: 'Papeletas'
       candidate:
-        one: 'Scandidate'
-        other: 'Scandidates'
+        one: 'Candidato'
+        other: 'Candidatos'
       comment:
-        one: 'Scomment'
-        other: 'Scomments'
+        one: 'Comentario'
+        other: 'Comentarios'
       connection:
-        one: 'Sconnection'
-        other: 'Sconnections'
+        one: 'Conexión'
+        other: 'Conexiones'
       flag:
-        one: 'Sflag'
-        other: 'Sflags'
+        one: 'Señalación'
+        other: 'Señalaciones'
       moderation_event:
-        one: 'Smoderation Event'
-        other: 'Smoderation Events'
+        one: 'Evento de moderación'
+        other: 'Eventos de moderación'
       nomination:
-        one: 'Snomination'
-        other: 'Snominations'
+        one: 'Nominación'
+        other: 'Nominaciones'
       org:
-        one: 'Sorg'
-        other: 'Sorgs'
+        one: 'Org'
+        other: 'Orgs'
       permission:
-        one: 'Spermission'
-        other: 'Spermissions'
+        one: 'Permiso'
+        other: 'Permisos'
       post:
-        one: 'Spost'
-        other: 'Sposts'
+        one: 'Discusión'
+        other: 'Discusiones'
       term:
-        one: 'Sterm'
-        other: 'Sterms'
+        one: 'Mandato'
+        other: 'Mandatos'
       union_card:
-        one: 'Sunion Card'
-        other: 'Sunion Cards'
+        one: 'Tarjeta sindical'
+        other: 'Tarjetas sindicales'
       upvote:
-        one: 'Supvote'
-        other: 'Supvotes'
+        one: 'Voto positivo'
+        other: 'Votos positivos'
       user:
-        one: 'Suser'
-        other: 'Susers'
+        one: 'Usuario'
+        other: 'Usuarios'
       vote:
-        one: 'Svote'
-        other: 'Svotes'
+        one: 'Voto'
+        other: 'Votos'
       work_group:
-        one: 'Swork Group'
-        other: 'Swork Groups'
+        one: 'Grupo de trabajo'
+        other: 'Grupos de trabajo'
   attributes:
-    accepted: 'sAccepted'
+    accepted: 'Aceptado'
     ballot: :activerecord.models.ballot
-    blocked_at: 'sBlocked at'
+    blocked_at: 'Bloqueado el'
     candidate: :activerecord.models.candidate
-    category: 'sCategory'
+    category: 'Categoría'
     comment: :activerecord.models.comment
-    deleted_at: 'sDeleted at'
-    encrypted_body: 'sBody'
-    encrypted_department: 'sDepartment'
-    encrypted_job_title: 'sJob title'
-    encrypted_name: 'sName'
-    encrypted_shift: 'sShift'
-    encrypted_title: 'sTitle'
+    deleted_at: 'Eliminado el'
+    encrypted_body: 'Cuerpo'
+    encrypted_department: 'Departamento'
+    encrypted_job_title: 'Título del trabajo'
+    encrypted_name: 'Nombre'
+    encrypted_shift: 'Turno'
+    encrypted_title: 'Título'
     nomination: :activerecord.models.nomination
     office: :activemodel.models.office
     org: :activerecord.models.org
@@ -227,32 +227,32 @@ es:
   errors:
     messages:
       authenticatable:
-        blocked_user: "sYou can't do that because you were blocked by your Org's moderators. If you think this was a mistake, please contact your Org's moderators to request that they unblock you. You can't use the app until you're unblocked."
-        left_org: "sYou can't do that because you left the Org"
-        unauthenticated: 'sInvalid auth token.'
-        unauthorized: "sYou aren't allowed to do that."
-      behind_on_payments: "sYour Org is behind on payments. Your officers must contact the app developers to resolve this. You can't use the app until this is resolved."
-      custom_not_found: 'sNot found'
-      named_not_found: "s%{name} not found"
-      not_in_org: 'sYou must be in an Org to do that'
-      org_not_verified: 'sYou must verify your account first'
+        blocked_user: "No puedes hacer eso porque fuiste bloqueado por los moderadores de tu Org. Si crees que esto fue un error, comunícate con los moderadores de tu Org para solicitar que te desbloqueen. No puedes usar la app hasta que te desbloqueen."
+        left_org: "No puedes hacer eso porque abandonaste la Org"
+        unauthenticated: 'Token de autenticación inválido.'
+        unauthorized: "No tienes permiso para hacer eso."
+      behind_on_payments: "Tu Org está morosa en los pagos. Tus funcionarios deben comunicarse con los desarrolladores de la app para resolver esto. No puedes usar la app hasta que se resuelva esto."
+      custom_not_found: 'No encontrado'
+      named_not_found: "%{name} no encontrado"
+      not_in_org: 'Debes estar en una Org para hacer eso'
+      org_not_verified: 'Debes verificar tu cuenta primero'
   v1:
     ballots:
       create:
         errors:
           election:
-            with_candidates: 'sElection candidates must be created via nominations'
+            with_candidates: 'Los candidatos a elección deben crearse a través de nominaciones'
           multiple_choice:
-            max_selections_greater_than_selections: "sMax selections can't be more than the number of unique choices"
-            too_few_choices: 'sMultiple choice ballots must have at least 2 unique choices'
-            too_many_choices: "sMultiple choice ballots can't have more than %{count} choices"
+            max_selections_greater_than_selections: "Las selecciones máximas no puede ser mayor que el número de opciones únicas"
+            too_few_choices: 'Las papeletas de opción múltiple deben tener al menos 2 opciones únicas'
+            too_many_choices: "Las papeletas de opción múltiple no pueden tener más de %{count} opciones"
           yes_no:
-            without_two_choices: 'sYes/No ballots must have 2 choices'
+            without_two_choices: 'Las papeletas de sí/no deben tener 2 opciones'
     orgs:
       verify:
         errors:
-          invalid: 'sInvalid verification code'
+          invalid: 'Código de verificación inválido'
     union_cards:
       create:
         errors:
-          taken: 'sUser has already created a union card'
+          taken: 'El usuario ya ha creado una tarjeta sindical'

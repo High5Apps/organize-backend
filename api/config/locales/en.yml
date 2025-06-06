@@ -54,7 +54,7 @@ en:
           nomination_mismatch: "Nomination's nominee and ballot must match candidate"
         connection:
           already_connected: "You're already connected to that user"
-          different_orgs: 'You must be in the same org'
+          different_orgs: 'You must be in the same Org'
           self_connection: "You can't connect to yourself"
         flag:
           candidacy_announcement: "Candidacy announcements can't be flagged"
