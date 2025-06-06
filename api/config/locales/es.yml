@@ -21,10 +21,10 @@ es:
       ballot:
         encrypted_question: 'Pregunta'
         max_candidate_ids_per_vote: 'Selecciones máximas'
-        nominations_end_at: '"Las nominaciones terminan el"'
-        term_ends_at: '"El mandato termina el"'
-        term_starts_at: '"El mandato comienza el"'
-        voting_ends_at: '"La votación termina el"'
+        nominations_end_at: 'Las nominaciones terminan el'
+        term_ends_at: 'El mandato termina el'
+        term_starts_at: 'El mandato comienza el'
+        voting_ends_at: 'La votación termina el'
       comment:
         ancestry: 'Linaje'
         depth: 'Profundidad'
