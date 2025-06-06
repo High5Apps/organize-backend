@@ -28,6 +28,7 @@ es:
       comment:
         ancestry: 'Linaje'
         depth: 'Profundidad'
+        encrypted_body: :activerecord.models.comment
       connection:
         scanner: 'Escáner'
         sharer: 'Compartidor'

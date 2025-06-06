@@ -16,6 +16,8 @@ en:
         term_ends_at: 'Term ends on'
         term_starts_at: 'Term starts on'
         voting_ends_at: 'Voting ends on'
+      comment:
+        encrypted_body: 'Comment'
       org:
         encrypted_employer_name: 'Employer name'
         encrypted_member_definition: 'Member definition'
