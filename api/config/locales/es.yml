@@ -19,110 +19,60 @@ es:
   activerecord:
     attributes:
       ballot:
-        blocked_at: 'sBlocked at'
-        category: 'sCategory'
         encrypted_question: 'sQuestion'
         max_candidate_ids_per_vote: 'sMax selections'
         nominations_end_at: '"sNominations end on"'
-        office: :activemodel.models.office
         term_ends_at: '"sTerm ends on"'
         term_starts_at: '"sTerm starts on"'
-        user: :activerecord.models.user
         voting_ends_at: '"sVoting ends on"'
-      candidate:
-        ballot: :activerecord.models.ballot
-        encrypted_title: 'sTitle'
-        nomination: :activerecord.models.nomination
-        user: :activerecord.models.user
       comment:
         ancestry: 'sAncestry'
-        blocked_at: 'sBlocked at'
-        deleted_at: 'sDeleted at'
         depth: 'sDepth'
-        encrypted_body: 'sBody'
-        post: :activerecord.models.post
-        user: :activerecord.models.user
       connection:
         scanner: 'sScanner'
         sharer: 'sSharer'
       flag:
         flaggable: 'sFlaggable'
         flaggable_type: 'sFlaggable type'
-        user: :activerecord.models.user
       moderation_event:
         action: 'sAction'
         moderatable: 'sModeratable'
         moderatable_type: 'sModeratable type'
-        user: :activerecord.models.user
       nomination:
-        accepted: 'sAccepted'
-        ballot: :activerecord.models.ballot
         nominator: 'sNominator'
         nominee: 'sNominee'
       org:
         behind_on_payments_at: 'sBehind on payments at'
         encrypted_employer_name: 'sEmployer name'
-        encrypted_name: 'sName'
         encrypted_member_definition: 'sMember definition'
         email: 'sEmail'
         verification_code: 'sVerification code'
         verified_at: 'sVerified at'
       permission:
         data: :activemodel.models.permission/data
-        org: :activerecord.models.org
         scope: 'sScope'
-      post:
-        blocked_at: 'sBlocked at'
-        candidate: :activerecord.models.candidate
-        category: 'sCategory'
-        deleted_at: 'sDeleted at'
-        encrypted_body: 'sBody'
-        encrypted_title: 'sTitle'
-        user: :activerecord.models.user
       term:
-        accepted: 'sAccepted'
-        ballot: :activerecord.models.ballot
         ends_at: 'sEnds at'
-        office: :activemodel.models.office
         starts_at: 'sStarts at'
-        user: :activerecord.models.user
       union_card:
         encrypted_agreement: 'sAgreement'
-        encrypted_department: 'sDepartment'
         encrypted_email: 'sEmail'
         encrypted_employer_name: 'sEmployer name'
         encrypted_home_address_line1: 'sHome address line 1'
         encrypted_home_address_line2: 'sHome address line 2'
-        encrypted_job_title: 'sJob title'
-        encrypted_name: 'sName'
         encrypted_phone: 'sPhone'
-        encrypted_shift: 'sShift'
         signature_bytes: 'sSignature bytes'
         signed_at: 'sSigned at'
-        user: :activerecord.models.user
-        work_group: :activerecord.models.work_group
       upvote:
-        comment: :activerecord.models.comment
-        post: :activerecord.models.post
-        user: :activerecord.models.user
         value: 'sValue'
       user:
-        blocked_at: 'sBlocked at'
         joined_at: 'sJoined at'
         left_org_at: 'sLeft Org at'
-        org: :activerecord.models.org
         public_key_bytes: 'sPublic key bytes'
         pseudonym: 'sPseudonym'
         recruiter: 'sRecruiter'
       vote:
-        ballot: :activerecord.models.ballot
         candidate_ids: 'sCandidate IDs'
-        user: :activerecord.models.user
-      work_group:
-        encrypted_department: 'sDepartment'
-        encrypted_job_title: 'sJob title'
-        encrypted_shift: 'sShift'
-        user: :activerecord.models.user
     errors:
       messages:
         encrypted_attribute_too_long: "sis too long. Emojis count more. Length: %{length}, max: %{max_length}"
@@ -254,6 +204,26 @@ es:
       work_group:
         one: 'Swork Group'
         other: 'Swork Groups'
+  attributes:
+    accepted: 'sAccepted'
+    ballot: :activerecord.models.ballot
+    blocked_at: 'sBlocked at'
+    candidate: :activerecord.models.candidate
+    category: 'sCategory'
+    comment: :activerecord.models.comment
+    deleted_at: 'sDeleted at'
+    encrypted_body: 'sBody'
+    encrypted_department: 'sDepartment'
+    encrypted_job_title: 'sJob title'
+    encrypted_name: 'sName'
+    encrypted_shift: 'sShift'
+    encrypted_title: 'sTitle'
+    nomination: :activerecord.models.nomination
+    office: :activemodel.models.office
+    org: :activerecord.models.org
+    post: :activerecord.models.post
+    user: :activerecord.models.user
+    work_group: :activerecord.models.work_group
   errors:
     messages:
       authenticatable:

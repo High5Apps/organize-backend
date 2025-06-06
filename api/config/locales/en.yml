@@ -16,32 +16,16 @@ en:
         term_ends_at: '"Term ends on"'
         term_starts_at: '"Term starts on"'
         voting_ends_at: '"Voting ends on"'
-      candidate:
-        encrypted_title: 'Title'
-      comment:
-        encrypted_body: 'Body'
       org:
         encrypted_employer_name: 'Employer name'
-        encrypted_name: 'Name'
         encrypted_member_definition: 'Member definition'
-      post:
-        encrypted_body: 'Body'
-        encrypted_title: 'Title'
       union_card:
         encrypted_agreement: 'Agreement'
-        encrypted_department: 'Department'
         encrypted_email: 'Email'
         encrypted_employer_name: 'Employer name'
         encrypted_home_address_line1: 'Home address line 1'
         encrypted_home_address_line2: 'Home address line 2'
-        encrypted_job_title: 'Job title'
-        encrypted_name: 'Name'
         encrypted_phone: 'Phone'
-        encrypted_shift: 'Shift'
-      work_group:
-        encrypted_department: 'Department'
-        encrypted_job_title: 'Job title'
-        encrypted_shift: 'Shift'
     errors:
       messages:
         encrypted_attribute_too_long: "is too long. Emojis count more. Length: %{length}, max: %{max_length}"
@@ -124,6 +108,13 @@ en:
             other: "must not contain more than %{count} choices"
           created_before_nominations_end: "Vote can't be created before nominations end"
           modified_after_voting_end: "Vote can't be changed after voting ends"
+  attributes:
+    encrypted_body: 'Body'
+    encrypted_department: 'Department'
+    encrypted_job_title: 'Job title'
+    encrypted_name: 'Name'
+    encrypted_shift: 'Shift'
+    encrypted_title: 'Title'
   errors:
     messages:
       authenticatable:
