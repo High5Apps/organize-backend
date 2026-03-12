@@ -10,7 +10,7 @@ gem "rails", "~> 8.1.2"
 gem "pg", "~> 1.1"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 6.0"
+gem "puma", ">= 7.0"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
@@ -43,7 +43,7 @@ group :development do
 end
 
 # Used in simulation and db seeds
-gem "rubystats", "~> 0.4.1"
+gem "rubystats", "~> 0.4"
 
 # Used for random db seed data
 gem 'faker', '~> 3'
@@ -63,13 +63,13 @@ gem 'sorbet-runtime'
 gem 'tapioca', require: false, :group => [:development, :test]
 
 # Used for collecting metrics
-gem 'yabeda-rails', '~> 0.9.0'
-gem 'yabeda-prometheus', '~> 0.9.1'
-gem 'yabeda-puma-plugin', '~> 0.7.1'
-gem 'yabeda-activerecord', '~> 0.1.1'
+gem 'yabeda-rails', '~> 0.9'
+gem 'yabeda-prometheus', '~> 0.9'
+gem 'yabeda-puma-plugin', '~> 0.8'
+gem 'yabeda-activerecord', '~> 0.1'
 
 # Used for structured request logging
-gem 'lograge', '~> 0.14.0'
+gem 'lograge', '~> 0.14'
 
 # Used for error message localization
 gem 'http_accept_language', '~> 2'
