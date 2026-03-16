@@ -173,7 +173,7 @@ class Seed
   private
 
   def benchmark(message, &block)
-    elapsed_time_ms = Benchmark.ms(&block)
+    elapsed_time_ms = 1000 * ActiveSupport::Benchmark.realtime(&block)
     puts "#{message} (#{elapsed_time_ms.round}ms)"
   end
 
