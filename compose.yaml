@@ -27,7 +27,7 @@ services:
     environment:
       PGDATA: /var/lib/postgresql/17/data
       POSTGRES_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
-    image: postgres:17.0
+    image: postgres:17.9
     ports:
       - "127.0.0.1:5432:5432"
     restart: always
