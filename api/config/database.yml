@@ -20,5 +20,10 @@ test:
   database: organize_test
 
 production:
-  <<: *default
-  database: organize_production
+  primary: &primary_production
+    <<: *default
+    database: organize_production
+  queue:
+    <<: *primary_production
+    database: organize_production_queue
+    migrations_paths: db/queue_migrate

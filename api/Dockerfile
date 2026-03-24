@@ -19,7 +19,9 @@ ENV RAILS_ENV="production" \
   BUNDLE_DEPLOYMENT="1" \
   BUNDLE_PATH="/usr/local/bundle" \
   BUNDLE_WITHOUT="development" \
-  LD_PRELOAD=/usr/local/lib/libjemalloc.so
+  LD_PRELOAD=/usr/local/lib/libjemalloc.so \
+  SOLID_QUEUE_IN_PUMA=true \
+  SOLID_QUEUE_SKIP_RECURRING=true
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
@@ -69,7 +71,8 @@ FROM build AS dev
 # Set development environment
 ENV RAILS_ENV="development" \
   BUNDLE_DEPLOYMENT="0" \
-  BUNDLE_WITHOUT=""
+  BUNDLE_WITHOUT="" \
+  SOLID_QUEUE_IN_PUMA=false
 
 # Install development packages
 RUN bundle install
