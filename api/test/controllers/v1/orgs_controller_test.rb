@@ -59,6 +59,20 @@ class V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil @user.reload.pseudonym
   end
 
+  test "should not enqueue a NewOrgNotificationJob on failed create" do
+    assert_no_enqueued_jobs
+    post v1_orgs_url, headers: @authorized_headers, params: {
+      org: @params[:org].except(:encrypted_name)
+    }
+    assert_no_enqueued_jobs
+  end
+
+  test "should enqueue a NewOrgNotificationJob on successful create" do
+    assert_enqueued_with(job: NewOrgNotificationJob) do
+      post v1_orgs_url, headers: @authorized_headers, params: @params
+    end
+  end
+
   test 'should show my_org' do
     get v1_my_org_url,
       headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL)

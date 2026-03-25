@@ -16,6 +16,7 @@ class V1::OrgsController < ApplicationController
   def create
     new_org = authenticated_user.build_org(create_or_update_params)
     if new_org.save && authenticated_user.save
+      NewOrgNotificationJob.perform_later
       render json: { id: new_org.id }, status: :created
     else
       render_error :unprocessable_entity, new_org.errors.full_messages

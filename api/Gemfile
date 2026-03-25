@@ -42,6 +42,10 @@ group :development do
   # gem "spring"
 end
 
+group :test do
+  gem 'webmock', '~> 3.26'
+end
+
 # Used in simulation and db seeds
 gem "rubystats", "~> 0.4"
 
@@ -76,3 +80,6 @@ gem 'http_accept_language', '~> 2'
 
 # Used for background jobs
 gem "solid_queue", "~> 1.4"
+
+# Used for external HTTP requests
+gem "httparty", "~> 0.24"
