@@ -1,0 +1,13 @@
+# Server
+base-url: "https://notify.getorganize.app"
+behind-proxy: true
+log-format: json
+manager-interval: 15m
+web-root: disable
+
+# Access control
+auth-file: "/var/cache/ntfy/user.db"
+auth-default-access: "deny-all"
+
+# Message cache
+cache-file: "/var/cache/ntfy/cache.db"

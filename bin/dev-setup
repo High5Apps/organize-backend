@@ -57,6 +57,8 @@ else
   sed -i '' "s/example-password-rmka/$rails_master_key_api/" $dot_env
   sed -i '' "s/example-password-rmks/$rails_master_key_site/" $dot_env
 
+  echo "WARNING: Some secrets may need to be updated manually"
+
   updated_dot_env=true
 fi
 
