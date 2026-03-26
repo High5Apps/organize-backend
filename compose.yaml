@@ -110,6 +110,7 @@ services:
     environment:
       NTFY_AUTH_TOKENS: ${NTFY_ADMIN_TOKEN:?err}
       NTFY_AUTH_USERS: ${NTFY_ADMIN_USER:?err}
+      NTFY_WEB_ROOT: disable
     image: localhost:5001/organize-monitor-notify
     ports:
       - "127.0.0.1:2586:80"

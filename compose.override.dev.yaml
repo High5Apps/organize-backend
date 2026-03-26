@@ -15,6 +15,9 @@ services:
   monitor-db:
     environment:
       DATA_SOURCE_URI: db:5432/organize_development?sslmode=disable
+  monitor-notify:
+    environment:
+      NTFY_WEB_ROOT: /
   site:
     build:
       target: dev
