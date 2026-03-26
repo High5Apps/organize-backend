@@ -1,14 +1,20 @@
 class NewOrgNotificationJob < ApplicationJob
   queue_as :default
 
-  def perform(*args)
-    return unless Rails.env.production?
+  NOTIFICATION_URL = "http://monitor-notify/org_created"
+  NOTIFICATION_TITLE = "New Org Created"
 
+  def perform(*args)
     HTTParty.post(
-      Rails.application.credentials.dig(:notification_urls, :new_org),
+      NOTIFICATION_URL,
       headers: {
-        Title: 'New Org Created',
+        Authorization: self.class.authorization(ENV.fetch("NTFY_TOKEN")),
+        Title: NOTIFICATION_TITLE,
       }
     )
+  end
+
+  def self.authorization(token)
+    "Bearer #{token.split(":")[1]}"
   end
 end

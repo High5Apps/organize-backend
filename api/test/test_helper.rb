@@ -59,6 +59,14 @@ class ActiveSupport::TestCase
     "#{SecureRandom.uuid}@example.com"
   end
 
+  def with_env_var(key, value)
+    original_value = ENV[key]
+    ENV[key] = value
+    yield
+  ensure
+    ENV[key] = original_value
+  end
+
   def with_rails_credentials(temporary_credentials)
     original_credentials = Rails.application.credentials
     Rails.application.credentials = temporary_credentials

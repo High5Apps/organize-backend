@@ -6,6 +6,7 @@ services:
     depends_on:
       - db
     environment:
+      NTFY_TOKEN: ${NTFY_ADMIN_TOKEN:?err}
       ORGANIZE_DATABASE_PASSWORD: ${ORGANIZE_DATABASE_PASSWORD:?err}
       ORGANIZE_DATABASE_USER: postgres
       ORGANIZE_DATABASE_HOST: db

@@ -1,30 +1,13 @@
 require "test_helper"
 
 class NewOrgNotificationJobTest < ActiveJob::TestCase
-  FAKE_NOTIFICATION_URL = 'https://example.com/12345'
+  FAKE_TOKEN = "my_user:tk_example_token_123456789098764"
 
-  test "should no-op unless environment is production" do
-    assert_not Rails.env.production?
-
+  test "should make a post request to NOTIFICATION_URL" do
     stub_notify = stub_notification_request
     assert_not_requested stub_notify
 
-    perform_enqueued_jobs do
-      NewOrgNotificationJob.perform_later
-    end
-
-    assert_not_requested stub_notify
-  end
-
-  test "should make a post request to credentials.notification_urls.new_org" do
-    Rails.env = 'production'
-    assert Rails.env.production?
-
-    stub_notify = stub_notification_request
-    assert_not_requested stub_notify
-
-    notification_urls = { new_org: FAKE_NOTIFICATION_URL }
-    with_rails_credentials(notification_urls:) do
+    with_env_var("NTFY_TOKEN", FAKE_TOKEN) do
       perform_enqueued_jobs do
         NewOrgNotificationJob.perform_later
       end
@@ -36,6 +19,12 @@ class NewOrgNotificationJobTest < ActiveJob::TestCase
   private
 
   def stub_notification_request
-    stub_request(:post, FAKE_NOTIFICATION_URL)
+    stub_request(:post, NewOrgNotificationJob::NOTIFICATION_URL).
+      with(
+        headers: {
+          Authorization: NewOrgNotificationJob::authorization(FAKE_TOKEN),
+          Title: NewOrgNotificationJob::NOTIFICATION_TITLE,
+        }
+      )
   end
 end
