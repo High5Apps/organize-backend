@@ -3,6 +3,7 @@ set -e
 
 DOMAIN="getorganize.app"
 DOMAIN_API="api.$DOMAIN"
+DOMAIN_NOTIFY="notify.$DOMAIN"
 DOMAIN_WWW="www.$DOMAIN"
 EMAIL_ADDRESS="GetOrganizeApp@gmail.com"
 WEBROOT_PATH="/var/www/certbot/"
@@ -51,6 +52,7 @@ if ! [ -e $cert_file ]; then
     --agree-tos \
     --domain $DOMAIN \
     --domain $DOMAIN_API \
+    --domain $DOMAIN_NOTIFY \
     --domain $DOMAIN_WWW \
     --email ${EMAIL_ADDRESS} \
     --non-interactive \
