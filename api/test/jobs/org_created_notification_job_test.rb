@@ -1,6 +1,6 @@
 require "test_helper"
 
-class NewOrgNotificationJobTest < ActiveJob::TestCase
+class OrgCreatedNotificationJobTest < ActiveJob::TestCase
   FAKE_TOKEN = "my_user:tk_example_token_123456789098764"
 
   setup do
@@ -13,7 +13,7 @@ class NewOrgNotificationJobTest < ActiveJob::TestCase
 
     with_env_var("NTFY_TOKEN", FAKE_TOKEN) do
       perform_enqueued_jobs do
-        NewOrgNotificationJob.perform_later @org
+        OrgCreatedNotificationJob.perform_later @org
       end
     end
 
@@ -23,13 +23,13 @@ class NewOrgNotificationJobTest < ActiveJob::TestCase
   private
 
   def stub_notification_request
-    stub_request(:post, NewOrgNotificationJob::NOTIFICATION_URL).
+    stub_request(:post, OrgCreatedNotificationJob::NOTIFICATION_URL).
       with(
         body: @org.email,
         headers: {
-          Actions: NewOrgNotificationJob::actions(@org),
-          Authorization: NewOrgNotificationJob::authorization(FAKE_TOKEN),
-          Title: NewOrgNotificationJob::NOTIFICATION_TITLE,
+          Actions: OrgCreatedNotificationJob::actions(@org),
+          Authorization: OrgCreatedNotificationJob::authorization(FAKE_TOKEN),
+          Title: OrgCreatedNotificationJob::NOTIFICATION_TITLE,
         }
       )
   end

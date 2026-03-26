@@ -1,4 +1,4 @@
-class NewOrgNotificationJob < ApplicationJob
+class OrgCreatedNotificationJob < ApplicationJob
   queue_as :default
 
   BODY_FORMAT = %(
@@ -17,7 +17,7 @@ Julian Tigler
 https://getorganize.app/blog/tips_for_starting_a_union
   ).strip
   NOTIFICATION_URL = "http://monitor-notify/org_created"
-  NOTIFICATION_TITLE = "New Org Created"
+  NOTIFICATION_TITLE = "Org Created"
 
   def perform(org)
     HTTParty.post(
