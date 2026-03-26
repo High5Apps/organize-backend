@@ -3,6 +3,7 @@ base-url: "https://notify.getorganize.app"
 behind-proxy: true
 log-format: json
 manager-interval: 15m
+metrics-listen-http: ":9090"
 web-root: disable
 
 # Access control
