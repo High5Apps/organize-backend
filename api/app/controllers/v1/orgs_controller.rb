@@ -47,6 +47,7 @@ class V1::OrgsController < ApplicationController
 
   def verify
     if @org.verify(params[:code])
+      OrgVerifiedNotificationJob.perform_later @org
       head :ok
     else
       render_error :forbidden, [t('.errors.invalid')]

@@ -59,7 +59,7 @@ class V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil @user.reload.pseudonym
   end
 
-  test "should not enqueue a OrgCreatedNotificationJob on failed create" do
+  test "should not enqueue an OrgCreatedNotificationJob on failed create" do
     assert_no_enqueued_jobs
     post v1_orgs_url, headers: @authorized_headers, params: {
       org: @params[:org].except(:encrypted_name)
@@ -67,7 +67,7 @@ class V1::OrgsControllerTest < ActionDispatch::IntegrationTest
     assert_no_enqueued_jobs
   end
 
-  test "should enqueue a OrgCreatedNotificationJob on successful create" do
+  test "should enqueue an OrgCreatedNotificationJob on successful create" do
     assert_enqueued_with(job: OrgCreatedNotificationJob) do
       post v1_orgs_url, headers: @authorized_headers, params: @params
     end
@@ -294,5 +294,21 @@ class V1::OrgsControllerTest < ActionDispatch::IntegrationTest
       headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL),
       params: { code: @org.verification_code }
     assert_response :forbidden
+  end
+
+  test "should not enqueue an OrgVerifiedNotificationJob on failed verify" do
+    assert_no_enqueued_jobs
+    post v1_verify_url,
+      headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL),
+      params: { code: 'invalid' }
+    assert_no_enqueued_jobs
+  end
+
+  test "should enqueue an OrgVerifiedNotificationJob on successful verify" do
+    assert_enqueued_with(job: OrgVerifiedNotificationJob) do
+      post v1_verify_url,
+        headers: authorized_headers(@user_in_org, Authenticatable::SCOPE_ALL),
+        params: { code: @org.verification_code }
+    end
   end
 end
