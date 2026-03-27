@@ -83,7 +83,7 @@ fi
 
 # Note this also happens in bin/bootstrap
 echo 'Installing the loki-docker-driver pulgin'
-docker plugin install grafana/loki-docker-driver:3.3.2-arm64 --alias loki --grant-all-permissions
+docker plugin install grafana/loki-docker-driver:3.7.1-arm64 --alias loki --grant-all-permissions
 parent_dir_path=$(dirname "$0")
 cp $parent_dir_path/../daemon.json ~/.docker/daemon.json
 echo 'Restart Docker Desktop to begin logging to Loki'

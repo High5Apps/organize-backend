@@ -126,7 +126,7 @@ ssh -i $SSH_KEY_PATH $new_host << EOF
   set -e
 
   echo 'Installing the loki-docker-driver pulgin'
-  docker plugin install grafana/loki-docker-driver:3.3.2-arm64 --alias loki --grant-all-permissions
+  docker plugin install grafana/loki-docker-driver:3.7.1-arm64 --alias loki --grant-all-permissions
 
   echo 'Moving the daemon.json file into place'
   sudo mv daemon.json /etc/docker/daemon.json
