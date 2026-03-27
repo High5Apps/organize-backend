@@ -19,7 +19,7 @@ This section talks briefly about various important directories and data structur
 
 ### `api`
 
-The root of the Ruby on Rails api service. It follows [Rails conventions](https://github.com/jwipeout/rails-directory-structure-guide) for its subdirectory structure.
+The root of the Ruby on Rails api service, exposed publicly at <https://api.getorganize.app>. It follows [Rails conventions](https://github.com/jwipeout/rails-directory-structure-guide) for its subdirectory structure.
 
 **Architecture Invariant**: All human-generated text must be end-to-end encrypted by the client using the relevant Org's group secret, and then stored in an `EncryptedMessage` attribute on its parent model. The attribute must begin with the prefix `encrypted_` (e.g. `Post.encrypted_title` or `Org.encrypted_member_definition`).
 
@@ -31,11 +31,11 @@ Admin scripts for dealing with top-level server operations.
 
 ### `certs`
 
-Certbot sevice for renewing Let's Encrypt TLS certificates.
+Certbot sevice for renewing [Let's Encrypt](https://letsencrypt.org/) TLS certificates.
 
 ### `jmeter`
 
-For load testing the server using the Apache JMeter application and CLI.
+For load testing the server using the [Apache JMeter](https://jmeter.apache.org/) application and CLI.
 
 ### `monitor`
 
@@ -43,11 +43,19 @@ For load testing the server using the Apache JMeter application and CLI.
 
 ### `monitor-dash`
 
-[Grafana OSS](https://grafana.com/oss/grafana/) service for metrics dashboards.
+[Grafana OSS](https://grafana.com/oss/grafana/) service for metrics dashboards and log queries.
+
+### `monitor-logs`
+
+[Loki OSS](https://grafana.com/oss/loki/) service for collecting logs from the [Docker daemon](https://docs.docker.com/reference/cli/dockerd/#on-linux) using Loki's [Docker driver client](https://grafana.com/docs/loki/latest/send-data/docker-driver/).
+
+### `monitor-notify`
+
+[ntfy.sh](https://ntfy.sh/) service for sending push notifications to developers to improve monitoring event response times. It's exposed publicly at <https://notify.getorganize.app>, and it's protected by ntfy's built-in [Authentication](https://docs.ntfy.sh/publish/#authentication) mechanisms.
 
 ### `site`
 
-The root of the Ruby on Rails site service. It serves the static website at <https://getorganize.app>. It follows [Rails conventions](https://github.com/jwipeout/rails-directory-structure-guide) for its subdirectory structure.
+The root of the Ruby on Rails site service. It serves the static website, exposed publicly at <https://getorganize.app> and <https://www.getorganize.app>. It follows [Rails conventions](https://github.com/jwipeout/rails-directory-structure-guide) for its subdirectory structure.
 
 ### `web`
 
