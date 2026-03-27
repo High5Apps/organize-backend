@@ -1,6 +1,4 @@
-class OrgCreatedNotificationJob < ApplicationJob
-  queue_as :default
-
+class OrgCreatedNotificationJob < NotificationJob
   BODY_FORMAT = %(
 Welcome to Organize!
 
@@ -16,19 +14,12 @@ Thanks,
 Julian Tigler
 https://getorganize.app/blog/tips_for_starting_a_union
   ).strip
-  NOTIFICATION_URL = "http://monitor-notify/org_created"
-  NOTIFICATION_TITLE = "Org Created"
+  TOPIC = "org_created"
 
   def perform(org)
-    HTTParty.post(
-      NOTIFICATION_URL,
+    send_notification TOPIC,
       body: org.email,
-      headers: {
-        Actions: self.class.actions(org),
-        Authorization: self.class.authorization(ENV.fetch("NTFY_TOKEN")),
-        Title: NOTIFICATION_TITLE,
-      }
-    )
+      headers: {Actions: self.class.actions(org)}
   end
 
   def self.actions(org)
@@ -40,9 +31,5 @@ https://getorganize.app/blog/tips_for_starting_a_union
     }
 
     "view, Compose Email, #{mail_to}, clear=true"
-  end
-
-  def self.authorization(token)
-    "Bearer #{token.split(":")[1]}"
   end
 end

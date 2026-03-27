@@ -7,7 +7,7 @@ class OrgCreatedNotificationJobTest < ActiveJob::TestCase
     @org = orgs(:one)
   end
 
-  test "should make a post request to NOTIFICATION_URL" do
+  test "should send notification" do
     stub_notify = stub_notification_request
     assert_not_requested stub_notify
 
@@ -23,13 +23,14 @@ class OrgCreatedNotificationJobTest < ActiveJob::TestCase
   private
 
   def stub_notification_request
-    stub_request(:post, OrgCreatedNotificationJob::NOTIFICATION_URL).
+    url = NotificationJob::notification_url(OrgCreatedNotificationJob::TOPIC)
+    stub_request(:post, url).
       with(
         body: @org.email,
         headers: {
           Actions: OrgCreatedNotificationJob::actions(@org),
-          Authorization: OrgCreatedNotificationJob::authorization(FAKE_TOKEN),
-          Title: OrgCreatedNotificationJob::NOTIFICATION_TITLE,
+          Authorization: NotificationJob::authorization(FAKE_TOKEN),
+          Title: NotificationJob::title(OrgCreatedNotificationJob::TOPIC),
         }
       )
   end
