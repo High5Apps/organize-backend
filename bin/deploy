@@ -13,7 +13,7 @@ cleanup()
   # Stop and remove the local registry
   docker container stop registry
   echo '- Stopped'
-  docker container rm registry
+  docker container rm --volumes registry
   echo '- Removed'
 }
 
