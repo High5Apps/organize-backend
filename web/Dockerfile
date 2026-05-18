@@ -51,7 +51,7 @@ COPY logging.conf /etc/nginx/logging.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx-auto-reloader.sh /usr/src/app/nginx-auto-reloader.sh
 COPY ssl-server.conf /etc/nginx/ssl-server.conf
-COPY store.conf /etc/nginx/store.conf
+COPY store-redirect-map.conf /etc/nginx/store-redirect-map.conf
 COPY vhost-traffic-status.conf /etc/nginx/vhost-traffic-status.conf
 
 ENTRYPOINT [ "./docker-entrypoint.sh" ]
